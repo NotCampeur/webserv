@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 10:59:27 by ldutriez          #+#    #+#             */
-/*   Updated: 2020/10/23 13:54:02 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:13:33 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	remove_line(char **storage)
 static int	read_until_nl_or_eof(char **storage, char *buffer,
 									int *read_return, int fd)
 {
-	while (ft_is_charset_in_str(*storage, "\n") == false
+	while (ft_is_charset_in_str(*storage, "\n") == b_false
 		&& *read_return != IS_END_OF_FILE)
 	{
 		*read_return = read(fd, buffer, BUFFER_SIZE);

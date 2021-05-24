@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/12 14:34:11 by ncoudsi           #+#    #+#             */
-/*   Updated: 2020/10/23 13:22:57 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 19:56:20 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,25 @@ char	**ft_get_file(char *path)
 	}
 	ft_add_to_tab((void *)line, (void ***)&result);
 	close(fd);
+	return (result);
+}
+
+char	**ft_get_file_fd(int fd)
+{
+	char	**result;
+	char	*line;
+
+	result = NULL;
+	line = NULL;
+	if (fd < 3)
+	{
+		return (ft_print_error(__PRETTY_FUNCTION__, __LINE__,
+								FT_E_ARG));
+	}
+	while (ft_get_next_line(fd, &line) > 0)
+	{
+		ft_add_to_tab((void *)line, (void ***)&result);
+	}
+	ft_add_to_tab((void *)line, (void ***)&result);
 	return (result);
 }

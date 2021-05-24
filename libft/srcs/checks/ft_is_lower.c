@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_is_lower.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncoudsi <ncoudsi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 12:27:37 by ldutriez          #+#    #+#             */
-/*   Updated: 2020/10/14 15:35:56 by ncoudsi          ###   ########.fr       */
+/*   Updated: 2021/05/24 20:11:16 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,6 @@
 t_bool	ft_is_lower(char c)
 {
 	if (c >= 'a' && c <= 'z')
-		return (true);
-	return (false);
+		return (b_true);
+	return (b_false);
 }

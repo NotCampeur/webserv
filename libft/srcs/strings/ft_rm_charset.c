@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 18:59:06 by ldutriez          #+#    #+#             */
-/*   Updated: 2020/10/23 15:08:22 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:10:09 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int		len_without_charset(char *str, char *charset)
 		return (result);
 	while (str[index] != '\0')
 	{
-		if (ft_is_char_in_str(str[index], charset) == false)
+		if (ft_is_char_in_str(str[index], charset) == b_false)
 			result++;
 		index++;
 	}
@@ -55,7 +55,7 @@ char			*ft_rm_charset(char *str, char *charset)
 		return (ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_MLC));
 	while (str[index] != '\0')
 	{
-		if (ft_is_char_in_str(str[index], charset) == false)
+		if (ft_is_char_in_str(str[index], charset) == b_false)
 		{
 			result[result_index] = str[index];
 			result_index++;

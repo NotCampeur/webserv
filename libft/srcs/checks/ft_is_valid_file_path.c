@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_valid_file_path.c                               :+:      :+:    :+:   */
+/*   ft_is_valid_file_path.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ncoudsi <ncoudsi@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 19:44:36 by ldutriez          #+#    #+#             */
-/*   Updated: 2020/10/14 15:32:03 by ncoudsi          ###   ########.fr       */
+/*   Updated: 2021/05/24 20:11:38 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_bool	ft_is_valid_file_path(char *path)
 
 	fd = open(path, O_RDONLY);
 	if (fd == -1)
-		return (false);
+		return (b_false);
 	close(fd);
-	return (true);
+	return (b_true);
 }

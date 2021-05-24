@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 17:04:01 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 17:23:35 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:20:15 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define REQUEST_HPP
 
 # include <string>
+# include <libft.h>
 
 class Request
 {

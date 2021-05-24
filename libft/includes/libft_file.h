@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/20 15:07:15 by ldutriez          #+#    #+#             */
-/*   Updated: 2020/10/20 15:30:14 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 19:56:33 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@
 
 int				ft_get_next_line(int fd, char **line);
 char			**ft_get_file(char *path);
+char			**ft_get_file_fd(int fd);
 
 #endif

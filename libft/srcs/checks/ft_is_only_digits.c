@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/17 14:44:35 by ncoudsi           #+#    #+#             */
-/*   Updated: 2020/10/23 14:02:51 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:11:26 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ t_bool	ft_is_only_digits(char *str)
 	}
 	while (str[index] != '\0')
 	{
-		if (ft_is_digit(str[index]) == false)
-			return (false);
+		if (ft_is_digit(str[index]) == b_false)
+			return (b_false);
 		index++;
 	}
-	return (true);
+	return (b_true);
 }

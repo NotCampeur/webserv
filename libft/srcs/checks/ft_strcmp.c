@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/04 14:55:32 by ncoudsi           #+#    #+#             */
-/*   Updated: 2020/10/23 14:03:47 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:11:51 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ t_bool	ft_strcmp(char *src, char *target)
 	while (src[index] != '\0' || target[index] != '\0')
 	{
 		if (src[index] != target[index])
-			return (false);
+			return (b_false);
 		index++;
 	}
-	return (true);
+	return (b_true);
 }

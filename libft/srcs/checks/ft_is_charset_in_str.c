@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/04 15:14:11 by ncoudsi           #+#    #+#             */
-/*   Updated: 2020/10/23 14:12:28 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:11:02 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ t_bool			ft_is_charset_in_str(char *str, char *to_find)
 	}
 	while (str[index] != '\0')
 	{
-		if (ft_is_char_in_str(str[index], to_find) == true)
-			return (true);
+		if (ft_is_char_in_str(str[index], to_find) == b_true)
+			return (b_true);
 		index++;
 	}
-	return (false);
+	return (b_false);
 }

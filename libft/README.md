@@ -4,10 +4,12 @@ Basic library in C language.
 # Change log
 
 - A new header file has been created (libft_error.h) to organize the defines
-	and the function relative to the error management
+	and the function relative to the error management  
 
 - Almost every function has been changed to return
-	an error message in the appropriate case.
+	an error message in the appropriate case.  
+
+- bool typedef has been change to b_true and b_false instead of true and false to avoid overwrite of cpp.
 
 	Updated files :
 

@@ -11,6 +11,7 @@ In this repository you will find a server using HTTP protocol write in C++.
 > Adding the libft to the project  
 > The server get a request of a client and send a never changing response.  
 > Everything has been split up into a class.  
+> Trying to read request with ft_get_file.  
 
 # Git status return :
 

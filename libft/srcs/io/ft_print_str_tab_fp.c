@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 14:49:30 by ncoudsi           #+#    #+#             */
-/*   Updated: 2020/10/23 13:30:16 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:13:07 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ void		ft_print_str_tab_fp(char *path,
 	fd = -1;
 	if (path == NULL || mode == NULL)
 		return ((void)ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_ARG));
-	if (ft_strcmp(mode, "OVERWRITE") == true)
+	if (ft_strcmp(mode, "OVERWRITE") == b_true)
 		fd = file_overwrite(path);
-	else if (ft_strcmp(mode, "APPEND") == true)
+	else if (ft_strcmp(mode, "APPEND") == b_true)
 		fd = file_append(path);
-	else if (ft_strcmp(mode, "CREATE") == true)
+	else if (ft_strcmp(mode, "CREATE") == b_true)
 		fd = file_create(path);
 	else
 		return ((void)ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_ARG));

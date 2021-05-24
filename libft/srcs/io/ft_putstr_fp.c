@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 14:58:50 by ncoudsi           #+#    #+#             */
-/*   Updated: 2020/10/23 13:29:34 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/24 20:12:28 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	file_create(char *path)
 	int	fd;
 
 	fd = -1;
-	if (ft_is_valid_file_path(path) == false)
+	if (ft_is_valid_file_path(path) == b_false)
 		fd = open(path, O_WRONLY | O_APPEND | O_CREAT, 00700);
 	return (fd);
 }
