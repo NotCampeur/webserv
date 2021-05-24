@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   libft_file.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/10/20 15:07:15 by ldutriez          #+#    #+#             */
+/*   Updated: 2020/10/20 15:30:14 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#ifndef LIBFT_FILE_H
+# define LIBFT_FILE_H
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 100
+# endif
 
-# include <errno.h>
+# define IS_NOT_A_LINE 2
+# define IS_A_LINE 1
+# define IS_END_OF_FILE 0
+# define IS_AN_ERROR -1
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
+int				ft_get_next_line(int fd, char **line);
+char			**ft_get_file(char *path);
 
 #endif

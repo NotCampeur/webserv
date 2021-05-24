@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_add_to_tab.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 16:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/02/14 15:09:42 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 14:54:07 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <webserv.hpp>
+#include "libft.h"
 
-int					main(void)
+/*
+**	Adding a an entry at the end of an 2 dimension array. Heap allocated.
+*/
+
+void	ft_add_to_tab(void *to_add, void ***tab)
 {
-	try
-	{
-		Server	server(true);
+	void	**tmp;
 
-		server.connection_handler();
-	}
-	catch(const std::exception &e)
+	if (to_add == NULL || tab == NULL)
+		return ((void)ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_ARG));
+	tmp = *tab;
+	*tab = ft_tab_new(ft_tab_len(tmp) + 1);
+	if (tmp != NULL)
 	{
-		std::cerr << e.what() << std::endl;
+		ft_tab_cpy(*tab, tmp);
+		free(tmp);
 	}
-	return 0;
+	(*tab)[ft_tab_len(*tab)] = to_add;
 }

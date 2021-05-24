@@ -1,31 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   libft_convert.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/10/20 15:13:45 by ldutriez          #+#    #+#             */
+/*   Updated: 2020/10/21 17:07:37 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#ifndef LIBFT_CONVERT_H
+# define LIBFT_CONVERT_H
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
-
-# include <errno.h>
-
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
+char			*ft_itoa_base(long long int nbr, char *base);
+char			*ft_itoa(long long int nbr);
+char			*ft_itoa_hexa(long long int nbr);
+char			*ft_itoa_octa(long long int nbr);
+int				ft_atoi(char *str);
 
 #endif

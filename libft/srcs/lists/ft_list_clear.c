@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_list_clear.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 16:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2019/11/08 12:47:03 by tguilbar          #+#    #+#             */
+/*   Updated: 2020/10/23 14:11:08 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <webserv.hpp>
+#include "libft.h"
 
-int					main(void)
+/*
+**	Apply the destructor function to all the datas and free each nodes
+*/
+
+void	ft_list_clear(t_list_node **list, void (*destructor)(void*))
 {
-	try
-	{
-		Server	server(true);
+	t_list_node *tmp;
 
-		server.connection_handler();
-	}
-	catch(const std::exception &e)
+	if (*list == NULL)
+		return ((void)ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_ARG));
+	while (*list != NULL)
 	{
-		std::cerr << e.what() << std::endl;
+		tmp = *list;
+		if (destructor != NULL)
+			(*destructor)(tmp->data);
+		*list = tmp->next;
+		free(tmp);
 	}
-	return 0;
 }

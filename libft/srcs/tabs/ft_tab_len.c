@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   ft_tab_len.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/02/14 14:13:14 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 13:28:57 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+/*
+**	Calculating the number of entries in a 2 dimensions array.
+*/
 
-# include <errno.h>
+size_t	ft_tab_len(void **tab)
+{
+	size_t	result;
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+	result = 0;
+	if (tab == NULL)
+	{
+		return ((size_t)ft_print_error(__PRETTY_FUNCTION__, __LINE__,
+										FT_E_ARG));
+	}
+	while (tab[result] != NULL)
+		result++;
+	return (result);
+}

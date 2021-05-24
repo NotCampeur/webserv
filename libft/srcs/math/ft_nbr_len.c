@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   ft_nbr_len.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/10/19 15:03:27 by ldutriez          #+#    #+#             */
+/*   Updated: 2020/10/20 11:39:35 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+size_t	ft_nbr_len(int nbr)
+{
+	size_t result;
 
-# include <errno.h>
-
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+	result = 1;
+	if (nbr < 0)
+		nbr *= -1;
+	while (nbr >= 10)
+	{
+		nbr /= 10;
+		result++;
+	}
+	return (result);
+}

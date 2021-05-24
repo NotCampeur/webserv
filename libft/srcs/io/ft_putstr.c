@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2019/12/11 13:48:45 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 13:22:57 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+/*
+**	Printing a string.
+*/
 
-# include <errno.h>
-
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+void	ft_putstr(char *str)
+{
+	if (str == NULL)
+	{
+		ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_ARG);
+		return ;
+	}
+	if (write(1, str, ft_strlen(str)) == -1)
+		ft_print_error(__PRETTY_FUNCTION__, __LINE__, "malfunction of write");
+}

@@ -1,31 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   ft_strdup_c.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2019/11/30 13:57:19 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 15:31:36 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+/*
+**	Allocating memory for a new string containing only c character.
+**	Then returns the string.
+*/
 
-# include <errno.h>
+char	*ft_strdup_c(char c)
+{
+	char	*result;
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+	result = ft_strnew(1);
+	if (result == NULL)
+		return (ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_MLC));
+	result[0] = c;
+	return (result);
+}

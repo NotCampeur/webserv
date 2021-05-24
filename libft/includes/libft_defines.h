@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   libft_defines.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2019/12/04 14:50:02 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 13:09:56 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#ifndef LIBFT_DEFINES_H
+# define LIBFT_DEFINES_H
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+/*
+**	This enum is designed to replace booleans since this library is used in 42
+**	school and the norme of the school does not authorize the use of external
+**	libraries.
+*/
 
-# include <errno.h>
-
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
+typedef enum	e_bool
+{
+	true = 1,
+	false = 0
+}				t_bool;
 
 #endif

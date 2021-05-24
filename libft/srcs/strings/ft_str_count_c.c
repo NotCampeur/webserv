@@ -1,31 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   ft_str_count_c.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/02/25 10:55:11 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 15:07:14 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+/*
+**	Counting the number of itterations of c character in str string.
+*/
 
-# include <errno.h>
+int	ft_str_count_c(char *str, char c)
+{
+	int	result;
+	int	index;
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+	result = 0;
+	index = 0;
+	if (str == NULL)
+		return ((int)ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_ARG));
+	while (str[index] != '\0')
+	{
+		if (str[index] == c)
+			result++;
+		index++;
+	}
+	return (result);
+}

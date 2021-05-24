@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_malloc_node.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 16:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/10/16 09:46:35 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 14:10:26 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <webserv.hpp>
+#include "libft.h"
 
-int					main(void)
+/*
+**	Allocating memory for a t_list_node pointer and filling it with data.
+**	Then returns the t_list_node pointer.
+*/
+
+t_list_node	*ft_malloc_node(void *data)
 {
-	try
-	{
-		Server	server(true);
+	t_list_node	*result;
 
-		server.connection_handler();
-	}
-	catch(const std::exception &e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-	return 0;
+	result = (t_list_node *)malloc(sizeof(t_list_node));
+	if (result == NULL)
+		return (ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_MLC));
+	result->data = data;
+	result->next = NULL;
+	return (result);
 }

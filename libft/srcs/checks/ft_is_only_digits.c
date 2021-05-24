@@ -1,31 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   ft_is_only_digits.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/02/17 14:44:35 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 14:02:51 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+/*
+**	Checking in a string if all the characters are digits.
+*/
 
-# include <errno.h>
+t_bool	ft_is_only_digits(char *str)
+{
+	size_t index;
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+	index = 0;
+	if (str == NULL)
+	{
+		return ((t_bool)ft_print_error(__PRETTY_FUNCTION__, __LINE__,
+										FT_E_ARG));
+	}
+	while (str[index] != '\0')
+	{
+		if (ft_is_digit(str[index]) == false)
+			return (false);
+		index++;
+	}
+	return (true);
+}

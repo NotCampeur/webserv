@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_is_alpha_num.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ncoudsi <ncoudsi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 16:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/02/25 12:30:13 by ldutriez          #+#    #+#             */
+/*   Updated: 2020/10/14 15:35:31 by ncoudsi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <webserv.hpp>
+#include "libft.h"
 
-int					main(void)
+/*
+**	Checking if a character is rather numeric or alphabetic.
+*/
+
+t_bool	ft_is_alpha_num(char c)
 {
-	try
-	{
-		Server	server(true);
-
-		server.connection_handler();
-	}
-	catch(const std::exception &e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-	return 0;
+	if (ft_is_digit(c) == true || ft_is_alpha(c) == true)
+		return (true);
+	return (false);
 }

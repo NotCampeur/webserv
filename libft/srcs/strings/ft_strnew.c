@@ -1,28 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_strnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 16:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2019/11/30 13:39:13 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 15:08:10 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <webserv.hpp>
+#include "libft.h"
 
-int					main(void)
+/*
+**	Allocating memory for a new string of len lenght and filling it with '\0'.
+*/
+
+char	*ft_strnew(size_t len)
 {
-	try
-	{
-		Server	server(true);
+	char		*result;
+	size_t		index;
 
-		server.connection_handler();
-	}
-	catch(const std::exception &e)
+	result = (char *)malloc(sizeof(char) * (len + 1));
+	if (result == NULL)
+		return (ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_MLC));
+	index = 0;
+	while (index < len)
 	{
-		std::cerr << e.what() << std::endl;
+		result[index] = '\0';
+		index++;
 	}
-	return 0;
+	result[index] = '\0';
+	return (result);
 }

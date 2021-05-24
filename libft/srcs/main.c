@@ -1,31 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/10/19 11:17:20 by ldutriez          #+#    #+#             */
+/*   Updated: 2020/10/23 15:08:56 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "libft.h"
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
+static void	print_params(int ac, char *av[])
+{
+	int	i;
 
-# include <errno.h>
+	i = 0;
+	while (i < ac)
+	{
+		ft_putnbr(i);
+		ft_putstr(" : ");
+		ft_putstr(av[i]);
+		ft_putstr("\n");
+		i++;
+	}
+}
 
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
-
-#endif
+int			main(int argc, char *argv[])
+{
+	print_params(argc, argv);
+	return (0);
+}

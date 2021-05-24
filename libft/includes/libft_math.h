@@ -1,31 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   libft_math.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 14:18:42 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/10/20 15:11:40 by ldutriez          #+#    #+#             */
+/*   Updated: 2020/10/21 17:45:56 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#ifndef LIBFT_MATH_H
+# define LIBFT_MATH_H
 
-# include <iostream>
-# include <exception>
-# include <string>
-# include <algorithm>
-# include <cstring>
-# include <ctime>
-
-# include <errno.h>
-
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
-# include "Server.hpp"
+size_t			ft_nbr_len(int nbr);
+float			ft_float_roof(float value);
+float			ft_float_floor(float value);
+float			ft_float_round(float value);
+int				ft_int_abs(int value);
+float			ft_float_abs(float value);
+void			ft_swap_int(int *x, int *y);
+void			ft_swap_char(char *x, char *y);
 
 #endif

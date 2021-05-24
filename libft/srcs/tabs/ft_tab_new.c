@@ -1,28 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_tab_new.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/24 16:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2020/02/14 14:11:26 by ncoudsi           #+#    #+#             */
+/*   Updated: 2020/10/23 14:55:55 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <webserv.hpp>
+#include "libft.h"
 
-int					main(void)
+/*
+**	Creating a new 2 dimensions array of size entries. Heap allocated.
+*/
+
+void	**ft_tab_new(int size)
 {
-	try
-	{
-		Server	server(true);
+	void	**result;
+	int		index;
 
-		server.connection_handler();
-	}
-	catch(const std::exception &e)
+	result = (void **)malloc(sizeof(void *) * (size + 1));
+	if (result == NULL)
+		return (ft_print_error(__PRETTY_FUNCTION__, __LINE__, FT_E_MLC));
+	index = 0;
+	while (index < size)
 	{
-		std::cerr << e.what() << std::endl;
+		result[index] = NULL;
+		index++;
 	}
-	return 0;
+	result[index] = NULL;
+	return (result);
 }
