@@ -6,12 +6,17 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/23 15:03:18 by ldutriez          #+#    #+#             */
-/*   Updated: 2020/10/23 15:05:02 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/25 17:56:07 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_ERROR_H
 # define LIBFT_ERROR_H
+
+/*
+**	THIS WHOLE SECTION IS HEAVILY DEPRECATED!!!
+**	As a cpp user you might want use exceptions.
+*/
 
 /*
 **	Thoses defines will format the color output of write.
@@ -41,7 +46,14 @@
 # define FT_E_RD "malfunction of read"
 # define FT_E_MLC "malfunction of malloc"
 
+/*
+**	Will print a colored message according where the function have been called
+**	and why, glad to the __PRETTY_NAME__ and __LINE__ attributes.
+**	The return of this function is always NULL which grant you the possibility
+**	to return the function directly in most of the case instead of
+**	print the error and then return.
+*/
 void	*ft_print_error(const char *function_name, int line,
-						char *reason);
+						const char *reason);
 
 #endif
