@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 18:59:06 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/25 18:24:39 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:21 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 /*
 **	Counting the lenght of the string without the characters of

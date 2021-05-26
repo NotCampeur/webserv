@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/22 15:31:41 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/25 18:09:43 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 void	*ft_print_error(const char *function_name, int line, const char *reason)
 {

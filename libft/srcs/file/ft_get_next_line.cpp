@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 10:59:27 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/25 18:51:29 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 /*
 **	Creating a line from storage.

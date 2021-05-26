@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/25 09:51:44 by tguilbar          #+#    #+#             */
-/*   Updated: 2021/05/25 18:18:21 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:21 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 /*
 **	Removing a node and its content.

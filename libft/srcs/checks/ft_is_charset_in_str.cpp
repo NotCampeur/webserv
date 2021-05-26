@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/04 15:14:11 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/25 18:49:43 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:21 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 t_bool			ft_is_charset_in_str(const char *str, const char *to_find)
 {

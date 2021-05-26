@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/09 15:17:49 by tguilbar          #+#    #+#             */
-/*   Updated: 2021/05/25 18:18:07 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:21 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 t_list_node	*ft_list_map(t_list_node *list, void *(*function)(void *),
 void (*destructor)(void *))

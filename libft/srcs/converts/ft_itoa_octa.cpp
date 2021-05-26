@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/03 16:36:45 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/25 17:34:50 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 char	*ft_itoa_octa(long long int nbr)
 {

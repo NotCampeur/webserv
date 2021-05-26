@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_add_to_tab.c                                    :+:      :+:    :+:   */
+/*   ft_add_to_tab.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/14 15:09:42 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/25 17:03:23 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 /*
 **	Adding a an entry at the end of an 2 dimension array. Heap allocated.

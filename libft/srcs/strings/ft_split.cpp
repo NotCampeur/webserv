@@ -6,11 +6,11 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 10:57:07 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/25 18:26:16 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft.hpp"
 
 /*
 **	Counting how many words we have after splitting the initial string.

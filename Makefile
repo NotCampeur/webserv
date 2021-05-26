@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/05/25 17:05:42 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/05/26 14:50:04 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 DEBUG =
 ifdef DEBUG
-    CPPFLAGS += -fsanitize=address -g3
+    CPPFLAGS += -g3
 endif
 
 IFLAGS =	$(foreach dir, $(INC_DIR), -I$(dir))
@@ -82,12 +82,12 @@ re-install:
 $(OBJ_DIR)/%.o : %.cpp
 				@echo -n "Compiling $(_YELLOW)$@$(_WHITE) ... "
 				@mkdir -p $(OBJ_DIR)
-				$(CXX) $(CPPFLAGS) $(IFLAGS) -o $@ -c $<
+				@$(CXX) $(CPPFLAGS) $(IFLAGS) -o $@ -c $<
 				@echo "$(_GREEN)DONE$(_WHITE)"
 
 $(NAME): 		libft/libft.a $(INC_DIR) $(OBJ) Makefile
 				@echo -n "-----\nCreating Executable $(_YELLOW)$@$(_WHITE) ... "
-				$(CXX) $(CPPFLAGS) $(OBJ) $(LDFLAGS) -o $(NAME)
+				@$(CXX) $(CPPFLAGS) $(OBJ) $(LDFLAGS) -o $(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 exec:			$(NAME)

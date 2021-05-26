@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:29:43 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/25 18:46:58 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/05/26 14:54:57 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,17 @@ void	Server::connection_handler()
 {
 	while (1)
 	{
-		accept_connection();
-		get_client_request();
-		send_response("<iframe width=\"1200\" height=\"800\" src=\"https://www.youtube.com/embed/Z3w5gVM_4y8?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>");
+		try
+		{
+			accept_connection();
+			get_client_request();
+			send_response("<iframe width=\"1200\" height=\"800\" src=\"https://www.youtube.com/embed/Z3w5gVM_4y8?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>");
+		}
+		catch(const std::exception& e)
+		{
+			close(_client_socket);
+			throw e;
+		}
 		close(_client_socket);
 	}
 }
@@ -95,37 +103,37 @@ void	Server::set_listener()
 		std::cout << "The server socket is listening\n" << std::endl;
 }
 
-// void	Server::get_client_request()
-// {
-// 	char		client_socket_buff[1024] = {0};
-// 	ssize_t		byte_readed(0);
-
-// 	byte_readed = read(_client_socket, client_socket_buff, 1024);
-// 	if (byte_readed == -1)
-// 		throw UnableToGetClientRequest();
-// 	if (_is_verbose == true)
-// 		std::cout << "Socket content (" << byte_readed << " byte readed):"
-// 		<< std::endl << client_socket_buff;
-// }
-
 void	Server::get_client_request()
 {
-	std::string	request;
-	char		**raw_request;
+	char		client_socket_buff[1024] = {0};
+	ssize_t		byte_readed(0);
 
-	raw_request = ft_get_file(_client_socket);
-	if (raw_request == NULL)
+	byte_readed = read(_client_socket, client_socket_buff, 1024);
+	if (byte_readed == -1)
 		throw UnableToGetClientRequest();
-	for (int i(0); raw_request[i] != NULL; i++)
-	{
-		request += raw_request[i];
-		request += "\n";
-	}
 	if (_is_verbose == true)
-		std::cout << "Socket content (" << request.size() << " byte readed):"
-		<< std::endl << request;
-	ft_free_tab((void**)raw_request);
+		std::cout << "Socket content (" << byte_readed << " byte readed):"
+		<< std::endl << client_socket_buff;
 }
+
+// void	Server::get_client_request()
+// {
+// 	std::string	request;
+// 	char		**raw_request;
+
+// 	raw_request = ft_get_file(_client_socket);
+// 	if (raw_request == NULL)
+// 		throw UnableToGetClientRequest();
+// 	for (int i(0); raw_request[i] != NULL; i++)
+// 	{
+// 		request += raw_request[i];
+// 		request += "\n";
+// 	}
+// 	if (_is_verbose == true)
+// 		std::cout << "Socket content (" << request.size() << " byte readed):"
+// 		<< std::endl << request;
+// 	ft_free_tab((void**)raw_request);
+// }
 
 void	Server::send_header(size_t content_length)
 {
@@ -144,7 +152,14 @@ void	Server::send_response(const std::string &msg)
 {
 	int	byte_writed;
 
-	send_header(msg.size());
+	try
+	{
+		send_header(msg.size());
+	}
+	catch(const std::exception& e)
+	{
+		throw e;
+	}
 	byte_writed = write(_client_socket, msg.c_str(), msg.size());
 	if (byte_writed == -1)
 		throw UnableToWriteToClient();
