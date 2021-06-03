@@ -1,6 +1,8 @@
 # webserv
 A 42 project about HTTP
 
+<img align="center" src="Norm.png" alt="Screenshot of the project norm" />
+
 > :warning: **Warning**: It is educational project.
 
 > :warning: **Warning**: You can take inspiration from it but don't copy / paste what you don't understand.
