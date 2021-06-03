@@ -1,19 +1,31 @@
 # webserv
-A 42 project about HTTP
+A 42 project about HTTP  
 
+> :warning: **Warning**: It is educational project.  
+
+> :warning: **Warning**: You can take inspiration from it but don't copy / paste what you don't understand.  
+
+## Install  
+You only need to run **make**.  
+All libraries will be build and the binary will be ready to launch  
+
+## Content
+* A simple read/write communication HTTP server.  
+
+## The Norm
 <img align="center" src="Norm.png" alt="Screenshot of the project norm" />
 
-> :warning: **Warning**: It is educational project.
+### :zzz: TODO :zzz:  
+*    
 
-> :warning: **Warning**: You can take inspiration from it but don't copy / paste what you don't understand.
+### :boom: Known bugs.. I mean features :boom:  
+*
 
-In this repository you will find a server using HTTP protocol write in C++.
+## :writing_hand: Change log :writing_hand:  
+* The libft become a Cpp library to avoid some linking troubles. (The .h are now .hpp)  
+* The ft_get_file() don't fit well to read client's request.  
 
-# Last changes :
-> The libft become a Cpp library to avoid some linking troubles. (The .h are now .hpp)  
-> The ft_get_file() don't fit well to read client's request.  
-
-# Git status return :
+### Git status return :
 
         modifié :         Makefile
         modifié :         includes/classes/Request.hpp
