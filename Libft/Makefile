@@ -2,9 +2,9 @@ NAME	=		libft.a
 
 CC 		=		clang++
 
-SRC_DIR = 		$(shell find srcs -type d)
-INC_DIR = 		$(shell find includes -type d)
-OBJ_DIR = 		objs
+SRC_DIR = 		$(shell find Srcs -type d)
+INC_DIR = 		$(shell find Includes -type d)
+OBJ_DIR = 		Objs
 
 vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 

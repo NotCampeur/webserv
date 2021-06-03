@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/05/26 14:50:04 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/06/03 18:34:09 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,21 +14,21 @@ NAME =		webserv
 
 CXX =		clang++
 
-SRC_DIR =	$(shell find srcs -type d)
+SRC_DIR =	$(shell find Srcs -type d)
 
-INC_DIR =	$(shell find includes -type d) \
-			$(shell find libft/includes -type d)
+INC_DIR =	$(shell find Includes -type d) \
+			$(shell find Libft/Includes -type d)
 
-LIB_DIR =	libft
+LIB_DIR =	Libft
 
-OBJ_DIR =	objs
+OBJ_DIR =	Objs
 
 vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 
 LIB = ft
 
 SRC	=	main.cpp \
-		Server.cpp
+		server.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 
@@ -102,7 +102,7 @@ re:				fclean all
 
 clean:
 				@echo -n "$(_WHITE)Deleting Objects Directory $(_YELLOW)$(OBJ_DIR)$(_WHITE) ... "
-				@rm -rf objs
+				@rm -rf $(OBJ_DIR)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 fclean:			clean

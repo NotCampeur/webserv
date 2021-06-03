@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
+/*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:15:41 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/26 14:32:30 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/03 18:28:05 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # define MAX_PENDING_CONNECTION 1
 # define PORT 8080
 
-class Server
+class server
 {
 	private:
 		int							_socket;
@@ -40,9 +40,9 @@ class Server
 		bool						_is_verbose;
 
 	public:
-							Server(const bool &verbose_state);
-							Server(const Server &to_copy);
-							~Server();
+							server(const bool &verbose_state);
+							server(const server &to_copy);
+							~server();
 
 		void				set_verbose(const bool &state);
 		void				connection_handler();
@@ -58,7 +58,7 @@ class Server
 		void				accept_connection();
 
 	public:
-		Server				&operator=(const Server &to_assign);
+		server				&operator=(const server &to_assign);
 	
 		class UnableToCreateServerSocket : public std::exception
 		{

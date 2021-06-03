@@ -1,37 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Request.hpp                                        :+:      :+:    :+:   */
+/*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/24 17:04:01 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/26 14:32:35 by ldutriez         ###   ########.fr       */
+/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
+/*   Updated: 2021/06/03 18:09:24 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REQUEST_HPP
-# define REQUEST_HPP
+#ifndef WEBSERV_H
+# define WEBSERV_H
 
-# include <string>
+# include <iostream>
+# include <exception>
+// # include <string>
+// # include <algorithm>
+// # include <cstring>
+// # include <ctime>
+
+// # include <errno.h>
+
+// # include <sys/types.h>
+// # include <sys/socket.h>
+// # include <unistd.h>
+// # include <netinet/in.h>
 # include "libft.hpp"
-
-class Request
-{
-	private:
-		std::string			_method;
-		std::string			_path;
-		std::string			_query;
-		std::string			_HTTP_version;
-		const std::string	_raw;
-		
-					Request();
-					Request(const Request &to_copy);
-	public:
-					Request(const std::string &request);
-					~Request();
-
-		Request		&operator=(const Request &to_assign);
-};
+# include "server.hpp"
 
 #endif

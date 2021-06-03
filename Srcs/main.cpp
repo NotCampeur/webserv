@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/26 14:32:23 by ldutriez         ###   ########.fr       */
+/*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
+/*   Updated: 2021/06/03 18:30:19 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_H
-# define WEBSERV_H
+#include "webserv.hpp"
 
-# include <iostream>
-# include <exception>
-// # include <string>
-// # include <algorithm>
-// # include <cstring>
-// # include <ctime>
+int	main(void)
+{
+	try
+	{
+		server	server(true);
 
-// # include <errno.h>
-
-// # include <sys/types.h>
-// # include <sys/socket.h>
-// # include <unistd.h>
-// # include <netinet/in.h>
-# include "libft.hpp"
-# include "Server.hpp"
-
-#endif
+		server.connection_handler();
+	}
+	catch(const std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	return 0;
+}

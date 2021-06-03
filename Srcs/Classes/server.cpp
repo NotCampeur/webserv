@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:29:43 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/26 14:54:57 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/03 18:28:32 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "server.hpp"
 
-Server::Server(const bool &verbose_state) : _client_header()
+server::server(const bool &verbose_state) : _client_header()
 {
 	_is_verbose = verbose_state;
 	create_socket();
@@ -22,12 +22,12 @@ Server::Server(const bool &verbose_state) : _client_header()
 	_client_socket = 0;
 }
 
-Server::Server(const Server &to_copy)
+server::server(const server &to_copy)
 {
 	*this = to_copy;
 }
 
-Server::~Server()
+server::~server()
 {
 	if (_socket != 0)
 		close(_socket);
@@ -35,12 +35,12 @@ Server::~Server()
 		close(_client_socket);
 }
 
-void	Server::set_verbose(const bool &state)
+void	server::set_verbose(const bool &state)
 {
 	_is_verbose = state;
 }
 
-void	Server::connection_handler()
+void	server::connection_handler()
 {
 	while (1)
 	{
@@ -59,7 +59,7 @@ void	Server::connection_handler()
 	}
 }
 
-void	Server::create_socket()
+void	server::create_socket()
 {
 	int	reuse(1);
 	int	result(0);
@@ -72,7 +72,7 @@ void	Server::create_socket()
 		std::cout << "The server socket's fd is " << _socket << std::endl;
 }
 
-void	Server::init_addr_in()
+void	server::init_addr_in()
 {
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
@@ -81,7 +81,7 @@ void	Server::init_addr_in()
 		_address.sin_zero[i] = '\0';
 }
 
-void	Server::naming_serv_socket()
+void	server::naming_serv_socket()
 {
 	int	binding;
 
@@ -92,7 +92,7 @@ void	Server::naming_serv_socket()
 		std::cout << "The bind with the server is up" << std::endl;
 }
 
-void	Server::set_listener()
+void	server::set_listener()
 {
 	int	open_to_connection(0);
 
@@ -103,7 +103,7 @@ void	Server::set_listener()
 		std::cout << "The server socket is listening\n" << std::endl;
 }
 
-void	Server::get_client_request()
+void	server::get_client_request()
 {
 	char		client_socket_buff[1024] = {0};
 	ssize_t		byte_readed(0);
@@ -116,7 +116,7 @@ void	Server::get_client_request()
 		<< std::endl << client_socket_buff;
 }
 
-// void	Server::get_client_request()
+// void	server::get_client_request()
 // {
 // 	std::string	request;
 // 	char		**raw_request;
@@ -135,7 +135,7 @@ void	Server::get_client_request()
 // 	ft_free_tab((void**)raw_request);
 // }
 
-void	Server::send_header(size_t content_length)
+void	server::send_header(size_t content_length)
 {
 	int	byte_writed;
 	
@@ -148,7 +148,7 @@ void	Server::send_header(size_t content_length)
 
 }
 
-void	Server::send_response(const std::string &msg)
+void	server::send_response(const std::string &msg)
 {
 	int	byte_writed;
 
@@ -166,7 +166,7 @@ void	Server::send_response(const std::string &msg)
 
 }
 
-void	Server::accept_connection()
+void	server::accept_connection()
 {
 	int	addr_len = sizeof(_address);
 	
@@ -178,7 +178,7 @@ void	Server::accept_connection()
 	
 }
 
-Server	&Server::operator=(const Server &to_assign)
+server	&server::operator=(const server &to_assign)
 {
 	if (this != &to_assign)
 	{
