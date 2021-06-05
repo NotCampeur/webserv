@@ -17,7 +17,7 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:  
 *  Comment each methods  
-
+*  Implement the poll/select
 ### :boom: Known bugs.. I mean features :boom:  
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.  
 
