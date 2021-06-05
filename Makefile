@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/03 18:34:09 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/06/05 11:33:30 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 LIB = ft
 
 SRC	=	main.cpp \
-		server.cpp
+		server.cpp request.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 

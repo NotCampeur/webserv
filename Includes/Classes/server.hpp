@@ -6,41 +6,32 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:15:41 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/03 18:28:05 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/05 11:33:53 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include "libft.hpp"
-# include <iostream>
-# include <exception>
-# include <string>
-# include <cstring>
-# include <errno.h>
-
-# include <vector>
-
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-# include <netinet/in.h>
+# include "webserv.hpp"
+# include "request.hpp"
 
 # define MAX_PENDING_CONNECTION 1
 # define PORT 8080
+
+class request;
 
 class server
 {
 	private:
 		int							_socket;
 		struct sockaddr_in			_address;
-		int							_client_socket;
-		std::vector<std::string>	_client_header;
+		std::vector<int>			_client_socket;
+		std::vector<request>		_client_request;
 		bool						_is_verbose;
 
 	public:
-							server(const bool &verbose_state);
+							server(const bool &verbose_state = false);
 							server(const server &to_copy);
 							~server();
 
