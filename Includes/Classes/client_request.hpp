@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   request.hpp                                        :+:      :+:    :+:   */
+/*   client_request.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 17:04:01 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/05 13:15:01 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/07 14:12:57 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REQUEST_HPP
-# define REQUEST_HPP
+#ifndef CLIENT_REQUEST_HPP
+# define CLIENT_REQUEST_HPP
 
 # include "webserv.hpp"
 
-class request
+class client_request
 {
 	private:
 		std::string					_method;
@@ -25,20 +25,20 @@ class request
 		std::vector<std::string>	_headers;
 		std::vector<std::string>	_body;
 		
-									request();
-			void					set_method(std::string &request);
-			void					set_path(std::string &request);
-			void					set_query(std::string &request);
-			void					set_HTTP_version(std::string &request);
-			void					set_headers(std::string &request);
-			void					set_body(std::string &request);
+									client_request();
+			void					set_method(std::string &client_request);
+			void					set_path(std::string &client_request);
+			void					set_query(std::string &client_request);
+			void					set_HTTP_version(std::string &client_request);
+			void					set_headers(std::string &client_request);
+			void					set_body(std::string &client_request);
 	public:
-									request(const char *request);
-									request(std::string &request);
-									request(const request &to_copy);
-									~request();
+									client_request(const char *client_request);
+									client_request(std::string &client_request);
+									client_request(const client_request &to_copy);
+									~client_request();
 
-		request						&operator=(const request &to_assign);
+		client_request				&operator=(const client_request &to_assign);
 };
 
 #endif

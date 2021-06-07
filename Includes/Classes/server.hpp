@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:15:41 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/05 11:33:53 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/07 14:34:33 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 # define SERVER_HPP
 
 # include "webserv.hpp"
-# include "request.hpp"
+# include "client_request.hpp"
 
 # define MAX_PENDING_CONNECTION 1
 # define PORT 8080
 
-class request;
+class client_request;
 
 class server
 {
@@ -27,15 +27,13 @@ class server
 		int							_socket;
 		struct sockaddr_in			_address;
 		std::vector<int>			_client_socket;
-		std::vector<request>		_client_request;
-		bool						_is_verbose;
+		std::vector<client_request>	_client_request;
 
 	public:
-							server(const bool &verbose_state = false);
+							server();
 							server(const server &to_copy);
 							~server();
 
-		void				set_verbose(const bool &state);
 		void				connection_handler();
 
 	private:

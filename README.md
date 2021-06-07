@@ -22,8 +22,10 @@ All libraries will be build and the binary will be ready to launch
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.  
 
 ## :writing_hand: Change log :writing_hand:  
-* The whole project has been normed  
-
+* The whole project has been normed.  
+* Renaming request to client_request.  
+* Adding multiple verbose rules to makefile to output debug.  
+	Therefore I removed the verbose mode in server class.  
 ### Git status return :
 
         modifié :         Includes/Classes/request.hpp
