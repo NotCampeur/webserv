@@ -11,7 +11,12 @@ All libraries will be build and the binary will be ready to launch
 
 ## Content
 * A simple read/write communication HTTP server.  
-
+ 
+## Ressources  
+* https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select     <-Different API explanation  
+* https://www.restapitutorial.com/httpstatuscodes.html  <-HTTP Return status  
+* https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa      <-HTTP Server tuto  
+ 
 ## The Norm
 <img align="center" src="Norm.png" alt="Screenshot of the project norm" />
 
