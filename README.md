@@ -17,6 +17,11 @@ All libraries will be build and the binary will be ready to launch
 * https://www.restapitutorial.com/httpstatuscodes.html  <-HTTP Return status  
 * https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa      <-HTTP Server tuto  
  
+ CGI:
+* http://www.whizkidtech.redprince.net/cgi-bin/tutorial  <- CGI basics
+* https://jkorpela.fi/forms/cgic.html  <- CGI programming tutorial
+* https://www.garshol.priv.no/download/text/http-tut.html <- HTTP and CGI explained
+ 
 ## The Norm
 <img align="center" src="Norm.png" alt="Screenshot of the project norm" />
 
