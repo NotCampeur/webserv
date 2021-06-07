@@ -22,6 +22,8 @@ All libraries will be build and the binary will be ready to launch
 * https://jkorpela.fi/forms/cgic.html  <- CGI programming tutorial
 * https://www.garshol.priv.no/download/text/http-tut.html <- HTTP and CGI explained
  
+ Reactor pattern:
+* http://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf
 ## The Norm
 <img align="center" src="Norm.png" alt="Screenshot of the project norm" />
 
