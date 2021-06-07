@@ -27,7 +27,11 @@ All libraries will be build and the binary will be ready to launch
 
 ### Git status return :
 
-        modifié :         Includes/Classes/client_request.hpp
+        nouveau fichier : Includes/Classes/client_request.hpp
+        modifié :         Includes/Classes/server.hpp
+        renommé :         Includes/Classes/request.hpp -> Includes/webserv.hpp
+        modifié :         Makefile
         modifié :         README.md
-        modifié :         Srcs/Classes/ClientRequest/client_request.cpp
+        nouveau fichier : Srcs/Classes/ClientRequest/client_request.cpp
+        renommé :         Srcs/Classes/server.cpp -> Srcs/Classes/Server/server.cpp
         modifié :         Srcs/main.cpp
