@@ -22,16 +22,16 @@ All libraries will be build and the binary will be ready to launch
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.  
 
 ## :writing_hand: Change log :writing_hand:  
-* The whole project has been normed.  
 * Renaming request to client_request.  
 * Adding multiple verbose rules to makefile to output debug.  
 	Therefore I removed the verbose mode in server class.  
 ### Git status return :
 
-        modifié :         Includes/Classes/request.hpp
+        renommé :         Includes/Classes/request.hpp -> Includes/Classes/client_request.hpp
         modifié :         Includes/Classes/server.hpp
-        modifié :         Includes/webserv.hpp
         modifié :         Makefile
-        nouveau fichier : Srcs/Classes/Request/request.cpp
-        renommé :         Srcs/Classes/server.cpp -> Srcs/Classes/Server/server.cpp
+        modifié :         README.md
+        nouveau fichier : Srcs/Classes/ClientRequest/client_request.cpp
+        supprimé :        Srcs/Classes/Request/request.cpp
+        modifié :         Srcs/Classes/Server/server.cpp
         modifié :         Srcs/main.cpp
