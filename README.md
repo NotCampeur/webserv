@@ -17,21 +17,17 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:  
 *  End the work and merge to main  
+*  Add Poll.  
 
 ### :boom: Known bugs.. I mean features :boom:  
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.  
 
 ## :writing_hand: Change log :writing_hand:  
-* Renaming request to client_request.  
-* Adding multiple verbose rules to makefile to output debug.  
-	Therefore I removed the verbose mode in server class.  
+* The client_request class is now filled up.  
+
 ### Git status return :
 
-        renommé :         Includes/Classes/request.hpp -> Includes/Classes/client_request.hpp
-        modifié :         Includes/Classes/server.hpp
-        modifié :         Makefile
+        modifié :         Includes/Classes/client_request.hpp
         modifié :         README.md
-        nouveau fichier : Srcs/Classes/ClientRequest/client_request.cpp
-        supprimé :        Srcs/Classes/Request/request.cpp
-        modifié :         Srcs/Classes/Server/server.cpp
+        modifié :         Srcs/Classes/ClientRequest/client_request.cpp
         modifié :         Srcs/main.cpp
