@@ -1,36 +1,39 @@
-#include "handlerTable.hpp"
+#include "HandlerTable.hpp"
 
-handlerTable::handlerTable(void) : _handler_table(new table_type [0])
+HandlerTable::HandlerTable(void) : _handler_table(new table_type [0])
 {}
 
-handlerTable::handlerTable(handlerTable const & src)
+HandlerTable::HandlerTable(const HandlerTable & src)
 {
     *(this->_handler_table) = std::map(*src._handler_table);
 }
 
-handlerTable::~handlerTable(void)
+HandlerTable::~HandlerTable(void)
 {
     delete [] this->_handler_table;
 }
 
-handlerTable &
-handlerTable::operator=(handlerTable const & src)
+HandlerTable &
+HandlerTable::operator=(const HandlerTable & src)
 {
-    return (*this);
+    HandlerTable ht(src);
+    return ht;
 }
 
 void
-handlerTable::add(handle_type handle, IeventHandler & event_handler)
+HandlerTable::add(int fd, IEventHandler & event_handler)
 {
-    
+    this->_handler_table->insert(std::pair<int, IEventHandler *>(fd, &event_handler));
 }
 
-void delete(handle_type h_val)
+void
+HandlerTable::remove(int fd)
 {
-
+    this->_handler_table->erase(fd);
 }
 
-IeventHandler & get_handler(handle_type h_val)
+IEventHandler *
+HandlerTable::get(int fd) const
 {
-  
-};
+    return (*this->_handler_table->find(fd)).second;
+}
