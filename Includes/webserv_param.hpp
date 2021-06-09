@@ -1,0 +1,6 @@
+#ifndef WEBSERV_PARAM_H
+# define WEBSERV_PARAM_H
+
+# define MAX_PENDING_CONNECTION 50
+
+#endif
