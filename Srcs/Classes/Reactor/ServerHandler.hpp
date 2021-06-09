@@ -2,13 +2,16 @@
 # define SERVERHANDLER_H
 
 # include "IEventHandler.hpp"
+# include "HandlerTable.hpp"
+// Include path TBU once makefile is fixed
+# include "../Server/Server2.hpp"
 
 class ServerHandler : public IEventHandler
 {
 
     public:
 
-        ServerHandler(int fd);
+        ServerHandler(int fd, const Server2 & server, const HandlerTable & ht);
         ServerHandler(ServerHandler const & src);
         ~ServerHandler(void);
 
@@ -22,7 +25,9 @@ class ServerHandler : public IEventHandler
     private:
         ServerHandler(void);
  
-        const int _fd;
+        const int               _fd;
+        const Server2 &         _server;
+        const HandlerTable &    _ht;
 
 };
 

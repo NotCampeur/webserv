@@ -1,8 +1,9 @@
 #ifndef SERVER2_H
 # define SERVER2_H
 
+# include <sstream>
 # include "webserv.hpp"
-# include "werbserv_param.hpp"
+# include "../../Includes/webserv_param.hpp"
 
 class Server2
 {
@@ -15,6 +16,8 @@ class Server2
         // Need to unlink socket here
         ~Server2(void);
 
+		int	getfd() const;
+
         Server2 &  operator=(Server2 const & src);
 
     private:
@@ -24,9 +27,12 @@ class Server2
         struct sockaddr_in  _address;
 
 		void				create_socket(int domain, int type, int protocol = 0);
+		void				make_nonblocking();		
 		void				init_addr_inputs(int domain, int port, u_int32_t ip);
 		void				name_serv_socket();
 		void				set_listener();
+
+	// Class Exceptions:
 
     public:
 	
@@ -58,6 +64,15 @@ class Server2
 				const char *what() const throw()
 				{return (std::string(std::string("Unable to set socket as listener : ")
 					+ std::string(strerror(errno)))).c_str();}
+		};
+
+		class UnableToSetNonblockFlag : public std::exception
+		{
+			public:
+				UnableToSetNonblockFlag(int fd) throw() : _fd(fd) {}
+			private:
+				const char *what() const throw();
+				int			_fd;
 		};
 
 };

@@ -1,6 +1,6 @@
 #include "Server2.hpp"
 
-Server2::Server2(int port, int com_domain = AF_INET, int sock_type = SOCK_STREAM, u_int32_t ip = INADDR_ANY)
+Server2::Server2(int port, u_int32_t ip = INADDR_ANY, int com_domain = AF_INET, int sock_type = SOCK_STREAM)
 {
     create_socket(com_domain, sock_type);
     init_addr_inputs(com_domain, port, ip);
@@ -21,6 +21,13 @@ Server2::operator=(Server2 const & src)
     return (*this);
 }
 
+int
+Server2::getfd() const
+{
+	return (_fd);
+}
+
+
 void
 Server2::create_socket(int domain, int type, int protocol = 0)
 {
@@ -34,6 +41,14 @@ Server2::create_socket(int domain, int type, int protocol = 0)
 	#ifdef DEBUG
 		std::cout << "The server socket's fd is " << _socket << std::endl;
 	#endif
+}
+
+void
+Server2::make_nonblocking()
+{
+	int ret = fcntl(_fd, F_SETFL, O_NONBLOCK);
+	if (ret == -1)
+		throw
 }
 
 void
@@ -69,4 +84,13 @@ Server2::set_listener()
 	#ifdef DEBUG
 		std::cout << "The server socket is listening\n" << std::endl;
 	#endif
+}
+
+const char *
+Server2::UnableToSetNonblockFlag::what() const throw()
+{
+	std::ostringstream ss;
+
+	ss << "cannot set nonblocking flag on fd " << _fd << " : error : " << errno << std::endl;
+	return ss.str().c_str();
 }
