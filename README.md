@@ -23,9 +23,9 @@ All libraries will be build and the binary will be ready to launch
 * https://www.garshol.priv.no/download/text/http-tut.html <- HTTP and CGI explained
  
  Reactor pattern:
-* http://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf
-## The Norm
-<img align="center" src="Norm.png" alt="Screenshot of the project norm" />
+* http://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf  
+ 
+## [The Norm](.readme/norm.md)  
 
 ### :zzz: TODO :zzz:  
 *  Comment each methods  
