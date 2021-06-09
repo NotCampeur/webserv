@@ -6,20 +6,19 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:29:43 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/03 18:28:32 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/07 14:34:18 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
-server::server(const bool &verbose_state) : _client_header()
+server::server()
+: _client_socket(), _client_request()
 {
-	_is_verbose = verbose_state;
 	create_socket();
 	init_addr_in();
 	naming_serv_socket();
 	set_listener();
-	_client_socket = 0;
 }
 
 server::server(const server &to_copy)
@@ -29,17 +28,16 @@ server::server(const server &to_copy)
 
 server::~server()
 {
+	size_t	size;
+
 	if (_socket != 0)
 		close(_socket);
-	if (_client_socket != 0)
-		close(_client_socket);
+	size = _client_socket.size();
+	for (size_t i(0); i < size; i++)
+		close(_client_socket[i]);
 }
 
-void	server::set_verbose(const bool &state)
-{
-	_is_verbose = state;
-}
-
+// \brief Will run the server listening loop.
 void	server::connection_handler()
 {
 	while (1)
@@ -52,10 +50,10 @@ void	server::connection_handler()
 		}
 		catch(const std::exception& e)
 		{
-			close(_client_socket);
+			close(_client_socket.back());
 			throw e;
 		}
-		close(_client_socket);
+		close(_client_socket.back());
 	}
 }
 
@@ -68,8 +66,9 @@ void	server::create_socket()
 	result = setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
 	if (result == -1 || _socket == -1)
 		throw UnableToCreateServerSocket();
-	if (_is_verbose == true)
+	#ifdef DEBUG
 		std::cout << "The server socket's fd is " << _socket << std::endl;
+	#endif
 }
 
 void	server::init_addr_in()
@@ -88,8 +87,9 @@ void	server::naming_serv_socket()
 	binding = bind(_socket, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
 		throw UnableToNameSocket();
-	if (_is_verbose == true)
+	#ifdef DEBUG
 		std::cout << "The bind with the server is up" << std::endl;
+	#endif
 }
 
 void	server::set_listener()
@@ -99,8 +99,9 @@ void	server::set_listener()
 	open_to_connection = listen(_socket, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
 		throw UnableToSetListener();
-	if (_is_verbose == true)
+	#ifdef DEBUG
 		std::cout << "The server socket is listening\n" << std::endl;
+	#endif
 }
 
 void	server::get_client_request()
@@ -108,32 +109,15 @@ void	server::get_client_request()
 	char		client_socket_buff[1024] = {0};
 	ssize_t		byte_readed(0);
 
-	byte_readed = read(_client_socket, client_socket_buff, 1024);
+	byte_readed = read(_client_socket.back(), client_socket_buff, 1024);
 	if (byte_readed == -1)
 		throw UnableToGetClientRequest();
-	if (_is_verbose == true)
+	#ifdef DEBUG
 		std::cout << "Socket content (" << byte_readed << " byte readed):"
 		<< std::endl << client_socket_buff;
+	#endif
+	_client_request.push_back(client_socket_buff);
 }
-
-// void	server::get_client_request()
-// {
-// 	std::string	request;
-// 	char		**raw_request;
-
-// 	raw_request = ft_get_file(_client_socket);
-// 	if (raw_request == NULL)
-// 		throw UnableToGetClientRequest();
-// 	for (int i(0); raw_request[i] != NULL; i++)
-// 	{
-// 		request += raw_request[i];
-// 		request += "\n";
-// 	}
-// 	if (_is_verbose == true)
-// 		std::cout << "Socket content (" << request.size() << " byte readed):"
-// 		<< std::endl << request;
-// 	ft_free_tab((void**)raw_request);
-// }
 
 void	server::send_header(size_t content_length)
 {
@@ -142,10 +126,9 @@ void	server::send_header(size_t content_length)
 	std::string	header("HTTP/1.1 200 OK\nContent-Type: text\nContent-Length: ");
 	header += content_length;
 	header += "\n\n";
-	byte_writed = write(_client_socket, header.c_str(), header.size());
+	byte_writed = write(_client_socket.back(), header.c_str(), header.size());
 	if (byte_writed == -1)
 		throw UnableToWriteToClient();
-
 }
 
 void	server::send_response(const std::string &msg)
@@ -160,22 +143,21 @@ void	server::send_response(const std::string &msg)
 	{
 		throw e;
 	}
-	byte_writed = write(_client_socket, msg.c_str(), msg.size());
+	byte_writed = write(_client_socket.back(), msg.c_str(), msg.size());
 	if (byte_writed == -1)
 		throw UnableToWriteToClient();
-
 }
 
 void	server::accept_connection()
 {
 	int	addr_len = sizeof(_address);
 	
-	_client_socket = accept(_socket, (struct sockaddr *)&_address, (socklen_t *)&addr_len);
-	if (_client_socket == -1)
+	_client_socket.push_back(accept(_socket, (struct sockaddr *)&_address, (socklen_t *)&addr_len));
+	if (_client_socket.back() == -1)
 		throw UnableToAcceptConnection();
-	if (_is_verbose == true)
-		std::cout << "A new connection has been acepted on fd : " << _client_socket << std::endl;
-	
+	#ifdef DEBUG
+		std::cout << "A new connection has been acepted on fd : " << _client_socket.back() << std::endl;
+	#endif
 }
 
 server	&server::operator=(const server &to_assign)
@@ -185,7 +167,6 @@ server	&server::operator=(const server &to_assign)
 		_socket = to_assign._socket;
 		_client_socket = to_assign._client_socket;
 		_address = to_assign._address;
-		_is_verbose = to_assign._is_verbose;
 	}
 	return *this;
 }
