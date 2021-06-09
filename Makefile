@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/03 18:34:09 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/06/09 18:49:14 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,18 +80,18 @@ re-install:
 				@echo "$(_WHITE)"
 
 $(OBJ_DIR)/%.o : %.cpp
-				@echo -n "Compiling $(_YELLOW)$@$(_WHITE) ... "
+				@echo "Compiling $(_YELLOW)$@$(_WHITE) ... \c"
 				@mkdir -p $(OBJ_DIR)
 				@$(CXX) $(CPPFLAGS) $(IFLAGS) -o $@ -c $<
 				@echo "$(_GREEN)DONE$(_WHITE)"
 
 $(NAME): 		libft/libft.a $(INC_DIR) $(OBJ) Makefile
-				@echo -n "-----\nCreating Executable $(_YELLOW)$@$(_WHITE) ... "
+				@echo "-----\nCreating Executable $(_YELLOW)$@$(_WHITE) ... \c"
 				@$(CXX) $(CPPFLAGS) $(OBJ) $(LDFLAGS) -o $(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 exec:			$(NAME)
-				@echo -n "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \n"
+				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \c"
 				@./$(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
@@ -101,12 +101,12 @@ norme:
 re:				fclean all
 
 clean:
-				@echo -n "$(_WHITE)Deleting Objects Directory $(_YELLOW)$(OBJ_DIR)$(_WHITE) ... "
+				@echo "$(_WHITE)Deleting Objects Directory $(_YELLOW)$(OBJ_DIR)$(_WHITE) ... \c"
 				@rm -rf $(OBJ_DIR)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 fclean:			clean
-				@echo -n "Deleting Binaries Files $(_YELLOW)$(NAME)$(_WHITE) ... "
+				@echo "Deleting Binaries Files $(_YELLOW)$(NAME)$(_WHITE) ... \c"
 				@rm -f $(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
