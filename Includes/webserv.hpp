@@ -15,6 +15,7 @@
 
 # include <iostream>
 # include <fstream>
+# include <sstream>
 # include <exception>
 # include <string>
 # include <cstring>
@@ -31,6 +32,6 @@
 # include <netinet/in.h>
 
 # include "libft.hpp"
-# include "server.hpp"
+# include "webserv_param.hpp"
 
 #endif

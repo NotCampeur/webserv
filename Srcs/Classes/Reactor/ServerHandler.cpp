@@ -1,18 +1,19 @@
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler(int fd, const Server2 & server, const HandlerTable & ht) :
-_fd(fd),
+ServerHandler::ServerHandler(const Server2 & server, HandlerTable & ht) :
 _server(server),
 _ht(ht)
 {}
 
 ServerHandler::ServerHandler(ServerHandler const & src) :
-_fd(src._fd),
 _server(src._server),
 _ht(src._ht)
 {}
 
-ServerHandler::~ServerHandler(void) {}
+ServerHandler::~ServerHandler(void)
+{
+	delete &_server;
+}
 
 ServerHandler &
 ServerHandler::operator=(ServerHandler const & src)
@@ -24,28 +25,55 @@ ServerHandler::operator=(ServerHandler const & src)
 void
 ServerHandler::readable(void)
 {
-	int	addr_len = sizeof(_server);
-	
+	socklen_t sockaddr_size = sizeof(struct sockaddr);
+
+	while (1)
+	{
+		struct sockaddr * address = new (struct sockaddr);
+		int ret = accept(_server.getfd(), address, &sockaddr_size);
+		if (ret >= 0)
+		{
+			Client * client = new Client(ret, address);
 
 
-	_client_socket.push_back(accept(_socket, (struct sockaddr *)&_address, (socklen_t *)&addr_len));
-	if (_client_socket.back() == -1)
-		throw UnableToAcceptConnection();
-	#ifdef DEBUG
-		std::cout << "A new connection has been acepted on fd : " << _client_socket.back() << std::endl;
-	#endif
-}  
+			#ifdef DEBUG
+				std::cout << "A new connection has been acepted on fd : " << ret << std::endl;
+			#endif
+		}
+		else
+		{
+			delete address;
+			if (ret != EWOULDBLOCK)
+				throw AcceptConnectionError(ret);
+			break ;
+		}
+	}
 }
 
+// No writable action can be detected on a server socket, hence this function does not do anything
 void
 ServerHandler::writable(void)
-{
-
-}
+{}
 
 
 int
 ServerHandler::getfd(void) const
 {
-    return this->_fd;
+    return _server.getfd();
+}
+
+void
+ServerHandler::new_client_handler(Client & client)
+{
+	ClientHandler *ch = new ClientHandler(client, _ht);
+	_ht.add(client.getfd(), *ch);
+}
+
+const char *
+ServerHandler::AcceptConnectionError::what() const throw()
+{
+	std::ostringstream oss;
+
+	oss << "Accept error: " << _error << " : errno : " << strerror(errno) << std::endl;
+	return oss.str().c_str();
 }

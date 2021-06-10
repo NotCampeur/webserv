@@ -18,6 +18,8 @@ class Server2
 
 		int	getfd() const;
 
+
+
         Server2 &  operator=(Server2 const & src);
 
     private:
@@ -35,7 +37,6 @@ class Server2
 	// Class Exceptions:
 
     public:
-	
 		class UnableToCreateServerSocket : public std::exception
 		{
 			public:

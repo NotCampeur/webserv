@@ -27,7 +27,6 @@ Server2::getfd() const
 	return (_fd);
 }
 
-
 void
 Server2::create_socket(int domain, int type, int protocol = 0)
 {
@@ -48,7 +47,10 @@ Server2::make_nonblocking()
 {
 	int ret = fcntl(_fd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
-		throw
+		throw UnableToSetNonblockFlag(_fd);
+	#ifdef DEBUG
+		std::cout << "fcntl call to set nonblocking flag returned " << ret << std::endl;
+	#endif
 }
 
 void

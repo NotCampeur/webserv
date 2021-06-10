@@ -2,5 +2,7 @@
 # define WEBSERV_PARAM_H
 
 # define MAX_PENDING_CONNECTION 50
+# define RECV_BUF_SIZE 1024
+
 
 #endif
