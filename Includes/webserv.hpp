@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/05 09:51:00 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/10 10:15:39 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,6 @@
 # include <netinet/in.h>
 
 # include "libft.hpp"
-# include "server.hpp"
+# include "Server.hpp"
 
 #endif

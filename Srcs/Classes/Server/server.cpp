@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:29:43 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/07 14:34:18 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/10 10:13:18 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "Server.hpp"
 
-server::server()
+Server::Server()
 : _client_socket(), _client_request()
 {
 	create_socket();
@@ -21,12 +21,12 @@ server::server()
 	set_listener();
 }
 
-server::server(const server &to_copy)
+Server::Server(const Server &to_copy)
 {
 	*this = to_copy;
 }
 
-server::~server()
+Server::~Server()
 {
 	size_t	size;
 
@@ -37,8 +37,8 @@ server::~server()
 		close(_client_socket[i]);
 }
 
-// \brief Will run the server listening loop.
-void	server::connection_handler()
+// \brief Will run the Server listening loop.
+void	Server::connection_handler()
 {
 	while (1)
 	{
@@ -57,7 +57,7 @@ void	server::connection_handler()
 	}
 }
 
-void	server::create_socket()
+void	Server::create_socket()
 {
 	int	reuse(1);
 	int	result(0);
@@ -67,11 +67,11 @@ void	server::create_socket()
 	if (result == -1 || _socket == -1)
 		throw UnableToCreateServerSocket();
 	#ifdef DEBUG
-		std::cout << "The server socket's fd is " << _socket << std::endl;
+		std::cout << "The Server socket's fd is " << _socket << std::endl;
 	#endif
 }
 
-void	server::init_addr_in()
+void	Server::init_addr_in()
 {
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
@@ -80,7 +80,7 @@ void	server::init_addr_in()
 		_address.sin_zero[i] = '\0';
 }
 
-void	server::naming_serv_socket()
+void	Server::naming_serv_socket()
 {
 	int	binding;
 
@@ -88,11 +88,11 @@ void	server::naming_serv_socket()
 	if (binding == -1)
 		throw UnableToNameSocket();
 	#ifdef DEBUG
-		std::cout << "The bind with the server is up" << std::endl;
+		std::cout << "The bind with the Server is up" << std::endl;
 	#endif
 }
 
-void	server::set_listener()
+void	Server::set_listener()
 {
 	int	open_to_connection(0);
 
@@ -100,11 +100,11 @@ void	server::set_listener()
 	if (open_to_connection == -1)
 		throw UnableToSetListener();
 	#ifdef DEBUG
-		std::cout << "The server socket is listening\n" << std::endl;
+		std::cout << "The Server socket is listening\n" << std::endl;
 	#endif
 }
 
-void	server::get_client_request()
+void	Server::get_client_request()
 {
 	char		client_socket_buff[1024] = {0};
 	ssize_t		byte_readed(0);
@@ -119,7 +119,7 @@ void	server::get_client_request()
 	_client_request.push_back(client_socket_buff);
 }
 
-void	server::send_header(size_t content_length)
+void	Server::send_header(size_t content_length)
 {
 	int	byte_writed;
 	
@@ -131,7 +131,7 @@ void	server::send_header(size_t content_length)
 		throw UnableToWriteToClient();
 }
 
-void	server::send_response(const std::string &msg)
+void	Server::send_response(const std::string &msg)
 {
 	int	byte_writed;
 
@@ -148,7 +148,7 @@ void	server::send_response(const std::string &msg)
 		throw UnableToWriteToClient();
 }
 
-void	server::accept_connection()
+void	Server::accept_connection()
 {
 	int	addr_len = sizeof(_address);
 	
@@ -160,7 +160,7 @@ void	server::accept_connection()
 	#endif
 }
 
-server	&server::operator=(const server &to_assign)
+Server	&Server::operator=(const Server &to_assign)
 {
 	if (this != &to_assign)
 	{

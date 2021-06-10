@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/07 16:39:40 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/10 10:18:24 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(void)
 	#endif
 	try
 	{
-		server	server;
+		Server	server;
 
 		server.connection_handler();
 	}

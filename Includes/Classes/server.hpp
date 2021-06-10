@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 14:15:41 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/07 14:34:33 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/10 10:20:09 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,24 @@
 # define SERVER_HPP
 
 # include "webserv.hpp"
-# include "client_request.hpp"
+# include "ClientRequest.hpp"
 
 # define MAX_PENDING_CONNECTION 1
 # define PORT 8080
 
-class client_request;
+class ClientRequest;
 
-class server
+class Server
 {
-	private:
 		int							_socket;
 		struct sockaddr_in			_address;
 		std::vector<int>			_client_socket;
-		std::vector<client_request>	_client_request;
+		std::vector<ClientRequest>	_client_request;
 
 	public:
-							server();
-							server(const server &to_copy);
-							~server();
+							Server();
+							Server(const Server &to_copy);
+							~Server();
 
 		void				connection_handler();
 
@@ -47,7 +46,7 @@ class server
 		void				accept_connection();
 
 	public:
-		server				&operator=(const server &to_assign);
+		Server				&operator=(const Server &to_assign);
 	
 		class UnableToCreateServerSocket : public std::exception
 		{
@@ -55,7 +54,7 @@ class server
 				UnableToCreateServerSocket() throw() {}
 				~UnableToCreateServerSocket() throw() {}
 				const char *what() const throw()
-				{return (std::string(std::string("Unable to create a socket for the server : ")
+				{return (std::string(std::string("Unable to create a socket for the Server : ")
 					+ std::string(strerror(errno)))).c_str();}
 		};
 
@@ -65,7 +64,7 @@ class server
 				UnableToNameSocket() throw() {}
 				~UnableToNameSocket() throw() {}
 				const char *what() const throw()
-				{return (std::string(std::string("Unable to name the socket of the server : ")
+				{return (std::string(std::string("Unable to name the socket of the Server : ")
 					+ std::string(strerror(errno)))).c_str();}
 		};
 

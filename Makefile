@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/09 18:55:07 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/06/10 10:20:40 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,22 +15,22 @@ NAME_DEV =	webserv_dev
 
 CXX =		clang++
 
-SRC_DIR =	$(shell find Srcs -type d)
+SRC_DIR =	$(shell find srcs -type d)
 
-INC_DIR =	$(shell find Includes -type d) \
-			$(shell find Libft/Includes -type d)
+INC_DIR =	$(shell find includes -type d) \
+			$(shell find libft/includes -type d)
 
 LIB_DIR =	Libft
 
-OBJ_DIR =	Objs
-OBJ_DIR_DEV =	DevObjs
+OBJ_DIR =	objs
+OBJ_DIR_DEV =	dev_objs
 
 vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 
 LIB = ft
 
 SRC	=	main.cpp \
-		server.cpp client_request.cpp
+		Server.cpp ClientRequest.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))
@@ -73,9 +73,9 @@ show:
 				@echo "$(_BLUE)INC_DIR :\n$(_YELLOW)$(INC_DIR)$(_WHITE)"
 
 libft/libft.a:
-				@echo -n "$(_PURPLE)"
+				@echo "$(_PURPLE)"
 				@$(foreach dir, $(LIB_DIR), make --no-print-directory DEBUG=$(DEBUG) -C $(dir) ; )
-				@echo -n "$(_WHITE)"		
+				@echo "$(_WHITE)"		
 
 re-install:
 				@echo "$(_PURPLE)"
@@ -94,23 +94,23 @@ $(NAME): 		libft/libft.a $(INC_DIR) $(OBJ) Makefile
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 exec:			$(NAME)
-				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \c"
+				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \n"
 				@./$(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 $(OBJ_DIR_DEV)/%.o : %.cpp
-				@echo -n "Compiling dev $(_YELLOW)$@$(_WHITE) ... "
+				@echo "Compiling dev $(_YELLOW)$@$(_WHITE) ... \c"
 				@mkdir -p $(OBJ_DIR_DEV)
 				@$(CXX) $(CPPFLAGS) $(IFLAGS) -D DEBUG=true -o $@ -c $<
 				@echo "$(_GREEN)DONE$(_WHITE)"
 				
 $(NAME_DEV):	libft/libft.a $(INC_DIR) $(OBJ_DEV) Makefile
-				@echo -n "-----\nCreating Dev Executable $(_YELLOW)$@$(_WHITE) ... "
+				@echo "-----\nCreating Dev Executable $(_YELLOW)$@$(_WHITE) ... \c"
 				@$(CXX) $(CPPFLAGS) $(OBJ_DEV) $(LDFLAGS) -o $(NAME_DEV)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 exec_dev:		$(NAME_DEV)
-				@echo -n "-----\nExecuting $(_YELLOW)$<$(_WHITE) in verbose mode ... \n"
+				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) in verbose mode ... \n"
 				@./$(NAME_DEV)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
