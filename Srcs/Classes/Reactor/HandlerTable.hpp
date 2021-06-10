@@ -21,6 +21,8 @@ public:
     void add(int fd, IEventHandler & event_handler);
     void remove(int fd);
     IEventHandler * get(int fd) const;
+	table_type & handler_table(void) const;
+
 
     HandlerTable &  operator=(const HandlerTable & src);
 

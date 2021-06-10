@@ -37,3 +37,9 @@ HandlerTable::get(int fd) const
 {
     return (*this->_handler_table->find(fd)).second;
 }
+
+HandlerTable::table_type &
+HandlerTable::handler_table(void) const
+{
+	return *_handler_table;
+}
