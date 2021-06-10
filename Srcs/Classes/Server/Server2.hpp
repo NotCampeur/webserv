@@ -1,7 +1,6 @@
 #ifndef SERVER2_H
 # define SERVER2_H
 
-# include <sstream>
 # include "webserv.hpp"
 # include "../../Includes/webserv_param.hpp"
 
