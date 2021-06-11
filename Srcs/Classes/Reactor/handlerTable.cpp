@@ -1,39 +1,96 @@
 #include "HandlerTable.hpp"
 
-HandlerTable::HandlerTable(void) : _handler_table(new table_type [0])
+HandlerTable::HandlerTable(void)
+: _handler_table(new table_type [0]), _demultiplexer_fds(NULL)
 {}
 
 HandlerTable::HandlerTable(const HandlerTable & src)
 {
-    *(this->_handler_table) = std::map(*src._handler_table);
+	*this = src;
 }
 
 HandlerTable::~HandlerTable(void)
 {
-    delete [] this->_handler_table;
+
+	delete [] _handler_table;
+}
+
+void
+HandlerTable::set_demultiplexer_fds(std::vector<struct pollfd> * fds_address)
+{
+	if (_demultiplexer_fds == NULL)
+		_demultiplexer_fds = fds_address;
 }
 
 HandlerTable &
 HandlerTable::operator=(const HandlerTable & src)
 {
-    HandlerTable ht(src);
-    return ht;
+	if (this != &src)
+	{
+		_handler_table = src._handler_table;
+		_demultiplexer_fds = src._demultiplexer_fds;
+	}
+	return *this;
 }
 
 void
 HandlerTable::add(int fd, IEventHandler & event_handler)
 {
-    this->_handler_table->insert(std::pair<int, IEventHandler *>(fd, &event_handler));
+	_handler_table->insert(std::pair<int, IEventHandler *>(fd, &event_handler));
+	#ifdef DEBUG
+		std::cout << "fd: " << fd << " has been add to the handler table";
+	#endif
+	if (_demultiplexer_fds != NULL)
+	{
+		struct pollfd	fd_data;
+
+		fd_data.fd = fd;
+		fd_data.events = POLLIN | POLLOUT;
+		fd_data.revents = 0;
+		_demultiplexer_fds->push_back(fd_data);
+		#ifdef DEBUG
+			std::cout << " and to the demultiplexer";
+		#endif
+	}
+	#ifdef DEBUG
+		std::cout << std::endl;
+	#endif
 }
 
 void
 HandlerTable::remove(int fd)
 {
-    this->_handler_table->erase(fd);
+	_handler_table->erase(fd);
+	#ifdef DEBUG
+		std::cout << "fd: " << fd << " has been removed of the handler table";
+	#endif
+	if (_demultiplexer_fds != NULL)
+	{
+		_demultiplexer_fds->erase(std::find(_demultiplexer_fds->begin(), _demultiplexer_fds->end(), fd));
+		#ifdef DEBUG
+			std::cout << " and of the demultiplexer";
+		#endif
+	}
+	#ifdef DEBUG
+		std::cout << std::endl;
+	#endif
 }
 
 IEventHandler *
 HandlerTable::get(int fd) const
 {
-    return (*this->_handler_table->find(fd)).second;
+	return (*_handler_table->find(fd)).second;
+}
+
+HandlerTable::table_type &
+HandlerTable::handler_table(void) const
+{
+	return *_handler_table;
+}
+
+bool	operator==(struct pollfd to_look, int to_find)
+{
+	if (to_look.fd == to_find)
+		return true;
+	return false;
 }
