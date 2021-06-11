@@ -11,7 +11,16 @@ HandlerTable::HandlerTable(const HandlerTable & src)
 
 HandlerTable::~HandlerTable(void)
 {
+	if (!_handler_table->empty())
+	{
+		table_type::iterator it = _handler_table->begin();
+		table_type::iterator ite = _handler_table->end();
 
+		for (;it != ite; it++)
+		{
+			delete it->second;
+		}
+	}
 	delete _handler_table;
 }
 
@@ -60,15 +69,16 @@ HandlerTable::add(int fd, IEventHandler & event_handler)
 void
 HandlerTable::remove(int fd)
 {
+	delete _handler_table->find(fd)->second;
 	_handler_table->erase(fd);
 	#ifdef DEBUG
-		std::cout << "fd: " << fd << " has been removed of the handler table";
+		std::cout << "fd: " << fd << " has been removed from the handler table";
 	#endif
 	if (_demultiplexer_fds != NULL)
 	{
 		_demultiplexer_fds->erase(std::find(_demultiplexer_fds->begin(), _demultiplexer_fds->end(), fd));
 		#ifdef DEBUG
-			std::cout << " and of the demultiplexer";
+			std::cout << " and from the demultiplexer";
 		#endif
 	}
 	#ifdef DEBUG
