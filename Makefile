@@ -15,7 +15,7 @@ NAME_DEV =	webserv_dev
 
 CXX =		clang++
 
-SRC_DIR =	$(shell find Srcs -type d)
+SRC_DIR =	$(shell find srcs -type d)
 
 INC_DIR =	$(shell find Includes -type d) \
 			$(shell find Srcs -type d) \
@@ -23,8 +23,8 @@ INC_DIR =	$(shell find Includes -type d) \
 
 LIB_DIR =	Libft
 
-OBJ_DIR =	Objs
-OBJ_DIR_DEV =	DevObjs
+OBJ_DIR =	objs
+OBJ_DIR_DEV =	dev_objs
 
 vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 
@@ -76,9 +76,9 @@ show:
 				@echo "$(_BLUE)INC_DIR :\n$(_YELLOW)$(INC_DIR)$(_WHITE)"
 
 libft/libft.a:
-				@echo -n "$(_PURPLE)"
+				@echo "$(_PURPLE)"
 				@$(foreach dir, $(LIB_DIR), make --no-print-directory DEBUG=$(DEBUG) -C $(dir) ; )
-				@echo -n "$(_WHITE)"		
+				@echo "$(_WHITE)"		
 
 re-install:
 				@echo "$(_PURPLE)"
@@ -97,7 +97,7 @@ $(NAME): 		libft/libft.a $(INC_DIR) $(OBJ) Makefile
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 exec:			$(NAME)
-				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \c"
+				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \n"
 				@./$(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 

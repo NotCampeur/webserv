@@ -36,5 +36,6 @@
 
 # include "libft.hpp"
 # include "webserv_param.hpp"
+# include "Server.hpp"
 
 #endif

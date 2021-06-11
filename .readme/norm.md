@@ -1,8 +1,8 @@
 #Norm:
   ____________________________
   * Directories     = snake_case
-  * srcs_files      = camelCase
-  * srcs_headers    = camelCase
+  * srcs_files      = snake_case
+  * srcs_headers    = snake_case
   * class_files     = PascalCase
   * class_headers   = PascalCase  
   _____________________________
