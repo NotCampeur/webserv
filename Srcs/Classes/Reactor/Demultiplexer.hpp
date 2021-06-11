@@ -3,27 +3,28 @@
 
 # include "webserv.hpp"
 # include "HandlerTable.hpp"
-# include <poll.h>
 
 class Demultiplexer
 {
-		std::vector<struct pollfd *>	_fds;
-		int								_timeout;
+	public:
+		typedef std::vector<struct pollfd>	fd_type;
+
+	private:
+		fd_type	_fds;
+		int		_timeout;
 
 		Demultiplexer(void);
-		Demultiplexer(const Demultiplexer & src);
-		Demultiplexer & operator=(const Demultiplexer & src);
 
 	public:
-		Demultiplexer(HandlerTable & table, int timeout = (3 * 60 * 1000));
+		Demultiplexer(const Demultiplexer & src);
+		Demultiplexer(HandlerTable & table, int timeout = (1 * 1000));
+		Demultiplexer & operator=(const Demultiplexer & src);
 		~Demultiplexer(void);
 
-		int					activate(void);
-		void				add(int	fd);
-		void				remove(int fd);
+		//	Will poll every fd to get tag the Writable | Readable ones.
+		int		activate(void);
 
-		std::vector<int>	&getReadables(void);
-		std::vector<int>	&getWritables(void);
+		fd_type	&fds(void);
 
 		class PollingError : public std::exception
 		{

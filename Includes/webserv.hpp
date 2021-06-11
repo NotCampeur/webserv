@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/05 09:51:00 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/11 08:31:40 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 # include <algorithm>
 # include <vector>
+# include <map>
 
 # include <errno.h>
 
@@ -29,6 +30,7 @@
 # include <sys/socket.h>
 # include <unistd.h>
 # include <netinet/in.h>
+# include <poll.h>
 
 # include "libft.hpp"
 # include "server.hpp"

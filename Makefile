@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/10 09:56:17 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/06/11 09:34:13 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CXX =		clang++
 SRC_DIR =	$(shell find Srcs -type d)
 
 INC_DIR =	$(shell find Includes -type d) \
-			$(shell find Srcs - type d) \
+			$(shell find Srcs -type d) \
 			$(shell find Libft/Includes -type d)
 
 LIB_DIR =	Libft
@@ -31,7 +31,9 @@ vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 LIB = ft
 
 SRC	=	main.cpp \
-		server.cpp client_request.cpp
+		server.cpp client_request.cpp \
+		\
+		Demultiplexer.cpp HandlerTable.cpp InitiationDispatcher.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))
