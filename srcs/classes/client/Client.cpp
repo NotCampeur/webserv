@@ -19,6 +19,7 @@ Client::~Client(void)
 Client &
 Client::operator=(Client const & src)
 {
+	(void)src;
     // Cannot copy constant attributes
     return (*this);
 }

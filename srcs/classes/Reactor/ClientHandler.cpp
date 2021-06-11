@@ -41,7 +41,7 @@ void
 ClientHandler::writable(void)
 {
 	std::string msg = "Hello World";
-	int	bytes_written;
+	ssize_t		bytes_written;
 
 	try
 	{
@@ -52,11 +52,11 @@ ClientHandler::writable(void)
 		throw e;
 	}
 	bytes_written = send(get_clientfd(), msg.c_str(), msg.size(), 0);
-	if (bytes_written != msg.size())
+	if (bytes_written != static_cast<ssize_t>(msg.size()))
 		throw UnableToWriteToClient();
 	
 	#ifdef DEBUG
-		std::cout << "Message written to client socket: " << msg << std::endl;
+		std::cout << "Message written to client socket: " << get_clientfd() << " : " << msg << std::endl;
 	#endif
 }
 

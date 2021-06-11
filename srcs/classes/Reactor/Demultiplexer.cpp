@@ -11,11 +11,12 @@ Demultiplexer::Demultiplexer(const Demultiplexer & src)
 Demultiplexer::Demultiplexer(HandlerTable & table, int timeout)
 : _timeout(timeout)
 {
-	HandlerTable::table_type::iterator it = table.handler_table().begin();
-	HandlerTable::table_type::iterator end = table.handler_table().end();
+	HandlerTable::table_type	tbl = table.handler_table();
+	HandlerTable::table_type::iterator it = tbl.begin();
+	HandlerTable::table_type::iterator end = tbl.end();
 	struct pollfd	fd_data;
 
-	for(; it != end; ++it)
+	for(; it != end; it++)
 	{
 		fd_data.fd = it->first;
 		// Check if the fd is a server one or a client one.

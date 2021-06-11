@@ -18,6 +18,7 @@ ServerHandler::~ServerHandler(void)
 ServerHandler &
 ServerHandler::operator=(ServerHandler const & src)
 {
+	(void)src;
     // Cannot copy const value, remove operator?
     return *this;
 }
@@ -34,19 +35,22 @@ ServerHandler::readable(void)
 		if (ret >= 0)
 		{
 			Client * client = new Client(ret, address);
-			new_client_handler(*client);
 			#ifdef DEBUG
 				std::cout << "A new connection has been acepted on fd : " << ret << std::endl;
 			#endif
+			new_client_handler(*client);
 		}
 		else
 		{
 			delete address;
-			if (ret != EWOULDBLOCK)
+			if (errno != EWOULDBLOCK)
 				throw UnableToAcceptConnection(ret);
 			break ;
 		}
 	}
+	#ifdef DEBUG
+		std::cout << "Accept backlog is empty" << std::endl;
+	#endif
 }
 
 // No writable action can be detected on a server socket, hence this function does not do anything

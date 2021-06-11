@@ -3,41 +3,40 @@
 
 # include "IEventHandler.hpp"
 # include "HandlerTable.hpp"
-// include path tbu
-# include "../client/Client.hpp"
+# include "Client.hpp"
 
 
 class ClientHandler : public IEventHandler
 {
-    private:
+	private:
 
-        const Client &    _client;
-        HandlerTable &    _ht;
+		const Client &	_client;
+		HandlerTable &	_ht;
 
-    public:
+	public:
 
-        ClientHandler(const Client & client, HandlerTable & ht);
-        ClientHandler(ClientHandler const & src);
-        ~ClientHandler(void);
+		ClientHandler(const Client & client, HandlerTable & ht);
+		ClientHandler(ClientHandler const & src);
+		~ClientHandler(void);
 
-        virtual void    readable(void);
-        virtual void    writable(void);
+		virtual void	readable(void);
+		virtual void	writable(void);
 
-        int             get_clientfd(void) const;
+		int			 get_clientfd(void) const;
 
-    private:
-        void    send_header(size_t content_length);
-    // Exceptions
-    public:
+	private:
+		void	send_header(size_t content_length);
+	// Exceptions
+	public:
 
-    	class UnableToReadClientRequest : public std::exception
+		class UnableToReadClientRequest : public std::exception
 		{
 			const char *what() const throw();
 		};
 		
-        class UnableToWriteToClient : public std::exception
+		class UnableToWriteToClient : public std::exception
 		{
-    		const char *what() const throw();
+			const char *what() const throw();
 		};
 };
 

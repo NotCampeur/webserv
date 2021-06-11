@@ -4,7 +4,7 @@
 class IEventHandler
 {
     public:
-		virtual	~IEventHandler() = 0;
+		virtual	~IEventHandler() {}
 
         virtual void readable(void) = 0;
         virtual void writable(void) = 0;

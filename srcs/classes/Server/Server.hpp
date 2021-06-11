@@ -2,7 +2,7 @@
 # define SERVER_H
 
 # include "webserv.hpp"
-# include "../../Includes/webserv_param.hpp"
+# include "webserv_param.hpp"
 
 class Server
 {

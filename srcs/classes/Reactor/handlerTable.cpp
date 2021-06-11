@@ -1,7 +1,7 @@
 #include "HandlerTable.hpp"
 
 HandlerTable::HandlerTable(void)
-: _handler_table(new table_type [0]), _demultiplexer_fds(NULL)
+: _handler_table(new table_type), _demultiplexer_fds(NULL)
 {}
 
 HandlerTable::HandlerTable(const HandlerTable & src)
@@ -12,7 +12,7 @@ HandlerTable::HandlerTable(const HandlerTable & src)
 HandlerTable::~HandlerTable(void)
 {
 
-	delete [] _handler_table;
+	delete _handler_table;
 }
 
 void

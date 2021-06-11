@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(int port, u_int32_t ip = INADDR_ANY, int com_domain = AF_INET, int sock_type = SOCK_STREAM)
+Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
 {
     create_socket(com_domain, sock_type);
 	make_nonblocking();
@@ -34,7 +34,7 @@ Server::getsockfd() const
 }
 
 void
-Server::create_socket(int domain, int type, int protocol = 0)
+Server::create_socket(int domain, int type, int protocol)
 {
 	int	reuse = 0;
 	int	result = 0;
@@ -44,7 +44,7 @@ Server::create_socket(int domain, int type, int protocol = 0)
 	if (result == -1 || _sockfd == -1)
 		throw UnableToCreateServerSocket();
 	#ifdef DEBUG
-		DEBUG_STREAM << "The server socket's fd is " << _socket << std::endl;
+		DEBUG_STREAM << "The server socket's fd is " << _sockfd << std::endl;
 	#endif
 }
 

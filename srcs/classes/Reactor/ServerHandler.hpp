@@ -4,9 +4,8 @@
 # include "IEventHandler.hpp"
 # include "HandlerTable.hpp"
 # include "ClientHandler.hpp"
-// Include paths TBU once makefile is fixed
-# include "../Server/Server.hpp"
-# include "../Client/Client.hpp"
+# include "Server.hpp"
+# include "Client.hpp"
 
 class ServerHandler : public IEventHandler
 {
