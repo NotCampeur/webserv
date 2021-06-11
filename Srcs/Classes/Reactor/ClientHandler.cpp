@@ -51,7 +51,7 @@ ClientHandler::writable(void)
 	{
 		throw e;
 	}
-	bytes_written = write(get_clientfd(), msg.c_str(), msg.size());
+	bytes_written = send(get_clientfd(), msg.c_str(), msg.size(), 0);
 	if (bytes_written != msg.size())
 		throw UnableToWriteToClient();
 	

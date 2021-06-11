@@ -1,6 +1,6 @@
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler(const Server2 & server, HandlerTable & ht) :
+ServerHandler::ServerHandler(const Server & server, HandlerTable & ht) :
 _server(server),
 _ht(ht)
 {}
@@ -34,8 +34,7 @@ ServerHandler::readable(void)
 		if (ret >= 0)
 		{
 			Client * client = new Client(ret, address);
-
-
+			new_client_handler(*client);
 			#ifdef DEBUG
 				std::cout << "A new connection has been acepted on fd : " << ret << std::endl;
 			#endif
@@ -76,13 +75,4 @@ ServerHandler::UnableToAcceptConnection::what() const throw()
 	oss << "Accept error: " << _error << " : errno : " << strerror(errno) << std::endl;
 	
 	return oss.str().c_str();
-}
-
-const char *
-ServerHandler::UnableToWriteToClient::what() const throw()
-{
-	std::string err = "Unable to write to client socket: ";
-	err += strerror(errno);
-	
-	return err.c_str();
 }

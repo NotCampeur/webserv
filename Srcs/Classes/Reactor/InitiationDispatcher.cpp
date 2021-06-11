@@ -17,7 +17,9 @@ InitiationDispatcher::set_demultiplexer(Demultiplexer &d)
 {};
 
 Demultiplexer &
-InitiationDispatcher::get_demultiplexer(void) const;
+InitiationDispatcher::get_demultiplexer(void) const
+{}
         
 void
-InitiationDispatcher::handle_events(void);
+InitiationDispatcher::handle_events(void)
+{}

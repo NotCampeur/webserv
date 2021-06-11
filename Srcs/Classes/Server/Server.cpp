@@ -9,7 +9,7 @@ Server::Server(int port, u_int32_t ip = INADDR_ANY, int com_domain = AF_INET, in
     set_listener();
 }
 
-server::Server(Server const & src)
+Server::Server(Server const & src)
 {
     (void)src;
 }

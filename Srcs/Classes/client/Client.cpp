@@ -13,6 +13,7 @@ _address(src._address)
 Client::~Client(void)
 {
     close(_sockfd);
+    delete _address;
 }
 
 Client &

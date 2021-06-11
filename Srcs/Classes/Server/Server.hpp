@@ -23,6 +23,7 @@ class Server
         Server &  operator=(Server const & src);
 
     private:
+		Server(void);
 
 		void				create_socket(int domain, int type, int protocol = 0);
 		void				make_nonblocking();		
