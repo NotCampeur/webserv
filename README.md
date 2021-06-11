@@ -32,7 +32,7 @@ All libraries will be build and the binary will be ready to launch
 *  Implement the poll/select  
 *  Add a log file with timestamp.  
 *  Standardize the headers' protection.  
-*  
+*  Add a logger.  
 ### :boom: Known bugs.. I mean features :boom:  
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.  
 
