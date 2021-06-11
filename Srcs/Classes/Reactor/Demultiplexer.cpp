@@ -11,14 +11,14 @@ Demultiplexer::Demultiplexer(const Demultiplexer & src)
 Demultiplexer::Demultiplexer(HandlerTable & table, int timeout)
 : _timeout(timeout)
 {
-	HandlerTable::table_type table_map = table.handler_table();
-	HandlerTable::table_type::iterator it = table_map.begin();
-	HandlerTable::table_type::iterator end = table_map.end();
+	HandlerTable::table_type::iterator it = table.handler_table().begin();
+	HandlerTable::table_type::iterator end = table.handler_table().end();
 	struct pollfd	fd_data;
 
 	for(; it != end; ++it)
 	{
 		fd_data.fd = it->first;
+		// Check if the fd is a server one or a client one.
 		fd_data.events = POLLIN | POLLOUT;
 		fd_data.revents = 0;
 		_fds.push_back(fd_data);
@@ -31,6 +31,7 @@ Demultiplexer::Demultiplexer(HandlerTable & table, int timeout)
 
 Demultiplexer::~Demultiplexer(void)
 {
+	// Still a pointer in the Handler table
 	#ifdef DEBUG
 		std::cout << "Demultiplexer has been destroyed" << std::endl;
 	#endif

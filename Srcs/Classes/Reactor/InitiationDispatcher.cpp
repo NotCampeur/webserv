@@ -57,12 +57,12 @@ InitiationDispatcher::event_handler_table(void) const
 void
 InitiationDispatcher::handle_events(void)
 {
+	if (_demultiplexer == NULL)
+		throw DemultiplexerNotSet();
+	if (_event_handler_table == NULL)
+		throw HandlerTableNotSet();
 	while (1)
 	{
-		if (_demultiplexer == NULL)
-			throw DemultiplexerNotSet();
-		if (_event_handler_table == NULL)
-			throw HandlerTableNotSet();
 		try
 		{
 			Demultiplexer::fd_type	fds;
@@ -71,11 +71,13 @@ InitiationDispatcher::handle_events(void)
 			_demultiplexer->activate();
 			fds = _demultiplexer->fds();
 			size = fds.size();
-			for (size_t i(0); i < size; i++)
+			for (size_t i(0); i < size; i++) // Check if the else if is needed.
+			{
 				if (POLLIN == (POLLIN & fds[i].revents))
 					_event_handler_table->get(fds[i].fd)->readable();
 				else if (POLLOUT == (POLLOUT & fds[i].revents))
 					_event_handler_table->get(fds[i].fd)->writable();
+			}
 		}
 		catch(const std::exception& e)
 		{

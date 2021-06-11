@@ -16,10 +16,11 @@ class Demultiplexer
 		Demultiplexer(void);
 
 	public:
-		Demultiplexer(const Demultiplexer & src);
 		Demultiplexer(HandlerTable & table, int timeout = (1 * 1000));
-		Demultiplexer & operator=(const Demultiplexer & src);
+		Demultiplexer(const Demultiplexer & src);
 		~Demultiplexer(void);
+		
+		Demultiplexer & operator=(const Demultiplexer & src);
 
 		//	Will poll every fd to get tag the Writable | Readable ones.
 		int		activate(void);
