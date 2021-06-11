@@ -20,24 +20,24 @@ class ClientHandler : public IEventHandler
         ClientHandler(ClientHandler const & src);
         ~ClientHandler(void);
 
-        ClientHandler &  operator=(ClientHandler const & src);
-
-
         virtual void    readable(void);
         virtual void    writable(void);
 
-        int             getfd(void) const;
+        int             get_clientfd(void) const;
 
     private:
-
-        ClientHandler(void);    // Default constructor
-
+        void    send_header(size_t content_length);
     // Exceptions
     public:
 
-    	class UnableToGetClientRequest : public std::exception
+    	class UnableToReadClientRequest : public std::exception
 		{
-				const char *what() const throw();
+			const char *what() const throw();
+		};
+		
+        class UnableToWriteToClient : public std::exception
+		{
+    		const char *what() const throw();
 		};
 };
 

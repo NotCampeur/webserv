@@ -5,19 +5,19 @@
 # include "HandlerTable.hpp"
 # include "ClientHandler.hpp"
 // Include paths TBU once makefile is fixed
-# include "../Server/Server2.hpp"
+# include "../Server/Server.hpp"
 # include "../Client/Client.hpp"
 
 class ServerHandler : public IEventHandler
 {
     private:
 
-        const Server2 & _server;
+        const Server & _server;
         HandlerTable &  _ht;
 
     public:
 
-        ServerHandler(const Server2 & server, HandlerTable & ht);
+        ServerHandler(const Server & server, HandlerTable & ht);
         ServerHandler(ServerHandler const & src);
         ~ServerHandler(void);
 
@@ -26,7 +26,7 @@ class ServerHandler : public IEventHandler
         virtual void readable(void);
         virtual void writable(void);
 
-        int getfd(void) const;
+        int get_serverfd(void) const;
 
     private:
 
@@ -36,15 +36,14 @@ class ServerHandler : public IEventHandler
     // Exceptions
     public:
 
-        class AcceptConnectionError : public std::exception
+        class UnableToAcceptConnection : public std::exception
 		{
 			public:
-				AcceptConnectionError(int error) throw() : _error(error) {}
+				UnableToAcceptConnection(int error) throw() : _error(error) {}
 			private:
 				const char *what() const throw();
 				int			_error;
 		};
-
 };
 
 #endif

@@ -8,18 +8,18 @@ class Client
 
     private:
 
-        const int               _fd;
+        const int               _sockfd;
         const struct sockaddr * _address;
 
     public:
         
-        Client(int fd, struct sockaddr *address);
+        Client(int sockfd, struct sockaddr *address);
         Client(Client const & src);
         ~Client(void);
 
         Client &  operator=(Client const & src);
 
-        int getfd(void) const;
+        int getsockfd(void) const;
 
     private:
 

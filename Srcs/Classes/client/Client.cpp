@@ -1,16 +1,19 @@
 #include "Client.hpp"
 
-Client::Client(int fd, struct sockaddr *address) : 
-_fd(fd),
+Client::Client(int sockfd, struct sockaddr *address) : 
+_sockfd(sockfd),
 _address(address)
 {}
 
 Client::Client(Client const & src) :
-_fd(src._fd),
+_sockfd(src._sockfd),
 _address(src._address)
 {}
 
-Client::~Client(void) {}
+Client::~Client(void)
+{
+    close(_sockfd);
+}
 
 Client &
 Client::operator=(Client const & src)
@@ -20,7 +23,7 @@ Client::operator=(Client const & src)
 }
 
 int
-Client::getfd(void) const
+Client::getsockfd(void) const
 {
-    return _fd;
+    return _sockfd;
 }

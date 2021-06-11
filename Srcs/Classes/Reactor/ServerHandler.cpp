@@ -30,7 +30,7 @@ ServerHandler::readable(void)
 	while (1)
 	{
 		struct sockaddr * address = new (struct sockaddr);
-		int ret = accept(_server.getfd(), address, &sockaddr_size);
+		int ret = accept(get_serverfd(), address, &sockaddr_size);
 		if (ret >= 0)
 		{
 			Client * client = new Client(ret, address);
@@ -44,7 +44,7 @@ ServerHandler::readable(void)
 		{
 			delete address;
 			if (ret != EWOULDBLOCK)
-				throw AcceptConnectionError(ret);
+				throw UnableToAcceptConnection(ret);
 			break ;
 		}
 	}
@@ -57,23 +57,32 @@ ServerHandler::writable(void)
 
 
 int
-ServerHandler::getfd(void) const
+ServerHandler::get_serverfd(void) const
 {
-    return _server.getfd();
+    return _server.getsockfd();
 }
 
 void
 ServerHandler::new_client_handler(Client & client)
 {
 	ClientHandler *ch = new ClientHandler(client, _ht);
-	_ht.add(client.getfd(), *ch);
+	_ht.add(client.getsockfd(), *ch);
 }
 
 const char *
-ServerHandler::AcceptConnectionError::what() const throw()
+ServerHandler::UnableToAcceptConnection::what() const throw()
 {
 	std::ostringstream oss;
-
 	oss << "Accept error: " << _error << " : errno : " << strerror(errno) << std::endl;
+	
 	return oss.str().c_str();
+}
+
+const char *
+ServerHandler::UnableToWriteToClient::what() const throw()
+{
+	std::string err = "Unable to write to client socket: ";
+	err += strerror(errno);
+	
+	return err.c_str();
 }
