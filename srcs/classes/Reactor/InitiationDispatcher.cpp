@@ -76,7 +76,11 @@ InitiationDispatcher::handle_events(void)
 				if (POLLIN == (POLLIN & fds[i].revents))
 					_event_handler_table->get(fds[i].fd)->readable();
 				else if (POLLOUT == (POLLOUT & fds[i].revents))
+				{
 					_event_handler_table->get(fds[i].fd)->writable();
+					_event_handler_table->remove(fds[i].fd);
+				}
+
 			}
 		}
 		catch(const std::exception& e)

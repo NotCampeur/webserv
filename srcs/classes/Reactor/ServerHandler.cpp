@@ -36,7 +36,7 @@ ServerHandler::readable(void)
 		{
 			Client * client = new Client(ret, address);
 			#ifdef DEBUG
-				std::cout << "A new connection has been acepted on fd : " << ret << std::endl;
+				std::cout << "A new connection has been accepted on fd : " << ret << std::endl;
 			#endif
 			new_client_handler(*client);
 		}
