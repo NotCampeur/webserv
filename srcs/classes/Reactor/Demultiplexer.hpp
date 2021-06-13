@@ -16,7 +16,8 @@ class Demultiplexer
 		Demultiplexer(void);
 
 	public:
-		Demultiplexer(HandlerTable & table, int timeout = (1 * 1000));
+		// Demultiplexer(HandlerTable & table, int timeout = DEMULTIMPEXER_TIMEOUT);
+		Demultiplexer(int timeout = DEMULTIMPEXER_TIMEOUT);		
 		Demultiplexer(const Demultiplexer & src);
 		~Demultiplexer(void);
 		
@@ -25,7 +26,9 @@ class Demultiplexer
 		//	Will poll every fd to get tag the Writable | Readable ones.
 		int		activate(void);
 
-		fd_type	&fds(void);
+		fd_type	&	getfds(void) const;
+		void		addfd(int fd);
+		void		removefd(int fd);
 
 		class PollingError : public std::exception
 		{

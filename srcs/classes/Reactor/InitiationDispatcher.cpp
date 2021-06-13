@@ -1,58 +1,64 @@
 #include "InitiationDispatcher.hpp"
 
-InitiationDispatcher::InitiationDispatcher(void)
-: _demultiplexer(NULL), _event_handler_table(NULL)
+// InitiationDispatcher::InitiationDispatcher(void)
+// : _demultiplexer(NULL), _event_handler_table(NULL)
+// {}
+
+InitiationDispatcher::InitiationDispatcher(const Demultiplexer & dm, HandlerTable & ht) :
+_demultiplexer(new Demultiplexer),
+_event_handler_table(new HandlerTable)
 {}
 
-InitiationDispatcher::InitiationDispatcher(const InitiationDispatcher & src)
-{
-	*this = src;
-}
+
+InitiationDispatcher::InitiationDispatcher(const InitiationDispatcher & src) :
+_demultiplexer(src._demultiplexer),
+_event_handler_table(src._event_handler_table)
+{}
 
 InitiationDispatcher::~InitiationDispatcher(void)
 {}
 
 //It is not a deep copy.
-InitiationDispatcher &  
-InitiationDispatcher::operator=(const InitiationDispatcher & src)
-{
-	if (this != &src)
-	{
-		_demultiplexer = src._demultiplexer;
-		_event_handler_table = src._event_handler_table;
-	}
-	return *this;
-};
+// InitiationDispatcher &  
+// InitiationDispatcher::operator=(const InitiationDispatcher & src)
+// {
+// 	if (this != &src)
+// 	{
+// 		_demultiplexer = src._demultiplexer;
+// 		_event_handler_table = src._event_handler_table;
+// 	}
+// 	return *this;
+// };
 
-void 
-InitiationDispatcher::set_demultiplexer(Demultiplexer &to_set)
-{
-	if (_demultiplexer == NULL)
-	_demultiplexer = &to_set;
-};
+// void 
+// InitiationDispatcher::set_demultiplexer(Demultiplexer &to_set)
+// {
+// 	if (_demultiplexer == NULL)
+// 	_demultiplexer = &to_set;
+// };
 
-const Demultiplexer &
-InitiationDispatcher::demultiplexer(void) const
-{
-	if (_demultiplexer == NULL)
-		throw DemultiplexerNotSet();
-	return *_demultiplexer;
-}
+// const Demultiplexer &
+// InitiationDispatcher::demultiplexer(void) const
+// {
+// 	if (_demultiplexer == NULL)
+// 		throw DemultiplexerNotSet();
+// 	return *_demultiplexer;
+// }
 
-void 
-InitiationDispatcher::set_event_handler_table(HandlerTable &to_set)
-{
-	if (_event_handler_table == NULL)
-	_event_handler_table = &to_set;
-};
+// void 
+// InitiationDispatcher::set_event_handler_table(HandlerTable &to_set)
+// {
+// 	if (_event_handler_table == NULL)
+// 	_event_handler_table = &to_set;
+// };
 
-const HandlerTable &
-InitiationDispatcher::event_handler_table(void) const
-{
-	if (_event_handler_table == NULL)
-		throw HandlerTableNotSet();
-	return *_event_handler_table;
-}
+// const HandlerTable &
+// InitiationDispatcher::event_handler_table(void) const
+// {
+// 	if (_event_handler_table == NULL)
+// 		throw HandlerTableNotSet();
+// 	return *_event_handler_table;
+// }
 
 void
 InitiationDispatcher::handle_events(void)
@@ -68,8 +74,8 @@ InitiationDispatcher::handle_events(void)
 			Demultiplexer::fd_type	fds;
 			size_t					size;
 
-			_demultiplexer->activate();
-			fds = _demultiplexer->fds();
+			_demultiplexer.activate();
+			fds = _demultiplexer.fds();
 			size = fds.size();
 			for (size_t i(0); i < size; i++) // Check if the else if is needed.
 			{

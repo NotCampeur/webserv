@@ -22,7 +22,51 @@ int	main(void)
 	#endif
 	std::cout << "\n-----TESTING-----\n\n";
 
-	std::cout << "\n---ONE SERVER---\n\n";
+	// std::cout << "\n---ONE SERVER---\n\n";
+	// {
+	// 	try
+	// 	{
+	// 		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
+	// 		HandlerTable ht;
+	// 		Demultiplexer dmpx(ht); // Missing arguments, rework needed
+	// 		idis.set_demultiplexer(dmpx);
+	// 		idis.set_event_handler_table(ht);
+	// 		const Server serv1(8080, inet_addr("127.0.0.1"));
+	// 		ServerHandler sh(serv1, ht);
+	// 		ht.add(serv1.getsockfd(), sh);
+	// 		idis.handle_events();
+	// 	}
+	// 	catch(const std::exception &e)
+	// 	{
+	// 		std::cerr << e.what() << std::endl;
+	// 	}
+	// 	return 0;
+	// }
+	// std::cout << "\n---TWO SERVER---\n\n";
+	// {
+	// 	try
+	// 	{
+	// 		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
+	// 		HandlerTable ht;
+	// 		Demultiplexer dmpx(ht); // Missing arguments, rework needed
+	// 		idis.set_demultiplexer(dmpx);
+	// 		idis.set_event_handler_table(ht);
+	// 		const Server serv1(8080, inet_addr("127.0.0.1"));
+	// 		const Server serv2(8081, inet_addr("127.0.0.1"));
+	// 		ServerHandler sh1(serv1, ht);
+	// 		ServerHandler sh2(serv2, ht);
+	// 		ht.add(serv1.getsockfd(), sh1);
+	// 		ht.add(serv2.getsockfd(), sh2);
+	// 		idis.handle_events();
+	// 	}
+	// 	catch(const std::exception &e)
+	// 	{
+	// 		std::cerr << e.what() << std::endl;
+	// 	}
+	// 	return 0;
+	// }
+
+	std::cout << "\n---THREE SERVER---\n\n";
 	{
 		try
 		{
@@ -32,8 +76,14 @@ int	main(void)
 			idis.set_demultiplexer(dmpx);
 			idis.set_event_handler_table(ht);
 			const Server serv1(8080, inet_addr("127.0.0.1"));
-			ServerHandler sh(serv1, ht);
-			ht.add(serv1.getsockfd(), sh);
+			const Server serv2(8081, inet_addr("127.0.0.1"));
+			const Server serv3(8082, inet_addr("127.0.0.1"));
+			ServerHandler sh1(serv1, ht);
+			ServerHandler sh2(serv2, ht);
+			ServerHandler sh3(serv3, ht);
+			ht.add(serv1.getsockfd(), sh1);
+			ht.add(serv2.getsockfd(), sh2);
+			ht.add(serv3.getsockfd(), sh3);
 			idis.handle_events();
 		}
 		catch(const std::exception &e)
@@ -42,10 +92,6 @@ int	main(void)
 		}
 		return 0;
 	}
-	std::cout << "\n---TWO SERVER---\n\n";
 
-
-	std::cout << "\n---THREE SERVER---\n\n";
-
-	std::cout << "\n---TEN SERVER---\n\n";
+	// std::cout << "\n---TEN SERVER---\n\n";
 }

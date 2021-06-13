@@ -6,11 +6,12 @@
 
 class InitiationDispatcher
 {
-		Demultiplexer	*_demultiplexer;
-		HandlerTable	*_event_handler_table;
+		const Demultiplexer	_demultiplexer;
+		HandlerTable	_event_handler_table;
 
 	public:
 		InitiationDispatcher(void);
+		InitiationDispatcher(const Demultiplexer & dm, HandlerTable & ht);
 		InitiationDispatcher(const InitiationDispatcher & src);
 		~InitiationDispatcher(void);
 
