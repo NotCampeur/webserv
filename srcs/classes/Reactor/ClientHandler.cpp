@@ -1,13 +1,11 @@
 #include "ClientHandler.hpp"
 
-ClientHandler::ClientHandler(const Client & client, HandlerTable & ht) :
-_client(client),
-_ht(ht)
+ClientHandler::ClientHandler(const Client & client) :
+_client(client)
 {}
 
 ClientHandler::ClientHandler(ClientHandler const & src) :
-_client(src._client),
-_ht(src._ht)
+_client(src._client)
 {}
 
 ClientHandler::~ClientHandler(void)
@@ -21,7 +19,6 @@ ClientHandler::get_clientfd(void) const
 	return _client.getsockfd();
 }
 
-// Function TBU with request parsing and proper reading of header content
 void 
 ClientHandler::readable(void)
 {

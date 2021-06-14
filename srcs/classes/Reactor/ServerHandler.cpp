@@ -1,14 +1,10 @@
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler(const Server & server, HandlerTable & ht) :
+ServerHandler::ServerHandler(const Server & server, InitiationDispatcher & idis) :
 _server(server),
-_ht(ht)
+_idis(idis)
 {}
 
-ServerHandler::ServerHandler(ServerHandler const & src) :
-_server(src._server),
-_ht(src._ht)
-{}
 
 ServerHandler::~ServerHandler(void)
 {
@@ -38,7 +34,7 @@ ServerHandler::readable(void)
 			#ifdef DEBUG
 				std::cout << "A new connection has been accepted on fd : " << ret << std::endl;
 			#endif
-			new_client_handler(*client);
+			_idis.add_handle(*client);
 		}
 		else
 		{
@@ -63,13 +59,6 @@ int
 ServerHandler::get_serverfd(void) const
 {
     return _server.getsockfd();
-}
-
-void
-ServerHandler::new_client_handler(Client & client)
-{
-	ClientHandler *ch = new ClientHandler(client, _ht);
-	_ht.add(client.getsockfd(), *ch);
 }
 
 const char *

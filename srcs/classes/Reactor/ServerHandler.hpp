@@ -2,30 +2,31 @@
 # define SERVERHANDLER_H
 
 # include "IEventHandler.hpp"
-# include "HandlerTable.hpp"
-# include "ClientHandler.hpp"
 # include "Server.hpp"
 # include "Client.hpp"
+
+class InitiationDispatcher;
+# include "InitiationDispatcher.hpp"
 
 class ServerHandler : public IEventHandler
 {
     private:
 
-        const Server & _server;
-        HandlerTable &  _ht;
+        const Server &          _server;
+        InitiationDispatcher &  _idis;
 
     public:
 
-        ServerHandler(const Server & server, HandlerTable & ht);
+        ServerHandler(const Server & server, InitiationDispatcher & idis);
         ServerHandler(ServerHandler const & src);
         ~ServerHandler(void);
 
         ServerHandler &  operator=(ServerHandler const & src);
 
-        virtual void readable(void);
-        virtual void writable(void);
+        virtual void    readable(void);
+        virtual void    writable(void);
 
-        int get_serverfd(void) const;
+        int             get_serverfd(void) const;
 
     private:
 

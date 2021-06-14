@@ -11,11 +11,10 @@ class ClientHandler : public IEventHandler
 	private:
 
 		const Client &	_client;
-		HandlerTable &	_ht;
 
 	public:
 
-		ClientHandler(const Client & client, HandlerTable & ht);
+		ClientHandler(const Client & client);
 		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);
 
@@ -25,7 +24,9 @@ class ClientHandler : public IEventHandler
 		int			 get_clientfd(void) const;
 
 	private:
+
 		void	send_header(size_t content_length);
+	
 	// Exceptions
 	public:
 

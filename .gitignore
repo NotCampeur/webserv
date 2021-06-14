@@ -1,6 +1,7 @@
 a.out
 .vscode
 objs/
+dev_objs/
 libft/libft.a
 libft/objs
 

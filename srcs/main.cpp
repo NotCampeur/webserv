@@ -71,19 +71,16 @@ int	main(void)
 		try
 		{
 			InitiationDispatcher idis; // Could create the demultiplexer and the handler table
-			HandlerTable ht;
-			Demultiplexer dmpx(ht); // Missing arguments, rework needed
-			idis.set_demultiplexer(dmpx);
-			idis.set_event_handler_table(ht);
+			// HandlerTable ht;
+			// Demultiplexer dmpx(ht); // Missing arguments, rework needed
+			// idis.set_demultiplexer(dmpx);
+			// idis.set_event_handler_table(ht);
 			const Server serv1(8080, inet_addr("127.0.0.1"));
 			const Server serv2(8081, inet_addr("127.0.0.1"));
 			const Server serv3(8082, inet_addr("127.0.0.1"));
-			ServerHandler sh1(serv1, ht);
-			ServerHandler sh2(serv2, ht);
-			ServerHandler sh3(serv3, ht);
-			ht.add(serv1.getsockfd(), sh1);
-			ht.add(serv2.getsockfd(), sh2);
-			ht.add(serv3.getsockfd(), sh3);
+			idis.add_handle(serv1);
+			idis.add_handle(serv2);
+			idis.add_handle(serv3);
 			idis.handle_events();
 		}
 		catch(const std::exception &e)
