@@ -29,13 +29,14 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:  
 *  Comment each methods  
-*  Implement the poll/select  
 *  Add a log file with timestamp.  
 *  Standardize the headers' protection.  
-*  Add a logger.  
-*  Destroy Client after sending response.  
+*  Add a logger.
+*  Update setsockopt to be able to reuse sockets after program quits
 ### :boom: Known bugs.. I mean features :boom:  
-* Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.  
+* Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
+* Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
+* Server crash if restarted before socket becomes available again
 
 ## :writing_hand: Change log :writing_hand:  
 * The client_request class is now filled up "correctly".  
