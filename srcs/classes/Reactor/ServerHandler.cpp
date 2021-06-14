@@ -1,7 +1,7 @@
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler(const Server & server, InitiationDispatcher & idis) :
-_server(server),
+ServerHandler::ServerHandler(const Server * server, InitiationDispatcher & idis) :
+_server(*server),
 _idis(idis)
 {}
 

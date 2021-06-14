@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
+#    By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/11 19:15:43 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/06/14 18:37:16 by jmaydew          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ SRC	=	main.cpp \
 		Server.cpp ClientRequest.cpp \
 		\
 		Demultiplexer.cpp HandlerTable.cpp InitiationDispatcher.cpp \
-		ServerHandler.cpp ClientHandler.cpp Client.cpp
+		ServerHandler.cpp ClientHandler.cpp Client.cpp \
+		sigint_handler.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))

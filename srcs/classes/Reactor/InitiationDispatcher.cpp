@@ -1,5 +1,7 @@
 #include "InitiationDispatcher.hpp"
 
+bool g_run_status = true;
+
 InitiationDispatcher::InitiationDispatcher(void) :
 _demultiplexer(new Demultiplexer()),
 _event_handler_table(new HandlerTable())
@@ -20,7 +22,7 @@ InitiationDispatcher::~InitiationDispatcher(void)
 void
 InitiationDispatcher::handle_events(void)
 {
-	while (1)
+	while (g_run_status)
 	{
 		try
 		{
@@ -29,7 +31,6 @@ InitiationDispatcher::handle_events(void)
 			Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
 			Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 
-			// for (; it < ite; it++)
 			while (it != ite)
 			{
 				if (POLLIN == (POLLIN & it->revents))
@@ -52,12 +53,15 @@ InitiationDispatcher::handle_events(void)
 			std::cerr << e.what() << '\n';
 		}
 	}
+	#ifdef DEBUG
+		std::cout << "Leaving main loop handle_events" << '\n';
+	#endif
 }
 
 void
 InitiationDispatcher::add_handle(const Server & srv)
 {
-	ServerHandler *sh = new ServerHandler(srv, *this);
+	ServerHandler *sh = new ServerHandler(&srv, *this);
 	_event_handler_table->add(sh->get_serverfd(), *sh);
 	_demultiplexer->addfd(sh->get_serverfd());
 }

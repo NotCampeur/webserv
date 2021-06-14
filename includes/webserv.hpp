@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/11 19:02:25 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/14 18:33:35 by jmaydew          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,11 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <poll.h>
+# include <signal.h>
 
 # include "libft.hpp"
 # include "webserv_param.hpp"
+
+void    sigint_handler(int val);
 
 #endif

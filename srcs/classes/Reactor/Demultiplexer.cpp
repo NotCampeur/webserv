@@ -34,7 +34,11 @@ Demultiplexer::activate(void)
 	if (result == -1)
 		throw Demultiplexer::PollingError();
 	else if (result == 0)
-		throw Demultiplexer::PollingTimeout();
+	{
+		std::cout << "Poll timeout\n";
+		return result;
+	}
+		// throw Demultiplexer::PollingTimeout();
 	#ifdef DEBUG
 		std::cout << result << " fd ready." << std::endl;
 	#endif
@@ -96,8 +100,9 @@ Demultiplexer::end()
 const char *
 Demultiplexer::PollingError::what(void) const throw()
 {
-	return (std::string(std::string("Unable to poll descriptors: ")
-			+ std::string(strerror(errno))).c_str());
+	std::string err = "Unable to poll descriptors: ";
+	err += strerror(errno);
+	return err.c_str();
 }
 
 const char *

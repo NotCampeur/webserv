@@ -11,17 +11,28 @@ HandlerTable::HandlerTable(const HandlerTable & src)
 
 HandlerTable::~HandlerTable(void)
 {
+	#ifdef DEBUG
+		std::cout << "Handler table contains " << _handler_table->size() << " elements" << '\n';
+	#endif
 	if (!_handler_table->empty())
 	{
 		table_type::iterator it = _handler_table->begin();
 		table_type::iterator ite = _handler_table->end();
 
+		int i = 0;
 		for (;it != ite; it++)
 		{
 			delete it->second;
+			i++;
 		}
+	#ifdef DEBUG
+		std::cout << "Handler table: " << i << "  IEventHandler elements deleted" << '\n';
+	#endif
 	}
 	delete _handler_table;
+	#ifdef DEBUG
+		std::cout << "Handler Table has been destroyed" << std::endl;
+	#endif
 }
 
 HandlerTable &

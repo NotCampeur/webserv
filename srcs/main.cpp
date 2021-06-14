@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/11 19:27:20 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/14 20:30:48 by jmaydew          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,14 @@ int	main(void)
 	{
 		try
 		{
+			signal(SIGINT, sigint_handler);
 			InitiationDispatcher idis; // Could create the demultiplexer and the handler table
-			const Server serv1(8080, inet_addr("127.0.0.1"));
-			const Server serv2(8081, inet_addr("127.0.0.1"));
-			const Server serv3(8082, inet_addr("127.0.0.1"));
-			idis.add_handle(serv1);
-			idis.add_handle(serv2);
-			idis.add_handle(serv3);
+			const Server *serv1 = new Server(8080, inet_addr("127.0.0.1"));
+			const Server *serv2 = new Server(8081, inet_addr("127.0.0.1"));
+			// const Server *serv3 = new Server(8082, inet_addr("127.0.0.1"));
+			idis.add_handle(*serv1);
+			idis.add_handle(*serv2);
+			// idis.add_handle(*serv3);
 			idis.handle_events();
 		}
 		catch(const std::exception &e)

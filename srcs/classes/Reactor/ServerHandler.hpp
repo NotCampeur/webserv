@@ -17,7 +17,7 @@ class ServerHandler : public IEventHandler
 
     public:
 
-        ServerHandler(const Server & server, InitiationDispatcher & idis);
+        ServerHandler(const Server * server, InitiationDispatcher & idis);
         ServerHandler(ServerHandler const & src);
         ~ServerHandler(void);
 
