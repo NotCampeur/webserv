@@ -45,7 +45,7 @@ ServerHandler::readable(void)
 		}
 	}
 	#ifdef DEBUG
-		std::cout << "Accept backlog is empty" << std::endl;
+		std::cout << "Accept backlog of server " << _server.getsockfd() << " is empty" << std::endl;
 	#endif
 }
 

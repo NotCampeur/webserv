@@ -12,7 +12,10 @@ _event_handler_table(src._event_handler_table)
 {}
 
 InitiationDispatcher::~InitiationDispatcher(void)
-{}
+{
+	delete _demultiplexer;
+	delete _event_handler_table;
+}
 
 void
 InitiationDispatcher::handle_events(void)
@@ -26,15 +29,22 @@ InitiationDispatcher::handle_events(void)
 			Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
 			Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 
-			for (; it != ite; it++)
+			// for (; it < ite; it++)
+			while (it != ite)
 			{
 				if (POLLIN == (POLLIN & it->revents))
+				{
 					_event_handler_table->get(it->fd)->readable();
+					it++;
+				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
 					_event_handler_table->get(it->fd)->writable();
 					remove_handle(it->fd);
+					ite--;
 				}
+				else
+					it++;				
 			}
 		}
 		catch(const std::exception& e)
@@ -65,4 +75,8 @@ InitiationDispatcher::remove_handle(int fd)
 {
 	_event_handler_table->remove(fd);
 	_demultiplexer->removefd(fd);
+
+	// #ifdef DEBUG
+	// std::cout << "FD " << fd << " removed" << '\n';
+	// #endif
 }
