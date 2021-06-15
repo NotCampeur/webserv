@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientRequest.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/05 10:30:02 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/10 10:14:06 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/15 12:20:34 by ldutriez_ho      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,7 @@ void	ClientRequest::set_method(std::string &ClientRequest)
 	
 	_method.assign(ClientRequest.substr(0, space));
 	ClientRequest.erase(0, space + 1);
-	#ifdef DEBUG
-		std::cout << "Method -------> " << _method << std::endl;
-	#endif
+	Logger() << "Method -------> " + _method;
 }
 
 void	ClientRequest::set_path(std::string &ClientRequest)
@@ -42,9 +40,7 @@ void	ClientRequest::set_path(std::string &ClientRequest)
 		ClientRequest.erase(0, to_find + 1);
 		set_query(ClientRequest);
 	}
-	#ifdef DEBUG
-		std::cout << "Path ---------> " << _path << std::endl;
-	#endif
+	Logger() << "Path ---------> " + _path;
 }
 
 void	ClientRequest::set_query(std::string &ClientRequest)
@@ -53,9 +49,7 @@ void	ClientRequest::set_query(std::string &ClientRequest)
 	
 	_query.assign(ClientRequest.substr(0, space));
 	ClientRequest.erase(0, space + 1);
-	#ifdef DEBUG
-		std::cout << "Query --------> " << _query << std::endl;
-	#endif
+	Logger() << "Query --------> " + _query;
 }
 
 void	ClientRequest::set_HTTP_version(std::string &ClientRequest)
@@ -64,9 +58,7 @@ void	ClientRequest::set_HTTP_version(std::string &ClientRequest)
 	
 	_HTTP_version.assign(ClientRequest.substr(0, end_of_line - 1));
 	ClientRequest.erase(0, end_of_line + 1);
-	#ifdef DEBUG
-		std::cout << "HTTP_version -> " << _HTTP_version << std::endl;
-	#endif
+	Logger() << "HTTP_version -> " + _HTTP_version;
 }
 
 static size_t	find_body_start(std::string &ClientRequest)
@@ -90,12 +82,9 @@ void	ClientRequest::set_headers(std::string &ClientRequest)
 		ClientRequest.erase(0, end_of_line + 1);
 		i += end_of_line;
 	}
-	#ifdef DEBUG
-		size_t	size_debug(_headers.size());
-		
-		for (size_t i(0); i < size_debug; i++)
-			std::cout << "Headers ------> " << _headers[i] << std::endl;
-	#endif
+	size_t	size_debug(_headers.size());
+	for (size_t i(0); i < size_debug; i++)
+		Logger() << "Headers ------> " + _headers[i];
 }
 
 void	ClientRequest::set_body(std::string &ClientRequest)
@@ -109,10 +98,8 @@ void	ClientRequest::set_body(std::string &ClientRequest)
 		_body.push_back(ClientRequest.substr(0, end_of_line - 1));
 		ClientRequest.erase(0, end_of_line + 1);
 	}
-	#ifdef DEBUG
-		for (size_t i(0); i < size; i++)
-			std::cout << "Body ---------> " << _body[i] << std::endl;
-	#endif
+	for (size_t i(0); i < size; i++)
+		Logger() << "Body ---------> " + _body[i];
 }
 
 ClientRequest::ClientRequest(const ClientRequest &to_copy)
@@ -129,9 +116,7 @@ ClientRequest::ClientRequest(const char *ClientRequest)
 	set_HTTP_version(tmp);
 	set_headers(tmp);
 	set_body(tmp);
-	#ifdef DEBUG
-		std::cout << "Remaining : [" << tmp << "]" << std::endl;
-	#endif
+	Logger() << "Remaining : [" + tmp + "]";
 }
 
 ClientRequest::ClientRequest(std::string &ClientRequest)
@@ -141,9 +126,7 @@ ClientRequest::ClientRequest(std::string &ClientRequest)
 	set_HTTP_version(ClientRequest);
 	set_headers(ClientRequest);
 	set_body(ClientRequest);
-	#ifdef DEBUG
-		std::cout << "Remaining : [" << ClientRequest << "]" << std::endl;
-	#endif
+	Logger() << "Remaining : [" + ClientRequest + "]";
 }
 
 ClientRequest::~ClientRequest()

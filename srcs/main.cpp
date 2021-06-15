@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/14 20:30:48 by jmaydew          ###   ########.fr       */
+/*   Updated: 2021/06/15 12:59:31 by ldutriez_ho      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,77 +15,33 @@
 #include "ServerHandler.hpp"
 #include "Server.hpp"
 
-int	main(void)
+void	serv_test(long server_amount)
 {
-	#ifdef DEBUG
-		std::cout << "\033[1;31mDevelopment mode enable\033[0m" << std::endl;
-	#endif
-	std::cout << "\n-----TESTING-----\n\n";
-
-	// std::cout << "\n---ONE SERVER---\n\n";
-	// {
-	// 	try
-	// 	{
-	// 		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
-	// 		HandlerTable ht;
-	// 		Demultiplexer dmpx(ht); // Missing arguments, rework needed
-	// 		idis.set_demultiplexer(dmpx);
-	// 		idis.set_event_handler_table(ht);
-	// 		const Server serv1(8080, inet_addr("127.0.0.1"));
-	// 		ServerHandler sh(serv1, ht);
-	// 		ht.add(serv1.getsockfd(), sh);
-	// 		idis.handle_events();
-	// 	}
-	// 	catch(const std::exception &e)
-	// 	{
-	// 		std::cerr << e.what() << std::endl;
-	// 	}
-	// 	return 0;
-	// }
-	// std::cout << "\n---TWO SERVER---\n\n";
-	// {
-	// 	try
-	// 	{
-			// InitiationDispatcher idis; // Could create the demultiplexer and the handler table
-			// HandlerTable ht;
-			// Demultiplexer dmpx(ht); // Missing arguments, rework needed
-			// idis.set_demultiplexer(dmpx);
-			// idis.set_event_handler_table(ht);
-			// const Server serv1(8080, inet_addr("127.0.0.1"));
-			// const Server serv2(8081, inet_addr("127.0.0.1"));
-			// ServerHandler sh1(serv1, ht);
-			// ServerHandler sh2(serv2, ht);
-			// ht.add(serv1.getsockfd(), sh1);
-			// ht.add(serv2.getsockfd(), sh2);
-			// idis.handle_events();
-	// 	}
-	// 	catch(const std::exception &e)
-	// 	{
-	// 		std::cerr << e.what() << std::endl;
-	// 	}
-	// 	return 0;
-	// }
-
-	std::cout << "\n---THREE SERVER---\n\n";
+	try
 	{
-		try
+		signal(SIGINT, sigint_handler);
+		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
+		for (long i(0); i < server_amount; i++)
 		{
-			signal(SIGINT, sigint_handler);
-			InitiationDispatcher idis; // Could create the demultiplexer and the handler table
-			const Server *serv1 = new Server(8080, inet_addr("127.0.0.1"));
-			const Server *serv2 = new Server(8081, inet_addr("127.0.0.1"));
-			// const Server *serv3 = new Server(8082, inet_addr("127.0.0.1"));
-			idis.add_handle(*serv1);
-			idis.add_handle(*serv2);
-			// idis.add_handle(*serv3);
-			idis.handle_events();
+			const Server *serv = new Server(8080 + i, inet_addr("127.0.0.1"));
+			idis.add_handle(*serv);
 		}
-		catch(const std::exception &e)
-		{
-			std::cerr << e.what() << std::endl;
-		}
-		return 0;
+		idis.handle_events();
 	}
+	catch(const std::exception &e)
+	{
+		Logger(LOG_FILE, error) << e.what();
+	}
+}
 
-	// std::cout << "\n---TEN SERVER---\n\n";
+int	main(int ac, char *av[])
+{
+	if (ac <= 1)
+		return EXIT_FAILURE;
+	Logger() << "Launching the servers";
+	
+	serv_test(std::atol(av[1]));
+
+	Logger::quit();
+	return EXIT_SUCCESS;
 }

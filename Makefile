@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+         #
+#    By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/14 18:37:16 by jmaydew          ###   ########.fr        #
+#    Updated: 2021/06/15 12:36:02 by ldutriez_ho      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,8 @@ LIB = ft
 
 SRC	=	main.cpp \
 		Server.cpp ClientRequest.cpp \
+		\
+		Logger.cpp \
 		\
 		Demultiplexer.cpp HandlerTable.cpp InitiationDispatcher.cpp \
 		ServerHandler.cpp ClientHandler.cpp Client.cpp \
@@ -100,7 +102,7 @@ $(NAME): 		libft/libft.a $(INC_DIR) $(OBJ) Makefile
 
 exec:			$(NAME)
 				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) ... \n"
-				@./$(NAME)
+				@./$(NAME) 3
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 $(OBJ_DIR_DEV)/%.o : %.cpp
@@ -116,7 +118,7 @@ $(NAME_DEV):	libft/libft.a $(INC_DIR) $(OBJ_DEV) Makefile
 
 exec_dev:		$(NAME_DEV)
 				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) in verbose mode ... \n"
-				@./$(NAME_DEV)
+				@./$(NAME_DEV) 3
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 norme:

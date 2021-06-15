@@ -13,25 +13,21 @@ class HandlerTable
 
 		typedef std::map<int, IEventHandler *>	table_type;
 
+	private:
+
+		table_type *					_handler_table;
+	
+	public:
+
 		HandlerTable(void);
 		HandlerTable(const HandlerTable & src);
 		~HandlerTable(void);
 
-		void	set_demultiplexer_fds(std::vector<struct pollfd> * fds_address);
-		void	add(int fd, IEventHandler & event_handler);
-		void	remove(int fd);
-
+		void			add(int fd, IEventHandler & event_handler);
+		void			remove(int fd);
 		IEventHandler *	get(int fd) const;
 		
-		table_type &	handler_table(void) const;
-
 		HandlerTable &	operator=(const HandlerTable & src);
-
-	private:
-		table_type *					_handler_table;
-		std::vector<struct pollfd> *	_demultiplexer_fds;
 };
-
-bool		operator==(struct pollfd to_look, int to_find);
 
 #endif

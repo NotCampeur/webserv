@@ -3,11 +3,13 @@
 
 # include "Demultiplexer.hpp"
 # include "HandlerTable.hpp"
+# include "ClientHandler.hpp"
+# include "ServerHandler.hpp"
 
 class InitiationDispatcher
 {
-		Demultiplexer	*_demultiplexer;
-		HandlerTable	*_event_handler_table;
+		Demultiplexer		* const _demultiplexer;
+		HandlerTable		* const _event_handler_table;
 
 	public:
 		InitiationDispatcher(void);
@@ -15,19 +17,12 @@ class InitiationDispatcher
 		~InitiationDispatcher(void);
 
 		InitiationDispatcher &	operator=(const InitiationDispatcher & src);
-		
-		//	Set the demultiplexor to be used by 'handle_events' method
-		//	The demultiplexer can only be set once
-		void					set_demultiplexer(Demultiplexer &to_set);
-		const Demultiplexer &	demultiplexer(void) const;
-
-		//	Set the handler table to be used by 'handle_events' method
-		//	The table can only be set once
-		void					set_event_handler_table(HandlerTable &to_set);
-		const HandlerTable &	event_handler_table(void) const;
 
 		// Main loop: starts the loop that uses the demultiplexor and call event handlers
 		void					handle_events(void);
+		void					add_handle(const Server & srv);
+		void					add_handle(const Client & clt);
+		void					remove_handle(int fd);
 
 		class DemultiplexerNotSet : public std::exception
 		{

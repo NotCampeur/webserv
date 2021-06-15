@@ -43,9 +43,9 @@ Server::create_socket(int domain, int type, int protocol)
 	result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
 	if (result == -1 || _sockfd == -1)
 		throw UnableToCreateServerSocket();
-	#ifdef DEBUG
-		DEBUG_STREAM << "The server socket's fd is " << _sockfd << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << _sockfd;
+	Logger() << "The server socket's fd is " + nb.str();
 }
 
 void
@@ -54,9 +54,9 @@ Server::make_nonblocking()
 	int ret = fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 		throw UnableToSetNonblockFlag(_sockfd);
-	#ifdef DEBUG
-		DEBUG_STREAM << "fcntl call to set nonblocking flag returned " << ret << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << ret;
+	Logger() << "fcntl call to set nonblocking flag returned " + nb.str();
 }
 
 void
@@ -76,9 +76,7 @@ Server::name_serv_socket()
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
 		throw UnableToNameSocket();
-	#ifdef DEBUG
-		DEBUG_STREAM << "The bind with the server is up" << std::endl;
-	#endif
+	Logger() << "The bind with the server is up";
 }
 
 void
@@ -89,9 +87,7 @@ Server::set_listener()
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
 		throw UnableToSetListener();
-	#ifdef DEBUG
-		DEBUG_STREAM << "The server socket is listening\n" << std::endl;
-	#endif
+	Logger() << "The server socket is listening";
 }
 
 // EXCEPTIONS

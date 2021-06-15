@@ -8,5 +8,6 @@
 # ifdef DEBUG
 #  define DEBUG_STREAM std::cerr
 # endif
+# define LOG_FILE "webserv.log"
 
 #endif

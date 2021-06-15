@@ -1,13 +1,11 @@
 #include "ClientHandler.hpp"
 
-ClientHandler::ClientHandler(const Client & client, HandlerTable & ht) :
-_client(client),
-_ht(ht)
+ClientHandler::ClientHandler(const Client & client) :
+_client(client)
 {}
 
 ClientHandler::ClientHandler(ClientHandler const & src) :
-_client(src._client),
-_ht(src._ht)
+_client(src._client)
 {}
 
 ClientHandler::~ClientHandler(void)
@@ -21,7 +19,6 @@ ClientHandler::get_clientfd(void) const
 	return _client.getsockfd();
 }
 
-// Function TBU with request parsing and proper reading of header content
 void 
 ClientHandler::readable(void)
 {
@@ -31,10 +28,10 @@ ClientHandler::readable(void)
 	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
 	if (bytes_read == -1)
 		throw UnableToReadClientRequest();
-	#ifdef DEBUG
-		std::cout << "Socket content (" << bytes_read << " byte read): "
-		<< read_buff << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << bytes_read;
+	Logger() << "Socket content (" + nb.str() + " byte read): "
+			+ read_buff;
 }
 
 void
@@ -54,10 +51,9 @@ ClientHandler::writable(void)
 	bytes_written = send(get_clientfd(), msg.c_str(), msg.size(), 0);
 	if (bytes_written != static_cast<ssize_t>(msg.size()))
 		throw UnableToWriteToClient();
-
-	#ifdef DEBUG
-		std::cout << "Message written to client socket: " << get_clientfd() << " : " << msg << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << get_clientfd();
+	Logger() << "Message written to client socket: " + nb.str() + " : " + msg;
 }
 
 void

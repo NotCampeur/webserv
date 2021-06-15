@@ -8,7 +8,5 @@ sigint_handler(int sig_val)
 {
     (void) sig_val;
     g_run_status = false;
-	#ifdef DEBUG
-		std::cout << "Sigint signal received" << '\n';
-	#endif
+	Logger(LOG_FILE, error) << "Sigint signal received";
 }

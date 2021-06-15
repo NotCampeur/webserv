@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/14 18:33:35 by jmaydew          ###   ########.fr       */
+/*   Updated: 2021/06/15 10:44:56 by ldutriez_ho      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 
 # include "libft.hpp"
 # include "webserv_param.hpp"
-
+# include "Logger.hpp"
 void    sigint_handler(int val);
 
 #endif

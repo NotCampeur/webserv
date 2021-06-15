@@ -1,14 +1,10 @@
 #include "ServerHandler.hpp"
 
-ServerHandler::ServerHandler(const Server & server, HandlerTable & ht) :
-_server(server),
-_ht(ht)
+ServerHandler::ServerHandler(const Server * server, InitiationDispatcher & idis) :
+_server(*server),
+_idis(idis)
 {}
 
-ServerHandler::ServerHandler(ServerHandler const & src) :
-_server(src._server),
-_ht(src._ht)
-{}
 
 ServerHandler::~ServerHandler(void)
 {
@@ -35,10 +31,10 @@ ServerHandler::readable(void)
 		if (ret >= 0)
 		{
 			Client * client = new Client(ret, address);
-			#ifdef DEBUG
-				std::cout << "A new connection has been accepted on fd : " << ret << std::endl;
-			#endif
-			new_client_handler(*client);
+			std::ostringstream	nb;
+			nb << ret;
+			Logger() << "A new connection has been accepted on fd : " + nb.str();
+			_idis.add_handle(*client);
 		}
 		else
 		{
@@ -48,9 +44,9 @@ ServerHandler::readable(void)
 			break ;
 		}
 	}
-	#ifdef DEBUG
-		std::cout << "Accept backlog is empty" << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << _server.getsockfd();
+	Logger() << "Accept backlog is empty" + nb.str() + " is empty";
 }
 
 // No writable action can be detected on a server socket, hence this function does not do anything
@@ -63,13 +59,6 @@ int
 ServerHandler::get_serverfd(void) const
 {
     return _server.getsockfd();
-}
-
-void
-ServerHandler::new_client_handler(Client & client)
-{
-	ClientHandler *ch = new ClientHandler(client, _ht);
-	_ht.add(client.getsockfd(), *ch);
 }
 
 const char *

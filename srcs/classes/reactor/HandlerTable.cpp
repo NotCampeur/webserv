@@ -11,9 +11,9 @@ HandlerTable::HandlerTable(const HandlerTable & src)
 
 HandlerTable::~HandlerTable(void)
 {
-	#ifdef DEBUG
-		std::cout << "Handler table contains " << _handler_table->size() << " elements" << '\n';
-	#endif
+	std::ostringstream	nb;
+	nb << _handler_table->size();
+	Logger() << "Handler table contains " + nb.str() + " elements";
 	if (!_handler_table->empty())
 	{
 		table_type::iterator it = _handler_table->begin();
@@ -25,14 +25,12 @@ HandlerTable::~HandlerTable(void)
 			delete it->second;
 			i++;
 		}
-	#ifdef DEBUG
-		std::cout << "Handler table: " << i << "  IEventHandler elements deleted" << '\n';
-	#endif
+		std::ostringstream	nb;
+		nb << i;
+		Logger() << "Handler table: " + nb.str() + "  IEventHandler elements deleted";
 	}
 	delete _handler_table;
-	#ifdef DEBUG
-		std::cout << "Handler Table has been destroyed" << std::endl;
-	#endif
+	Logger() << "Handler Table has been destroyed";
 }
 
 HandlerTable &
@@ -47,9 +45,9 @@ void
 HandlerTable::add(int fd, IEventHandler & event_handler)
 {
 	_handler_table->insert(std::pair<int, IEventHandler *>(fd, &event_handler));
-	#ifdef DEBUG
-		std::cout << "fd: " << fd << " has been add to the handler table" << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << fd;
+	Logger() << "fd: " + nb.str() + " has been add to the handler table";
 }
 
 void
@@ -57,9 +55,9 @@ HandlerTable::remove(int fd)
 {
 	delete _handler_table->find(fd)->second;
 	_handler_table->erase(fd);
-	#ifdef DEBUG
-		std::cout << "fd: " << fd << " has been removed from the handler table" << std::endl;
-	#endif
+	std::ostringstream	nb;
+	nb << fd;
+	Logger() << "fd: " + nb.str() + " has been removed from the handler table";
 }
 
 IEventHandler *

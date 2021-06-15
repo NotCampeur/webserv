@@ -7,31 +7,38 @@
 class Demultiplexer
 {
 	public:
-		typedef std::vector<struct pollfd>	fd_type;
+		typedef std::vector<struct pollfd>	pollfd_arr;
 
 	private:
-		fd_type	_fds;
-		int		_timeout;
 
-		Demultiplexer(void);
+		pollfd_arr	_pollfds;
+		int			_timeout;
 
 	public:
-		Demultiplexer(HandlerTable & table, int timeout = (1 * 1000));
+
+		Demultiplexer(int timeout = DEMULTIMPEXER_TIMEOUT);		
 		Demultiplexer(const Demultiplexer & src);
 		~Demultiplexer(void);
 		
 		Demultiplexer & operator=(const Demultiplexer & src);
 
-		//	Will poll every fd to get tag the Writable | Readable ones.
-		int		activate(void);
-
-		fd_type	&fds(void);
+		int						activate(void);
+		void					addfd(int fd);
+		void					removefd(int fd);
+		pollfd_arr::iterator	begin();
+		pollfd_arr::iterator	end();
 
 		class PollingError : public std::exception
 		{
 			const char * what(void) const throw();
 		};
+		
 		class PollingTimeout : public std::exception
+		{
+			const char * what(void) const throw();
+		};
+
+		class FdNotFound : public std::exception
 		{
 			const char * what(void) const throw();
 		};
