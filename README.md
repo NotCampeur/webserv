@@ -29,26 +29,42 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:  
 *  Comment each methods  
-*  Add a log file with timestamp.  
 *  Standardize the headers' protection.  
-*  Add a logger.
-*  Update setsockopt to be able to reuse sockets after program quits
+*  Update setsockopt to be able to reuse sockets after program quits  
+*  Improve Logger (add a template or use ostringstream | Add a level of importance)
 ### :boom: Known bugs.. I mean features :boom:  
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
 * Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
 * Server crash if restarted before socket becomes available again
 
 ## :writing_hand: Change log :writing_hand:  
-* The client_request class is now filled up "correctly".  
-* The branch gettingRequest hab been merged up.  
+* Logger class added.  
+* Main tests improved.    
 
 ### Git status return :
 
-        nouveau fichier : Includes/Classes/client_request.hpp
-        modifié :         Includes/Classes/server.hpp
-        renommé :         Includes/Classes/request.hpp -> Includes/webserv.hpp
         modifié :         Makefile
-        modifié :         README.md
-        nouveau fichier : Srcs/Classes/ClientRequest/client_request.cpp
-        renommé :         Srcs/Classes/server.cpp -> Srcs/Classes/Server/server.cpp
-        modifié :         Srcs/main.cpp
+        modifié :         includes/webserv.hpp
+        modifié :         includes/webserv_param.hpp
+        supprimé :        srcs/classes/Reactor/ClientHandler.cpp
+        supprimé :        srcs/classes/Reactor/ClientHandler.hpp
+        supprimé :        srcs/classes/Reactor/HandlerTable.hpp
+        supprimé :        srcs/classes/Reactor/IEventHandler.hpp
+        modifié :         srcs/classes/client_request/ClientRequest.cpp
+        nouveau fichier : srcs/classes/logger/Logger.cpp
+        nouveau fichier : srcs/classes/logger/Logger.hpp
+        modifié :         srcs/classes/reactor/ClientHandler.cpp
+        modifié :         srcs/classes/reactor/ClientHandler.hpp
+        renommé :         srcs/classes/Reactor/Demultiplexer.cpp -> srcs/classes/reactor/Demultiplexer.cpp
+        renommé :         srcs/classes/Reactor/Demultiplexer.hpp -> srcs/classes/reactor/Demultiplexer.hpp
+        renommé :         srcs/classes/Reactor/HandlerTable.cpp -> srcs/classes/reactor/HandlerTable.cpp
+        modifié :         srcs/classes/reactor/HandlerTable.hpp
+        modifié :         srcs/classes/reactor/IEventHandler.hpp
+        renommé :         srcs/classes/Reactor/InitiationDispatcher.cpp -> srcs/classes/reactor/InitiationDispatcher.cpp
+        renommé :         srcs/classes/Reactor/InitiationDispatcher.hpp -> srcs/classes/reactor/InitiationDispatcher.hpp
+        renommé :         srcs/classes/Reactor/ServerHandler.cpp -> srcs/classes/reactor/ServerHandler.cpp
+        renommé :         srcs/classes/Reactor/ServerHandler.hpp -> srcs/classes/reactor/ServerHandler.hpp
+        supprimé :        srcs/classes/reactor/handlerTable.cpp
+        modifié :         srcs/classes/server/Server.cpp
+        modifié :         srcs/main.cpp
+        modifié :         srcs/signals/sigint_handler.cpp
