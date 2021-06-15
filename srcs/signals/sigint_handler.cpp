@@ -8,5 +8,5 @@ sigint_handler(int sig_val)
 {
     (void) sig_val;
     g_run_status = false;
-	Logger(LOG_FILE, error) << "Sigint signal received";
+	Logger(LOG_FILE, error_type) << "Sigint signal received";
 }
