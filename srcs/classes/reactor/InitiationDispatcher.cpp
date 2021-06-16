@@ -53,7 +53,7 @@ InitiationDispatcher::handle_events(void)
 			Logger(LOG_FILE, error_type) << e.what();
 		}
 	}
-	Logger() << "Leaving main loop handle_events";
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";
 }
 
 void
@@ -78,5 +78,5 @@ InitiationDispatcher::remove_handle(int fd)
 	_event_handler_table->remove(fd);
 	_demultiplexer->removefd(fd);
 
-	// Logger() << "FD " + std::string::to_string(fd_ + " removed";
+	Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << fd << " removed";
 }

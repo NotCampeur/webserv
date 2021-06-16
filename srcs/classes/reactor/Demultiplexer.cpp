@@ -11,7 +11,7 @@ Demultiplexer::Demultiplexer(const Demultiplexer & src)
 
 Demultiplexer::~Demultiplexer(void)
 {
-	Logger() << "Demultiplexer has been destroyed";
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Demultiplexer has been destroyed";
 }
 
 Demultiplexer &
@@ -33,13 +33,13 @@ Demultiplexer::activate(void)
 		throw Demultiplexer::PollingError();
 	else if (result == 0)
 	{
-		Logger() << "Poll timeout";
+		Logger(LOG_FILE, basic_type, minor_lvl) << "Poll timeout";
 		return result;
 	}
 		// throw Demultiplexer::PollingTimeout();
 	std::ostringstream	nb;
 	nb << result;
-	Logger() << nb.str() + " fd ready";
+	Logger(LOG_FILE, basic_type, major_lvl) << nb.str() + " fd ready";
 	return result;
 }
 
@@ -52,9 +52,7 @@ Demultiplexer::addfd(int fd)
 	fd_data.events = POLLIN | POLLOUT;
 	fd_data.revents = 0;
 	_pollfds.push_back(fd_data);
-	std::ostringstream	nb;
-	nb << fd;
-	Logger() << "fd: " + nb.str() + " has been added to demultiplexer";
+	Logger(LOG_FILE, basic_type, minor_lvl) << "fd: " << fd << " has been added to demultiplexer";
 }
 
 void
@@ -71,9 +69,7 @@ Demultiplexer::removefd(int fd)
 			if (it->fd == fd)
 			{
 				_pollfds.erase(it);
-				std::ostringstream	nb;
-				nb << fd;
-				Logger() << "fd: " + nb.str() + " removed from pollfd array";
+				Logger(LOG_FILE, basic_type, minor_lvl) << "fd: " << fd << " removed from pollfd array";
 				return ;
 			}
 		}

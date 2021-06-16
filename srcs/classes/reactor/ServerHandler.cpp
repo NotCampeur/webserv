@@ -31,9 +31,7 @@ ServerHandler::readable(void)
 		if (ret >= 0)
 		{
 			Client * client = new Client(ret, address);
-			std::ostringstream	nb;
-			nb << ret;
-			Logger() << "A new connection has been accepted on fd : " + nb.str();
+			Logger(LOG_FILE, basic_type, minor_lvl) << "A new connection has been accepted on fd : " << ret;
 			_idis.add_handle(*client);
 		}
 		else
@@ -44,9 +42,7 @@ ServerHandler::readable(void)
 			break ;
 		}
 	}
-	std::ostringstream	nb;
-	nb << _server.getsockfd();
-	Logger() << "Accept backlog is empty" + nb.str() + " is empty";
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
 }
 
 // No writable action can be detected on a server socket, hence this function does not do anything

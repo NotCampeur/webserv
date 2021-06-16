@@ -22,6 +22,13 @@ typedef enum log_importance_level
 	all_lvl   = error_lvl | major_lvl | minor_lvl | debug_lvl
 }	log_importance_level;
 
+// Will force the unary expression to return a log_importance_level and not a int.
+log_importance_level operator|(const log_importance_level & value_a,
+								const log_importance_level & value_b);
+
+// Will force the unary expression to return a log_importance_level and not a int.
+log_importance_level operator^(const log_importance_level & value_a,
+								const log_importance_level & value_b);
 
 // A class to simplify logs creation.
 // The common usage is
@@ -54,8 +61,8 @@ class Logger
 		Logger	&operator<<(const char * const & entry);
 		Logger	&operator<<(const char & entry);
 		Logger	&operator<<(const int & entry);
-		Logger	&operator<<(std::ofstream & entry);
-
+		Logger	&operator<<(const ssize_t & entry);
+		Logger	&operator<<(const size_t & entry);
 
 	private:
 		void	put_timestamp(void);
@@ -66,18 +73,5 @@ class Logger
 		static log_importance_level	_accepted_importance;
 		log_importance_level		_importance;
 };
-
-	// template <class T>
-	// Logger	&operator<<(Logger & logger, const T & entry)
-	// {
-	// 	if (logger.is_important_enough())
-	// 	{
-	// 		std::ostringstream	convert;
-
-	// 		convert << entry;
-	// 		*Logger::_files[Logger::_path] << convert.str();
-	// 	}
-	// 	return logger;
-	// }
 
 #endif

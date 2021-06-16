@@ -28,10 +28,8 @@ ClientHandler::readable(void)
 	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
 	if (bytes_read == -1)
 		throw UnableToReadClientRequest();
-	std::ostringstream	nb;
-	nb << bytes_read;
-	Logger() << "Socket content (" + nb.str() + " byte read): "
-			+ read_buff;
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): "
+			<< read_buff;
 }
 
 void
@@ -51,9 +49,7 @@ ClientHandler::writable(void)
 	bytes_written = send(get_clientfd(), msg.c_str(), msg.size(), 0);
 	if (bytes_written != static_cast<ssize_t>(msg.size()))
 		throw UnableToWriteToClient();
-	std::ostringstream	nb;
-	nb << get_clientfd();
-	Logger() << "Message written to client socket: " + nb.str() + " : " + msg;
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << msg;
 }
 
 void

@@ -10,7 +10,7 @@ You only need to run **make**.
 All libraries will be build and the binary will be ready to launch  
 
 ## Content
-* A simple read/write communication HTTP server.  
+* A simple HTTP server.  
  
 ## Ressources  
 * https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select     <-Different API explanation  
@@ -31,40 +31,25 @@ All libraries will be build and the binary will be ready to launch
 *  Comment each methods  
 *  Standardize the headers' protection.  
 *  Update setsockopt to be able to reuse sockets after program quits  
-*  Improve Logger (add a template or use ostringstream | Add a level of importance)
 ### :boom: Known bugs.. I mean features :boom:  
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
 * Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
 * Server crash if restarted before socket becomes available again
 
 ## :writing_hand: Change log :writing_hand:  
-* Logger class added.  
-* Main tests improved.    
+* Logger class improved and commented.  
 
 ### Git status return :
 
-        modifié :         Makefile
-        modifié :         includes/webserv.hpp
-        modifié :         includes/webserv_param.hpp
-        supprimé :        srcs/classes/Reactor/ClientHandler.cpp
-        supprimé :        srcs/classes/Reactor/ClientHandler.hpp
-        supprimé :        srcs/classes/Reactor/HandlerTable.hpp
-        supprimé :        srcs/classes/Reactor/IEventHandler.hpp
-        modifié :         srcs/classes/client_request/ClientRequest.cpp
-        nouveau fichier : srcs/classes/logger/Logger.cpp
-        nouveau fichier : srcs/classes/logger/Logger.hpp
-        modifié :         srcs/classes/reactor/ClientHandler.cpp
-        modifié :         srcs/classes/reactor/ClientHandler.hpp
-        renommé :         srcs/classes/Reactor/Demultiplexer.cpp -> srcs/classes/reactor/Demultiplexer.cpp
-        renommé :         srcs/classes/Reactor/Demultiplexer.hpp -> srcs/classes/reactor/Demultiplexer.hpp
-        renommé :         srcs/classes/Reactor/HandlerTable.cpp -> srcs/classes/reactor/HandlerTable.cpp
-        modifié :         srcs/classes/reactor/HandlerTable.hpp
-        modifié :         srcs/classes/reactor/IEventHandler.hpp
-        renommé :         srcs/classes/Reactor/InitiationDispatcher.cpp -> srcs/classes/reactor/InitiationDispatcher.cpp
-        renommé :         srcs/classes/Reactor/InitiationDispatcher.hpp -> srcs/classes/reactor/InitiationDispatcher.hpp
-        renommé :         srcs/classes/Reactor/ServerHandler.cpp -> srcs/classes/reactor/ServerHandler.cpp
-        renommé :         srcs/classes/Reactor/ServerHandler.hpp -> srcs/classes/reactor/ServerHandler.hpp
-        supprimé :        srcs/classes/reactor/handlerTable.cpp
-        modifié :         srcs/classes/server/Server.cpp
-        modifié :         srcs/main.cpp
-        modifié :         srcs/signals/sigint_handler.cpp
+        modified:   .gitignore
+        modified:   srcs/classes/client_request/ClientRequest.cpp
+        modified:   srcs/classes/logger/Logger.cpp
+        modified:   srcs/classes/logger/Logger.hpp
+        modified:   srcs/classes/reactor/ClientHandler.cpp
+        modified:   srcs/classes/reactor/Demultiplexer.cpp
+        modified:   srcs/classes/reactor/HandlerTable.cpp
+        modified:   srcs/classes/reactor/InitiationDispatcher.cpp
+        modified:   srcs/classes/reactor/ServerHandler.cpp
+        modified:   srcs/classes/server/Server.cpp
+        modified:   srcs/classes/server/Server.hpp
+        modified:   srcs/main.cpp

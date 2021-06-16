@@ -2,16 +2,16 @@
 
 Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
 {
-    create_socket(com_domain, sock_type);
+	create_socket(com_domain, sock_type);
 	make_nonblocking();
-    init_addr_inputs(com_domain, port, ip);
-    name_serv_socket();
-    set_listener();
+	init_addr_inputs(com_domain, port, ip);
+	name_serv_socket();
+	set_listener();
 }
 
 Server::Server(Server const & src)
 {
-    (void)src;
+	(void)src;
 }
 
 Server::~Server(void)
@@ -24,7 +24,7 @@ Server::operator=(Server const & src)
 {
 	this->_sockfd = src._sockfd;
 	this->_address = src._address;
-    return (*this);
+	return (*this);
 }
 
 int
@@ -43,9 +43,7 @@ Server::create_socket(int domain, int type, int protocol)
 	result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
 	if (result == -1 || _sockfd == -1)
 		throw UnableToCreateServerSocket();
-	std::ostringstream	nb;
-	nb << _sockfd;
-	Logger() << "The server socket's fd is " + nb.str();
+	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
 }
 
 void
@@ -54,18 +52,17 @@ Server::make_nonblocking()
 	int ret = fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 		throw UnableToSetNonblockFlag(_sockfd);
-	std::ostringstream	nb;
-	nb << ret;
-	Logger() << "fcntl call to set nonblocking flag returned " + nb.str();
+	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
 }
 
 void
 Server::init_addr_inputs(int domain, int port, u_int32_t ip)
 {
+	_listening_port = port;
 	_address.sin_family = domain;
 	_address.sin_port = htons(port);
 	_address.sin_addr.s_addr = ip;
-    std::memset(_address.sin_zero, 0, 8);
+	std::memset(_address.sin_zero, 0, 8);
 }
 
 void
@@ -76,7 +73,7 @@ Server::name_serv_socket()
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
 		throw UnableToNameSocket();
-	Logger() << "The bind with the server is up";
+	Logger(LOG_FILE, basic_type, minor_lvl) << "The bind with the server is up";
 }
 
 void
@@ -87,7 +84,7 @@ Server::set_listener()
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
 		throw UnableToSetListener();
-	Logger() << "The server socket is listening";
+	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << _listening_port;
 }
 
 // EXCEPTIONS

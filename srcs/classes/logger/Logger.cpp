@@ -17,7 +17,10 @@ Logger::Logger(std::string path, log_type type, log_importance_level importance)
 }
 
 Logger::~Logger()
-{}
+{
+	if (is_important_enough())
+		*_files[_path] << std::endl;
+}
 
 void
 Logger::put_timestamp(void)
@@ -63,13 +66,23 @@ Logger::is_important_enough(void) const
 	return false;
 }
 
+log_importance_level
+operator|(const log_importance_level & value_a, const log_importance_level & value_b)
+{
+	return ((log_importance_level)(static_cast<int>(value_a) | static_cast<int>(value_b)));
+}
+
+log_importance_level
+operator^(const log_importance_level & value_a, const log_importance_level & value_b)
+{
+	return ((log_importance_level)(static_cast<int>(value_a) ^ static_cast<int>(value_b)));
+}
+
 Logger &
 Logger::operator<<(const std::string & entry)
 {
 	if (is_important_enough())
-	{
 		*_files[_path] << entry;
-	}
 	return *this;
 }
 
@@ -77,9 +90,7 @@ Logger &
 Logger::operator<<(const char * const & entry)
 {
 	if (is_important_enough())
-	{
 		*_files[_path] << entry;
-	}
 	return *this;
 }
 
@@ -87,20 +98,7 @@ Logger &
 Logger::operator<<(const char & entry)
 {
 	if (is_important_enough())
-	{
 		*_files[_path] << entry;
-	}
-	return *this;
-}
-
-Logger &
-Logger::operator<<(std::ofstream & entry)
-{
-	if (is_important_enough())
-	{
-		(void)entry;
-		*_files[_path] << std::endl;
-	}
 	return *this;
 }
 
@@ -108,23 +106,22 @@ Logger &
 Logger::operator<<(const int & entry)
 {
 	if (is_important_enough())
-	{
 		*_files[_path] << entry;
-	}
 	return *this;
 }
 
+Logger &
+Logger::operator<<(const ssize_t & entry)
+{
+	if (is_important_enough())
+		*_files[_path] << entry;
+	return *this;
+}
 
-// template <class T>
-// Logger &
-// operator<<(Logger & logger, T & entry)
-// {
-// 	if (logger.is_important_enough())
-// 	{
-// 		std::ostringstream	convert;
-
-// 		convert << entry;
-// 		*Logger::_files[Logger::_path] << convert.str();
-// 	}
-// 	return logger;
-// }
+Logger &
+Logger::operator<<(const size_t & entry)
+{
+	if (is_important_enough())
+		*_files[_path] << entry;
+	return *this;
+}
