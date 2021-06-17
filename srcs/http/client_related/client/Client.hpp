@@ -1,5 +1,5 @@
-#ifndef CLIENT_H
-# define CLIENT_H
+#ifndef WEBSERV_CLIENT_HPP
+# define WEBSERV_CLIENT_HPP
 
 # include "webserv.hpp"
 

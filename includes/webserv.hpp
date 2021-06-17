@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/15 10:44:56 by ldutriez_ho      ###   ########.fr       */
+/*   Updated: 2021/06/17 20:40:14 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,6 @@
 # include "libft.hpp"
 # include "webserv_param.hpp"
 # include "Logger.hpp"
-void    sigint_handler(int val);
+# include "webserv_sig_handler.hpp"
 
 #endif

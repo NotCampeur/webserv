@@ -1,5 +1,5 @@
-#ifndef DEMULTIPLEXER
-# define DEMULTIPLEXER
+#ifndef WEBSERV_DEMULTIPLEXER_HPP
+# define WEBSERV_DEMULTIPLEXER_HPP
 
 # include "webserv.hpp"
 # include "HandlerTable.hpp"

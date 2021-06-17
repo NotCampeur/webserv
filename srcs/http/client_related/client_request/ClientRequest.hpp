@@ -6,12 +6,12 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/24 17:04:01 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/10 10:16:33 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/17 20:14:43 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENTREQUEST_HPP
-# define CLIENTREQUEST_HPP
+#ifndef WEBSERV_CLIENT_REQUEST_HPP
+# define WEBSERV_CLIENT_REQUEST_HPP
 
 # include "webserv.hpp"
 

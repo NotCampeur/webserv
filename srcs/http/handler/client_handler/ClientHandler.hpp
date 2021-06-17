@@ -1,5 +1,5 @@
-#ifndef CLIENTHANDLER_H
-# define CLIENTHANDLER_H
+#ifndef WEBSERV_CLIENT_HANDLER_HPP
+# define WEBSERV_CLIENT_HANDLER_HPP
 
 # include "IEventHandler.hpp"
 # include "HandlerTable.hpp"

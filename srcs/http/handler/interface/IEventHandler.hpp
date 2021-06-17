@@ -1,5 +1,5 @@
-#ifndef EVENTHANDLER_H
-# define EVENTHANDLER_H
+#ifndef WEBSERV_EVENTHANDLER_HPP
+# define WEBSERV_EVENTHANDLER_HPP
 
 class IEventHandler
 {

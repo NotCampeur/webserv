@@ -1,5 +1,5 @@
-#ifndef SERVERHANDLER_H
-# define SERVERHANDLER_H
+#ifndef WEBSERV_SERVER_HANDLER_HPP
+# define WEBSERV_SERVER_HANDLER_HPP
 
 # include "IEventHandler.hpp"
 # include "Server.hpp"

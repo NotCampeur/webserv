@@ -1,5 +1,5 @@
-#ifndef HANDLERTABLE_H
-# define HANDLERTABLE_H
+#ifndef WEBSERV_HANDLERTABLE_HPP
+# define WEBSERV_HANDLERTABLE_HPP
 
 # include "webserv.hpp"
 # include "IEventHandler.hpp"

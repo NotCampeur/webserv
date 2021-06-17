@@ -53,7 +53,7 @@ Logger::quit(void)
 
 	for (; it != ite; it++)
 	{
-		*it->second << "End of the log";
+		*it->second << "End of the log" << std::endl;
 		delete it->second;
 	}
 }

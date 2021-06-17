@@ -1,5 +1,5 @@
-#ifndef SERVER_H
-# define SERVER_H
+#ifndef WEBSERV_SERVER_HPP
+# define WEBSERV_SERVER_HPP
 
 # include "webserv.hpp"
 # include "webserv_param.hpp"

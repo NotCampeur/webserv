@@ -1,5 +1,5 @@
-#ifndef INITIATIONDISPATCHER_H
-# define INITIATIONDISPATCHER_H
+#ifndef WEBSERV_INITIATION_DISPATCHER_HPP
+# define WEBSERV_INITIATION_DISPATCHER_HPP
 
 # include "Demultiplexer.hpp"
 # include "HandlerTable.hpp"
