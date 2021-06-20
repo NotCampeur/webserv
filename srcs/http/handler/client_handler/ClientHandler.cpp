@@ -28,8 +28,7 @@ ClientHandler::readable(void)
 	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
 	if (bytes_read == -1)
 		throw UnableToReadClientRequest();
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): "
-			<< read_buff;
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
 void
