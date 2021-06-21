@@ -10,7 +10,7 @@ class ClientHandler : public IEventHandler
 {
 	private:
 
-		const Client &	_client;
+		Client &	_client;
 
 	public:
 

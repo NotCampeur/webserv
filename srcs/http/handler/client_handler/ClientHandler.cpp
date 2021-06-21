@@ -22,17 +22,34 @@ ClientHandler::get_clientfd(void) const
 void 
 ClientHandler::readable(void)
 {
+	Request *req;
+
+	if (_client.no_request() || _client.latest_request()->iscomplete())
+	{
+		req = new Request;
+		_client.add_request(req);
+	}
+	else
+	{
+		req = _client.latest_request();
+	}
+
 	char		read_buff[RECV_BUF_SIZE] = {0};
 	ssize_t		bytes_read;
 
-	// while (1)
-	// {
+	while (1)
+	{
 		bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
 		if (bytes_read == -1)
 			throw UnableToReadClientRequest();
-	// 	else if (bytes_read == 0 || bytes_read < RECV_BUF_SIZE)
-	// 		break;
-	// }
+
+		std::string s(read_buff, bytes_read);
+		req->add_bytes_read(read_buff, bytes_read);
+
+		// Break conditions: buffer was not full after last read || req is complete (in which case, woud need to handle buffer leftovers if any)
+		if (bytes_read < RECV_BUF_SIZE)
+			break;
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
