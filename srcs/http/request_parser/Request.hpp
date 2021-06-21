@@ -30,8 +30,9 @@ public:
     void seturi(std::string & path, std::string & query, std::string & fragment);
 
 private:
-    int _method;
-    uri _uri;
+    http_method _method;
+    uri         _uri;
+    bool        _complete;
 
 
 };

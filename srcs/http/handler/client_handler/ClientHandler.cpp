@@ -25,9 +25,14 @@ ClientHandler::readable(void)
 	char		read_buff[RECV_BUF_SIZE] = {0};
 	ssize_t		bytes_read;
 
-	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
-	if (bytes_read == -1)
-		throw UnableToReadClientRequest();
+	// while (1)
+	// {
+		bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
+		if (bytes_read == -1)
+			throw UnableToReadClientRequest();
+	// 	else if (bytes_read == 0 || bytes_read < RECV_BUF_SIZE)
+	// 		break;
+	// }
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
@@ -67,7 +72,7 @@ ClientHandler::send_header(size_t content_length)
 const char *
 ClientHandler::UnableToReadClientRequest::what() const throw()
 {
-	std::string err = "Unable to read to client socket: ";
+	std::string err = "Unable to read from client socket: ";
 	err += strerror(errno);	
 
 	return err.c_str();

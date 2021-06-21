@@ -73,7 +73,7 @@ Server::name_serv_socket()
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
 		throw UnableToNameSocket();
-	Logger(LOG_FILE, basic_type, minor_lvl) << "The bind with the server is up";
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
 }
 
 void
