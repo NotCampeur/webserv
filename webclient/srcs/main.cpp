@@ -3,64 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:33:01 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/22 12:49:55 by ldutriez_ho      ###   ########.fr       */
+/*   Updated: 2021/06/22 20:42:13 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webclient.hpp"
 #include "Client.hpp"
 
-void	client_manager(int port)
+void	client_manager(int amount, std::string request_path, int range_start, int range_end)
 {
-	for (int i(0); i < 2000; i++)
+	std::vector<webclient::Client> clients;
+	(void)range_end;
+	// for (int i(0); i < amount; i++)
+	// {
+	// 	// if (range_start == range_end)
+	// 	// 	clients.push_back(webclient::Client(range_start, AF_INET, SOCK_STREAM));
+	// 	// else
+	// 	// 	clients.push_back(webclient::Client(rand() % (range_end - range_start) + range_start, AF_INET, SOCK_STREAM));
+	// }
+	for (int i(0); i < amount; i++)
 	{
-		Client	client(port, AF_INET, SOCK_STREAM);
-		client.send_request("HONK");
-		client.receive_response();
+		clients.push_back(webclient::Client(range_start, AF_INET, SOCK_STREAM));
+		clients[i].send_request(request_path);
+		clients[i].receive_response();
+	}
+	// for (int i(0); i < amount; i++)
+}
+
+void	unit_test_one(int amount, std::string request_path, int range_start, int range_end)
+{
+	(void)range_end;
+	for (int i(0); i < amount; i++)
+	{
+		if (range_start == range_end)
+			webclient::Client cl(range_start, AF_INET, SOCK_STREAM);
+		else
+			webclient::Client cl(rand() % (range_end - range_start) + range_start, AF_INET, SOCK_STREAM);
+		cl.send_request(request_path);
+		cl.receive_response();
 	}
 }
 
 int main(int ac, char *av[])
 {
-	if (ac != 2)
+	if (ac != 5)
 		return EXIT_FAILURE;
-	client_manager(atoi(av[1]));
-	// int sock = 0;
-	// long valread;
-	// struct sockaddr_in serv_addr;
-	// std::string hello("Hello from client");
-	// char buffer[1024] = {0};
-
-	// if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-	// {
-	// 	printf("\n Socket creation error \n");
-	// 	return -1;
-	// }
-		
-	// memset(&serv_addr, '0', sizeof(serv_addr));
-		
-	// serv_addr.sin_family = AF_INET;
-	// serv_addr.sin_port = htons(PORT);
-		
-	// // Convert IPv4 and IPv6 addresses from text to binary form
-	// if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
-	// {
-	// 	printf("\nInvalid address/ Address not supported \n");
-	// 	return -1;
-	// }
-		
-	// if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-	// {
-	// 	printf("\nConnection Failed \n");
-	// 	return -1;
-	// }
-	// send(sock , hello.c_str() , hello.size() , 0 );
-	// printf("Hello message sent\n");
-	// valread = read( sock , buffer, 1024);
-	// printf("%s\n",buffer );
+	srand(time(NULL));
+	Logger::accept_importance(all_lvl);
+	try
+	{
+		// client_manager(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
+		unit_test_one(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
+	}
+	catch(const std::exception& e)
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << e.what();
+	}
 	Logger::quit();
 	return 0;
 }

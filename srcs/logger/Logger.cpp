@@ -89,7 +89,7 @@ Logger::operator<<(const std::string & entry)
 Logger &
 Logger::operator<<(const char * const & entry)
 {
-	if (is_important_enough())
+	if (is_important_enough() && entry != NULL)
 		*_files[_path] << entry;
 	return *this;
 }

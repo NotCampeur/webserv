@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:48:33 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/22 12:48:06 by ldutriez_ho      ###   ########.fr       */
+/*   Updated: 2021/06/22 17:06:53 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define WEBSERV_WEBCLIENT_CLIENT_HPP
 
 # include "webclient.hpp"
-
+namespace webclient
+{
 	class Client
 	{
 			private:
@@ -58,5 +59,6 @@
 			};
 
 	};
-	
+}
+
 #endif

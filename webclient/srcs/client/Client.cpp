@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:51:17 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/22 12:48:23 by ldutriez_ho      ###   ########.fr       */
+/*   Updated: 2021/06/22 17:17:03 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
+
+using namespace webclient;
 
 Client::Client(int port, int com_domain, int sock_type)
 {
 	create_socket(com_domain, sock_type);
 	init_addr_inputs(com_domain, port);
 	connect_to_serv();
-	// send_request("HONK");
-	// receive_response();
 }
 
 Client::Client(Client const & src)
@@ -83,8 +83,17 @@ Client::connect_to_serv()
 void
 Client::send_request(std::string file_path)
 {
-	(void)file_path;
-	send(_sockfd , "Hello World\n" , 12 , 0 );
+	std::ifstream	file(file_path);
+	std::string		tmp;
+	std::string		to_send;
+
+	while (file.peek() != EOF)
+	{
+		std::getline(file, tmp);
+		to_send += tmp + "\n";
+	}
+	send(_sockfd , to_send.c_str() , to_send.size() , 0);
+	file.close();
 }
 
 void
