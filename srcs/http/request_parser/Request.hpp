@@ -21,8 +21,10 @@ public:
 
     typedef std::vector<std::pair<std::string, std::string> > header_list;
 
+    //Public for now to improve code readibility
+
+
 private:
-    std::string _raw;
     http_method _method;
     uri         _uri;
     header_list _headers;
@@ -39,8 +41,9 @@ public:
     void    setmethod(http_method met);
     void    seturi(std::string & path, std::string & query, std::string & fragment);
     bool    iscomplete(void) const;
-    void    add_bytes_read(char *s, size_t len);
 
 };
+
+// std::ostream & operator<<(std::ostream & o, Request & req);
 
 #endif

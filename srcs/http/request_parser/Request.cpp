@@ -44,3 +44,15 @@ Request::add_bytes_read(char *s, size_t len)
 {
     _raw += std::string(s, len);
 }
+
+void
+Request::parse(void)
+{
+    
+}
+
+// std::ostream &
+// operator<<(std::ostream & o, Request & req)
+// {
+//     o << "Request: \n" <<
+// }

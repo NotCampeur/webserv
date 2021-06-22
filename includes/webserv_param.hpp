@@ -10,4 +10,8 @@
 # endif
 # define LOG_FILE "webserv.log"
 
+# define HTTP_METHODS_COUNT 3
+
+# define MAX_REQUEST_SIZE	10000 //Minimum request size per rfc 7230 is 8000 octets
+
 #endif

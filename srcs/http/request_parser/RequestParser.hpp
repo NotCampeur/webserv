@@ -6,9 +6,21 @@
 
 class RequestParser {
 
+public:
+    typedef enum parsing_state {
+        METHOD,
+        URI,
+        HEADERS
+    };
+
 private:
-    const std::string & _request;
-    std::string::iterator _offset;
+    Request *               _request;
+    
+    std::string             _raw;
+    std::string::iterator   _offset;
+    parsing_state           _state;
+    std::string             _httpmethod;
+    std::string             _uri;
 
 public:
 
@@ -20,12 +32,15 @@ public:
 
     RequestParser &  operator=(RequestParser const & src);
 
-    void    parse_request(void) const;
+    void    reset(void);
+
+    void    add_bytes_read(char *s, size_t len);
+    void    parse(void);
 
 private:
     void    parse_method();
     void    parse_uri();
-
+  
 };
 
 #endif
