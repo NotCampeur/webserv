@@ -33,6 +33,25 @@ Request::seturi(std::string & path, std::string & query, std::string & fragment)
     _uri.fragment = fragment;
 }
 
+void
+Request::seturi_path(std::string & path)
+{
+    _uri.path = path;
+}
+
+void
+Request::seturi_query( std::string & query)
+{
+    _uri.query = query;
+}
+
+void
+Request::seturi_fragment(std::string & fragment)
+{
+    _uri.fragment = fragment;
+}
+
+
 bool
 Request::iscomplete(void) const
 {

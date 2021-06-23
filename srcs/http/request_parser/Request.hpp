@@ -39,7 +39,9 @@ public:
     Request &  operator=(Request const & src);
 
     void    setmethod(http_method met);
-    void    seturi(std::string & path, std::string & query, std::string & fragment);
+    void    seturi_path(std::string & path);
+    void    seturi_query( std::string & query);
+    void    seturi_fragment(std::string & fragment);
     bool    iscomplete(void) const;
 
 };

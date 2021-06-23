@@ -10,6 +10,7 @@ public:
     typedef enum parsing_state {
         METHOD,
         URI,
+        VERSION,
         HEADERS
     };
 
@@ -40,7 +41,8 @@ public:
 private:
     void    parse_method();
     void    parse_uri();
-  
+    void    parse_query();
+    void    check_version();
 };
 
 #endif
