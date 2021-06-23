@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:51:17 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/22 17:17:03 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/23 19:52:33 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,20 +107,32 @@ Client::receive_response()
 
 // EXCEPTIONS
 
+Client::UnableToCreateClientSocket::UnableToCreateClientSocket() throw()
+: _msg("Unable to create a socket for the Client : ")
+{
+	_msg += strerror(errno);
+}
+
+Client::UnableToCreateClientSocket::~UnableToCreateClientSocket() throw()
+{}
+
 const char *
 Client::UnableToCreateClientSocket::what() const throw()
 {
-	std::string err = "Unable to create a socket for the Client : ";
-	err += strerror(errno);
-
-	return err.c_str();
+	return _msg.c_str();
 }
+
+Client::UnableToConnect::UnableToConnect() throw()
+: _msg("Unable to set socket as listener : ")
+{
+	_msg += strerror(errno);
+}
+
+Client::UnableToConnect::~UnableToConnect() throw()
+{}
 
 const char *
 Client::UnableToConnect::what() const throw()
 {
-	std::string err = "Unable to set socket as listener : ";
-	err += strerror(errno);
-
-	return err.c_str();
+	return _msg.c_str();
 }

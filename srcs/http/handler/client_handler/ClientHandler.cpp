@@ -65,20 +65,32 @@ ClientHandler::send_header(size_t content_length)
 		throw UnableToWriteToClient();
 }
 
-const char *
-ClientHandler::UnableToReadClientRequest::what() const throw()
+ClientHandler::UnableToReadClientRequest::UnableToReadClientRequest() throw()
+: _msg("Unable to read from client socket: ")
 {
-	std::string err = "Unable to read to client socket: ";
-	err += strerror(errno);	
-
-	return err.c_str();
+	_msg += strerror(errno);
 }
 
+ClientHandler::UnableToReadClientRequest::~UnableToReadClientRequest() throw()
+{}
+
 const char *
-ClientHandler::UnableToWriteToClient::what() const throw()
+ClientHandler::UnableToReadClientRequest::what(void) const throw()
 {
-	std::string err = "Unable to write to client socket: ";
-	err += strerror(errno);
-	
-	return err.c_str();
+	return _msg.c_str();
+}
+
+ClientHandler::UnableToWriteToClient::UnableToWriteToClient() throw()
+: _msg("Unable to write to client socket: ")
+{
+	_msg += strerror(errno);
+}
+
+ClientHandler::UnableToWriteToClient::~UnableToWriteToClient() throw()
+{}
+
+const char *
+ClientHandler::UnableToWriteToClient::what(void) const throw()
+{
+	return _msg.c_str();
 }

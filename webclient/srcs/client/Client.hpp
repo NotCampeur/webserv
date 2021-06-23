@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:48:33 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/22 17:06:53 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/06/23 19:51:28 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,19 @@ namespace webclient
 		public:
 			class UnableToCreateClientSocket : public std::exception
 			{
-				const char *what() const throw();
+					std::string	_msg;
+				public:
+					UnableToCreateClientSocket() throw();
+					~UnableToCreateClientSocket() throw();
+					const char *what() const throw();
 			};
 
 			class UnableToConnect : public std::exception
 			{
+					std::string	_msg;
+				public:
+					UnableToConnect() throw();
+					~UnableToConnect() throw();
 					const char *what() const throw();
 			};
 

@@ -89,38 +89,74 @@ Server::set_listener()
 
 // EXCEPTIONS
 
+Server::UnableToCreateServerSocket::UnableToCreateServerSocket() throw()
+: _msg("Unable to create a socket for the server : ")
+{
+	_msg += strerror(errno);
+}
+
+Server::UnableToCreateServerSocket::~UnableToCreateServerSocket()  throw()
+{}
+
 const char *
 Server::UnableToCreateServerSocket::what() const throw()
 {
-	std::string err = "Unable to create a socket for the server : ";
-	err += strerror(errno);
-
-	return err.c_str();
+	return _msg.c_str();
 }
+
+Server::UnableToNameSocket::UnableToNameSocket() throw()
+: _msg("Unable to name the socket of the server : ")
+{
+	_msg += strerror(errno);
+}
+
+Server::UnableToNameSocket::~UnableToNameSocket()  throw()
+{}
 
 const char *
 Server::UnableToNameSocket::what() const throw()
 {
-	std::string err = "Unable to name the socket of the server : ";
-	err += strerror(errno);
-
-	return err.c_str();
+	return _msg.c_str();
 }
+
+Server::UnableToSetListener::UnableToSetListener() throw()
+: _msg("Unable to set socket as listener : ")
+{
+	_msg += strerror(errno);
+}
+
+Server::UnableToSetListener::~UnableToSetListener() throw()
+{}
 
 const char *
 Server::UnableToSetListener::what() const throw()
 {
-	std::string err = "Unable to set socket as listener : ";
-	err += strerror(errno);
-
-	return err.c_str();
+	return _msg.c_str();
 }
+
+Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
+: _msg("cannot set nonblocking flag on fd"), _fd(-1)
+{
+	_msg << " : " << strerror(errno);
+}
+
+Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
+: _msg("cannot set nonblocking flag on fd : "), _fd(fd)
+{
+	_msg << _fd << " : " << strerror(errno);
+}
+
+Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
+{
+	_fd = to_copy._fd;
+	_msg << to_copy._msg.str();
+}
+
+Server::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
+{}
 
 const char *
 Server::UnableToSetNonblockFlag::what() const throw()
 {
-	std::ostringstream ss;
-
-	ss << "cannot set nonblocking flag on fd " << _fd << " : error : " << errno << std::endl;
-	return ss.str().c_str();
+	return _msg.str().c_str();
 }
