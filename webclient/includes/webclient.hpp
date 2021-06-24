@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webclient.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:32:47 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/22 12:33:58 by ldutriez_ho      ###   ########.fr       */
+/*   Updated: 2021/06/24 13:53:43 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <string>
 # include <cstring>
 # include <ctime>
+# include <random>
 
 # include <algorithm>
 # include <vector>
