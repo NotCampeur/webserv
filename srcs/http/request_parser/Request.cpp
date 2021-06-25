@@ -4,9 +4,9 @@ Request::Request(void) : _complete(false)
 {}
 
 Request::Request(Request const & src) :
-_raw(src._raw),
 _method(src._method),
 _uri(src._uri),
+_headers(src._headers),
 _complete(src._complete)
 {}
 
@@ -23,14 +23,6 @@ void
 Request::setmethod(http_method met)
 {
     _method = met;
-}
-
-void
-Request::seturi(std::string & path, std::string & query, std::string & fragment)
-{
-    _uri.path = path;
-    _uri.query = query;
-    _uri.fragment = fragment;
 }
 
 void
@@ -59,19 +51,11 @@ Request::iscomplete(void) const
 }
 
 void
-Request::add_bytes_read(char *s, size_t len)
+Request::add_header(std::string & title, std::string & content)
 {
-    _raw += std::string(s, len);
-}
+    std::pair<std::string, std::string> * p = new std::pair<std::string, std::string>;
+    p->first = title;
+    p->second = content;
 
-void
-Request::parse(void)
-{
-    
+    _headers.push_back(*p);
 }
-
-// std::ostream &
-// operator<<(std::ostream & o, Request & req)
-// {
-//     o << "Request: \n" <<
-// }

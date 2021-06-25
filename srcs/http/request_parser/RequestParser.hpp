@@ -3,25 +3,33 @@
 
 # include "webserv.hpp"
 # include "Request.hpp"
+# include "RequestUriParser.hpp"
+# include "RequestHeaderParser.hpp"
 
 class RequestParser {
 
 public:
-    typedef enum parsing_state {
+    typedef enum request_parsing_state {
         METHOD,
         URI,
         VERSION,
-        HEADERS
+		REQ_LINE_CRLF,
+        HEADERS,
+		HEADER_CRLF,
+		FINAL_CRLF,
+        DONE
     };
 
 private:
     Request *               _request;
-    
-    std::string             _raw;
-    std::string::iterator   _offset;
-    parsing_state           _state;
-    std::string             _httpmethod;
-    std::string             _uri;
+	RequestUriParser		_uri_parser;
+	RequestHeaderParser		_header_parser;
+
+    std::string  			_buffer;
+    size_t       			_offset;
+    request_parsing_state	_request_state;
+    std::string  			_http_method;
+	std::string				_http_version;
 
 public:
 
@@ -33,16 +41,15 @@ public:
 
     RequestParser &  operator=(RequestParser const & src);
 
-    void    reset(void);
-
     void    add_bytes_read(char *s, size_t len);
     void    parse(void);
 
 private:
-    void    parse_method();
-    void    parse_uri();
-    void    parse_query();
-    void    check_version();
+    void    reset(void);
+
+    void    parse_method(char c);
+    void    check_version(char c);
+    void    request_error(int code);
 };
 
 #endif

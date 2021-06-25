@@ -23,7 +23,6 @@ public:
 
     //Public for now to improve code readibility
 
-
 private:
     http_method _method;
     uri         _uri;
@@ -43,6 +42,7 @@ public:
     void    seturi_query( std::string & query);
     void    seturi_fragment(std::string & fragment);
     bool    iscomplete(void) const;
+    void    add_header(std::string & title, std::string & content);
 
 };
 
