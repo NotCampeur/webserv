@@ -1,17 +1,15 @@
-#ifndef REQUESTHEADERPARSER_H
-# define REQUESTHEADERPARSER_H
+#ifndef WEBSERV_REQUESTHEADERPARSER_HPP
+# define WEBSERV_REQUESTHEADERPARSER_HPP
 
 # include "webserv.hpp"
 
 class RequestHeaderParser
 {
 	private:
-		typedef enum header_parsing_state {
+		enum header_parsing_state {
 			FIELD_NAME,
 			COLON,
-			FIELD_VALUE,
-			TRAILING_WP,
-			HEADER_CRLF
+			FIELD_VALUE
 		};
 
 		header_parsing_state	_state;
@@ -21,15 +19,17 @@ class RequestHeaderParser
 	public:
 
 		RequestHeaderParser(void);
-		RequestHeaderParser(RequestHeaderParser const & src);
+		// RequestHeaderParser(RequestHeaderParser const & src);
 		~RequestHeaderParser(void);
 
-		RequestHeaderParser &  operator=(RequestHeaderParser const & src);
+		// RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 
-		bool	parse_char(char c) throw();
-		void	reset(void);
+		bool		parse_char(char c);
+		void		reset(void);
+		std::string	get_header_name(void) const;
+		std::string	get_header_value(void) const;
 
 	private:
-		bool	RequestHeaderParser::iswhitespace(char c);
+		bool	iswhitespace(char c);
 };
 #endif

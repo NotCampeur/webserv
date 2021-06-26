@@ -2,15 +2,15 @@
 # define WEBSERV_CLIENT_HANDLER_HPP
 
 # include "IEventHandler.hpp"
-# include "HandlerTable.hpp"
 # include "Client.hpp"
-
+# include "RequestParser.hpp"
 
 class ClientHandler : public IEventHandler
 {
 	private:
 
-		Client &	_client;
+		const Client &		_client;
+		RequestParser	_req_parser;
 
 	public:
 
@@ -24,8 +24,7 @@ class ClientHandler : public IEventHandler
 		int			 get_clientfd(void) const;
 
 	private:
-
-		void	send_header(size_t content_length);
+		void	set_header(std::stringstream & header, size_t content_length);
 	
 	// Exceptions
 	public:

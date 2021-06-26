@@ -12,11 +12,11 @@ _complete(src._complete)
 
 Request::~Request(void) {}
 
-Request &
-Request::operator=(Request const & src)
-{
-    return (*this);
-}
+// Request &
+// Request::operator=(Request const & src)
+// {
+//     return (*this);
+// }
 
 
 void

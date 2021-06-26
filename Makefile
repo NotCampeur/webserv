@@ -31,23 +31,24 @@ vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 LIB = ft
 
 SRC	=	main.cpp \
-		Server.cpp ClientRequest.cpp \
-		\
 		Logger.cpp \
-		\
-		Demultiplexer.cpp HandlerTable.cpp InitiationDispatcher.cpp \
-		ServerHandler.cpp ClientHandler.cpp Client.cpp \
-		sigint_handler.cpp
+		sigint_handler.cpp \
+		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
+		ServerHandler.cpp ClientHandler.cpp \
+		Server.cpp Client.cpp \
+		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp \
+		Request.cpp
+
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))
 
 #Compilation flag
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 DEBUG =
 ifdef DEBUG
-    CPPFLAGS += -fsanitize=address
+    CPPFLAGS += -g3 -fsanitize=address
 endif
 
 IFLAGS =	$(foreach dir, $(INC_DIR), -I$(dir))
@@ -120,9 +121,6 @@ exec_dev:		$(NAME_DEV)
 				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) in verbose mode ... \n"
 				@./$(NAME_DEV) 3
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
-
-norme:
-				norminette $(SRC_DIR)
 
 re:				fclean all
 

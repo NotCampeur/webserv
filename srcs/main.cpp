@@ -47,7 +47,7 @@ int	main(int ac, char *av[])
 	if (ac <= 1)
 		return EXIT_FAILURE;
 
-	Logger::accept_importance(all_lvl ^ debug_lvl);
+	Logger::accept_importance(all_lvl);
 	Logger(LOG_FILE, basic_type, all_lvl) << "Launching the servers " << 42 << " yeah baby";
 
 	serv_test(std::atol(av[1]));

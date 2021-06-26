@@ -4,50 +4,45 @@ RequestHeaderParser::RequestHeaderParser(void) :
 _state(FIELD_NAME)
 {}
 
-RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src)
-{
-    (void)src;
-}
+// RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src)
+// {
+//     (void)src;
+// }
 
 RequestHeaderParser::~RequestHeaderParser(void) {}
 
-RequestHeaderParser &
-RequestHeaderParser::operator=(RequestHeaderParser const & src)
-{
-    return (*this);
-}
+// RequestHeaderParser &
+// RequestHeaderParser::operator=(RequestHeaderParser const & src)
+// {
+//     return (*this);
+// }
 
 void
 RequestHeaderParser::reset(void)
 {
 	_state = FIELD_NAME;
-	_field_name.empty();
-	_field_value.empty();
+	_field_name.clear();
+	_field_value.clear();
 }
 
 bool
-RequestHeaderParser::parse_char(char c) throw()
+RequestHeaderParser::parse_char(char c)
 {
 	switch (_state)
 	{
 		case FIELD_NAME :
 		{
-			// if (c == '\r')
-			// {
-			// 	_request_state = FINAL_CRLF;
-			// 	return ;
-			// }
 			if(c == ':')
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{
-					throw(400);
+					throw(40); // Error code 400
 				}
 				_state = COLON;
 			}
 			else
 			{
-				_field_name += c;
+				_field_name += c; // Could use "to_lower" here as field names are case insensitive
 			}
 			break ;
 		}
@@ -62,13 +57,9 @@ RequestHeaderParser::parse_char(char c) throw()
 		}
 		case FIELD_VALUE :
 		{
-			if (iswhitespace(c))
+			if (c == '\r')
 			{
-				_state = TRAILING_WP;
-			}
-			else if (c == '\r')
-			{
-				_state = HEADER_CRLF;
+				return true;
 			}
 			else
 			{
@@ -76,30 +67,8 @@ RequestHeaderParser::parse_char(char c) throw()
 			}
 			break ;
 		}
-		case TRAILING_WP :
-		{
-			if (!iswhitespace(c))
-			{
-				if (c == '\r')
-				{
-					_state = HEADER_CRLF;
-				}
-				else
-				{
-					throw(400); //Error code TBC
-				}
-			}
-			break ;
-		}
-		case HEADER_CRLF :
-		{
-			if (c != '\n')
-			{
-				throw(400); // Code TBC
-			}
-			return true;
-		}
 	}
+	return false;
 }
 
 bool
@@ -108,4 +77,17 @@ RequestHeaderParser::iswhitespace(char c)
 	if (c == ' ' || c == '\t')
 		return true;
 	return false;
+}
+
+
+std::string
+RequestHeaderParser::get_header_name(void) const
+{
+	return _field_name;
+}
+
+std::string
+RequestHeaderParser::get_header_value(void) const
+{
+	return _field_value;
 }

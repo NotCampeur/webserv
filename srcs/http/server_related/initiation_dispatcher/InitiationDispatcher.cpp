@@ -35,11 +35,13 @@ InitiationDispatcher::handle_events(void)
 			{
 				if (POLLIN == (POLLIN & it->revents))
 				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
 					it++;
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
 					remove_handle(it->fd);
 					ite--;

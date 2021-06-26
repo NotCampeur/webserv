@@ -21,9 +21,9 @@ void
 RequestUriParser::reset(void)
 {
 	_state = PATH;
-	_path.empty();
-	_query.empty();
-	_fragment.empty();
+	_path.clear();
+	_query.clear();
+	_fragment.clear();
 }
 
 bool
@@ -81,4 +81,22 @@ RequestUriParser::parse_char(char c)
 		}
 	}
 	return false;
+}
+
+const std::string &
+RequestUriParser::getpath(void) const
+{
+	return _path;
+}
+
+const std::string &
+RequestUriParser::getquery(void) const
+{
+	return _query;
+}
+
+const std::string &
+RequestUriParser::getfragment(void) const
+{
+	return _fragment;
 }

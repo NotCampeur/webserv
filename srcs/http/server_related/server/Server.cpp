@@ -6,6 +6,7 @@ Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
 	make_nonblocking();
 	init_addr_inputs(com_domain, port, ip);
 	name_serv_socket();
+	set_sock_opt();
 	set_listener();
 }
 
@@ -36,12 +37,11 @@ Server::getsockfd() const
 void
 Server::create_socket(int domain, int type, int protocol)
 {
-	int	reuse = 0;
-	int	result = 0;
+	// int	reuse = 0;
+	// int	result = 0;
 	
 	this->_sockfd = socket(domain, type, protocol);
-	result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
-	if (result == -1 || _sockfd == -1)
+ 	if (_sockfd == -1)
 		throw UnableToCreateServerSocket();
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
 }
@@ -75,6 +75,17 @@ Server::name_serv_socket()
 		throw UnableToNameSocket();
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
 }
+
+void
+Server::set_sock_opt()
+{
+	int result, reuse;
+	result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
+	if (result == -1)
+		throw UnableToSetSockOpt();
+	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
+}
+
 
 void
 Server::set_listener()
@@ -123,4 +134,9 @@ Server::UnableToSetNonblockFlag::what() const throw()
 
 	ss << "cannot set nonblocking flag on fd " << _fd << " : error : " << errno << std::endl;
 	return ss.str().c_str();
+}
+const char *
+Server::UnableToSetSockOpt::what() const throw()
+{
+	return "Unable to set socket option";
 }

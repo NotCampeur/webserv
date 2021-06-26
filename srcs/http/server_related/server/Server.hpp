@@ -30,6 +30,7 @@ class Server
 		void				make_nonblocking();		
 		void				init_addr_inputs(int domain, int port, u_int32_t ip);
 		void				name_serv_socket();
+		void				set_sock_opt();
 		void				set_listener();
 
 	// Class Exceptions:
@@ -57,6 +58,11 @@ class Server
 			private:
 				const char *what() const throw();
 				int			_fd;
+		};
+
+		class UnableToSetSockOpt : public std::exception
+		{
+			const char * what() const throw();
 		};
 };
 

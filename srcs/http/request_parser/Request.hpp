@@ -6,13 +6,13 @@
 class Request {
 
 public:
-    typedef enum http_method {
+    enum http_method {
         GET,
         POST,
         DELETE
     };
 
-    typedef struct uri
+    struct uri
     {
         std::string path;
         std::string query;
@@ -35,7 +35,7 @@ public:
     Request(Request const & src);
     ~Request(void);
 
-    Request &  operator=(Request const & src);
+    // Request &  operator=(Request const & src);
 
     void    setmethod(http_method met);
     void    seturi_path(std::string & path);

@@ -24,7 +24,6 @@ class Client
 
         int     getsockfd(void) const;
 
-
         void    add_request(Request * req);
         bool    no_request(void) const;
         Request *latest_request(void) const;

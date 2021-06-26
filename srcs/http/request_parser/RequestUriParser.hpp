@@ -1,5 +1,5 @@
-#ifndef REQUESTURIPARSER_H
-# define REQUESTURIPARSER_H
+#ifndef WEBSERV_REQUESTURIPARSER_HPP
+# define WEBSERV_REQUESTURIPARSER_HPP
 
 # include "webserv.hpp"
 
@@ -7,7 +7,7 @@ class RequestUriParser
 {
 	private:
 
-		typedef enum uri_parsing_state {
+		enum uri_parsing_state {
 			PATH,
 			QUERY,
 			FRAGMENT
@@ -21,16 +21,16 @@ class RequestUriParser
 	public:
 
 		RequestUriParser(void);
-		RequestUriParser(RequestUriParser const & src);
+		// RequestUriParser(RequestUriParser const & src);
 		~RequestUriParser(void);
 
-		RequestUriParser &  operator=(RequestUriParser const & src);
+		// RequestUriParser &  operator=(RequestUriParser const & src);
 
-		bool			parse_char(char c);
-		std::string &	getpath(void) const;
-		std::string &	getquery(void) const;
-		std::string &	getfragment(void) const;
-		void			reset(void);
+		bool				parse_char(char c);
+		const std::string &	getpath(void) const;
+		const std::string &	getquery(void) const;
+		const std::string &	getfragment(void) const;
+		void				reset(void);
 
 };
 

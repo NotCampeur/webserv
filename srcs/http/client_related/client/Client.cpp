@@ -19,7 +19,7 @@ Client::~Client(void)
     delete _address;
 
     size_t queue_size = _requests->size();
-    for (int i = 0; i < queue_size; i++)
+    for (size_t i = 0; i < queue_size; i++)
     {
         delete _requests->front();
     }

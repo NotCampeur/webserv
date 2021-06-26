@@ -22,17 +22,8 @@ ClientHandler::get_clientfd(void) const
 void 
 ClientHandler::readable(void)
 {
-	Request *req;
-
-	if (_client.no_request() || _client.latest_request()->iscomplete())
-	{
-		req = new Request;
-		_client.add_request(req);
-	}
-	else
-	{
-		req = _client.latest_request();
-	}
+	if (_req_parser.iscomplete())
+		return ;
 
 	char		read_buff[RECV_BUF_SIZE] = {0};
 	ssize_t		bytes_read;
@@ -43,9 +34,7 @@ ClientHandler::readable(void)
 		if (bytes_read == -1)
 			throw UnableToReadClientRequest();
 
-		std::string s(read_buff, bytes_read);
-		req->add_bytes_read(read_buff, bytes_read);
-
+		_req_parser.parse(read_buff, bytes_read);
 		// Break conditions: buffer was not full after last read || req is complete (in which case, woud need to handle buffer leftovers if any)
 		if (bytes_read < RECV_BUF_SIZE)
 			break;
@@ -56,34 +45,43 @@ ClientHandler::readable(void)
 void
 ClientHandler::writable(void)
 {
-	std::string msg = "Hello World\n";
-	ssize_t		bytes_written;
+	if (!_req_parser.iscomplete())
+		return ;
+
+	std::stringstream	ss;
+	static std::string 	msg = "Hello World\n";
+	ssize_t				bytes_written;
 
 	try
 	{
-		send_header(msg.size());
+		set_header(ss, msg.size());
 	}
 	catch(const std::exception& e)
 	{
 		throw e;
 	}
-	bytes_written = send(get_clientfd(), msg.c_str(), msg.size(), 0);
-	if (bytes_written != static_cast<ssize_t>(msg.size()))
+
+	ss << msg;
+	std::string datagram = ss.str();
+
+	bytes_written = send(get_clientfd(), datagram.c_str(), datagram.size(), 0);
+
+	if (bytes_written != static_cast<ssize_t>(datagram.size()))
 		throw UnableToWriteToClient();
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << msg;
+
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << datagram;
+
+	_req_parser.next_request();	
 }
 
 void
-ClientHandler::send_header(size_t content_length)
-{
-	int	bytes_written;
-	
-	std::string	header = "HTTP/1.1 200 OK\nContent-Type: text\nContent-Length: ";
-	header += content_length;
-	header += "\n\n";
-	bytes_written = send(get_clientfd(), header.c_str(), header.size(), 0);
-	if (bytes_written == -1)
-		throw UnableToWriteToClient();
+ClientHandler::set_header(std::stringstream & header, size_t content_length)
+{	
+	header << "HTTP/1.1 200 OK\r\n"
+	<< "Content-Type: text\r\n"
+	<< "Content-Length: "
+	<< (content_length)
+	<< "\r\n\r\n";
 }
 
 const char *

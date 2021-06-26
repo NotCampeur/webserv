@@ -1,5 +1,5 @@
-#ifndef REQUESTPARSER_H
-# define REQUESTPARSER_H
+#ifndef WEBSERV_REQUESTPARSER_HPP
+# define WEBSERV_REQUESTPARSER_HPP
 
 # include "webserv.hpp"
 # include "Request.hpp"
@@ -9,7 +9,7 @@
 class RequestParser {
 
 public:
-    typedef enum request_parsing_state {
+    enum request_parsing_state {
         METHOD,
         URI,
         VERSION,
@@ -17,39 +17,47 @@ public:
         HEADERS,
 		HEADER_CRLF,
 		FINAL_CRLF,
+		ERROR,
         DONE
     };
 
 private:
-    Request *               _request;
-	RequestUriParser		_uri_parser;
-	RequestHeaderParser		_header_parser;
+	RequestUriParser					_uri_parser;
+	RequestHeaderParser					_header_parser;
 
-    std::string  			_buffer;
-    size_t       			_offset;
-    request_parsing_state	_request_state;
-    std::string  			_http_method;
-	std::string				_http_version;
+	bool								_complete;
+    request_parsing_state				_request_state;
+    std::string  						_http_method;
+	std::string							_http_version;
+	std::map<std::string, std::string>	_headers;
+
+	std::string							_buffer_leftovers;
+
+	size_t								_debug_code;
 
 public:
 
     RequestParser(void);
-    RequestParser(std::string & request);
+    // RequestParser(std::string & request);
 
-    RequestParser(RequestParser const & src);
+    // RequestParser(RequestParser const & src);
     ~RequestParser(void);
 
-    RequestParser &  operator=(RequestParser const & src);
+    // RequestParser &  operator=(RequestParser const & src);
 
-    void    add_bytes_read(char *s, size_t len);
-    void    parse(void);
+    void    parse(const char *buffer, size_t len);
+	bool	iscomplete(void) const;
+	void	next_request(void);
 
 private:
     void    reset(void);
 
+	void	parse_char(char c);
     void    parse_method(char c);
     void    check_version(char c);
     void    request_error(int code);
+
+	void	add_header(void);
 };
 
 #endif
