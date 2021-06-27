@@ -53,6 +53,7 @@ InitiationDispatcher::handle_events(void)
 		catch(const std::exception& e)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
+			g_run_status = false;
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";

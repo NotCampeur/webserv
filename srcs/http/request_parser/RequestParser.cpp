@@ -32,7 +32,7 @@ RequestParser::parse(const char *buffer, size_t len)
 			_complete = true;
 			_buffer_leftovers.clear(); // In case of an error, flush buffer
 
-			std::cerr << "***Request error nb: " << _debug_code << '\n';
+			std::cerr << "***Request error nb: " << _debug_code << " ***\n";
 			break ;
 		}
 		else if (_request_state == DONE) // Should set request to Complete here
