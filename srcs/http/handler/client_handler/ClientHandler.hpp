@@ -31,12 +31,20 @@ class ClientHandler : public IEventHandler
 
 		class UnableToReadClientRequest : public std::exception
 		{
-			const char *what() const throw();
+				std::string	_msg;
+			public:
+				UnableToReadClientRequest() throw();
+				~UnableToReadClientRequest() throw();
+				const char * what(void) const throw();
 		};
 		
 		class UnableToWriteToClient : public std::exception
 		{
-			const char *what() const throw();
+				std::string	_msg;
+			public:
+				UnableToWriteToClient() throw();
+				~UnableToWriteToClient() throw();
+				const char * what(void) const throw();
 		};
 };
 

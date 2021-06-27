@@ -7,6 +7,7 @@ class RequestHeaderParser
 {
 	private:
 		enum header_parsing_state {
+			LEADING_WP,
 			FIELD_NAME,
 			COLON,
 			FIELD_VALUE

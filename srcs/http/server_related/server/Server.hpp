@@ -38,26 +38,41 @@ class Server
 	public:
 		class UnableToCreateServerSocket : public std::exception
 		{
-			const char *what() const throw();
+				std::string	_msg;
+			public:
+				UnableToCreateServerSocket() throw();
+				~UnableToCreateServerSocket() throw();
+				const char * what(void) const throw();
 		};
 
 		class UnableToNameSocket : public std::exception
 		{
-			const char *what() const throw();
+				std::string	_msg;
+			public:
+				UnableToNameSocket() throw();
+				~UnableToNameSocket() throw();
+				const char * what(void) const throw();
 		};
 
 		class UnableToSetListener : public std::exception
 		{
-				const char *what() const throw();
+				std::string	_msg;
+			public:
+				UnableToSetListener() throw();
+				~UnableToSetListener() throw();
+				const char * what(void) const throw();
 		};
 
 		class UnableToSetNonblockFlag : public std::exception
 		{
+				std::ostringstream	_msg;
+				int					_fd;
 			public:
-				UnableToSetNonblockFlag(int fd) throw() : _fd(fd) {}
-			private:
+				UnableToSetNonblockFlag() throw();
+				UnableToSetNonblockFlag(int fd) throw();
+				UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw();
+				~UnableToSetNonblockFlag() throw();
 				const char *what() const throw();
-				int			_fd;
 		};
 
 		class UnableToSetSockOpt : public std::exception

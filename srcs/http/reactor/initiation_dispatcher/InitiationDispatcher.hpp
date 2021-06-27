@@ -23,15 +23,6 @@ class InitiationDispatcher
 		void					add_handle(const Server & srv);
 		void					add_handle(const Client & clt);
 		void					remove_handle(int fd);
-
-		class DemultiplexerNotSet : public std::exception
-		{
-			const char * what(void) const throw();
-		};
-		class HandlerTableNotSet : public std::exception
-		{
-			const char * what(void) const throw();
-		};
 };
 
 #endif

@@ -89,12 +89,19 @@ Demultiplexer::end()
 	return _pollfds.end();
 }
 
+Demultiplexer::PollingError::PollingError() throw()
+: _msg("Unable to poll descriptors : ")
+{
+	_msg += strerror(errno);
+}
+
+Demultiplexer::PollingError::~PollingError() throw()
+{}
+
 const char *
 Demultiplexer::PollingError::what(void) const throw()
 {
-	std::string err = "Unable to poll descriptors: ";
-	err += strerror(errno);
-	return err.c_str();
+	return _msg.c_str();
 }
 
 const char *

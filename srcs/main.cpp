@@ -33,7 +33,7 @@ void	serv_test(long server_amount)
 		{
 			Logger(LOG_FILE, error_type, error_lvl) << e.what();
 		}
-		
+
 		idis.handle_events();
 	}
 	catch(const std::exception &e)

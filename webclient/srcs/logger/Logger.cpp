@@ -53,7 +53,7 @@ Logger::quit(void)
 
 	for (; it != ite; it++)
 	{
-		*it->second << "End of logs" << std::endl;
+		*it->second << "End of the log" << std::endl;
 		delete it->second;
 	}
 }
@@ -89,7 +89,7 @@ Logger::operator<<(const std::string & entry)
 Logger &
 Logger::operator<<(const char * const & entry)
 {
-	if (is_important_enough() && entry != nullptr)
+	if (is_important_enough() && entry != NULL)
 		*_files[_path] << entry;
 	return *this;
 }

@@ -20,7 +20,7 @@ RequestHeaderParser::~RequestHeaderParser(void) {}
 void
 RequestHeaderParser::reset(void)
 {
-	_state = FIELD_NAME;
+	_state = LEADING_WP;
 	_field_name.clear();
 	_field_value.clear();
 }
@@ -30,6 +30,15 @@ RequestHeaderParser::parse_char(char c)
 {
 	switch (_state)
 	{
+		case LEADING_WP :
+		{
+			if (!iswhitespace(c))
+			{
+				_state = FIELD_NAME;
+				_field_name += c;
+			}
+			break ;
+		}
 		case FIELD_NAME :
 		{
 			if(c == ':')

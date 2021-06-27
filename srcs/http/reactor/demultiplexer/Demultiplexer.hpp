@@ -30,7 +30,11 @@ class Demultiplexer
 
 		class PollingError : public std::exception
 		{
-			const char * what(void) const throw();
+				std::string	_msg;
+			public:
+				PollingError() throw();
+				~PollingError() throw();
+				const char * what(void) const throw();
 		};
 		
 		class PollingTimeout : public std::exception
