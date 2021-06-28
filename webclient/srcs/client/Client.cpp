@@ -93,8 +93,11 @@ Client::send_request(std::string file_path)
 		to_send += tmp + "\r\n";
 	}
 	to_send += "\r\n";
-	send(_sockfd , to_send.c_str() , to_send.size() , 0);
+	
 	file.close();
+	
+	send(_sockfd , to_send.c_str() , to_send.size() , 0);
+
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The Client sent :\n" << to_send;
 }
 

@@ -28,16 +28,13 @@ ClientHandler::readable(void)
 	char		read_buff[RECV_BUF_SIZE] = {0};
 	ssize_t		bytes_read;
 
-	while (1)
-	{
-		bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
-		if (bytes_read == -1)
-			throw UnableToReadClientRequest();
+	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
+
+	if (bytes_read == -1)
+		throw UnableToReadClientRequest();
+	else if (bytes_read > 0)
 		_req_parser.parse(read_buff, bytes_read);
-		// Break conditions: buffer was not full after last read || req is complete (in which case, woud need to handle buffer leftovers if any)
-		if (bytes_read < RECV_BUF_SIZE)
-			break;
-	}
+
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 

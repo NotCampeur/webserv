@@ -19,7 +19,7 @@ void	simultaneous_test(int amount, std::string request_path, int range_start, in
 	std::random_device					rd;
 	std::mt19937						rng(rd());
 	std::uniform_int_distribution<int>	uni(range_start, range_end);
-	std::vector<webclient::Client> clients;
+	std::vector<webclient::Client>		 clients;
 
 	for (int i(0); i < amount; i++)
 	{
@@ -44,6 +44,7 @@ void	unit_test(int amount, std::string request_path, int range_start, int range_
 		port = uni(rng);
 		webclient::Client cl(port, AF_INET, SOCK_STREAM);
 		cl.send_request(request_path);
+		usleep(10000);
 		cl.receive_response();
 	}
 }
@@ -55,8 +56,8 @@ int main(int ac, char *av[])
 	Logger::accept_importance(all_lvl);
 	try
 	{
-		// simultaneous_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
-		unit_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
+		simultaneous_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
+		// unit_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
 	}
 	catch(const std::exception& e)
 	{

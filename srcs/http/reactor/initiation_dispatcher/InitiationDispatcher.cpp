@@ -37,6 +37,7 @@ InitiationDispatcher::handle_events(void)
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
+					it->revents = 0;
 					it++;
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
@@ -47,13 +48,14 @@ InitiationDispatcher::handle_events(void)
 					ite--;
 				}
 				else
-					it++;				
+					it++;
 			}
+
 		}
 		catch(const std::exception& e)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
-			g_run_status = false;
+			g_run_status = false;	// FOR TESTING PURPOSES, CONSIDER REMOVING
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";
