@@ -37,7 +37,6 @@ InitiationDispatcher::handle_events(void)
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
-					it->revents = 0;
 					it++;
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
