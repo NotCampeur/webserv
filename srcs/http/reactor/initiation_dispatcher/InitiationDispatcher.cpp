@@ -24,63 +24,79 @@ InitiationDispatcher::handle_events(void)
 {
 	while (g_run_status)
 	{
-		try
-		{
+		try {
 			_demultiplexer->activate();
-
+			// Think of different implementation as remove handle operations could 
 			Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
-			Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
-
-			while (it != ite)
+			while (it != _demultiplexer->end())
 			{
 				if (POLLIN == (POLLIN & it->revents))
 				{
-					// Add handle 
-					// Add bool for close
-					// Check if req is complete to change POLLIN/POLLOUT
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
-					int ret = _event_handler_table->get(it->fd)->readable();
 
-					switch (ret)
+					try {
+						int ret = _event_handler_table->get(it->fd)->readable();
+						switch (ret)
+						{
+							case CLIENT_CLOSED_CONNECTION :
+							{
+								remove_handle(it->fd);
+								break ;
+							}
+							case REQUEST_COMPLETE :
+							{
+								it->events = POLLOUT;
+								it++;
+								break ;
+							}
+							case REQUEST_INCOMPLETE :
+							{
+								it++;
+								break ;
+							}
+						}
+					}
+					catch(const std::exception& e)
 					{
-						case CLIENT_CLOSED_CONNECTION :
+						Logger(LOG_FILE, error_type) << e.what();
+						if (errno == ECONNRESET)
 						{
 							remove_handle(it->fd);
-							ite--;
-							break ;
 						}
-						case REQUEST_COMPLETE :
-						{
-							it->events = POLLOUT;
-							it++;
+						else
 							break ;
-						}
-						case REQUEST_INCOMPLETE :
-						{
-							it++;
-							break ;
-						}
-						default :
-							it++;
 					}
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
-					_event_handler_table->get(it->fd)->writable();
-					// Should reset revent to POLLIN here
+
+					try {
+						_event_handler_table->get(it->fd)->writable();
+						// it->events = POLLIN; // Uncomment when timout is implemented
+					}
+					catch (const std::exception& e)
+					{
+						// Uncomment to below once Timemout feature is implemented
+						if (errno == ECONNRESET || errno == EHOSTDOWN || errno == EHOSTUNREACH)
+						// {
+						// 	remove_handle(it->fd);
+						// }
+						// else
+						Logger(LOG_FILE, error_type) << e.what();
+						break ;
+					}
 					remove_handle(it->fd);
-					ite--;
 				}
 				else
 					it++;
 			}
-
 		}
-		catch(const std::exception& e)
+		catch (const std::exception & e)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
-			g_run_status = false;	// FOR TESTING PURPOSES, CONSIDER REMOVING
+			if (errno != EAGAIN)
+				break ;
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";

@@ -1,4 +1,4 @@
-#include "Request.hpp"
+#include "Request_delete.hpp"
 
 Request::Request(void) : _complete(false)
 {}

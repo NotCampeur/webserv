@@ -43,7 +43,7 @@ void
 HandlerTable::add(int fd, IEventHandler & event_handler)
 {
 	_handler_table->insert(std::pair<int, IEventHandler *>(fd, &event_handler));
-	Logger(LOG_FILE, basic_type, debug_lvl) << "fd: " << fd << " has been add to the handler table";
+	Logger(LOG_FILE, basic_type, debug_lvl) << "fd: " << fd << " has been added to the handler table";
 }
 
 void

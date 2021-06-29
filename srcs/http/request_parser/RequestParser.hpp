@@ -2,7 +2,6 @@
 # define WEBSERV_REQUESTPARSER_HPP
 
 # include "webserv.hpp"
-# include "Request.hpp"
 # include "RequestUriParser.hpp"
 # include "RequestHeaderParser.hpp"
 

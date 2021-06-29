@@ -36,8 +36,7 @@ SRC	=	main.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
 		ServerHandler.cpp ClientHandler.cpp \
 		Server.cpp Client.cpp \
-		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp \
-		Request.cpp
+		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp
 
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))

@@ -30,7 +30,9 @@ Demultiplexer::activate(void)
 
 	result = poll(_pollfds.data(), _pollfds.size(), _timeout);
 	if (result == -1)
+	{
 		throw Demultiplexer::PollingError();
+	}
 	else if (result == 0)
 	{
 		Logger(LOG_FILE, basic_type, minor_lvl) << "Poll timeout";
