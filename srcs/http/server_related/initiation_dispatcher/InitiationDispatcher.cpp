@@ -45,7 +45,7 @@ InitiationDispatcher::handle_events(void)
 					ite--;
 				}
 				else
-					it++;				
+					it++;
 			}
 		}
 		catch(const std::exception& e)

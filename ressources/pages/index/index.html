@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+	<!--<link rel="stylesheet" href="styles.css">-->
+	<style>
+		body {
+			background-image: url("background.jpeg");
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: cover;
+			background-position: center;
+		}
+
+		body p {
+			color: cyan;
+			font-family: cursive;
+			font-style: oblique;
+			position: relative;
+			/* top: -140px; */
+			font-size: 7vmax;
+			text-align: center;
+		}
+
+		input[type=submit] {
+			width: 4vmax;
+			height: 1.5vmax;
+			background-color: purple;
+			color: black;
+			font-weight: bolder;
+			font-size: 1vmax;
+		}
+
+		.subject {
+			border: 0.3vmax ridge purple;
+			padding: 1vmax;
+			position: relative;
+			top: 1vmax;
+			width: 4vmax;
+			left: 47%;
+			background-color: rgba(0, 255, 255, 0.6);
+		}
+
+		.subject form {
+			text-align: center;
+			position: relative;
+			top: 0vmax;
+		}
+	</style>
+	<title>Webserv</title>
+</head>
+
+<body>
+	<p> Webserv </p>
+	<div class="subject">
+		<form action="subject.txt" target="_blank">
+			<input type="submit" value="Subject" />
+		</form>
+	</div>
+</body>
