@@ -10,6 +10,7 @@ class RequestParser {
 
 public:
     enum request_parsing_state {
+		START,
         METHOD,
         URI,
         VERSION,

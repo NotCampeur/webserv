@@ -52,6 +52,7 @@ RequestParser::parse(const char *buffer, size_t len)
 				std::cerr << "Header name: " << (*it).first << '\t'
 				<< "Header value: " << (*it).second << '\n';
 			}
+			std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
 			break ;
 		}
 	}
@@ -62,6 +63,15 @@ RequestParser::parse_char(char c)
 {
 	switch (_request_state)
 	{
+		case START :
+		{
+			if (c != '\r' && c != '\n')
+			{
+				_request_state = METHOD;
+				_http_method += c;
+			}
+			break ;
+		}
 		case METHOD :
 		{
 			parse_method(c);
@@ -179,7 +189,6 @@ RequestParser::parse_method(char c)
         {
             if (available_methods[i] == _http_method)
             {
-                // _request->setmethod(static_cast<Request::http_method>(i));
                 _request_state = URI;
 				return ;
             }
@@ -220,7 +229,7 @@ RequestParser::check_version(char c)
 		_http_version += c;
 		if (_http_version.size() > correct_version.size())
 		{
-			request_error(7); // Error code TBC
+			request_error(7); // Error code TBC - Should not be a bad_version error, but a bad_request_line error (bad spacing errors fall here)
 		}
 	}
 }
@@ -249,7 +258,7 @@ void
 RequestParser::reset(void)
 {
 	_complete = false;
-    _request_state = METHOD;
+    _request_state = START;
     _http_method.clear();
 	_http_version.clear();
     _uri_parser.reset();

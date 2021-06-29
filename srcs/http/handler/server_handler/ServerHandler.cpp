@@ -19,7 +19,7 @@ ServerHandler::operator=(ServerHandler const & src)
     return *this;
 }
 
-void
+int
 ServerHandler::readable(void)
 {
 	socklen_t sockaddr_size = sizeof(struct sockaddr);
@@ -39,10 +39,10 @@ ServerHandler::readable(void)
 			delete address;
 			if (errno != EWOULDBLOCK)
 				throw UnableToAcceptConnection(ret);
-			break ;
+			Logger(LOG_FILE, basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
+			return 0;
 		}
 	}
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
 }
 
 // No writable action can be detected on a server socket, hence this function does not do anything

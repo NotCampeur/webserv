@@ -18,10 +18,10 @@ class ClientHandler : public IEventHandler
 		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);
 
-		virtual void	readable(void);
+		virtual int		readable(void);
 		virtual void	writable(void);
 
-		int			 get_clientfd(void) const;
+		int				get_clientfd(void) const;
 
 	private:
 		void	set_header(std::stringstream & header, size_t content_length);

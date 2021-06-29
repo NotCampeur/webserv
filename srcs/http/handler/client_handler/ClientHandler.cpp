@@ -18,33 +18,46 @@ ClientHandler::get_clientfd(void) const
 {
 	return _client.getsockfd();
 }
-
-void 
+/*
+** If a request is complete: return
+** If recv returns 0: the client has closed the connection --> Need to close the socket and remove the client
+** Otherwise, read BUF_SIZE and parse it
+*/
+int 
 ClientHandler::readable(void)
 {
-	if (_req_parser.iscomplete())
-		return ;
-
 	char		read_buff[RECV_BUF_SIZE] = {0};
 	ssize_t		bytes_read;
 
 	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
 
 	if (bytes_read == -1)
+	{
 		throw UnableToReadClientRequest();
-	else if (bytes_read > 0)
+	}
+	else if (bytes_read == 0)
+	{
+		 return CLIENT_CLOSED_CONNECTION;
+	}
+	else
+	{
 		_req_parser.parse(read_buff, bytes_read);
-
+		
+		if (_req_parser.iscomplete())
+		{
+			return REQUEST_COMPLETE;
+		}
+		else
+		{
+			return REQUEST_INCOMPLETE;
+		}
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
 void
 ClientHandler::writable(void)
 {
-	// if (!_req_parser.iscomplete())
-	// 	return ;
-
-
 	while (_req_parser.iscomplete())
 	{
 		std::stringstream	ss;

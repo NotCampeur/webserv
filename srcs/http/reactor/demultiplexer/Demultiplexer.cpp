@@ -49,7 +49,7 @@ Demultiplexer::addfd(int fd)
 	struct pollfd	fd_data;
 
 	fd_data.fd = fd;
-	fd_data.events = POLLIN | POLLOUT;
+	fd_data.events = POLLIN;
 	fd_data.revents = 0;
 	_pollfds.push_back(fd_data);
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fd: " << fd << " has been added to demultiplexer";

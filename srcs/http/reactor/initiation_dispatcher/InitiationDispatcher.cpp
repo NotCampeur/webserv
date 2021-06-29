@@ -35,14 +35,40 @@ InitiationDispatcher::handle_events(void)
 			{
 				if (POLLIN == (POLLIN & it->revents))
 				{
+					// Add handle 
+					// Add bool for close
+					// Check if req is complete to change POLLIN/POLLOUT
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
-					_event_handler_table->get(it->fd)->readable();
-					it++;
+					int ret = _event_handler_table->get(it->fd)->readable();
+
+					switch (ret)
+					{
+						case CLIENT_CLOSED_CONNECTION :
+						{
+							remove_handle(it->fd);
+							ite--;
+							break ;
+						}
+						case REQUEST_COMPLETE :
+						{
+							it->events = POLLOUT;
+							it++;
+							break ;
+						}
+						case REQUEST_INCOMPLETE :
+						{
+							it++;
+							break ;
+						}
+						default :
+							it++;
+					}
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
+					// Should reset revent to POLLIN here
 					remove_handle(it->fd);
 					ite--;
 				}

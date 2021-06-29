@@ -56,8 +56,8 @@ int main(int ac, char *av[])
 	Logger::accept_importance(all_lvl);
 	try
 	{
-		simultaneous_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
-		// unit_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
+		// simultaneous_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
+		unit_test(atoi(av[1]), av[2], atoi(av[3]), atoi(av[4]));
 	}
 	catch(const std::exception& e)
 	{

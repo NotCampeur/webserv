@@ -23,8 +23,8 @@ class ServerHandler : public IEventHandler
 
         ServerHandler &  operator=(ServerHandler const & src);
 
-        virtual void    readable(void);
-        virtual void    writable(void);
+        virtual int		readable(void);
+        virtual void	writable(void);
 
         int             get_serverfd(void) const;
 
