@@ -25,7 +25,8 @@ class ServerHandler : public IEventHandler
 
         virtual int		readable(void);
         virtual void	writable(void);
-
+		virtual	bool	is_timeoutable(void);
+		virtual bool	is_timeout(void);
         int             get_serverfd(void) const;
 
     private:

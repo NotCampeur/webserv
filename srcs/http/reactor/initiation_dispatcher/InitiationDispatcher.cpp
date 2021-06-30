@@ -26,21 +26,25 @@ InitiationDispatcher::handle_events(void)
 	{
 		try {
 			_demultiplexer->activate();
-			// Think of different implementation as remove handle operations could 
+			// Think of different implementation as remove handle operations could have adversed effects on iterators
 			Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
-			while (it != _demultiplexer->end())
-			{
-				if (POLLIN == (POLLIN & it->revents))
-				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
+			Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 
-					try {
+			while (it != ite)
+			{
+				// std::cerr << "Loop! Fd: " << it->fd << '\n';
+				try {
+					if (POLLIN == (POLLIN & it->revents))
+					{
+						Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
+
 						int ret = _event_handler_table->get(it->fd)->readable();
 						switch (ret)
 						{
 							case CLIENT_CLOSED_CONNECTION :
 							{
 								remove_handle(it->fd);
+								ite--;
 								break ;
 							}
 							case REQUEST_COMPLETE :
@@ -54,42 +58,42 @@ InitiationDispatcher::handle_events(void)
 								it++;
 								break ;
 							}
+							default :
+								std::cerr << "Default case\n";
+								it++;
 						}
 					}
-					catch(const std::exception& e)
+					else if (POLLOUT == (POLLOUT & it->revents))
 					{
-						Logger(LOG_FILE, error_type) << e.what();
-						if (errno == ECONNRESET)
+						Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
+
+						_event_handler_table->get(it->fd)->writable();
+						it->events = POLLIN;
+					}	
+					else if (_event_handler_table->get(it->fd)->is_timeoutable())
+					{
+						std::cerr << "Timeout check: ";
+						if (_event_handler_table->get(it->fd)->is_timeout())
 						{
 							remove_handle(it->fd);
+							ite--;
+							std::cerr << "REMOVED\n";
 						}
 						else
-							break ;
+						{
+							std::cerr << "Not timeout yet\n";
+							it++;
+						}
 					}
+					else
+						it++;
 				}
-				else if (POLLOUT == (POLLOUT & it->revents))
+				catch (const std::exception& e)
 				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
-
-					try {
-						_event_handler_table->get(it->fd)->writable();
-						// it->events = POLLIN; // Uncomment when timout is implemented
-					}
-					catch (const std::exception& e)
-					{
-						// Uncomment to below once Timemout feature is implemented
-						if (errno == ECONNRESET || errno == EHOSTDOWN || errno == EHOSTUNREACH)
-						// {
-						// 	remove_handle(it->fd);
-						// }
-						// else
-						Logger(LOG_FILE, error_type) << e.what();
-						break ;
-					}
 					remove_handle(it->fd);
+					ite--;
+					Logger(LOG_FILE, error_type) << e.what();
 				}
-				else
-					it++;
 			}
 		}
 		catch (const std::exception & e)

@@ -4,13 +4,15 @@
 # include "IEventHandler.hpp"
 # include "Client.hpp"
 # include "RequestParser.hpp"
+# include "Timeout.hpp"
 
 class ClientHandler : public IEventHandler
 {
 	private:
 
-		const Client &		_client;
+		const Client &	_client;
 		RequestParser	_req_parser;
+		Timeout			_timeout;
 
 	public:
 
@@ -20,7 +22,8 @@ class ClientHandler : public IEventHandler
 
 		virtual int		readable(void);
 		virtual void	writable(void);
-
+		virtual	bool	is_timeoutable(void);
+		virtual bool	is_timeout(void);
 		int				get_clientfd(void) const;
 
 	private:

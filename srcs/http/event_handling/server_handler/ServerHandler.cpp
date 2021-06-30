@@ -50,6 +50,17 @@ void
 ServerHandler::writable(void)
 {}
 
+bool
+ServerHandler::is_timeoutable(void)
+{
+	return false;
+}
+
+bool
+ServerHandler::is_timeout(void)
+{
+	return false;
+}
 
 int
 ServerHandler::get_serverfd(void) const

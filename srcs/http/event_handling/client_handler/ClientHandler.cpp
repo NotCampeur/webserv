@@ -42,7 +42,8 @@ ClientHandler::readable(void)
 	else
 	{
 		_req_parser.parse(read_buff, bytes_read);
-		
+		_timeout.reset();
+
 		if (_req_parser.iscomplete())
 		{
 			return REQUEST_COMPLETE;
@@ -78,6 +79,19 @@ ClientHandler::writable(void)
 
 		_req_parser.next_request();	// Could very well handle multiple requests here!!!!!!!
 	}
+	_timeout.reset();
+}
+
+bool
+ClientHandler::is_timeoutable(void)
+{
+	return true;
+}
+
+bool
+ClientHandler::is_timeout(void)
+{
+	return _timeout.expired();
 }
 
 void

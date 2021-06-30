@@ -12,8 +12,10 @@
 
 # define MAX_REQUEST_SIZE	10000 //Minimum request size per rfc 7230 is 8000 octets
 
-# define CLIENT_CLOSED_CONNECTION -1
-# define REQUEST_INCOMPLETE 0
-# define REQUEST_COMPLETE 1
+# define CLIENT_CLOSED_CONNECTION 1
+# define REQUEST_INCOMPLETE 2
+# define REQUEST_COMPLETE 3
+
+# define CLIENT_TIMEOUT 30 //In seconds
 
 #endif

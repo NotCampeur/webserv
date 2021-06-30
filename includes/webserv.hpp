@@ -20,6 +20,7 @@
 # include <string>
 # include <cstring>
 # include <ctime>
+# include <sys/time.h>
 
 # include <algorithm>
 # include <vector>
