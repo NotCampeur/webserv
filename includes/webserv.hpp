@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/24 16:40:23 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/01 11:29:50 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <exception>
 # include <string>
 # include <cstring>
+# include <cctype>
 # include <ctime>
 
 # include <algorithm>

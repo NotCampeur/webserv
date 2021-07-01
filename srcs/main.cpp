@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/29 19:01:36 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/01 08:16:06 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 #include "InitiationDispatcher.hpp"
 #include "ServerHandler.hpp"
 #include "Server.hpp"
-#include "ConfigParser.hpp"
+#include "json.hpp"
 
 void	serv_test(long server_amount)
 {
 	try
 	{
-		ConfigParser	cp;
+		JsonFileReader	json_reader;
+		
 		signal(SIGINT, sigint_handler);
 		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
 		try
