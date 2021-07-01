@@ -14,6 +14,7 @@ class ServerHandler : public IEventHandler
 
         const Server &          _server;
         InitiationDispatcher &  _idis;
+		int						_event_flag;
 
     public:
 
@@ -23,10 +24,12 @@ class ServerHandler : public IEventHandler
 
         ServerHandler &  operator=(ServerHandler const & src);
 
-        virtual int		readable(void);
+        virtual void	readable(void);
         virtual void	writable(void);
-		virtual	bool	is_timeoutable(void);
-		virtual bool	is_timeout(void);
+		virtual	bool	is_timeoutable(void) const;
+		virtual bool	is_timeout(void) const;
+		virtual int		get_event_flag(void) const;
+
         int             get_serverfd(void) const;
 
     private:

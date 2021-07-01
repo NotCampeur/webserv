@@ -1,11 +1,13 @@
 #include "ClientHandler.hpp"
 
 ClientHandler::ClientHandler(const Client & client) :
-_client(client)
+_client(client),
+_event_flag(POLLIN)
 {}
 
 ClientHandler::ClientHandler(ClientHandler const & src) :
-_client(src._client)
+_client(src._client),
+_event_flag(src._event_flag)
 {}
 
 ClientHandler::~ClientHandler(void)
@@ -18,12 +20,8 @@ ClientHandler::get_clientfd(void) const
 {
 	return _client.getsockfd();
 }
-/*
-** If a request is complete: return
-** If recv returns 0: the client has closed the connection --> Need to close the socket and remove the client
-** Otherwise, read BUF_SIZE and parse it
-*/
-int 
+
+void 
 ClientHandler::readable(void)
 {
 	char		read_buff[RECV_BUF_SIZE] = {0};
@@ -31,26 +29,21 @@ ClientHandler::readable(void)
 
 	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
 
-	if (bytes_read == -1)
+	switch (bytes_read)
 	{
-		throw UnableToReadClientRequest();
-	}
-	else if (bytes_read == 0)
-	{
-		 return CLIENT_CLOSED_CONNECTION;
-	}
-	else
-	{
-		_req_parser.parse(read_buff, bytes_read);
-		_timeout.reset();
-
-		if (_req_parser.iscomplete())
+		case -1 :
 		{
-			return REQUEST_COMPLETE;
+			throw UnableToReadClientRequest();
 		}
-		else
+		case 0 :
 		{
-			return REQUEST_INCOMPLETE;
+			throw ClientClosedConnection();
+		}
+		default :
+		{
+			_req_parser.parse(read_buff, bytes_read);
+			if (_req_parser.iscomplete())
+				_event_flag = POLLOUT;
 		}
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
@@ -77,21 +70,28 @@ ClientHandler::writable(void)
 
 		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << datagram;
 
-		_req_parser.next_request();	// Could very well handle multiple requests here!!!!!!!
+		_req_parser.next_request();
 	}
+	_event_flag = POLLIN;
 	_timeout.reset();
 }
 
 bool
-ClientHandler::is_timeoutable(void)
+ClientHandler::is_timeoutable(void) const
 {
 	return true;
 }
 
 bool
-ClientHandler::is_timeout(void)
+ClientHandler::is_timeout(void) const
 {
 	return _timeout.expired();
+}
+
+int
+ClientHandler::get_event_flag(void) const
+{
+	return _event_flag;
 }
 
 void
@@ -132,4 +132,10 @@ const char *
 ClientHandler::UnableToWriteToClient::what(void) const throw()
 {
 	return _msg.c_str();
+}
+
+const char *
+ClientHandler::ClientClosedConnection::what(void) const throw()
+{
+	return "client closed connection";
 }

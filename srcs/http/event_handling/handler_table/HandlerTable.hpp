@@ -11,7 +11,8 @@ class HandlerTable
 {
 	public:
 
-		typedef std::map<int, IEventHandler *>	table_type;
+		typedef std::map<int, IEventHandler *>				table_type;
+		typedef std::map<int, IEventHandler *>::iterator	iterator;
 
 	private:
 
@@ -25,7 +26,10 @@ class HandlerTable
 
 		void			add(int fd, IEventHandler & event_handler);
 		void			remove(int fd);
+		iterator		begin(void) const;
+		iterator		end(void) const;
 		IEventHandler *	get(int fd) const;
+		size_t			size(void) const;
 		
 		HandlerTable &	operator=(const HandlerTable & src);
 };

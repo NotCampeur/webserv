@@ -22,9 +22,10 @@ class Demultiplexer
 		
 		Demultiplexer & operator=(const Demultiplexer & src);
 
-		int						activate(void);
-		void					addfd(int fd);
+		int						activate();
+		void					addfd(int fd, int flag);
 		void					removefd(int fd);
+		void					clear(void);
 		pollfd_arr::iterator	begin();
 		pollfd_arr::iterator	end();
 

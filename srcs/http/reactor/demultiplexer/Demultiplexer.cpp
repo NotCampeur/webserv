@@ -4,9 +4,10 @@ Demultiplexer::Demultiplexer(int timeout) :
 _timeout(timeout)
 {}
 
-Demultiplexer::Demultiplexer(const Demultiplexer & src)
+Demultiplexer::Demultiplexer(const Demultiplexer & src) :
+_timeout(src._timeout)
 {
-    *this = src;
+    // *this = src;
 }
 
 Demultiplexer::~Demultiplexer(void)
@@ -18,17 +19,17 @@ Demultiplexer &
 Demultiplexer::operator=(const Demultiplexer & src)
 {
 	if (this != &src)
-		_pollfds = src._pollfds;
+		// _pollfds = src._pollfds;
 		_timeout = src._timeout;
 	return *this;
 }
 
 int
-Demultiplexer::activate(void)
+Demultiplexer::activate()
 {
 	int	result(0);
 
-	result = poll(_pollfds.data(), _pollfds.size(), _timeout);
+	result = poll(&_pollfds[0], _pollfds.size(), _timeout);
 	if (result == -1)
 	{
 		throw Demultiplexer::PollingError();
@@ -38,7 +39,6 @@ Demultiplexer::activate(void)
 		Logger(LOG_FILE, basic_type, minor_lvl) << "Poll timeout";
 		return result;
 	}
-		// throw Demultiplexer::PollingTimeout();
 	std::ostringstream	nb;
 	nb << result;
 	Logger(LOG_FILE, basic_type, major_lvl) << nb.str() + " fd ready";
@@ -46,12 +46,12 @@ Demultiplexer::activate(void)
 }
 
 void
-Demultiplexer::addfd(int fd)
+Demultiplexer::addfd(int fd, int flag)
 {
 	struct pollfd	fd_data;
 
 	fd_data.fd = fd;
-	fd_data.events = POLLIN;
+	fd_data.events = flag;
 	fd_data.revents = 0;
 	_pollfds.push_back(fd_data);
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fd: " << fd << " has been added to demultiplexer";
@@ -77,6 +77,12 @@ Demultiplexer::removefd(int fd)
 		}
 		throw Demultiplexer::FdNotFound();
 	}
+}
+
+void					
+Demultiplexer::clear(void)
+{
+	_pollfds.clear();
 }
 
 Demultiplexer::pollfd_arr::iterator

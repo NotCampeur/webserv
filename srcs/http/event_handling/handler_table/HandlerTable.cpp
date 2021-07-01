@@ -59,3 +59,22 @@ HandlerTable::get(int fd) const
 {
 	return (*_handler_table->find(fd)).second;
 }
+
+size_t
+HandlerTable::size(void) const
+{
+	return _handler_table->size();
+}
+
+
+HandlerTable::iterator
+HandlerTable::begin(void) const
+{
+	return _handler_table->begin();
+}
+
+HandlerTable::iterator
+HandlerTable::end(void) const
+{
+	return _handler_table->end();
+}

@@ -2,7 +2,8 @@
 
 ServerHandler::ServerHandler(const Server * server, InitiationDispatcher & idis) :
 _server(*server),
-_idis(idis)
+_idis(idis),
+_event_flag(POLLIN)
 {}
 
 
@@ -19,7 +20,7 @@ ServerHandler::operator=(ServerHandler const & src)
     return *this;
 }
 
-int
+void
 ServerHandler::readable(void)
 {
 	socklen_t sockaddr_size = sizeof(struct sockaddr);
@@ -40,10 +41,11 @@ ServerHandler::readable(void)
 			if (errno != EWOULDBLOCK)
 				throw UnableToAcceptConnection(ret);
 			Logger(LOG_FILE, basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
-			return 0;
+			break ;
 		}
 	}
 }
+
 
 // No writable action can be detected on a server socket, hence this function does not do anything
 void
@@ -51,15 +53,21 @@ ServerHandler::writable(void)
 {}
 
 bool
-ServerHandler::is_timeoutable(void)
+ServerHandler::is_timeoutable(void) const
 {
 	return false;
 }
 
 bool
-ServerHandler::is_timeout(void)
+ServerHandler::is_timeout(void) const
 {
 	return false;
+}
+
+int
+ServerHandler::get_event_flag(void) const
+{
+	return _event_flag;
 }
 
 int

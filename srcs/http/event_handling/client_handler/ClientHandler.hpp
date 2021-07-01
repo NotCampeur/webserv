@@ -10,9 +10,10 @@ class ClientHandler : public IEventHandler
 {
 	private:
 
-		const Client &	_client;
-		RequestParser	_req_parser;
-		Timeout			_timeout;
+		const Client &			_client;
+		RequestParser			_req_parser;
+		Timeout					_timeout;
+		int						_event_flag;
 
 	public:
 
@@ -20,11 +21,14 @@ class ClientHandler : public IEventHandler
 		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);
 
-		virtual int		readable(void);
+		virtual void	readable(void);
 		virtual void	writable(void);
-		virtual	bool	is_timeoutable(void);
-		virtual bool	is_timeout(void);
+		virtual	bool	is_timeoutable(void) const;
+		virtual bool	is_timeout(void) const;
+		virtual int		get_event_flag(void) const;
+
 		int				get_clientfd(void) const;
+
 
 	private:
 		void	set_header(std::stringstream & header, size_t content_length);
@@ -48,6 +52,17 @@ class ClientHandler : public IEventHandler
 				UnableToWriteToClient() throw();
 				~UnableToWriteToClient() throw();
 				const char * what(void) const throw();
+		};
+
+		class BadEventFrag : public std::exception
+		{
+			const char *	what(void) const throw();
+		};
+
+		class ClientClosedConnection : public std::exception
+		{
+			public:
+				const char *	what(void) const throw();
 		};
 };
 
