@@ -29,7 +29,6 @@ class ClientHandler : public IEventHandler
 
 		int				get_clientfd(void) const;
 
-
 	private:
 		void	set_header(std::stringstream & header, size_t content_length);
 	
