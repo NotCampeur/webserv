@@ -4,9 +4,9 @@ Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
 {
 	create_socket(com_domain, sock_type);
 	make_nonblocking();
+	set_sock_opt();
 	init_addr_inputs(com_domain, port, ip);
 	name_serv_socket();
-	set_sock_opt();
 	set_listener();
 }
 
