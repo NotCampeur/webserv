@@ -55,6 +55,17 @@ Server::make_nonblocking()
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
 }
 
+
+void
+Server::set_sock_opt()
+{
+	int enable = 1;
+	int result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+	if (result == -1)
+		throw UnableToSetSockOpt();
+	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
+}
+
 void
 Server::init_addr_inputs(int domain, int port, u_int32_t ip)
 {
@@ -75,17 +86,6 @@ Server::name_serv_socket()
 		throw UnableToNameSocket();
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
 }
-
-void
-Server::set_sock_opt()
-{
-	int result, reuse;
-	result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
-	if (result == -1)
-		throw UnableToSetSockOpt();
-	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
-}
-
 
 void
 Server::set_listener()
