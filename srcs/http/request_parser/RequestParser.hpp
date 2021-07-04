@@ -4,6 +4,7 @@
 # include "webserv.hpp"
 # include "RequestUriParser.hpp"
 # include "RequestHeaderParser.hpp"
+# include "IHttpMethod.hpp"
 
 class RequestParser {
 
@@ -27,9 +28,14 @@ private:
 
 	bool								_complete;
     request_parsing_state				_request_state;
-    std::string  						_http_method;
-	std::string							_http_version;
-	std::map<std::string, std::string>	_headers;
+    
+	
+	struct Request {
+		std::string  						_http_method;
+		std::string							_http_version;
+		std::map<std::string, std::string>	_headers;
+		IHttpMethod							*_method;	
+	};
 
 	std::string							_buffer_leftovers;
 

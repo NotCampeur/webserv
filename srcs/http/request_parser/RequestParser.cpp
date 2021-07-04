@@ -179,9 +179,10 @@ RequestParser::parse_method(char c)
     static std::string	available_methods[] = {
         "GET",
         "POST",
-        "DELETE"
+        "DELETE",
+		"HEAD"
     };
-    static size_t 		method_count = 3;    
+    static size_t 		method_count = 4;
 
 	if (c == ' ')
 	{

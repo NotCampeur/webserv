@@ -37,9 +37,6 @@ Server::getsockfd() const
 void
 Server::create_socket(int domain, int type, int protocol)
 {
-	// int	reuse = 0;
-	// int	result = 0;
-	
 	this->_sockfd = socket(domain, type, protocol);
  	if (_sockfd == -1)
 		throw UnableToCreateServerSocket();
@@ -171,6 +168,7 @@ Server::UnableToSetNonblockFlag::what() const throw()
 {
 	return _msg.str().c_str();
 }
+
 const char *
 Server::UnableToSetSockOpt::what() const throw()
 {

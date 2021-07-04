@@ -12,6 +12,7 @@ class ClientHandler : public IEventHandler
 
 		const Client &			_client;
 		RequestParser			_req_parser;
+
 		Timeout					_timeout;
 		int						_event_flag;
 
