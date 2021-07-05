@@ -1,19 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   json.hpp                                           :+:      :+:    :+:   */
+/*   IJsonValue.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/07/01 08:12:18 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/05 19:14:05 by ldutriez         ###   ########.fr       */
+/*   Created: 2021/07/05 11:38:36 by ldutriez          #+#    #+#             */
+/*   Updated: 2021/07/05 15:56:00 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_JSON_HPP
-# define WEBSERV_JSON_HPP
+#ifndef WEBSERV_JSON_VALUE_HPP
+# define WEBSERV_JSON_VALUE_HPP
 
-# include "JsonFileReader.hpp"
-# include "JsonObject.hpp"
+# include "webserv.hpp"
+
+class IJsonValue
+{
+	public:
+				IJsonValue();
+		virtual	~IJsonValue() = 0;
+};
 
 #endif

@@ -14,6 +14,9 @@
 # define WEBSERV_JSON_FILE_READER_HPP
 
 # include "webserv.hpp"
+# include "JsonObject.hpp"
+# include "JsonString.hpp"
+# include "JsonArray.hpp"
 
 class JsonFileReader
 {
@@ -51,6 +54,9 @@ class JsonFileReader
 		//	Load a file given by the path to create a JsonFileReader which get the raw data.
 		JsonFileReader(std::string path = "ressources/config/webserv.conf");
 		~JsonFileReader();
+
+		//	Return the json file formated into a JsonObject.
+		JsonObject	& objectify(void);
 
 		class NotAbleToOpen : public std::exception
 		{

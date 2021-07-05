@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/01 08:16:06 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/05 19:15:11 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ void	serv_test(long server_amount)
 	try
 	{
 		JsonFileReader	json_reader;
-		
+		JsonObject		obj(json_reader.objectify());
+
+		std::cout << obj << std::endl;
 		signal(SIGINT, sigint_handler);
 		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
 		try

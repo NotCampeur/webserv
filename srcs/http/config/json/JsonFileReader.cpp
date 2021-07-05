@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/01 17:46:56 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/05 19:45:32 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 JsonFileReader::JsonFileReader(std::string path)
 : _file_data()
 {
-
 	try
 	{
 		get_data(path.c_str());
@@ -31,6 +30,74 @@ JsonFileReader::JsonFileReader(std::string path)
 
 JsonFileReader::~JsonFileReader()
 {}
+
+JsonObject &
+JsonFileReader::objectify(void)
+{
+	JsonObject								result;
+	bool									is_key(true);
+	std::string::iterator					it(_file_data.begin());
+	std::string::iterator					ite(_file_data.end());
+	std::pair<std::string, IJsonValue *>	data;
+	
+	while (it != ite)
+	{
+		switch(*it)
+		{
+			case '"' :
+			{
+				if (is_key == true)
+				{
+					size_t	start = it - _file_data.begin();
+					size_t	end = _file_data.find('"', start);
+					
+					data.first = _file_data.substr(start + 1, end - 1);
+					it = _file_data.begin() + end + 1;
+				}
+				else
+				{
+					size_t	start = it - _file_data.begin();
+					size_t	end = _file_data.find('"', start);
+					
+					data.second = new JsonString(_file_data.substr(start + 1, end - 1));
+					it = _file_data.begin() + end + 1;
+				}
+				break;
+			}
+			case '[' :
+			{
+
+				break;
+			}
+			case '{' :
+			{
+
+				break;
+			}
+			case ':' :
+			{
+				is_key = false;
+				break;
+			}
+			case ']' :
+			{
+
+				break;
+			}
+			case '}' :
+			{
+
+				break;
+			}
+			case ',' :
+			{
+
+				break;
+			}
+		}
+	}
+	return result;
+}
 
 void
 JsonFileReader::get_data(const char *path)

@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Config.hpp                                         :+:      :+:    :+:   */
+/*   JsonString.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/05 16:53:02 by ldutriez         ###   ########.fr       */
+/*   Created: 2021/07/05 11:50:28 by ldutriez          #+#    #+#             */
+/*   Updated: 2021/07/05 14:00:39 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_CONFIG_HPP
-# define WEBSERV_CONFIG_HPP
+#ifndef WEBSERV_JSON_STRING_HPP
+# define WEBSERV_JSON_STRING_HPP
 
 # include "webserv.hpp"
-# include "JsonObject.hpp"
+# include "IJsonValue.hpp"
 
-class Config
+class JsonString : public IJsonValue
 {
-		JsonObject	& _global_scope;
+		std::string		_value;
 		
 	public:
-		Config(JsonObject & config_object);
-		Config(const Config & to_copy);
-		~Config();
+								JsonString(std::string value);
+								JsonString(const JsonString & to_copy);
+								~JsonString();
 
-		Config & operator=(const Config & to_assign);
-		friend std::ofstream & operator<<(std::ofstream & os,
-											const Config & to_print);
+		JsonString			& operator=(const JsonString & to_assign);
+		friend std::ostream	& operator<<(std::ostream & os,
+									const JsonString & to_print);
 };
 
 #endif

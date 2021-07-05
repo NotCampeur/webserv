@@ -6,7 +6,7 @@
 #    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/07/01 08:11:33 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/07/05 16:30:03 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,8 @@ SRC	=	main.cpp \
 		ServerHandler.cpp ClientHandler.cpp Client.cpp \
 		sigint_handler.cpp \
 		\
-		JsonFileReader.cpp
+		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
+		Config.cpp ConfigParser.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))
