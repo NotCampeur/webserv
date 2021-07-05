@@ -2,6 +2,7 @@
 # define WEBSERV_REQUESTPARSER_HPP
 
 # include "webserv.hpp"
+# include "Request.hpp"
 # include "RequestUriParser.hpp"
 # include "RequestHeaderParser.hpp"
 
@@ -22,24 +23,17 @@ public:
     };
 
 private:
+	Request &							_request;
 	RequestUriParser					_uri_parser;
 	RequestHeaderParser					_header_parser;
 
-	bool								_complete;
     request_parsing_state				_request_state;
-    
-	
-	std::string  						_http_method;
-	std::string							_http_version;
-	std::map<std::string, std::string>	_headers;
-
 	std::string							_buffer_leftovers;
-
 	size_t								_debug_code;
 
 public:
 
-    RequestParser(void);
+    RequestParser(Request &req);
     // RequestParser(std::string & request);
 
     // RequestParser(RequestParser const & src);
@@ -52,8 +46,9 @@ public:
 	void	next_request(void);
 
 private:
-    void    reset(void);
-
+	RequestParser(void);
+    
+	void    reset(void);
 	void	parse_char(char c);
     void    parse_method(char c);
     void    check_version(char c);

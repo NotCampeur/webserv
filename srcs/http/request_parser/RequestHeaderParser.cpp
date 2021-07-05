@@ -89,14 +89,14 @@ RequestHeaderParser::iswhitespace(char c)
 }
 
 
-std::string
-RequestHeaderParser::get_header_name(void) const
+std::string &
+RequestHeaderParser::get_header_name(void)
 {
 	return _field_name;
 }
 
-std::string
-RequestHeaderParser::get_header_value(void) const
+std::string &
+RequestHeaderParser::get_header_value(void)
 {
 	return _field_value;
 }

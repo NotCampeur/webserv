@@ -2,13 +2,17 @@
 
 ClientHandler::ClientHandler(const Client & client) :
 _client(client),
+_request(),
+_req_parser(_request),
 _event_flag(POLLIN)
 {}
 
-ClientHandler::ClientHandler(ClientHandler const & src) :
-_client(src._client),
-_event_flag(src._event_flag)
-{}
+// ClientHandler::ClientHandler(ClientHandler const & src) :
+// _client(src._client),
+// _request(src._request),
+// _req_parser(src.)
+// _event_flag(src._event_flag)
+// {}
 
 ClientHandler::~ClientHandler(void)
 {
@@ -42,7 +46,7 @@ ClientHandler::readable(void)
 		default :
 		{
 			_req_parser.parse(read_buff, bytes_read);
-			if (_req_parser.iscomplete())
+			if (_request.complete())
 				_event_flag = POLLOUT;
 		}
 	}
@@ -52,7 +56,7 @@ ClientHandler::readable(void)
 void
 ClientHandler::writable(void)
 {
-	while (_req_parser.iscomplete())
+	while (_request.complete())
 	{
 		std::stringstream	ss;
 		static std::string 	msg = "Hello World\n";

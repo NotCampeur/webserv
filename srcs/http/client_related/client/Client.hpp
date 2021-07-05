@@ -2,8 +2,6 @@
 # define WEBSERV_CLIENT_HPP
 
 # include "webserv.hpp"
-# include <queue>
-# include "Request_delete.hpp"
 
 class Client
 {

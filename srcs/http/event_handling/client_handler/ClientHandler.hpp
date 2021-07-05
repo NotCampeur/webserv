@@ -11,15 +11,14 @@ class ClientHandler : public IEventHandler
 	private:
 
 		const Client &			_client;
+		Request					_request;
 		RequestParser			_req_parser;
-
 		Timeout					_timeout;
 		int						_event_flag;
 
 	public:
 
 		ClientHandler(const Client & client);
-		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);
 
 		virtual void	readable(void);
@@ -31,6 +30,7 @@ class ClientHandler : public IEventHandler
 		int				get_clientfd(void) const;
 
 	private:
+		ClientHandler(ClientHandler const & src);
 		void	set_header(std::stringstream & header, size_t content_length);
 	
 	// Exceptions

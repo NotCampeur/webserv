@@ -25,10 +25,10 @@ class RequestHeaderParser
 
 		// RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 
-		bool		parse_char(char c);
-		void		reset(void);
-		std::string	get_header_name(void) const;
-		std::string	get_header_value(void) const;
+		bool			parse_char(char c);
+		void			reset(void);
+		std::string	&	get_header_name(void);
+		std::string	&	get_header_value(void);
 
 	private:
 		bool	iswhitespace(char c);

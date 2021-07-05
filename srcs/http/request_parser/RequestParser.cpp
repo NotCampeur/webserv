@@ -1,22 +1,12 @@
 #include "RequestParser.hpp"
 
-RequestParser::RequestParser(void)
-{
-    reset();
-}
-
-// RequestParser::RequestParser(RequestParser const & src) :
-// _request(src._request),
-// _offset(src._offset)
-// {}
+RequestParser::RequestParser(Request & req) :
+_request(req),
+_uri_parser(req.uri()),
+_request_state(START)
+{}
 
 RequestParser::~RequestParser(void) {}
-
-// RequestParser &
-// RequestParser::operator=(RequestParser const & src)
-// {
-//     return (*this);
-// }
 
 void
 RequestParser::parse(const char *buffer, size_t len)
@@ -29,7 +19,7 @@ RequestParser::parse(const char *buffer, size_t len)
 
 		if (_request_state == ERROR)
 		{
-			_complete = true;
+			_request.complete() = true;
 			_buffer_leftovers.clear(); // In case of an error, flush buffer
 
 			std::cerr << "***Request error nb: " << _debug_code << " ***\n";
@@ -37,17 +27,17 @@ RequestParser::parse(const char *buffer, size_t len)
 		}
 		else if (_request_state == DONE) // Should set request to Complete here
 		{
-			_complete = true;
+			_request.complete() = true;
 			_buffer_leftovers = std::string(&buffer[i], len - i - 1);
 
 			std::cerr << "\n### PARSED REQUEST ###\n"
-			<< "Method: " << _http_method << '\n'
-			<< "Uri (path): " << _uri_parser.getpath() << '\n'
-			<< "Uri (query): " << _uri_parser.getquery() << '\n'
-			<< "Uri (fragment): " << _uri_parser.getfragment() << '\n'
-			<< "Http version: " << _http_version << '\n';
+			<< "Method: " << _request.method() << '\n'
+			<< "Uri (path): " << _request.uri().path << '\n'
+			<< "Uri (query): " << _request.uri().query << '\n'
+			<< "Uri (fragment): " << _request.uri().fragment << '\n'
+			<< "Http version: " << _request.version() << '\n';
 
-			for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
+			for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
 			{
 				std::cerr << "Header name: " << (*it).first << '\t'
 				<< "Header value: " << (*it).second << '\n';
@@ -68,7 +58,7 @@ RequestParser::parse_char(char c)
 			if (c != '\r' && c != '\n')
 			{
 				_request_state = METHOD;
-				_http_method += c;
+				_request.method() += c;
 			}
 			break ;
 		}
@@ -188,7 +178,7 @@ RequestParser::parse_method(char c)
 	{
         for (size_t i = 0; i < method_count; i++)
         {
-            if (available_methods[i] == _http_method)
+            if (available_methods[i] == _request.method())
             {
                 _request_state = URI;
 				return ;
@@ -198,8 +188,8 @@ RequestParser::parse_method(char c)
     }
 	else
 	{
-        _http_method += c;
-		if (_http_method.size() > 6)
+        _request.method() += c;
+		if (_request.method().size() > 6)
 		{
 			request_error(5); // Code 500
 			return ;
@@ -214,7 +204,7 @@ RequestParser::check_version(char c)
 
 	if (c == '\r')
 	{
-		if (_http_version == correct_version)
+		if (_request.version() == correct_version)
 		{
 			_request_state = REQ_LINE_CRLF;
 			return ;
@@ -227,8 +217,8 @@ RequestParser::check_version(char c)
 	}
 	else
 	{
-		_http_version += c;
-		if (_http_version.size() > correct_version.size())
+		_request.version() += c;
+		if (_request.version().size() > correct_version.size())
 		{
 			request_error(7); // Error code TBC - Should not be a bad_version error, but a bad_request_line error (bad spacing errors fall here)
 		}
@@ -245,23 +235,14 @@ RequestParser::request_error(int code)
 void
 RequestParser::add_header(void)
 {
-	_headers.insert(std::pair<std::string, std::string>(_header_parser.get_header_name(), _header_parser.get_header_value()));
+	_request.add_header(_header_parser.get_header_name(), _header_parser.get_header_value());
 	_header_parser.reset();
-}
-
-bool
-RequestParser::iscomplete(void) const
-{
-	return _complete;
 }
 
 void
 RequestParser::reset(void)
 {
-	_complete = false;
     _request_state = START;
-    _http_method.clear();
-	_http_version.clear();
     _uri_parser.reset();
 	_header_parser.reset();
 }
@@ -270,6 +251,7 @@ void
 RequestParser::next_request(void)
 {
 	reset();
+	_request.reset();
 	parse(_buffer_leftovers.c_str(), _buffer_leftovers.size());
 	std::cerr << "* Buffer Leftovers: *\n" << _buffer_leftovers << '\n';
 }

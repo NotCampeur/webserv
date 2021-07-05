@@ -1,29 +1,16 @@
 #include "RequestUriParser.hpp"
 
-RequestUriParser::RequestUriParser(void) :
-_state(PATH)
+RequestUriParser::RequestUriParser(Request::uri_t & uri) :
+_state(PATH),
+_uri(uri)
 {}
 
-// RequestUriParser::RequestUriParser(RequestUriParser const & src)
-// {
-//     (void)src;
-// }
-
 RequestUriParser::~RequestUriParser(void) {}
-
-// RequestUriParser &
-// RequestUriParser::operator=(RequestUriParser const & src)
-// {
-//     return (*this);
-// }
 
 void
 RequestUriParser::reset(void)
 {
 	_state = PATH;
-	_path.clear();
-	_query.clear();
-	_fragment.clear();
 }
 
 bool
@@ -47,7 +34,7 @@ RequestUriParser::parse_char(char c)
 			}
 			else
 			{
-				_path += c;
+				_uri.path += c;
 			}
 			break ;
 		}
@@ -63,7 +50,7 @@ RequestUriParser::parse_char(char c)
 			}
 			else
 			{
-				_query += c;
+				_uri.query += c;
 			}
 			break ;
 		}
@@ -75,28 +62,10 @@ RequestUriParser::parse_char(char c)
 			}
 			else
 			{
-				_fragment += c;
+				_uri.fragment += c;
 			}
 			break ;
 		}
 	}
 	return false;
-}
-
-const std::string &
-RequestUriParser::getpath(void) const
-{
-	return _path;
-}
-
-const std::string &
-RequestUriParser::getquery(void) const
-{
-	return _query;
-}
-
-const std::string &
-RequestUriParser::getfragment(void) const
-{
-	return _fragment;
 }

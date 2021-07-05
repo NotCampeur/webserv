@@ -2,6 +2,7 @@
 # define WEBSERV_REQUESTURIPARSER_HPP
 
 # include "webserv.hpp"
+# include "Request.hpp"
 
 class RequestUriParser
 {
@@ -13,25 +14,21 @@ class RequestUriParser
 			FRAGMENT
 		};
 
-		std::string 		_path;
-		std::string 		_query;
-		std::string 		_fragment;
 		uri_parsing_state	_state;
+		Request::uri_t &	_uri;
 
 	public:
 
-		RequestUriParser(void);
-		// RequestUriParser(RequestUriParser const & src);
+		RequestUriParser(Request::uri_t & uri);
 		~RequestUriParser(void);
 
-		// RequestUriParser &  operator=(RequestUriParser const & src);
-
 		bool				parse_char(char c);
-		const std::string &	getpath(void) const;
-		const std::string &	getquery(void) const;
-		const std::string &	getfragment(void) const;
 		void				reset(void);
 
+	private:
+		RequestUriParser(void);
+		RequestUriParser(RequestUriParser const & src);
+		RequestUriParser &  operator=(RequestUriParser const & src);
 };
 
 #endif
