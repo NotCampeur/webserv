@@ -48,6 +48,18 @@ class ServerHandler : public IEventHandler
 				const char *what() const throw();
 				int			_error;
 		};
+
+		class UnableToSetNonblockFlag : public std::exception
+		{
+				std::ostringstream	_msg;
+				int					_fd;
+			public:
+				UnableToSetNonblockFlag() throw();
+				UnableToSetNonblockFlag(int fd) throw();
+				UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw();
+				~UnableToSetNonblockFlag() throw();
+				const char *what() const throw();
+		};
 };
 
 #endif

@@ -20,10 +20,7 @@ class RequestHeaderParser
 	public:
 
 		RequestHeaderParser(void);
-		// RequestHeaderParser(RequestHeaderParser const & src);
 		~RequestHeaderParser(void);
-
-		// RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 
 		bool			parse_char(char c);
 		void			reset(void);
@@ -32,5 +29,8 @@ class RequestHeaderParser
 
 	private:
 		bool	iswhitespace(char c);
+
+		RequestHeaderParser(RequestHeaderParser const & src);
+		RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 };
 #endif

@@ -29,9 +29,14 @@ ServerHandler::readable(void)
 	{
 		struct sockaddr * address = new (struct sockaddr);
 		int ret = accept(get_serverfd(), address, &sockaddr_size);
+
 		if (ret >= 0)
 		{
+			if (fcntl(ret, F_SETFL, O_NONBLOCK) < 0)
+				throw UnableToSetNonblockFlag(ret);
+
 			Client * client = new Client(ret, address);
+
 			Logger(LOG_FILE, basic_type, minor_lvl) << "A new connection has been accepted on fd : " << ret;
 			_idis.add_handle(*client);
 		}
@@ -45,7 +50,6 @@ ServerHandler::readable(void)
 		}
 	}
 }
-
 
 // No writable action can be detected on a server socket, hence this function does not do anything
 void
@@ -83,4 +87,31 @@ ServerHandler::UnableToAcceptConnection::what() const throw()
 	oss << "Accept error: " << _error << " : errno : " << strerror(errno) << std::endl;
 	
 	return oss.str().c_str();
+}
+
+ServerHandler::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
+: _msg("cannot set nonblocking flag on fd"), _fd(-1)
+{
+	_msg << " : " << strerror(errno);
+}
+
+ServerHandler::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
+: _msg("cannot set nonblocking flag on fd : "), _fd(fd)
+{
+	_msg << _fd << " : " << strerror(errno);
+}
+
+ServerHandler::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
+{
+	_fd = to_copy._fd;
+	_msg << to_copy._msg.str();
+}
+
+ServerHandler::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
+{}
+
+const char *
+ServerHandler::UnableToSetNonblockFlag::what() const throw()
+{
+	return _msg.str().c_str();
 }

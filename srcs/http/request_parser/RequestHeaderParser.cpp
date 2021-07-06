@@ -4,18 +4,7 @@ RequestHeaderParser::RequestHeaderParser(void) :
 _state(FIELD_NAME)
 {}
 
-// RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src)
-// {
-//     (void)src;
-// }
-
 RequestHeaderParser::~RequestHeaderParser(void) {}
-
-// RequestHeaderParser &
-// RequestHeaderParser::operator=(RequestHeaderParser const & src)
-// {
-//     return (*this);
-// }
 
 void
 RequestHeaderParser::reset(void)
@@ -87,7 +76,6 @@ RequestHeaderParser::iswhitespace(char c)
 		return true;
 	return false;
 }
-
 
 std::string &
 RequestHeaderParser::get_header_name(void)
