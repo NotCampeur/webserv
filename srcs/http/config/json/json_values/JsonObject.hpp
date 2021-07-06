@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JsonObject.hpp                                :+:      :+:    :+:   */
+/*   JsonObject.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/07/05 11:53:05 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/05 14:04:54 by ldutriez         ###   ########.fr       */
+/*   Created: 2021/07/06 15:27:48 by ldutriez          #+#    #+#             */
+/*   Updated: 2021/07/06 22:28:15 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "webserv.hpp"
 # include "IJsonValue.hpp"
+# include "JsonString.hpp"
 
 class JsonObject : public IJsonValue
 {
@@ -32,18 +33,21 @@ class JsonObject : public IJsonValue
 		void					add_value(std::string key, IJsonValue & to_add);
 		void					add_value(std::pair<std::string, IJsonValue *> &to_add);
 
+		IJsonValue				*clone(void);
+		void					print(int indent) const;
+
 		JsonObject				&operator=(const JsonObject & to_assign);
 		friend std::ostream		&operator<<(std::ostream & os,
 												const JsonObject & to_print);
 
-		class MultipleDefinitionOfAValue
+		class MultipleDefinitionOfAValue : public std::exception
 		{
 				std::string	_msg;
 			public:
 				MultipleDefinitionOfAValue(std::string value) throw();
 				~MultipleDefinitionOfAValue() throw();
 
-				const char * what() throw();
+				const char * what() const throw();
 		};
 };
 

@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/01 11:29:50 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/06 12:26:01 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <algorithm>
 # include <vector>
 # include <map>
+# include <stack>
 
 # include <errno.h>
 

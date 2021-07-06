@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/05 19:45:32 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/06 21:23:18 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,9 @@
 JsonFileReader::JsonFileReader(std::string path)
 : _file_data()
 {
-	try
-	{
-		get_data(path.c_str());
-		Logger(LOG_FILE, basic_type, debug_lvl) << "Data has been read :\n" << _file_data;
-		raw_parsing();
-	}
-	catch(const std::exception& e)
-	{
-		Logger(LOG_FILE, error_type, error_lvl) << e.what();
-	}
-	
+	get_data(path.c_str());
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Data has been read :\n" << _file_data;
+	raw_parsing();
 }
 
 JsonFileReader::~JsonFileReader()
@@ -34,12 +26,14 @@ JsonFileReader::~JsonFileReader()
 JsonObject &
 JsonFileReader::objectify(void)
 {
-	JsonObject								result;
+	JsonObject								*result(new JsonObject);
+	std::stack<IJsonValue *>				current_value;
 	bool									is_key(true);
-	std::string::iterator					it(_file_data.begin());
+	std::string::iterator					it(_file_data.begin() + 1);
 	std::string::iterator					ite(_file_data.end());
 	std::pair<std::string, IJsonValue *>	data;
 	
+	current_value.push(result);
 	while (it != ite)
 	{
 		switch(*it)
@@ -49,29 +43,44 @@ JsonFileReader::objectify(void)
 				if (is_key == true)
 				{
 					size_t	start = it - _file_data.begin();
-					size_t	end = _file_data.find('"', start);
-					
-					data.first = _file_data.substr(start + 1, end - 1);
-					it = _file_data.begin() + end + 1;
+					size_t	end = _file_data.find('"', start + 1);
+
+					is_key = false;
+					data.first = _file_data.substr(start + 1, end - 1 - start);
+					// Logger(LOG_FILE, basic_type, debug_lvl) << "Key found -> " << data.first;
+					it = _file_data.begin() + end;
 				}
 				else
 				{
 					size_t	start = it - _file_data.begin();
-					size_t	end = _file_data.find('"', start);
+					size_t	end = _file_data.find('"', start + 1);
 					
-					data.second = new JsonString(_file_data.substr(start + 1, end - 1));
-					it = _file_data.begin() + end + 1;
+					data.second = new JsonString(_file_data.substr(start + 1, end - 1 - start));
+					// Logger(LOG_FILE, basic_type, debug_lvl) << "Value found -> " << _file_data.substr(start + 1, end - 1 - start);
+					Logger(LOG_FILE, basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
+					it = _file_data.begin() + end;
+					JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
+					if (obj != NULL)
+						obj->add_value(data);
+					else
+					{
+						JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+						array->add_value(data.second);
+					}
 				}
 				break;
 			}
 			case '[' :
 			{
-
+				Logger(LOG_FILE, basic_type, debug_lvl) << "array begin";
+				current_value.push(new JsonArray());
 				break;
 			}
 			case '{' :
 			{
-
+				Logger(LOG_FILE, basic_type, debug_lvl) << "object begin";
+				is_key = true;
+				current_value.push(new JsonObject());
 				break;
 			}
 			case ':' :
@@ -81,22 +90,47 @@ JsonFileReader::objectify(void)
 			}
 			case ']' :
 			{
-
+				data.second = current_value.top();
+				Logger(LOG_FILE, basic_type, debug_lvl) << "array end";
+				current_value.pop();
+				JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
+				if (obj != NULL)
+					obj->add_value(data);
+				else
+				{
+					JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+					array->add_value(data.second);
+				}
 				break;
 			}
 			case '}' :
 			{
-
+				data.second = current_value.top();
+				Logger(LOG_FILE, basic_type, debug_lvl) << "object end";
+				if (current_value.size() == 1)
+					return *dynamic_cast<JsonObject *>(data.second);
+				current_value.pop();
+				JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
+				if (obj != NULL)
+					obj->add_value(data);
+				else
+				{
+					JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+					array->add_value(data.second);
+				}
 				break;
 			}
 			case ',' :
 			{
-
+				JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+				if (array == NULL)
+					is_key = true;
 				break;
 			}
 		}
+		it++;
 	}
-	return result;
+	return *result;
 }
 
 void

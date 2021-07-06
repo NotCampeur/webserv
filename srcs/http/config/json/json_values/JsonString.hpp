@@ -25,6 +25,9 @@ class JsonString : public IJsonValue
 								JsonString(const JsonString & to_copy);
 								~JsonString();
 
+		IJsonValue				*clone(void);
+		void					print(int indent) const;
+
 		JsonString			& operator=(const JsonString & to_assign);
 		friend std::ostream	& operator<<(std::ostream & os,
 									const JsonString & to_print);

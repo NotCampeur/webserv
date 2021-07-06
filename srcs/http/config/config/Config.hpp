@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/05 16:53:02 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/06 14:32:48 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class Config
 		~Config();
 
 		Config & operator=(const Config & to_assign);
-		friend std::ofstream & operator<<(std::ofstream & os,
+		friend std::ostream & operator<<(std::ostream & os,
 											const Config & to_print);
 };
 

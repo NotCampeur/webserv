@@ -28,7 +28,7 @@ class JsonFileReader
 		};
 
 		std::string	_file_data;
-		
+
 		//	A JsonFileReader is not instantiable without a path.
 
 		//	Will basicaly get what is writed in the json file.

@@ -15,6 +15,7 @@
 
 # include "webserv.hpp"
 # include "IJsonValue.hpp"
+# include "JsonString.hpp"
 
 class JsonArray : public IJsonValue
 {
@@ -29,7 +30,10 @@ class JsonArray : public IJsonValue
 								JsonArray(const JsonArray & to_copy);
 								~JsonArray();
 
-		void					add_value(IJsonValue & to_add);
+		void					add_value(IJsonValue * to_add);
+
+		IJsonValue				*clone(void);
+		void					print(int indent) const;
 
 		JsonArray				&operator=(const JsonArray & to_assign);
 		friend std::ostream		&operator<<(std::ostream & os,
