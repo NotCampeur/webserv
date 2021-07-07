@@ -31,11 +31,11 @@ RequestParser::parse(const char *buffer, size_t len)
 			_buffer_leftovers = std::string(&buffer[i], len - i - 1);
 
 			std::cerr << "\n### PARSED REQUEST ###\n"
-			<< "Method: " << _request.method() << '\n'
+			<< "Method: " << _http_method << '\n'
 			<< "Uri (path): " << _request.uri().path << '\n'
 			<< "Uri (query): " << _request.uri().query << '\n'
 			<< "Uri (fragment): " << _request.uri().fragment << '\n'
-			<< "Http version: " << _request.version() << '\n';
+			<< "Http version: " << _http_version << '\n';
 
 			for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
 			{
@@ -58,7 +58,7 @@ RequestParser::parse_char(char c)
 			if (c != '\r' && c != '\n')
 			{
 				_request_state = METHOD;
-				_request.method() += c;
+				_http_method += c;
 			}
 			break ;
 		}
@@ -130,6 +130,10 @@ RequestParser::parse_char(char c)
 				request_error(3); // Req nb TBC
 			}
 		}
+		case BODY :
+		{
+			break;
+		}
 		case DONE :	// Apparently I need to handle all enumeration variables within switch
 			break ;
 		case ERROR :
@@ -168,18 +172,28 @@ RequestParser::parse_method(char c)
 {
     static std::string	available_methods[] = {
         "GET",
+		"HEAD",
         "POST",
-        "DELETE",
-		"HEAD"
+        "DELETE"
     };
+
     static size_t 		method_count = 4;
+
+	static IHttpMethod * (*create[4])(void) =
+	{
+		GetMethod::create,
+		HeadMethod::create,
+		PostMethod::create,
+		DeleteMethod::create
+	};
 
 	if (c == ' ')
 	{
         for (size_t i = 0; i < method_count; i++)
         {
-            if (available_methods[i] == _request.method())
+            if (available_methods[i] == _http_method)
             {
+				_request.method() = *create[i]();
                 _request_state = URI;
 				return ;
             }
@@ -188,8 +202,8 @@ RequestParser::parse_method(char c)
     }
 	else
 	{
-        _request.method() += c;
-		if (_request.method().size() > 6)
+        _http_method += c;
+		if (_http_method.size() > 6)
 		{
 			request_error(5); // Code 500
 			return ;
@@ -204,7 +218,7 @@ RequestParser::check_version(char c)
 
 	if (c == '\r')
 	{
-		if (_request.version() == correct_version)
+		if (_http_version == correct_version)
 		{
 			_request_state = REQ_LINE_CRLF;
 			return ;
@@ -217,8 +231,8 @@ RequestParser::check_version(char c)
 	}
 	else
 	{
-		_request.version() += c;
-		if (_request.version().size() > correct_version.size())
+		_http_version += c;
+		if (_http_version.size() > correct_version.size())
 		{
 			request_error(7); // Error code TBC - Should not be a bad_version error, but a bad_request_line error (bad spacing errors fall here)
 		}
@@ -245,6 +259,8 @@ RequestParser::reset(void)
     _request_state = START;
     _uri_parser.reset();
 	_header_parser.reset();
+	_http_method.clear();
+	_http_version.clear();
 }
 
 void

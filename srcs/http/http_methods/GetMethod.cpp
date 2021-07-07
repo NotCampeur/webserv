@@ -9,3 +9,15 @@ GetMethod::handle(void)
 {
 
 }
+
+bool
+GetMethod::has_body(void)
+{
+	return false;
+}
+
+IHttpMethod *
+GetMethod::create(void)
+{
+	return new GetMethod();
+}

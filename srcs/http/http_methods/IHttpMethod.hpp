@@ -8,7 +8,7 @@ class IHttpMethod
     	virtual			~IHttpMethod(void);
 		virtual void	handle(void) = 0;
 
-		virtual bool			is_authorized(void) = 0; // Is the method authorized on the server
+		virtual bool			has_body(void) = 0;
 };
 
 #endif

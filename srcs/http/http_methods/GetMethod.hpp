@@ -10,8 +10,9 @@ class GetMethod : public IHttpMethod
     	GetMethod(void);
     	~GetMethod(void);
 
-		virtual void	handle(void);
-
+		virtual void		handle(void);
+		virtual bool		has_body(void);
+		static IHttpMethod	*create(void);
 	private:
     	GetMethod(GetMethod const & src);
 		GetMethod &  operator=(GetMethod const & src);

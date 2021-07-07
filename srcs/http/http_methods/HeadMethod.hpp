@@ -10,7 +10,9 @@ class HeadMethod : public IHttpMethod
     	HeadMethod(void);
     	~HeadMethod(void);
 
-		virtual void	handle(void);
+		virtual void		handle(void);
+		virtual bool		has_body(void);
+		static IHttpMethod	*create(void);
 
 	private:
     	HeadMethod(HeadMethod const & src);

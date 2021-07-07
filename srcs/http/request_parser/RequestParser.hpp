@@ -5,6 +5,10 @@
 # include "Request.hpp"
 # include "RequestUriParser.hpp"
 # include "RequestHeaderParser.hpp"
+# include "DeleteMethod.hpp"
+# include "GetMethod.hpp"
+# include "HeadMethod.hpp"
+# include "PostMethod.hpp"
 
 class RequestParser {
 
@@ -18,6 +22,7 @@ public:
         HEADERS,
 		HEADER_CRLF,
 		FINAL_CRLF,
+		BODY,
 		ERROR,
         DONE
     };
@@ -29,6 +34,10 @@ private:
 
     request_parsing_state				_request_state;
 	std::string							_buffer_leftovers;
+
+	std::string  						_http_method;
+	std::string							_http_version;
+
 	size_t								_debug_code;
 
 public:

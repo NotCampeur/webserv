@@ -12,6 +12,8 @@
 
 # define MAX_REQUEST_SIZE	10000 //Minimum request size per rfc 7230 is 8000 octets
 
+# define MAX_CLIENT_BODY_SIZE 1000000 //1MB
+
 # define CLIENT_TIMEOUT 30 //In seconds
 
 #endif

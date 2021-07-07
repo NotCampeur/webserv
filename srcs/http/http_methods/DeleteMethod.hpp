@@ -1,5 +1,5 @@
-#ifndef WEBSERV_GETMETHOD_H
-# define WEBSERV_GETMETHOD_H
+#ifndef WEBSERV_DELETEMETHOD_H
+# define WEBSERV_DELETEMETHOD_H
 
 # include "IHttpMethod.hpp"
 
@@ -10,7 +10,10 @@ class DeleteMethod : public IHttpMethod
     	DeleteMethod(void);
     	~DeleteMethod(void);
 
-		virtual void	handle(void);
+		virtual void		handle(void);
+
+		virtual bool		has_body(void);
+		static IHttpMethod	*create(void);
 
 	private:
     	DeleteMethod(DeleteMethod const & src);

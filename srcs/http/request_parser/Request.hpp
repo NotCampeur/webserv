@@ -2,6 +2,7 @@
 # define WERSERV_REQUEST_H
 
 # include "webserv.hpp"
+# include "IHttpMethod.hpp"
 
 class Request
 {
@@ -16,10 +17,11 @@ class Request
 	private:
 		bool								_complete;
 		
-		std::string  						_http_method;
-		std::string							_http_version;
+		IHttpMethod *						_method;
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
+		char 								_body[MAX_CLIENT_BODY_SIZE];
+		size_t								_body_size;
 
 	public:
 
@@ -27,13 +29,21 @@ class Request
 		Request(Request const & src);
 		~Request(void);
 
-		std::string &							method(void);
+		IHttpMethod &							method(void);
 		uri_t &									uri(void);
-		std::string &							version(void);
 		std::map<std::string, std::string> &	headers(void);
+		void									addbody(char *buf, size_t len);
+		size_t									bodysize(void) const;
 		bool &									complete();
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
+
+		// Exceptions
+
+		class MaxBodySizeReached : public std::exception
+		{
+			const char * what() const throw();
+		};
 };
 
 #endif
