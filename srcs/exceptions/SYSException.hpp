@@ -7,11 +7,11 @@ class SYSException : std::exception
 {
 	private:
 		std::string	_msg;
-		int			_error;
+		int			_errno;
 
 	public:
 
-    	SYSException(char *str, int error);
+    	SYSException(char *str);
     	SYSException(SYSException const & src);
     	~SYSException(void);
 		

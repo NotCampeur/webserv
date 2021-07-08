@@ -24,7 +24,7 @@ RequestHeaderParser::parse_char(char c)
 			if (!iswhitespace(c))
 			{
 				_state = FIELD_NAME;
-				_field_name += c;
+				addto_fieldname(c);
 			}
 			break ;
 		}
@@ -40,16 +40,16 @@ RequestHeaderParser::parse_char(char c)
 			}
 			else
 			{
-				_field_name += c; // Could use "to_lower" here as field names are case insensitive
+				addto_fieldname(c);
 			}
 			break ;
 		}
 		case COLON :
 		{
-			if (!iswhitespace(c)) // This condition does not break. If we have something else than a WP, we need to store this char (falling into FIELD_VALUE)
+			if (!iswhitespace(c)) // Remove WP
 			{
 				_state = FIELD_VALUE;
-				_field_value += c;
+				addto_fieldvalue(c);
 			}
 			break ;
 		}
@@ -57,11 +57,12 @@ RequestHeaderParser::parse_char(char c)
 		{
 			if (c == '\r')
 			{
+				remove_trailing_wp(_field_value);
 				return true;
 			}
 			else
 			{
-				_field_value += c;
+				addto_fieldvalue(c);
 			}
 			break ;
 		}
@@ -83,8 +84,34 @@ RequestHeaderParser::get_header_name(void)
 	return _field_name;
 }
 
+void	
+RequestHeaderParser::remove_trailing_wp(std::string & s)
+{
+	if (s.size() > 0)
+	{
+		size_t i = _field_value.size() - 1;
+		while (iswhitespace(_field_value[i]))
+		{
+			i--;
+		}
+		_field_value.erase(i + 1);
+	}
+}
+
 std::string &
 RequestHeaderParser::get_header_value(void)
 {
 	return _field_value;
+}
+
+void
+RequestHeaderParser::addto_fieldname(char c)
+{
+	_field_name += std::tolower(c);
+}
+
+void
+RequestHeaderParser::addto_fieldvalue(char c)
+{
+	_field_value += std::tolower(c);
 }

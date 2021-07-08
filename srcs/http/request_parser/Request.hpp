@@ -3,6 +3,8 @@
 
 # include "webserv.hpp"
 # include "IHttpMethod.hpp"
+# include "Exception.hpp"
+# include "HttpException.hpp"
 
 class Request
 {
@@ -40,10 +42,10 @@ class Request
 
 		// Exceptions
 
-		class MaxBodySizeReached : public std::exception
-		{
-			const char * what() const throw();
-		};
+		// class MaxBodySizeReached : public std::exception
+		// {
+		// 	const char * what() const throw();
+		// };
 };
 
 #endif

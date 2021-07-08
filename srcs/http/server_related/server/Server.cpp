@@ -39,7 +39,7 @@ Server::create_socket(int domain, int type, int protocol)
 {
 	this->_sockfd = socket(domain, type, protocol);
  	if (_sockfd == -1)
-		throw UnableToCreateServerSocket();
+		throw SYSException("Unable to create server socket");
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
 }
 
@@ -48,7 +48,7 @@ Server::make_nonblocking()
 {
 	int ret = fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
-		throw UnableToSetNonblockFlag(_sockfd);
+		throw SYSException("Cannot set nonblocking flag on server socket");
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
 }
 
@@ -59,7 +59,7 @@ Server::set_sock_opt()
 	int enable = 1;
 	int result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 	if (result == -1)
-		throw UnableToSetSockOpt();
+		throw SYSException("Unable to set socket option");
 	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
 }
 
@@ -80,7 +80,7 @@ Server::name_serv_socket()
 
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
-		throw UnableToNameSocket();
+		throw SYSException("Unable to name the server socket");
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
 }
 
@@ -91,86 +91,86 @@ Server::set_listener()
 
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
-		throw UnableToSetListener();
+		throw SYSException("Unable to set socket as listener");
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << _listening_port;
 }
 
 // EXCEPTIONS
 
-Server::UnableToCreateServerSocket::UnableToCreateServerSocket() throw()
-: _msg("Unable to create a socket for the server : ")
-{
-	_msg += strerror(errno);
-}
+// Server::UnableToCreateServerSocket::UnableToCreateServerSocket() throw()
+// : _msg("Unable to create a socket for the server : ")
+// {
+// 	_msg += strerror(errno);
+// }
 
-Server::UnableToCreateServerSocket::~UnableToCreateServerSocket()  throw()
-{}
+// Server::UnableToCreateServerSocket::~UnableToCreateServerSocket()  throw()
+// {}
 
-const char *
-Server::UnableToCreateServerSocket::what() const throw()
-{
-	return _msg.c_str();
-}
+// const char *
+// Server::UnableToCreateServerSocket::what() const throw()
+// {
+// 	return _msg.c_str();
+// }
 
-Server::UnableToNameSocket::UnableToNameSocket() throw()
-: _msg("Unable to name the socket of the server : ")
-{
-	_msg += strerror(errno);
-}
+// Server::UnableToNameSocket::UnableToNameSocket() throw()
+// : _msg("Unable to name the socket of the server : ")
+// {
+// 	_msg += strerror(errno);
+// }
 
-Server::UnableToNameSocket::~UnableToNameSocket()  throw()
-{}
+// Server::UnableToNameSocket::~UnableToNameSocket()  throw()
+// {}
 
-const char *
-Server::UnableToNameSocket::what() const throw()
-{
-	return _msg.c_str();
-}
+// const char *
+// Server::UnableToNameSocket::what() const throw()
+// {
+// 	return _msg.c_str();
+// }
 
-Server::UnableToSetListener::UnableToSetListener() throw()
-: _msg("Unable to set socket as listener : ")
-{
-	_msg += strerror(errno);
-}
+// Server::UnableToSetListener::UnableToSetListener() throw()
+// : _msg("Unable to set socket as listener : ")
+// {
+// 	_msg += strerror(errno);
+// }
 
-Server::UnableToSetListener::~UnableToSetListener() throw()
-{}
+// Server::UnableToSetListener::~UnableToSetListener() throw()
+// {}
 
-const char *
-Server::UnableToSetListener::what() const throw()
-{
-	return _msg.c_str();
-}
+// const char *
+// Server::UnableToSetListener::what() const throw()
+// {
+// 	return _msg.c_str();
+// }
 
-Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
-: _msg("cannot set nonblocking flag on fd"), _fd(-1)
-{
-	_msg << " : " << strerror(errno);
-}
+// Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
+// : _msg("cannot set nonblocking flag on fd"), _fd(-1)
+// {
+// 	_msg << " : " << strerror(errno);
+// }
 
-Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
-: _msg("cannot set nonblocking flag on fd : "), _fd(fd)
-{
-	_msg << _fd << " : " << strerror(errno);
-}
+// Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
+// : _msg("cannot set nonblocking flag on fd : "), _fd(fd)
+// {
+// 	_msg << _fd << " : " << strerror(errno);
+// }
 
-Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
-{
-	_fd = to_copy._fd;
-	_msg << to_copy._msg.str();
-}
+// Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
+// {
+// 	_fd = to_copy._fd;
+// 	_msg << to_copy._msg.str();
+// }
 
-Server::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
-{}
+// Server::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
+// {}
 
-const char *
-Server::UnableToSetNonblockFlag::what() const throw()
-{
-	return _msg.str().c_str();
-}
+// const char *
+// Server::UnableToSetNonblockFlag::what() const throw()
+// {
+// 	return _msg.str().c_str();
+// }
 
-const char *
-Server::UnableToSetSockOpt::what() const throw()
-{
-	return "Unable to set socket option";
-}
+// const char *
+// Server::UnableToSetSockOpt::what() const throw()
+// {
+// 	return "Unable to set socket option";
+// }

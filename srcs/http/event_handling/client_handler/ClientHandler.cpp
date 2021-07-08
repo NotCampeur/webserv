@@ -37,11 +37,11 @@ ClientHandler::readable(void)
 	{
 		case -1 :
 		{
-			throw UnableToReadClientRequest();
+			throw SYSException("Unable to read from client socket");
 		}
 		case 0 :
 		{
-			throw ClientClosedConnection();
+			throw Exception("Connection closed by client");
 		}
 		default :
 		{
@@ -70,7 +70,7 @@ ClientHandler::writable(void)
 		bytes_written = send(get_clientfd(), datagram.c_str(), datagram.size(), 0);
 
 		if (bytes_written != static_cast<ssize_t>(datagram.size()))
-			throw UnableToWriteToClient();
+			throw SYSException("Unable to write to client socket");
 
 		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << datagram;
 
@@ -108,38 +108,38 @@ ClientHandler::set_header(std::stringstream & header, size_t content_length)
 	<< "\r\n\r\n";
 }
 
-ClientHandler::UnableToReadClientRequest::UnableToReadClientRequest() throw()
-: _msg("Unable to read from client socket: ")
-{
-	_msg += strerror(errno);
-}
+// ClientHandler::UnableToReadClientRequest::UnableToReadClientRequest() throw()
+// : _msg("Unable to read from client socket: ")
+// {
+// 	_msg += strerror(errno);
+// }
 
-ClientHandler::UnableToReadClientRequest::~UnableToReadClientRequest() throw()
-{}
+// ClientHandler::UnableToReadClientRequest::~UnableToReadClientRequest() throw()
+// {}
 
-const char *
-ClientHandler::UnableToReadClientRequest::what(void) const throw()
-{
-	return _msg.c_str();
-}
+// const char *
+// ClientHandler::UnableToReadClientRequest::what(void) const throw()
+// {
+// 	return _msg.c_str();
+// }
 
-ClientHandler::UnableToWriteToClient::UnableToWriteToClient() throw()
-: _msg("Unable to write to client socket: ")
-{
-	_msg += strerror(errno);
-}
+// ClientHandler::UnableToWriteToClient::UnableToWriteToClient() throw()
+// : _msg("Unable to write to client socket: ")
+// {
+// 	_msg += strerror(errno);
+// }
 
-ClientHandler::UnableToWriteToClient::~UnableToWriteToClient() throw()
-{}
+// ClientHandler::UnableToWriteToClient::~UnableToWriteToClient() throw()
+// {}
 
-const char *
-ClientHandler::UnableToWriteToClient::what(void) const throw()
-{
-	return _msg.c_str();
-}
+// const char *
+// ClientHandler::UnableToWriteToClient::what(void) const throw()
+// {
+// 	return _msg.c_str();
+// }
 
-const char *
-ClientHandler::ClientClosedConnection::what(void) const throw()
-{
-	return "client closed connection";
-}
+// const char *
+// ClientHandler::ClientClosedConnection::what(void) const throw()
+// {
+// 	return "client closed connection";
+// }

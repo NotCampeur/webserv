@@ -58,19 +58,19 @@ InitiationDispatcher::handle_events(void)
 						}
 					}
 				}
-				catch (const ClientHandler::ClientClosedConnection & e)
+				catch (const Exception & e)
 				{
 					remove_handle(it->fd);
 					Logger(LOG_FILE, basic_type, debug_lvl) << e.what() << ' ' << it->fd;
 				}
-				catch (const std::exception& e)
+				catch (const SYSException & e)
 				{
 					remove_handle(it->fd);
 					Logger(LOG_FILE, error_type) << e.what();
 				}
 			}
 		}
-		catch (const std::exception & e)
+		catch (...)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
 			if (errno != EAGAIN)

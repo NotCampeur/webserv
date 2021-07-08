@@ -29,7 +29,9 @@ class RequestHeaderParser
 
 	private:
 		bool	iswhitespace(char c);
-
+		void	remove_trailing_wp(std::string & s);
+		void	addto_fieldname(char c);
+		void	addto_fieldvalue(char c);
 		RequestHeaderParser(RequestHeaderParser const & src);
 		RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 };

@@ -4,6 +4,7 @@
 # include "IEventHandler.hpp"
 # include "Server.hpp"
 # include "Client.hpp"
+# include "SYSException.hpp"
 
 class InitiationDispatcher;
 # include "InitiationDispatcher.hpp"
@@ -38,28 +39,28 @@ class ServerHandler : public IEventHandler
         void    new_client_handler(Client & client);
 
     // Exceptions
-    public:
+    // public:
 
-        class UnableToAcceptConnection : public std::exception
-		{
-			public:
-				UnableToAcceptConnection(int error) throw() : _error(error) {}
-			private:
-				const char *what() const throw();
-				int			_error;
-		};
+    //     class UnableToAcceptConnection : public std::exception
+	// 	{
+	// 		public:
+	// 			UnableToAcceptConnection(int error) throw() : _error(error) {}
+	// 		private:
+	// 			const char *what() const throw();
+	// 			int			_error;
+	// 	};
 
-		class UnableToSetNonblockFlag : public std::exception
-		{
-				std::ostringstream	_msg;
-				int					_fd;
-			public:
-				UnableToSetNonblockFlag() throw();
-				UnableToSetNonblockFlag(int fd) throw();
-				UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw();
-				~UnableToSetNonblockFlag() throw();
-				const char *what() const throw();
-		};
+	// 	class UnableToSetNonblockFlag : public std::exception
+	// 	{
+	// 			std::ostringstream	_msg;
+	// 			int					_fd;
+	// 		public:
+	// 			UnableToSetNonblockFlag() throw();
+	// 			UnableToSetNonblockFlag(int fd) throw();
+	// 			UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw();
+	// 			~UnableToSetNonblockFlag() throw();
+	// 			const char *what() const throw();
+	// 	};
 };
 
 #endif

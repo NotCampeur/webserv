@@ -3,6 +3,7 @@
 
 # include "webserv.hpp"
 # include "webserv_param.hpp"
+# include "SYSException.hpp"
 
 class Server
 {
@@ -35,50 +36,50 @@ class Server
 
 	// Class Exceptions:
 
-	public:
-		class UnableToCreateServerSocket : public std::exception
-		{
-				std::string	_msg;
-			public:
-				UnableToCreateServerSocket() throw();
-				~UnableToCreateServerSocket() throw();
-				const char * what(void) const throw();
-		};
+	// public:
+	// 	class UnableToCreateServerSocket : public std::exception
+	// 	{
+	// 			std::string	_msg;
+	// 		public:
+	// 			UnableToCreateServerSocket() throw();
+	// 			~UnableToCreateServerSocket() throw();
+	// 			const char * what(void) const throw();
+	// 	};
 
-		class UnableToNameSocket : public std::exception
-		{
-				std::string	_msg;
-			public:
-				UnableToNameSocket() throw();
-				~UnableToNameSocket() throw();
-				const char * what(void) const throw();
-		};
+	// 	class UnableToNameSocket : public std::exception
+	// 	{
+	// 			std::string	_msg;
+	// 		public:
+	// 			UnableToNameSocket() throw();
+	// 			~UnableToNameSocket() throw();
+	// 			const char * what(void) const throw();
+	// 	};
 
-		class UnableToSetListener : public std::exception
-		{
-				std::string	_msg;
-			public:
-				UnableToSetListener() throw();
-				~UnableToSetListener() throw();
-				const char * what(void) const throw();
-		};
+	// 	class UnableToSetListener : public std::exception
+	// 	{
+	// 			std::string	_msg;
+	// 		public:
+	// 			UnableToSetListener() throw();
+	// 			~UnableToSetListener() throw();
+	// 			const char * what(void) const throw();
+	// 	};
 
-		class UnableToSetNonblockFlag : public std::exception
-		{
-				std::ostringstream	_msg;
-				int					_fd;
-			public:
-				UnableToSetNonblockFlag() throw();
-				UnableToSetNonblockFlag(int fd) throw();
-				UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw();
-				~UnableToSetNonblockFlag() throw();
-				const char *what() const throw();
-		};
+	// 	class UnableToSetNonblockFlag : public std::exception
+	// 	{
+	// 			std::ostringstream	_msg;
+	// 			int					_fd;
+	// 		public:
+	// 			UnableToSetNonblockFlag() throw();
+	// 			UnableToSetNonblockFlag(int fd) throw();
+	// 			UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw();
+	// 			~UnableToSetNonblockFlag() throw();
+	// 			const char *what() const throw();
+	// 	};
 
-		class UnableToSetSockOpt : public std::exception
-		{
-			const char * what() const throw();
-		};
+	// 	class UnableToSetSockOpt : public std::exception
+	// 	{
+	// 		const char * what() const throw();
+	// 	};
 };
 
 #endif

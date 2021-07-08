@@ -6,17 +6,18 @@
 class HttpException : std::exception
 {
 	private:
-		std::string	_msg;
+		int	_error;
 
 	public:
 
-    	HttpException(char *str);
+    	HttpException(int error);
     	HttpException(HttpException const & src);
     	~HttpException(void);
 		
 		HttpException &  operator=(HttpException const & src);
 
-		const char * what(void) const throw();
+		int	error_code(void);
+		// const char * what(void) const throw();
 
 	private:
 		HttpException(void);
@@ -24,7 +25,7 @@ class HttpException : std::exception
 
 #endif
 
-
+/*
 Parsing (Headers + body)
 Validation: is path ok, is method allowed
 Handle request:
@@ -72,3 +73,5 @@ SENDING : sets headers on first call
 		- validator		-> validate(request + response (optional))
 		- method handler -> handle(request + response)
 		- sender	-> sendready(request + response)
+
+*/

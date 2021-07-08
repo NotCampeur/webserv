@@ -13,7 +13,7 @@ class Exception : std::exception
     	Exception(char *str);
     	Exception(Exception const & src);
     	~Exception(void);
-		
+
 		Exception &  operator=(Exception const & src);
 
 		const char * what(void) const throw();

@@ -39,7 +39,7 @@ void
 Request::addbody(char *buf, size_t len)
 {
 	if ((_body_size + len) > MAX_CLIENT_BODY_SIZE)
-		throw MaxBodySizeReached();
+		throw Exception("Client request body is too large");
 	std::memcpy(&_body[_body_size], buf, len);
 }
 
@@ -74,8 +74,8 @@ Request::add_header(std::string & field_name, std::string & field_value)
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
 
-const char *
-Request::MaxBodySizeReached::what() const throw()
-{
-	return "Client request body is too large";
-}
+// const char *
+// Request::MaxBodySizeReached::what() const throw()
+// {
+// 	return "Client request body is too large";
+// }

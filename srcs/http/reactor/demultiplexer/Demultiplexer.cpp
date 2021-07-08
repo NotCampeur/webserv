@@ -32,7 +32,7 @@ Demultiplexer::activate()
 	result = poll(&_pollfds[0], _pollfds.size(), _timeout);
 	if (result == -1)
 	{
-		throw Demultiplexer::PollingError();
+		throw SYSException("Unable to poll descriptors");
 	}
 	else if (result == 0)
 	{
@@ -60,9 +60,7 @@ Demultiplexer::addfd(int fd, int flag)
 void
 Demultiplexer::removefd(int fd)
 {
-	if (_pollfds.empty())
-		throw Demultiplexer::FdNotFound();
-	else
+	if (!_pollfds.empty())
 	{
 		pollfd_arr::iterator it = _pollfds.begin();
 		pollfd_arr::iterator ite = _pollfds.end();
@@ -75,51 +73,51 @@ Demultiplexer::removefd(int fd)
 				return ;
 			}
 		}
-		throw Demultiplexer::FdNotFound();
 	}
+	throw Exception("Fd not found");
 }
 
-void					
-Demultiplexer::clear(void)
-{
-	_pollfds.clear();
-}
+// void					
+// Demultiplexer::clear(void)
+// {
+// 	_pollfds.clear();
+// }
 
-Demultiplexer::pollfd_arr::iterator
-Demultiplexer::begin()
-{
-	return _pollfds.begin();
-}
+// Demultiplexer::pollfd_arr::iterator
+// Demultiplexer::begin()
+// {
+// 	return _pollfds.begin();
+// }
 
-Demultiplexer::pollfd_arr::iterator
-Demultiplexer::end()
-{
-	return _pollfds.end();
-}
+// Demultiplexer::pollfd_arr::iterator
+// Demultiplexer::end()
+// {
+// 	return _pollfds.end();
+// }
 
-Demultiplexer::PollingError::PollingError() throw()
-: _msg("Unable to poll descriptors : ")
-{
-	_msg += strerror(errno);
-}
+// Demultiplexer::PollingError::PollingError() throw()
+// : _msg("Unable to poll descriptors : ")
+// {
+// 	_msg += strerror(errno);
+// }
 
-Demultiplexer::PollingError::~PollingError() throw()
-{}
+// Demultiplexer::PollingError::~PollingError() throw()
+// {}
 
-const char *
-Demultiplexer::PollingError::what(void) const throw()
-{
-	return _msg.c_str();
-}
+// const char *
+// Demultiplexer::PollingError::what(void) const throw()
+// {
+// 	return _msg.c_str();
+// }
 
-const char *
-Demultiplexer::PollingTimeout::what(void) const throw()
-{
-	return ("The polling timeout.");
-}
+// const char *
+// Demultiplexer::PollingTimeout::what(void) const throw()
+// {
+// 	return ("The polling timeout.");
+// }
 
-const char *
-Demultiplexer::FdNotFound::what(void) const throw()
-{
-	return ("Cannot remove fd from pollfds: fd not found");
-}
+// const char *
+// Demultiplexer::FdNotFound::what(void) const throw()
+// {
+// 	return ("Cannot remove fd from pollfds: fd not found");
+// }
