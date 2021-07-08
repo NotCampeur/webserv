@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/08 18:25:29 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/08 18:40:33 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ JsonFileReader::objectify(void)
 			case '{' :
 			{
 				is_key = true;
-				current_value.push(new JsonObject());
+				current_value.push(new JsonObject(data.first));
 				break;
 			}
 			case ':' :
