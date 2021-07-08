@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/08 18:40:33 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/08 22:41:44 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ JsonFileReader::objectify(void)
 			{
 				data.first = current_value.top()->key();
 				data.second = current_value.top();
-				Logger(LOG_FILE, basic_type, debug_lvl) << "array end";
+				Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " array end";
 				current_value.pop();
 				JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
 				if (obj != NULL)
@@ -104,9 +104,16 @@ JsonFileReader::objectify(void)
 			{
 				data.first = current_value.top()->key();
 				data.second = current_value.top();
-				Logger(LOG_FILE, basic_type, debug_lvl) << "object end";
+				Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " object end";
 				if (current_value.size() == 1)
+				{
+					if (ite - it > 1)
+					{
+						delete data.second;
+						throw JsonFileReaderException("Another global scope has been detected");
+					}
 					return *dynamic_cast<JsonObject *>(data.second);
+				}
 				current_value.pop();
 				JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
 				if (obj != NULL)
@@ -269,7 +276,7 @@ JsonFileReader::check_curly_bracket_scope()
 		{
 			closing_c_bracket = _file_data.find('}', opening_c_bracket + 1);
 			if (closing_c_bracket == std::string::npos)
-				throw MissingEnclosingQuotes();
+				throw JsonFileReaderException("Missing enclosing quotes");
 			closing_c_bracket++;
 		}
 	}
@@ -288,7 +295,7 @@ JsonFileReader::check_bracket_scope()
 		{
 			closing_bracket = _file_data.find(']', opening_bracket + 1);
 			if (closing_bracket == std::string::npos)
-				throw MissingEnclosingQuotes();
+				throw JsonFileReaderException("Missing enclosing quotes");
 			closing_bracket++;
 		}
 	}
@@ -307,7 +314,7 @@ JsonFileReader::check_quotes_scope()
 		{
 			closing_dquote = _file_data.find('"', opening_dquote + 1);
 			if (closing_dquote == std::string::npos)
-				throw MissingEnclosingQuotes();
+				throw JsonFileReaderException("Missing enclosing quotes");
 			closing_dquote++;
 		}
 	}
@@ -351,20 +358,6 @@ JsonFileReader::NotAbleToOpen::what() const throw()
 	return _msg.c_str();
 }
 
-JsonFileReader::MissingEnclosingQuotes::MissingEnclosingQuotes() throw()
-: _msg("Missing enclosing quotes")
-{
-}
-
-JsonFileReader::MissingEnclosingQuotes::~MissingEnclosingQuotes() throw()
-{}
-
-const char *
-JsonFileReader::MissingEnclosingQuotes::what() const throw()
-{
-	return _msg.c_str();
-}
-
 JsonFileReader::MissingToken::MissingToken(std::string precision) throw()
 : _msg("Missing expected token around here : " + precision)
 {
@@ -379,3 +372,15 @@ JsonFileReader::MissingToken::what() const throw()
 	return _msg.c_str();
 }
 
+JsonFileReader::JsonFileReaderException::JsonFileReaderException(std::string msg) throw()
+: _msg(msg)
+{}
+
+JsonFileReader::JsonFileReaderException::~JsonFileReaderException() throw()
+{}
+
+const char *
+JsonFileReader::JsonFileReaderException::what() const throw()
+{
+	return _msg.c_str();
+}

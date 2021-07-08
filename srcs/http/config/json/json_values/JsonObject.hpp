@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 15:27:48 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/08 18:11:59 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/09 00:28:54 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class JsonObject : public IJsonValue
 		typedef std::map<std::string, IJsonValue *> value_type;
 
 	private:
+		std::string				_key;
 		value_type				_value;
 	
 	public:
@@ -37,6 +38,10 @@ class JsonObject : public IJsonValue
 
 		IJsonValue				*clone(void);
 		void					print(int indent) const;
+		void					print_to_buffer(int indent, std::string & buffer) const;
+
+		value_type::const_iterator	value_begin(void) const;
+		value_type::const_iterator	value_end(void) const;
 
 		JsonObject				&operator=(const JsonObject & to_assign);
 		friend std::ostream		&operator<<(std::ostream & os,

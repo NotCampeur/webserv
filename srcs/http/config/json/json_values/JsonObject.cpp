@@ -14,13 +14,12 @@
 
 
 JsonObject::JsonObject(std::string key)
-: IJsonValue(key), _value()
+: _key(key), _value()
 {
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Begin of " << _key << " object";
 }
 
 JsonObject::JsonObject(const JsonObject & to_copy)
-: IJsonValue(to_copy)
 {
 	*this = to_copy;
 }
@@ -71,9 +70,9 @@ JsonObject::clone(void)
 void
 JsonObject::print(int indent) const
 {
-	JsonObject::value_type::const_iterator it = _value.begin();
-	JsonObject::value_type::const_iterator ite = _value.end();
-	
+	JsonObject::value_type::const_iterator	it = _value.begin();
+	JsonObject::value_type::const_iterator	ite = _value.end();
+
 	std::cout << "{\n";
 	for (; it != ite; it++)
 	{
@@ -81,7 +80,7 @@ JsonObject::print(int indent) const
 			std::cout << ",\n";
 		for (int i(0); i < indent; i++)
 			std::cout << "    ";
-		std::cout << '"' << it->first << "\":";
+		std::cout << '"' + it->first + "\":";
 		JsonString	*tmp = dynamic_cast<JsonString *>(it->second);
 		if (tmp != NULL)
 			it->second->print(0);
@@ -92,6 +91,44 @@ JsonObject::print(int indent) const
 	for (int i(0); i < indent - 1; i++)
 		std::cout << "    ";
 	std::cout << "}";
+}
+
+void
+JsonObject::print_to_buffer(int indent, std::string & buffer) const
+{
+	JsonObject::value_type::const_iterator	it = _value.begin();
+	JsonObject::value_type::const_iterator	ite = _value.end();
+
+	buffer += "{\n";
+	for (; it != ite; it++)
+	{
+		if (it != _value.begin())
+			buffer += ",\n";
+		for (int i(0); i < indent; i++)
+			buffer += "    ";
+		buffer += '"' + it->first + "\":";
+		JsonString	*tmp = dynamic_cast<JsonString *>(it->second);
+		if (tmp != NULL)
+			it->second->print_to_buffer(0, buffer);
+		else
+			it->second->print_to_buffer(indent + 1, buffer);
+	}
+	buffer += "\n";
+	for (int i(0); i < indent - 1; i++)
+		buffer += "    ";
+	buffer += "}";
+}
+
+JsonObject::value_type::const_iterator
+JsonObject::value_begin(void) const
+{
+	return _value.cbegin();
+}
+
+JsonObject::value_type::const_iterator
+JsonObject::value_end(void) const
+{
+	return _value.cend();
 }
 
 JsonObject &

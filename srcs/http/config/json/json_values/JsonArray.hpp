@@ -23,6 +23,7 @@ class JsonArray : public IJsonValue
 		typedef std::vector<IJsonValue *> value_type;
 
 	private:
+		std::string					_key;
 		std::vector<IJsonValue *>	_value;
 	
 	public:
@@ -33,9 +34,13 @@ class JsonArray : public IJsonValue
 		void					add_value(IJsonValue * to_add);
 
 		std::string				key(void) const;
+	
+		value_type::const_iterator	value_begin(void) const;
+		value_type::const_iterator	value_end(void) const;
 
 		IJsonValue				*clone(void);
 		void					print(int indent) const;
+		void					print_to_buffer(int indent, std::string & buffer) const;
 
 		JsonArray				&operator=(const JsonArray & to_assign);
 		friend std::ostream		&operator<<(std::ostream & os,

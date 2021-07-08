@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/06 14:32:41 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/09 01:06:24 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,116 @@ Config::Config(const Config & to_copy)
 
 Config::~Config()
 {}
+
+Config::global_config
+Config::get_global_key(const std::string & key)
+{
+	if (key == "server")
+		return server;
+	return global_unknown;
+}
+
+Config::server_config
+Config::get_server_key(const std::string & key)
+{
+	if (key == "host")
+		return host;
+	else if (key == "port")
+		return port;
+	else if (key == "route")
+		return route;
+	return server_unknown;
+}
+
+Config::route_config
+Config::get_route_key(const std::string & key)
+{
+	if (key == "path")
+		return path;
+	return route_unknown;
+}
+
+void
+Config::apply(InitiationDispatcher & idis)
+{
+	JsonObject::value_type::const_iterator it(_global_scope.value_begin());
+	JsonObject::value_type::const_iterator ite(_global_scope.value_end());
+
+	while (it != ite)
+	{
+		switch (get_global_key(it->first))
+		{
+			case server:
+			{
+				JsonArray	*servers = dynamic_cast<JsonArray *>(it->second);
+				if (servers == nullptr)
+					throw;
+				JsonArray::value_type::const_iterator ait(servers->value_begin());
+				JsonArray::value_type::const_iterator aite(servers->value_end());
+				while (ait != aite)
+				{
+					JsonObject	*server = dynamic_cast<JsonObject *>(*ait);
+					if (server == nullptr)
+						throw;
+					JsonObject::value_type::const_iterator oit(server->value_begin());
+					JsonObject::value_type::const_iterator oite(server->value_end());
+					std::string	host_value("127.0.0.1");
+					std::string	port_value("8080");
+					
+					while (oit != oite)
+					{
+						switch (get_server_key(oit->first))
+						{
+							case host:
+							{
+								JsonString	*value = dynamic_cast<JsonString *>(oit->second);
+								if (value == nullptr)
+									throw;
+								host_value = value->value();
+								break;
+							}
+							case port:
+							{
+								JsonString	*value = dynamic_cast<JsonString *>(oit->second);
+								if (value == nullptr)
+									throw;
+								port_value = value->value();
+								break;
+							}
+							case route:
+							{
+								break;
+							}
+							case server_unknown:
+							{
+								throw;
+							}
+						}
+						oit++;
+					}
+					const Server *serv = new Server(atoi(port_value.c_str()), inet_addr(host_value.c_str()));
+					idis.add_handle(*serv);
+					ait++;
+				}
+				break;
+			}
+			case global_unknown:
+			{
+				throw;
+			}
+		}
+		it++;
+	}
+}
+
+void
+Config::print_to_log(void) const
+{
+	std::string buffer("Config content :\n");
+
+	_global_scope.print_to_buffer(1, buffer);
+	Logger(LOG_FILE, basic_type, debug_lvl) << buffer;
+}
 
 Config & Config::operator=(const Config & to_assign)
 {

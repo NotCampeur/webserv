@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 12:09:31 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/08 18:17:32 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/09 00:23:25 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,10 @@
 
 
 JsonString::JsonString(std::string key, std::string value)
-: IJsonValue(key), _value(value)
+: _key(key), _value(value)
 {}
 
 JsonString::JsonString(const JsonString & to_copy)
-: IJsonValue(to_copy)
 {
 	*this = to_copy;
 }
@@ -30,6 +29,12 @@ std::string
 JsonString::key(void) const
 {
 	return _key;
+}
+
+std::string
+JsonString::value(void) const
+{
+	return _value;
 }
 
 IJsonValue *
@@ -47,6 +52,14 @@ JsonString::print(int indent) const
 	for (int i(0); i < indent; i++)
 		std::cout << "    ";
 	std::cout << '"' + _value + '"';
+}
+
+void
+JsonString::print_to_buffer(int indent, std::string &buffer) const
+{
+	for (int i(0); i < indent; i++)
+		buffer += "    ";
+	buffer += '"' + _value + '"';
 }
 
 JsonString &

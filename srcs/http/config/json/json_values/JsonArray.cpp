@@ -1,25 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   JsonArray.cpp                                 :+:      :+:    :+:   */
+/*   JsonArray.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/07/05 14:27:02 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/05 15:24:11 by ldutriez         ###   ########.fr       */
+/*   Created: 2021/07/08 21:01:56 by ldutriez          #+#    #+#             */
+/*   Updated: 2021/07/09 00:29:28 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "JsonArray.hpp"
 
 JsonArray::JsonArray(std::string key)
-: IJsonValue(key), _value()
+: _key(key), _value()
 {
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Begin of " << _key << " array";
 }
 
 JsonArray::JsonArray(const JsonArray & to_copy)
-: IJsonValue(to_copy)
 {
 	*this = to_copy;
 }
@@ -45,6 +44,18 @@ JsonArray::key(void) const
 	return _key;
 }
 
+JsonArray::value_type::const_iterator
+JsonArray::value_begin(void) const
+{
+	return _value.cbegin();
+}
+
+JsonArray::value_type::const_iterator
+JsonArray::value_end(void) const
+{
+	return _value.cend();
+}
+
 IJsonValue *
 JsonArray::clone(void)
 {
@@ -53,6 +64,7 @@ JsonArray::clone(void)
 	result = new JsonArray(*this);
 	return result;
 }
+
 void
 JsonArray::print(int indent) const
 {
@@ -79,6 +91,34 @@ JsonArray::print(int indent) const
 	for (int i(0); i < indent - 1; i++)
 		std::cout << "    ";
 	std::cout << "]";
+}
+
+void
+JsonArray::print_to_buffer(int indent, std::string & buffer) const
+{
+	JsonArray::value_type::const_iterator	it(_value.begin());
+	JsonArray::value_type::const_iterator	ite(_value.end());
+
+	buffer += "\n";
+	for (int i(0); i < indent - 1; i++)
+		buffer += "    ";
+	buffer += "[\n";
+	for (;it != ite; it++)
+	{
+		if (it != _value.begin())
+			buffer += ",\n";
+		for (int i(0); i < indent; i++)
+			buffer += "    ";
+		JsonString	*tmp = dynamic_cast<JsonString *>(*it);
+		if (tmp != NULL)
+			(*it)->print_to_buffer(0, buffer);
+		else
+			(*it)->print_to_buffer(indent + 1, buffer);
+	}
+	buffer += "\n";
+	for (int i(0); i < indent - 1; i++)
+		buffer += "    ";
+	buffer += "]";
 }
 
 JsonArray &

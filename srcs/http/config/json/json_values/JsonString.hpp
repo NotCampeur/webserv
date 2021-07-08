@@ -18,6 +18,7 @@
 
 class JsonString : public IJsonValue
 {
+		std::string		_key;
 		std::string		_value;
 		
 	public:
@@ -26,9 +27,11 @@ class JsonString : public IJsonValue
 								~JsonString();
 
 		std::string				key(void) const;
+		std::string				value(void) const;
 
 		IJsonValue				*clone(void);
 		void					print(int indent) const;
+		void					print_to_buffer(int indent, std::string &buffer) const;
 
 		JsonString			& operator=(const JsonString & to_assign);
 		friend std::ostream	& operator<<(std::ostream & os,

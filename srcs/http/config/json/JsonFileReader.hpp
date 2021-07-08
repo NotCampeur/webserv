@@ -58,6 +58,7 @@ class JsonFileReader
 		//	Return the json file formated into a JsonObject.
 		JsonObject	& objectify(void);
 
+		// TODO : Will be modified in SysException
 		class NotAbleToOpen : public std::exception
 		{
 				std::string _msg;
@@ -69,16 +70,6 @@ class JsonFileReader
 				const char * what() const throw();
 		};
 
-		class MissingEnclosingQuotes : public std::exception
-		{
-				std::string _msg;
-				
-			public:
-				MissingEnclosingQuotes() throw();
-				~MissingEnclosingQuotes() throw();
-				const char * what() const throw();
-		};
-
 		class MissingToken : public std::exception
 		{
 				std::string _msg;
@@ -86,6 +77,17 @@ class JsonFileReader
 			public:
 				MissingToken(std::string precision) throw();
 				~MissingToken() throw();
+				const char * what() const throw();
+		};
+
+		class JsonFileReaderException : public std::exception
+		{
+				std::string _msg;
+				
+			public:
+				JsonFileReaderException(std::string msg) throw();
+				~JsonFileReaderException() throw();
+
 				const char * what() const throw();
 		};
 };
