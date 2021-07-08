@@ -12,10 +12,14 @@
 
 #include "JsonArray.hpp"
 
-JsonArray::JsonArray()
-{}
+JsonArray::JsonArray(std::string key)
+: IJsonValue(key), _value()
+{
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Begin of " << _key << " array";
+}
 
 JsonArray::JsonArray(const JsonArray & to_copy)
+: IJsonValue(to_copy)
 {
 	*this = to_copy;
 }
@@ -35,6 +39,12 @@ JsonArray::add_value(IJsonValue * to_add)
 	_value.push_back(to_add);
 }
 
+std::string
+JsonArray::key(void) const
+{
+	return _key;
+}
+
 IJsonValue *
 JsonArray::clone(void)
 {
@@ -49,6 +59,9 @@ JsonArray::print(int indent) const
 	JsonArray::value_type::const_iterator	it(_value.begin());
 	JsonArray::value_type::const_iterator	ite(_value.end());
 
+	std::cout << "\n";
+	for (int i(0); i < indent - 1; i++)
+		std::cout << "    ";
 	std::cout << "[\n";
 	for (;it != ite; it++)
 	{

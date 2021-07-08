@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 15:27:48 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/06 22:28:15 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/08 18:11:59 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,14 @@ class JsonObject : public IJsonValue
 		value_type				_value;
 	
 	public:
-								JsonObject();
+								JsonObject(std::string key = "config");
 								JsonObject(const JsonObject & to_copy);
 								~JsonObject();
 
 		void					add_value(std::string key, IJsonValue & to_add);
 		void					add_value(std::pair<std::string, IJsonValue *> &to_add);
+
+		std::string				key(void) const;
 
 		IJsonValue				*clone(void);
 		void					print(int indent) const;

@@ -6,18 +6,19 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 12:09:31 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/06 22:30:21 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/08 18:17:32 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "JsonString.hpp"
 
 
-JsonString::JsonString(std::string value)
-: _value(value)
+JsonString::JsonString(std::string key, std::string value)
+: IJsonValue(key), _value(value)
 {}
 
 JsonString::JsonString(const JsonString & to_copy)
+: IJsonValue(to_copy)
 {
 	*this = to_copy;
 }
@@ -25,12 +26,18 @@ JsonString::JsonString(const JsonString & to_copy)
 JsonString::~JsonString()
 {}
 
+std::string
+JsonString::key(void) const
+{
+	return _key;
+}
+
 IJsonValue *
 JsonString::clone(void)
 {
 	JsonString	*result;
 
-	result = new JsonString(_value);
+	result = new JsonString(*this);
 	return result;
 }
 

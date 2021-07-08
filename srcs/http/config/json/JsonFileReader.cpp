@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/06 21:23:18 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/08 18:25:29 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ JsonFileReader::objectify(void)
 
 					is_key = false;
 					data.first = _file_data.substr(start + 1, end - 1 - start);
-					// Logger(LOG_FILE, basic_type, debug_lvl) << "Key found -> " << data.first;
 					it = _file_data.begin() + end;
 				}
 				else
@@ -55,8 +54,7 @@ JsonFileReader::objectify(void)
 					size_t	start = it - _file_data.begin();
 					size_t	end = _file_data.find('"', start + 1);
 					
-					data.second = new JsonString(_file_data.substr(start + 1, end - 1 - start));
-					// Logger(LOG_FILE, basic_type, debug_lvl) << "Value found -> " << _file_data.substr(start + 1, end - 1 - start);
+					data.second = new JsonString(data.first ,_file_data.substr(start + 1, end - 1 - start));
 					Logger(LOG_FILE, basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
 					it = _file_data.begin() + end;
 					JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
@@ -72,13 +70,11 @@ JsonFileReader::objectify(void)
 			}
 			case '[' :
 			{
-				Logger(LOG_FILE, basic_type, debug_lvl) << "array begin";
-				current_value.push(new JsonArray());
+				current_value.push(new JsonArray(data.first));
 				break;
 			}
 			case '{' :
 			{
-				Logger(LOG_FILE, basic_type, debug_lvl) << "object begin";
 				is_key = true;
 				current_value.push(new JsonObject());
 				break;
@@ -90,6 +86,7 @@ JsonFileReader::objectify(void)
 			}
 			case ']' :
 			{
+				data.first = current_value.top()->key();
 				data.second = current_value.top();
 				Logger(LOG_FILE, basic_type, debug_lvl) << "array end";
 				current_value.pop();
@@ -105,6 +102,7 @@ JsonFileReader::objectify(void)
 			}
 			case '}' :
 			{
+				data.first = current_value.top()->key();
 				data.second = current_value.top();
 				Logger(LOG_FILE, basic_type, debug_lvl) << "object end";
 				if (current_value.size() == 1)

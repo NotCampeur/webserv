@@ -13,10 +13,14 @@
 #include "JsonObject.hpp"
 
 
-JsonObject::JsonObject()
-{}
+JsonObject::JsonObject(std::string key)
+: IJsonValue(key), _value()
+{
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Begin of " << _key << " object";
+}
 
 JsonObject::JsonObject(const JsonObject & to_copy)
+: IJsonValue(to_copy)
 {
 	*this = to_copy;
 }
@@ -47,6 +51,12 @@ JsonObject::add_value(std::pair<std::string, IJsonValue *> & to_add)
 	result = _value.insert(to_add);
 	if (result.second == false)
 		throw MultipleDefinitionOfAValue(to_add.first);
+}
+
+std::string
+JsonObject::key(void) const
+{
+	return _key;
 }
 
 IJsonValue *

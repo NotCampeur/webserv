@@ -21,9 +21,11 @@ class JsonString : public IJsonValue
 		std::string		_value;
 		
 	public:
-								JsonString(std::string value);
+								JsonString(std::string key, std::string value);
 								JsonString(const JsonString & to_copy);
 								~JsonString();
+
+		std::string				key(void) const;
 
 		IJsonValue				*clone(void);
 		void					print(int indent) const;

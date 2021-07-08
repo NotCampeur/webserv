@@ -26,11 +26,13 @@ class JsonArray : public IJsonValue
 		std::vector<IJsonValue *>	_value;
 	
 	public:
-								JsonArray();
+								JsonArray(std::string key);
 								JsonArray(const JsonArray & to_copy);
 								~JsonArray();
 
 		void					add_value(IJsonValue * to_add);
+
+		std::string				key(void) const;
 
 		IJsonValue				*clone(void);
 		void					print(int indent) const;
