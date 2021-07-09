@@ -35,14 +35,6 @@ Request::headers(void)
 	return _headers;
 }
 
-void
-Request::addbody(char *buf, size_t len)
-{
-	if ((_body_size + len) > MAX_CLIENT_BODY_SIZE)
-		throw Exception("Client request body is too large");
-	std::memcpy(&_body[_body_size], buf, len);
-}
-
 size_t
 Request::bodysize(void) const
 {
@@ -53,6 +45,30 @@ bool &
 Request::complete(void)
 {
 	return _complete;
+}
+
+void
+Request::add_char_to_body(char c)
+{
+	if (_body_size == MAX_CLIENT_BODY_SIZE)
+		throw HttpException(::HttpException::REQUEST_ENTITY_TOO_LARGE_413);
+	_body[_body_size] = c;
+	_body_size++;
+}
+
+// To delete
+void
+Request::addbody(char *buf, size_t len)
+{
+	if ((_body_size + len) > MAX_CLIENT_BODY_SIZE)
+		throw HttpException(REQUEST_ENTITY_TOO_LARGE_413);
+	std::memcpy(&_body[_body_size], buf, len);
+}
+
+const char *
+Request::get_body(void) const
+{
+	return &_body[0]; //To return _body directly, need to change return type to char const *
 }
 
 void
@@ -73,9 +89,3 @@ Request::add_header(std::string & field_name, std::string & field_value)
 {
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
-
-// const char *
-// Request::MaxBodySizeReached::what() const throw()
-// {
-// 	return "Client request body is too large";
-// }

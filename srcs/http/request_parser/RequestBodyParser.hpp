@@ -4,22 +4,22 @@
 # include "RequestParser.hpp"
 # include "Request.hpp"
 # include "Exception.hpp"
+# include "HttpException.hpp"
 
 class RequestBodyParser
 {
 	private:
-		enum chunk_state {
+		enum body_state {
 			START,
-			NORMAL,
-			CHUNK_SIZE,
-			CHUNK_EXTENSION,
-			CHUNK_META_CRLF,
-			CHUNK_DATA,
-			CHUNK_DATA_CRLF,
-			DONE
+			CONTENT_LEN,
+			// CHUNK_SIZE,
+			// CHUNK_EXTENSION,
+			// CHUNK_META_CRLF,
+			// CHUNK_DATA,
+			// CHUNK_DATA_CRLF
 		};
 
-		chunk_state			_state;
+		body_state			_state;
 		long int			_size;
 		Request &			_request;
 		std::string			_hex;
@@ -29,11 +29,10 @@ class RequestBodyParser
     	RequestBodyParser(Request & req);
     	~RequestBodyParser(void);
 
-		bool	parse_body(char *buf, size_t len);
+		bool	parse_char(char c);
+		void	reset(void);
 
 	private:
-		void	parse_chunk_char(char c);
-
 		RequestBodyParser(void);
 		RequestBodyParser(RequestBodyParser const & src);
 		RequestBodyParser &  operator=(RequestBodyParser const & src);

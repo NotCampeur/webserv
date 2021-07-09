@@ -70,7 +70,7 @@ InitiationDispatcher::handle_events(void)
 				}
 			}
 		}
-		catch (...)
+		catch (std::exception & e)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
 			if (errno != EAGAIN)

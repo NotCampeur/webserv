@@ -3,6 +3,7 @@
 
 # include "webserv.hpp"
 # include "Request.hpp"
+# include "HttpException.hpp"
 
 class RequestUriParser
 {
@@ -29,6 +30,8 @@ class RequestUriParser
 		RequestUriParser(void);
 		RequestUriParser(RequestUriParser const & src);
 		RequestUriParser &  operator=(RequestUriParser const & src);
+
+		size_t	uri_length(void) const;
 };
 
 #endif

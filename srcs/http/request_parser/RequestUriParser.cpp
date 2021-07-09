@@ -67,5 +67,14 @@ RequestUriParser::parse_char(char c)
 			break ;
 		}
 	}
+	if (uri_length() > MAX_URI_SIZE)
+		throw HttpException(HttpException::REQUEST_URI_TOO_LONG_414);
 	return false;
+}
+
+
+size_t
+RequestUriParser::uri_length(void) const
+{
+	return (_uri.path.size() + _uri.query.size() + _uri.fragment.size());
 }

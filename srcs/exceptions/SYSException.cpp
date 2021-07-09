@@ -1,6 +1,6 @@
 #include "SYSException.hpp"
 
-SYSException::SYSException(char *str) :
+SYSException::SYSException(const char *str) throw() :
 _msg(str),
 _errno(errno)
 {
@@ -8,15 +8,15 @@ _errno(errno)
 	_msg += std::strerror(_errno);
 }
 
-SYSException::SYSException(SYSException const & src) :
+SYSException::SYSException(SYSException const & src) throw() :
 _msg(src._msg),
 _errno(src._errno)
 {}
 
-SYSException::~SYSException(void) {}
+SYSException::~SYSException(void) throw() {}
 
 SYSException &
-SYSException::operator=(SYSException const & src)
+SYSException::operator=(SYSException const & src) throw()
 {
     return (*this);
 }

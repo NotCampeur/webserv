@@ -45,9 +45,16 @@ ClientHandler::readable(void)
 		}
 		default :
 		{
-			_req_parser.parse(read_buff, bytes_read);
-			if (_request.complete())
+			try {
+				_req_parser.parse(read_buff, bytes_read);
+				if (_request.complete())
+					_event_flag = POLLOUT;
+			}
+			catch (HttpException & e)
+			{
+				// Later, will set the response status code here and set response to complete
 				_event_flag = POLLOUT;
+			}
 		}
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;

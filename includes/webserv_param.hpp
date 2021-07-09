@@ -10,7 +10,7 @@
 # endif
 # define LOG_FILE "webserv.log"
 
-# define MAX_REQUEST_SIZE	10000 //Minimum request size per rfc 7230 is 8000 octets
+# define MAX_URI_SIZE	8000 //Minimum request line size per rfc 7230 is 8000 octets
 
 # define MAX_CLIENT_BODY_SIZE 1000000 //1MB
 

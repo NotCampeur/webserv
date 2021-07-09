@@ -11,16 +11,16 @@ class SYSException : std::exception
 
 	public:
 
-    	SYSException(char *str);
-    	SYSException(SYSException const & src);
-    	~SYSException(void);
+    	SYSException(const char *str) throw();
+    	SYSException(SYSException const & src) throw();
+    	~SYSException(void) throw();
 		
-		SYSException &  operator=(SYSException const & src);
+		SYSException &  operator=(SYSException const & src) throw();
 
 		const char * what(void) const throw();
 
 	private:
-		SYSException(void);
+		SYSException(void) throw();
 };
 
 #endif

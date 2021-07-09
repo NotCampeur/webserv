@@ -2,6 +2,7 @@
 # define WEBSERV_REQUESTHEADERPARSER_HPP
 
 # include "webserv.hpp"
+# include "HttpException.hpp"
 
 class RequestHeaderParser
 {

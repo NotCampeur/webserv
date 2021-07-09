@@ -1,17 +1,17 @@
 #include "Exception.hpp"
 
-Exception::Exception(char *str) :
+Exception::Exception(const char *str) throw():
 _msg(std::string(str))
 {}
 
-Exception::Exception(Exception const & src) :
+Exception::Exception(Exception const & src) throw():
 _msg(src._msg)
 {}
 
-Exception::~Exception(void) {}
+Exception::~Exception(void) throw() {}
 
 Exception &
-Exception::operator=(Exception const & src)
+Exception::operator=(Exception const & src) throw()
 {
 	_msg = src._msg;
     return (*this);

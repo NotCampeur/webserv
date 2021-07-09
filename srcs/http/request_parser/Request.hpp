@@ -35,17 +35,12 @@ class Request
 		uri_t &									uri(void);
 		std::map<std::string, std::string> &	headers(void);
 		void									addbody(char *buf, size_t len);
+		void									add_char_to_body(char c);
+		const char *							get_body(void) const;
 		size_t									bodysize(void) const;
 		bool &									complete();
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
-
-		// Exceptions
-
-		// class MaxBodySizeReached : public std::exception
-		// {
-		// 	const char * what() const throw();
-		// };
 };
 
 #endif

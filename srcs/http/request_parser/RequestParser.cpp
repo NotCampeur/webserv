@@ -3,6 +3,7 @@
 RequestParser::RequestParser(Request & req) :
 _request(req),
 _uri_parser(req.uri()),
+_body_parser(req),
 _request_state(START)
 {}
 
@@ -16,16 +17,7 @@ RequestParser::parse(const char *buffer, size_t len)
 	for (size_t i = 0; i < len; i++)
 	{
 		parse_char(buffer[i]);
-
-		if (_request_state == ERROR)
-		{
-			_request.complete() = true;
-			_buffer_leftovers.clear(); // In case of an error, flush buffer
-
-			std::cerr << "***Request error nb: " << _debug_code << " ***\n";
-			break ;
-		}
-		else if (_request_state == DONE) // Should set request to Complete here
+		if (_request_state == DONE) // Should set request to Complete here
 		{
 			_request.complete() = true;
 			_buffer_leftovers = std::string(&buffer[i], len - i - 1);
@@ -42,6 +34,7 @@ RequestParser::parse(const char *buffer, size_t len)
 				std::cerr << "Header name: " << (*it).first << '\t'
 				<< "Header value: " << (*it).second << '\n';
 			}
+			std::cerr << _request.get_body();
 			std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
 			break ;
 		}
@@ -51,6 +44,7 @@ RequestParser::parse(const char *buffer, size_t len)
 void
 RequestParser::parse_char(char c)
 {
+
 	switch (_request_state)
 	{
 		case START :
@@ -86,26 +80,19 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				request_error(1); // Request nb TBC
+				throw HttpException(HttpException::BAD_REQUEST_400);
 			}
 			break ;
 		}
 		case HEADERS :
 		{
-			if (c == '\r' && _header_parser.get_header_name().empty())
+			if (c == '\r' && _header_parser.get_header_name().empty()) // There are no more headers, move to Final CRLF
 			{
 				_request_state = FINAL_CRLF;
 				break ;
 			}
-			try
-			{
-				if (_header_parser.parse_char(c))
-					_request_state = HEADER_CRLF;
-			}
-			catch(int error_code)
-			{
-				request_error(error_code);
-			}
+			if (_header_parser.parse_char(c))
+				_request_state = HEADER_CRLF;
 			break ;
 		}
 		case HEADER_CRLF :
@@ -117,27 +104,37 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				request_error(2); // Code TBC
+				throw HttpException(HttpException::BAD_REQUEST_400);
 			}
 			break ;
 		}
 		case FINAL_CRLF :
 		{
 			if (c == '\n')
-				_request_state = DONE;
+			{
+				if (_request.method().has_body())
+					_request_state = BODY;
+				else
+					_request_state = DONE;
+			}
 			else
 			{
-				request_error(3); // Req nb TBC
+				throw HttpException(HttpException::BAD_REQUEST_400);
 			}
 		}
 		case BODY :
 		{
+			if (_body_parser.parse_char(c))
+				_request_state = DONE;
 			break;
 		}
-		case DONE :	// Apparently I need to handle all enumeration variables within switch
+		case DONE :
 			break ;
-		case ERROR :
-			break ;
+		default :
+		{
+			Logger(LOG_FILE, error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
+			throw HttpException(HttpException::BAD_REQUEST_400); // Defensive: in case something odd happens, send a bad request
+		}
 	}
 }
 
@@ -198,15 +195,14 @@ RequestParser::parse_method(char c)
 				return ;
             }
         }
-        request_error(4); // Error code TBC
+		throw HttpException(HttpException::NOT_IMPLEMENTED_501);
     }
 	else
 	{
         _http_method += c;
 		if (_http_method.size() > 6)
 		{
-			request_error(5); // Code 500
-			return ;
+			throw HttpException(HttpException::NOT_IMPLEMENTED_501);
 		}
 	}
 }
@@ -225,8 +221,7 @@ RequestParser::check_version(char c)
 		}
 		else
 		{
-			request_error(6); // Code 505
-			return ;
+			throw HttpException(HttpException::HTTP_VERSION_NOT_SUPPORTE_505);
 		}
 	}
 	else
@@ -234,16 +229,9 @@ RequestParser::check_version(char c)
 		_http_version += c;
 		if (_http_version.size() > correct_version.size())
 		{
-			request_error(7); // Error code TBC - Should not be a bad_version error, but a bad_request_line error (bad spacing errors fall here)
+			throw HttpException(HttpException::BAD_REQUEST_400); // Not be a bad_version error, but a bad_request error as the size exceeds that of version syntax standard
 		}
 	}
-}
-
-void
-RequestParser::request_error(int code)
-{
-    _request_state = ERROR;
-	_debug_code = code;
 }
 
 void
@@ -259,6 +247,7 @@ RequestParser::reset(void)
     _request_state = START;
     _uri_parser.reset();
 	_header_parser.reset();
+	_body_parser.reset();
 	_http_method.clear();
 	_http_version.clear();
 }

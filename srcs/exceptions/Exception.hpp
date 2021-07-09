@@ -10,11 +10,11 @@ class Exception : std::exception
 
 	public:
 
-    	Exception(char *str);
-    	Exception(Exception const & src);
-    	~Exception(void);
+    	Exception(const char *str) throw();
+    	Exception(Exception const & src) throw();
+    	~Exception(void) throw();
 
-		Exception &  operator=(Exception const & src);
+		Exception &  operator=(Exception const & src) throw();
 
 		const char * what(void) const throw();
 
