@@ -18,7 +18,7 @@ class RequestBodyParser
 		};
 
 		body_state			_state;
-		long int			_size;
+		unsigned long		_size;
 		Request &			_request;
 		std::string			_hex;
 

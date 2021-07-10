@@ -9,8 +9,8 @@ class PostMethod : public IHttpMethod
     	PostMethod(void);
     	~PostMethod(void);
 
-		virtual void		handle(void);
-		virtual bool		has_body(void);
+		void		handle(void);
+		bool		has_body(void);
 		static IHttpMethod	*create(void);
 
 	private:

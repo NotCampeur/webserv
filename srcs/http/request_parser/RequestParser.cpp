@@ -190,7 +190,8 @@ RequestParser::parse_method(char c)
         {
             if (available_methods[i] == _http_method)
             {
-				_request.method() = *create[i]();
+				// std::cout << "Method: " << i << " created\n";
+				_request.method() = *(create[i]());
                 _request_state = URI;
 				return ;
             }

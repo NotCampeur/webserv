@@ -23,12 +23,12 @@ RequestBodyParser::parse_char(char c)
 			if (_request.headers().find("content-length") != _request.headers().end())
 			{
 				_state = CONTENT_LEN;
-				_size = std::strtol(_request.headers().find("content-length")->second.c_str(), NULL, 10);
-				if (_size > MAX_CLIENT_BODY_SIZE || _size == LONG_MAX)
+				_size = std::strtoul(_request.headers().find("content-length")->second.c_str(), NULL, 10);
+				if (_size > MAX_CLIENT_BODY_SIZE || _size == ULONG_MAX)
 				{
 					throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
 				}
-				else if (_size <= 0)
+				else if (_size == 0)
 				{
 					throw HttpException(HttpException::BAD_REQUEST_400);
 				}

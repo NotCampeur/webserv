@@ -4,7 +4,7 @@
 class IHttpMethod
 {
 	public:
-    	virtual			~IHttpMethod(void);
+    	virtual			~IHttpMethod(void) {};
 		virtual void	handle(void) = 0;
 		virtual bool	has_body(void) = 0;
 };
