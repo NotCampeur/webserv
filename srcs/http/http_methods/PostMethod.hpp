@@ -6,7 +6,6 @@
 class PostMethod : public IHttpMethod
 {
 	public:
-
     	PostMethod(void);
     	~PostMethod(void);
 
@@ -17,7 +16,6 @@ class PostMethod : public IHttpMethod
 	private:
     	PostMethod(PostMethod const & src);
 		PostMethod &  operator=(PostMethod const & src);
-
 };
 
 #endif

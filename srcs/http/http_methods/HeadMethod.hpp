@@ -6,7 +6,6 @@
 class HeadMethod : public IHttpMethod
 {
 	public:
-
     	HeadMethod(void);
     	~HeadMethod(void);
 
@@ -17,7 +16,6 @@ class HeadMethod : public IHttpMethod
 	private:
     	HeadMethod(HeadMethod const & src);
 		HeadMethod &  operator=(HeadMethod const & src);
-
 };
 
 #endif

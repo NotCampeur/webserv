@@ -5,10 +5,9 @@ _timeout(timeout)
 {}
 
 Demultiplexer::Demultiplexer(const Demultiplexer & src) :
+_pollfds(src._pollfds),
 _timeout(src._timeout)
-{
-    // *this = src;
-}
+{}
 
 Demultiplexer::~Demultiplexer(void)
 {
@@ -18,9 +17,8 @@ Demultiplexer::~Demultiplexer(void)
 Demultiplexer &
 Demultiplexer::operator=(const Demultiplexer & src)
 {
-	if (this != &src)
-		// _pollfds = src._pollfds;
-		_timeout = src._timeout;
+	_pollfds = src._pollfds;
+	_timeout = src._timeout;
 	return *this;
 }
 
@@ -77,23 +75,23 @@ Demultiplexer::removefd(int fd)
 	throw Exception("Fd not found");
 }
 
-// void					
-// Demultiplexer::clear(void)
-// {
-// 	_pollfds.clear();
-// }
+void					
+Demultiplexer::clear(void)
+{
+	_pollfds.clear();
+}
 
-// Demultiplexer::pollfd_arr::iterator
-// Demultiplexer::begin()
-// {
-// 	return _pollfds.begin();
-// }
+Demultiplexer::pollfd_arr::iterator
+Demultiplexer::begin()
+{
+	return _pollfds.begin();
+}
 
-// Demultiplexer::pollfd_arr::iterator
-// Demultiplexer::end()
-// {
-// 	return _pollfds.end();
-// }
+Demultiplexer::pollfd_arr::iterator
+Demultiplexer::end()
+{
+	return _pollfds.end();
+}
 
 // Demultiplexer::PollingError::PollingError() throw()
 // : _msg("Unable to poll descriptors : ")

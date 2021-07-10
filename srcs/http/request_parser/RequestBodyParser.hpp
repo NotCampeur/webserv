@@ -1,9 +1,7 @@
-#ifndef REQUESTBODYPARSER_H
-# define REQUESTBODYPARSER_H
+#ifndef WEBSERV_REQUESTBODYPARSER_H
+# define WEBSERV_REQUESTBODYPARSER_H
 
-# include "RequestParser.hpp"
 # include "Request.hpp"
-# include "Exception.hpp"
 # include "HttpException.hpp"
 
 class RequestBodyParser

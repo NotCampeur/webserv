@@ -1,10 +1,14 @@
 #include "HttpException.hpp"
 
-HttpException::HttpException(error_index error) throw():
+HttpException::HttpException(error_index_t error) throw():
 _index(error)
 {}
 
 HttpException::~HttpException(void) throw() {}
+
+HttpException::HttpException(HttpException const & src) throw() :
+_index(src._index)
+{}
 
 std::string &
 HttpException::get_error_msg(void) const throw()

@@ -51,7 +51,7 @@ void
 Request::add_char_to_body(char c)
 {
 	if (_body_size == MAX_CLIENT_BODY_SIZE)
-		throw HttpException(::HttpException::REQUEST_ENTITY_TOO_LARGE_413);
+		throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
 	_body[_body_size] = c;
 	_body_size++;
 }
@@ -61,7 +61,7 @@ void
 Request::addbody(char *buf, size_t len)
 {
 	if ((_body_size + len) > MAX_CLIENT_BODY_SIZE)
-		throw HttpException(REQUEST_ENTITY_TOO_LARGE_413);
+		throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
 	std::memcpy(&_body[_body_size], buf, len);
 }
 

@@ -6,8 +6,8 @@
 class SYSException : std::exception
 {
 	private:
-		std::string	_msg;
-		int			_errno;
+		std::string			_msg;
+		const int			_errno;
 
 	public:
 
@@ -15,12 +15,12 @@ class SYSException : std::exception
     	SYSException(SYSException const & src) throw();
     	~SYSException(void) throw();
 		
-		SYSException &  operator=(SYSException const & src) throw();
 
 		const char * what(void) const throw();
 
 	private:
 		SYSException(void) throw();
+		SYSException &  operator=(SYSException const & src) throw();
 };
 
 #endif

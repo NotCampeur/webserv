@@ -1,5 +1,5 @@
 #include "DeleteMethod.hpp"
-
+#include <iostream>
 DeleteMethod::DeleteMethod(void) {}
 
 DeleteMethod::~DeleteMethod(void) {}
@@ -7,7 +7,7 @@ DeleteMethod::~DeleteMethod(void) {}
 void
 DeleteMethod::handle(void)
 {
-
+	std::cerr << "Handling Delete\n";
 }
 
 bool

@@ -6,9 +6,7 @@ PostMethod::~PostMethod(void) {}
 
 void
 PostMethod::handle(void)
-{
-
-}
+{}
 
 bool
 PostMethod::has_body(void)

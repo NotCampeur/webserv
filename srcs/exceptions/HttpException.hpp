@@ -6,7 +6,7 @@
 class HttpException
 {
 	public:
-		enum error_index {
+		typedef enum error_index_e {
 			CONTINUE_100,
 			SWITCHING_PROTOCOLS_101,
 			OK_200,
@@ -47,19 +47,19 @@ class HttpException
 			SERVICE_UNAVAILABLE_503,
 			GATEWAY_TIMEOUT_504,
 			HTTP_VERSION_NOT_SUPPORTE_505
-		};
+		} error_index_t;
 
-    	HttpException(error_index error) throw();
-    	~HttpException(void) throw();
+    	HttpException(error_index_t error) throw();
+	    HttpException(HttpException const & src) throw();    	
+		~HttpException(void) throw();
 		
 		std::string & get_error_msg(void) const throw();
 
 	private:
 		HttpException(void) throw();
-	    HttpException(HttpException const & src) throw();
 		HttpException &  operator=(HttpException const & src) throw();
 
-		error_index _index;
+		error_index_t _index;
 };
 
 #endif

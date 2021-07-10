@@ -15,12 +15,6 @@ _errno(src._errno)
 
 SYSException::~SYSException(void) throw() {}
 
-SYSException &
-SYSException::operator=(SYSException const & src) throw()
-{
-    return (*this);
-}
-
 const char *
 SYSException::what(void) const throw()
 {
