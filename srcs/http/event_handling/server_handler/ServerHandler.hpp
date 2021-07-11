@@ -5,6 +5,8 @@
 # include "Server.hpp"
 # include "Client.hpp"
 # include "SYSException.hpp"
+# include "ServerSYSException.hpp"
+# include "ClientSYSException.hpp"
 
 class InitiationDispatcher;
 # include "InitiationDispatcher.hpp"

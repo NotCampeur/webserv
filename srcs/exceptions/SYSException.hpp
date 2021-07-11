@@ -5,7 +5,7 @@
 
 class SYSException : std::exception
 {
-	private:
+	protected:
 		std::string			_msg;
 		const int			_errno;
 

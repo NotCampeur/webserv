@@ -21,6 +21,7 @@ class RequestUriParser
 	public:
 
 		RequestUriParser(Request::uri_t & uri);
+		RequestUriParser(RequestUriParser const & src);
 		~RequestUriParser(void);
 
 		bool				parse_char(char c);
@@ -28,7 +29,6 @@ class RequestUriParser
 
 	private:
 		RequestUriParser(void);
-		RequestUriParser(RequestUriParser const & src);
 		RequestUriParser &  operator=(RequestUriParser const & src);
 
 		size_t	uri_length(void) const;

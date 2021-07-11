@@ -5,11 +5,19 @@ _state(START),
 _request(req)
 {}
 
+RequestBodyParser::RequestBodyParser(RequestBodyParser const & src) :
+_state(src._state),
+_size(src._size),
+_request(src._request),
+_hex(src._hex)
+{}
+
 RequestBodyParser::~RequestBodyParser(void) {}
 
 bool
 RequestBodyParser::parse_char(char c)
 {
+	std::cerr << "In body parser\n";
 	switch (_state)
 	{
 		case START :
@@ -34,7 +42,8 @@ RequestBodyParser::parse_char(char c)
 				}
 			}
 			else
-				throw HttpException(HttpException::LENGTH_REQUIRED_411);
+			{std::cerr << "Throwing 411\n";
+				throw HttpException(HttpException::LENGTH_REQUIRED_411);}
 			break;
 		}
 		case CONTENT_LEN :

@@ -30,25 +30,6 @@ class Demultiplexer
 		void					clear(void);
 		pollfd_arr::iterator	begin();
 		pollfd_arr::iterator	end();
-
-		// class PollingError : public std::exception
-		// {
-		// 		std::string	_msg;
-		// 	public:
-		// 		PollingError() throw();
-		// 		~PollingError() throw();
-		// 		const char * what(void) const throw();
-		// };
-		
-		// class PollingTimeout : public std::exception
-		// {
-		// 	const char * what(void) const throw();
-		// };
-
-		// class FdNotFound : public std::exception
-		// {
-		// 	const char * what(void) const throw();
-		// };
 };
 
 #endif

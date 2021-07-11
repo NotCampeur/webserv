@@ -7,6 +7,18 @@ _body_parser(req),
 _request_state(START)
 {}
 
+RequestParser::RequestParser(RequestParser const & src) :
+_request(src._request),
+_uri_parser(src._uri_parser),
+_header_parser(src._header_parser),
+_body_parser(src._body_parser),
+_request_state(src._request_state),
+_buffer_leftovers(src._buffer_leftovers),
+_http_method(src._http_method),
+_http_version(src._http_version)
+{}
+
+
 RequestParser::~RequestParser(void) {}
 
 void
@@ -34,8 +46,11 @@ RequestParser::parse(const char *buffer, size_t len)
 				std::cerr << "Header name: " << (*it).first << '\t'
 				<< "Header value: " << (*it).second << '\n';
 			}
-			std::cerr << _request.get_body();
-			std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
+			if (_request.method().has_body())
+			{
+				std::cerr << _request.get_body();
+				std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
+			}
 			break ;
 		}
 	}
@@ -121,6 +136,7 @@ RequestParser::parse_char(char c)
 			{
 				throw HttpException(HttpException::BAD_REQUEST_400);
 			}
+			break ;
 		}
 		case BODY :
 		{
@@ -190,9 +206,9 @@ RequestParser::parse_method(char c)
         {
             if (available_methods[i] == _http_method)
             {
-				// std::cout << "Method: " << i << " created\n";
-				_request.method() = *(create[i]());
-                _request_state = URI;
+				std::cout << "Method: " << i << " created\n";
+				_request.set_method(create[i]());
+				_request_state = URI;
 				return ;
             }
         }

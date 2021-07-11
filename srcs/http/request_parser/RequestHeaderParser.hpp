@@ -21,6 +21,7 @@ class RequestHeaderParser
 	public:
 
 		RequestHeaderParser(void);
+		RequestHeaderParser(RequestHeaderParser const & src);
 		~RequestHeaderParser(void);
 
 		bool			parse_char(char c);
@@ -33,7 +34,6 @@ class RequestHeaderParser
 		void	remove_trailing_wp(std::string & s);
 		void	addto_fieldname(char c);
 		void	addto_fieldvalue(char c);
-		RequestHeaderParser(RequestHeaderParser const & src);
 		RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 };
 #endif

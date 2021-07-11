@@ -3,7 +3,7 @@
 
 # include "webserv.hpp"
 # include "IEventHandler.hpp"
-
+# include "Exception.hpp"
 // Table holding handles (fds) and associated event handler object
 // Implemented using map container
 
@@ -28,6 +28,7 @@ class HandlerTable
 		void			remove(int fd);
 		iterator		begin(void) const;
 		iterator		end(void) const;
+		iterator		find(int fd) const;
 		IEventHandler *	get(int fd) const;
 		size_t			size(void) const;
 		

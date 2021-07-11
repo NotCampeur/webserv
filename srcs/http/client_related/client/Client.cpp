@@ -2,7 +2,8 @@
 
 Client::Client(int sockfd, struct sockaddr *address) : 
 _sockfd(sockfd),
-_address(address)
+_address(address),
+_ip(inet_ntoa((reinterpret_cast<sockaddr_in *>(address))->sin_addr))
 {}
 
 //Soft copy, consider removing
@@ -29,4 +30,10 @@ int
 Client::getsockfd(void) const
 {
     return _sockfd;
+}
+
+const std::string &
+Client::getip(void) const
+{
+	return _ip;
 }

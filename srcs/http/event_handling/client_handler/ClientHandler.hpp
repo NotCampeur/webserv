@@ -6,7 +6,8 @@
 # include "RequestParser.hpp"
 # include "Timeout.hpp"
 # include "Exception.hpp"
-# include "SYSException.hpp"
+# include "ClientException.hpp"
+# include "ClientSYSException.hpp"
 
 class ClientHandler : public IEventHandler
 {
@@ -34,38 +35,6 @@ class ClientHandler : public IEventHandler
 	private:
 		ClientHandler(ClientHandler const & src);
 		void	set_header(std::stringstream & header, size_t content_length);
-	
-	// Exceptions
-	// public:
-
-	// 	class UnableToReadClientRequest : public std::exception
-	// 	{
-	// 			std::string	_msg;
-	// 		public:
-	// 			UnableToReadClientRequest() throw();
-	// 			~UnableToReadClientRequest() throw();
-	// 			const char * what(void) const throw();
-	// 	};
-		
-	// 	class UnableToWriteToClient : public std::exception
-	// 	{
-	// 			std::string	_msg;
-	// 		public:
-	// 			UnableToWriteToClient() throw();
-	// 			~UnableToWriteToClient() throw();
-	// 			const char * what(void) const throw();
-	// 	};
-
-	// 	class BadEventFrag : public std::exception
-	// 	{
-	// 		const char *	what(void) const throw();
-	// 	};
-
-	// 	class ClientClosedConnection : public std::exception
-	// 	{
-	// 		public:
-	// 			const char *	what(void) const throw();
-	// 	};
 };
 
 #endif

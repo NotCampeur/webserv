@@ -40,6 +40,7 @@ SRC	=	main.cpp \
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
 		Timeout.cpp \
 		Exception.cpp SYSException.cpp HttpException.cpp \
+		ServerSYSException.cpp ClientSYSException.cpp ClientException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))

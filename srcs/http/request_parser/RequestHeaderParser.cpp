@@ -4,6 +4,12 @@ RequestHeaderParser::RequestHeaderParser(void) :
 _state(FIELD_NAME)
 {}
 
+RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src) :
+_state(src._state),
+_field_name(src._field_name),
+_field_value(src._field_value)
+{}
+
 RequestHeaderParser::~RequestHeaderParser(void) {}
 
 void

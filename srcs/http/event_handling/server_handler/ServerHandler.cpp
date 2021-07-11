@@ -28,23 +28,28 @@ ServerHandler::readable(void)
 	while (1)
 	{
 		struct sockaddr * address = new (struct sockaddr);
-		int ret = accept(get_serverfd(), address, &sockaddr_size);
+		int fd = accept(get_serverfd(), address, &sockaddr_size);
 
-		if (ret >= 0)
+		if (fd >= 0)
 		{
-			if (fcntl(ret, F_SETFL, O_NONBLOCK) < 0)
-				throw SYSException("Unable to set nonblocking flag on fd");
-
-			Client * client = new Client(ret, address);
-
-			Logger(LOG_FILE, basic_type, minor_lvl) << "A new connection has been accepted on fd : " << ret;
-			_idis.add_handle(*client);
+			if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
+			{
+				Logger(LOG_FILE, error_type, error_lvl) << "Unable to set nonblocking flag on client fd: " << inet_ntoa((reinterpret_cast<sockaddr_in *>(address))->sin_addr);
+				delete address;
+				close(fd);
+			}
+			else
+			{
+				Client * client = new Client(fd, address);
+				Logger(LOG_FILE, basic_type, minor_lvl) << "A new connection has been accepted on fd : " << fd << " for client " << client->getip();
+				_idis.add_handle(*client);
+			}
 		}
 		else
 		{
 			delete address;
 			if (errno != EWOULDBLOCK)
-				throw SYSException("Accept error");
+				throw ServerSYSException("Accept error", _server.getip(), _server.getport());
 			Logger(LOG_FILE, basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
 			break ;
 		}
@@ -79,39 +84,3 @@ ServerHandler::get_serverfd(void) const
 {
     return _server.getsockfd();
 }
-
-// const char *
-// ServerHandler::UnableToAcceptConnection::what() const throw()
-// {
-// 	std::ostringstream oss;
-// 	oss << "Accept error: " << _error << " : errno : " << strerror(errno) << std::endl;
-	
-// 	return oss.str().c_str();
-// }
-
-// ServerHandler::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
-// : _msg("cannot set nonblocking flag on fd"), _fd(-1)
-// {
-// 	_msg << " : " << strerror(errno);
-// }
-
-// ServerHandler::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
-// : _msg("cannot set nonblocking flag on fd : "), _fd(fd)
-// {
-// 	_msg << _fd << " : " << strerror(errno);
-// }
-
-// ServerHandler::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
-// {
-// 	_fd = to_copy._fd;
-// 	_msg << to_copy._msg.str();
-// }
-
-// ServerHandler::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
-// {}
-
-// const char *
-// ServerHandler::UnableToSetNonblockFlag::what() const throw()
-// {
-// 	return _msg.str().c_str();
-// }

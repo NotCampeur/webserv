@@ -5,7 +5,7 @@
 
 class Exception : std::exception
 {
-	private:
+	protected:
 		std::string	_msg;
 
 	public:

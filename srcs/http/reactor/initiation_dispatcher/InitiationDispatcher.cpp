@@ -27,54 +27,71 @@ InitiationDispatcher::handle_events(void)
 		try {
 			set_demultiplexer_handles();
 			_demultiplexer->activate();
-			Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
-			Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
-			for (;it != ite; it++)
-			{
-				try {
-					if (POLLIN == (POLLIN & it->revents))
-					{
-						Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
-						_event_handler_table->get(it->fd)->readable();
-					}
-					else if (POLLOUT == (POLLOUT & it->revents))
-					{
-						Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
-						_event_handler_table->get(it->fd)->writable();
-						it->events = POLLIN;
-					}
-					else if (_event_handler_table->get(it->fd)->is_timeoutable())
-					{
-						std::cerr << "Timeout check: ";
-						if (_event_handler_table->get(it->fd)->is_timeout())
-						{
-							Logger(LOG_FILE, basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
-							remove_handle(it->fd);
-							std::cerr << "REMOVED\n";
-						}
-						else
-						{
-							std::cerr << "Not timeout yet\n";
-						}
-					}
-				}
-				catch (const Exception & e)
-				{
-					remove_handle(it->fd);
-					Logger(LOG_FILE, basic_type, debug_lvl) << e.what() << ' ' << it->fd;
-				}
-				catch (const SYSException & e)
-				{
-					remove_handle(it->fd);
-					Logger(LOG_FILE, error_type) << e.what();
-				}
-			}
 		}
-		catch (std::exception & e)
+		catch (const SYSException & e)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
 			if (errno != EAGAIN)
-				break ;
+				break;
+			else
+				continue;
+		}
+
+		Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
+		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
+		for (;it != ite; it++)
+		{
+			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
+			{
+				continue;
+			}
+			try {
+				if (POLLIN == (POLLIN & it->revents))
+				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
+					_event_handler_table->get(it->fd)->readable();
+				}
+				else if (POLLOUT == (POLLOUT & it->revents))
+				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
+					_event_handler_table->get(it->fd)->writable();
+					it->events = POLLIN;
+				}
+				else if (_event_handler_table->get(it->fd)->is_timeoutable())
+				{
+					if (_event_handler_table->get(it->fd)->is_timeout())
+					{
+						Logger(LOG_FILE, basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
+						remove_handle(it->fd);
+					}
+				}
+			}
+			catch (const ClientException & e)
+			{
+				remove_handle(e.getfd());
+				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+			
+			}
+			catch (const ClientSYSException & e)
+			{
+				remove_handle(e.getfd());
+				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+			
+			}
+			catch (const ServerSYSException & e)
+			{
+				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+				return ;
+			}
+			catch (const Exception & e)
+			{
+				Logger(LOG_FILE, basic_type, debug_lvl) << e.what() << ' ' << it->fd;
+			}
+			catch (const SYSException & e)
+			{
+				remove_handle(it->fd);
+				Logger(LOG_FILE, error_type) << e.what();
+			}
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";
@@ -83,10 +100,10 @@ InitiationDispatcher::handle_events(void)
 void
 InitiationDispatcher::set_demultiplexer_handles(void)
 {
+	_demultiplexer->clear();
 	HandlerTable::iterator it = _event_handler_table->begin();
 	HandlerTable::iterator ite = _event_handler_table->end();
-
-	_demultiplexer->clear();
+	
 	while (it != ite)
 	{
 		_demultiplexer->addfd(it->first, it->second->get_event_flag());
@@ -112,6 +129,5 @@ void
 InitiationDispatcher::remove_handle(int fd)
 {
 	_event_handler_table->remove(fd);
-
 	Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << fd << " removed";
 }

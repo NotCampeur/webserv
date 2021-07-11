@@ -7,12 +7,13 @@ _req_parser(_request),
 _event_flag(POLLIN)
 {}
 
-// ClientHandler::ClientHandler(ClientHandler const & src) :
-// _client(src._client),
-// _request(src._request),
-// _req_parser(src.)
-// _event_flag(src._event_flag)
-// {}
+ClientHandler::ClientHandler(ClientHandler const & src) :
+_client(src._client),
+_request(src._request),
+_req_parser(src._req_parser),
+_timeout(src._timeout),
+_event_flag(src._event_flag)
+{}
 
 ClientHandler::~ClientHandler(void)
 {
@@ -37,11 +38,11 @@ ClientHandler::readable(void)
 	{
 		case -1 :
 		{
-			throw SYSException("Unable to read from client socket");
+			throw ClientSYSException("Unable to read from client socket", _client.getip(), _client.getsockfd());
 		}
 		case 0 :
 		{
-			throw Exception("Connection closed by client");
+			throw ClientException("Connection closed by client", _client.getip(), _client.getsockfd());
 		}
 		default :
 		{
@@ -52,6 +53,8 @@ ClientHandler::readable(void)
 			}
 			catch (HttpException & e)
 			{
+				_request.complete() = true;
+				Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << e.get_error_msg();
 				// Later, will set the response status code here and set response to complete
 				_event_flag = POLLOUT;
 			}
@@ -75,12 +78,15 @@ ClientHandler::writable(void)
 		std::string datagram = ss.str();
 
 		bytes_written = send(get_clientfd(), datagram.c_str(), datagram.size(), 0);
-
-		if (bytes_written != static_cast<ssize_t>(datagram.size()))
-			throw SYSException("Unable to write to client socket");
-
+		if (bytes_written < 0)
+		{
+			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
+		}
+		else if (static_cast<size_t>(bytes_written) != datagram.size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
+		{
+			throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
+		}
 		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << datagram;
-
 		_req_parser.next_request();
 	}
 	_event_flag = POLLIN;
@@ -114,39 +120,3 @@ ClientHandler::set_header(std::stringstream & header, size_t content_length)
 	<< (content_length)
 	<< "\r\n\r\n";
 }
-
-// ClientHandler::UnableToReadClientRequest::UnableToReadClientRequest() throw()
-// : _msg("Unable to read from client socket: ")
-// {
-// 	_msg += strerror(errno);
-// }
-
-// ClientHandler::UnableToReadClientRequest::~UnableToReadClientRequest() throw()
-// {}
-
-// const char *
-// ClientHandler::UnableToReadClientRequest::what(void) const throw()
-// {
-// 	return _msg.c_str();
-// }
-
-// ClientHandler::UnableToWriteToClient::UnableToWriteToClient() throw()
-// : _msg("Unable to write to client socket: ")
-// {
-// 	_msg += strerror(errno);
-// }
-
-// ClientHandler::UnableToWriteToClient::~UnableToWriteToClient() throw()
-// {}
-
-// const char *
-// ClientHandler::UnableToWriteToClient::what(void) const throw()
-// {
-// 	return _msg.c_str();
-// }
-
-// const char *
-// ClientHandler::ClientClosedConnection::what(void) const throw()
-// {
-// 	return "client closed connection";
-// }

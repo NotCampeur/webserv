@@ -31,6 +31,7 @@ class Request
 		Request(Request const & src);
 		~Request(void);
 
+		void									set_method(IHttpMethod *method);
 		IHttpMethod &							method(void);
 		uri_t &									uri(void);
 		std::map<std::string, std::string> &	headers(void);

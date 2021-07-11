@@ -78,3 +78,9 @@ HandlerTable::end(void) const
 {
 	return _handler_table->end();
 }
+
+HandlerTable::iterator
+HandlerTable::find(int fd) const
+{
+	return _handler_table->find(fd);
+}

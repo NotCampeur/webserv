@@ -17,6 +17,12 @@ Request::~Request(void)
 	delete _method;
 }
 
+void
+Request::set_method(IHttpMethod *method)
+{
+	_method = method;
+}
+
 IHttpMethod &
 Request::method(void)
 {

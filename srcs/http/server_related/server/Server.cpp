@@ -8,6 +8,8 @@ Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
 	init_addr_inputs(com_domain, port, ip);
 	name_serv_socket();
 	set_listener();
+
+	_ip = std::string(inet_ntoa(_address.sin_addr));
 }
 
 Server::Server(Server const & src)
@@ -66,7 +68,6 @@ Server::set_sock_opt()
 void
 Server::init_addr_inputs(int domain, int port, u_int32_t ip)
 {
-	_listening_port = port;
 	_address.sin_family = domain;
 	_address.sin_port = htons(port);
 	_address.sin_addr.s_addr = ip;
@@ -92,85 +93,17 @@ Server::set_listener()
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
 		throw SYSException("Unable to set socket as listener");
-	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << _listening_port;
+	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << getport();
 }
 
-// EXCEPTIONS
+int
+Server::getport(void) const
+{
+	return _address.sin_port;
+}
 
-// Server::UnableToCreateServerSocket::UnableToCreateServerSocket() throw()
-// : _msg("Unable to create a socket for the server : ")
-// {
-// 	_msg += strerror(errno);
-// }
-
-// Server::UnableToCreateServerSocket::~UnableToCreateServerSocket()  throw()
-// {}
-
-// const char *
-// Server::UnableToCreateServerSocket::what() const throw()
-// {
-// 	return _msg.c_str();
-// }
-
-// Server::UnableToNameSocket::UnableToNameSocket() throw()
-// : _msg("Unable to name the socket of the server : ")
-// {
-// 	_msg += strerror(errno);
-// }
-
-// Server::UnableToNameSocket::~UnableToNameSocket()  throw()
-// {}
-
-// const char *
-// Server::UnableToNameSocket::what() const throw()
-// {
-// 	return _msg.c_str();
-// }
-
-// Server::UnableToSetListener::UnableToSetListener() throw()
-// : _msg("Unable to set socket as listener : ")
-// {
-// 	_msg += strerror(errno);
-// }
-
-// Server::UnableToSetListener::~UnableToSetListener() throw()
-// {}
-
-// const char *
-// Server::UnableToSetListener::what() const throw()
-// {
-// 	return _msg.c_str();
-// }
-
-// Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
-// : _msg("cannot set nonblocking flag on fd"), _fd(-1)
-// {
-// 	_msg << " : " << strerror(errno);
-// }
-
-// Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
-// : _msg("cannot set nonblocking flag on fd : "), _fd(fd)
-// {
-// 	_msg << _fd << " : " << strerror(errno);
-// }
-
-// Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
-// {
-// 	_fd = to_copy._fd;
-// 	_msg << to_copy._msg.str();
-// }
-
-// Server::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
-// {}
-
-// const char *
-// Server::UnableToSetNonblockFlag::what() const throw()
-// {
-// 	return _msg.str().c_str();
-// }
-
-// const char *
-// Server::UnableToSetSockOpt::what() const throw()
-// {
-// 	return "Unable to set socket option";
-// }
+const std::string &
+Server::getip(void) const
+{
+	return _ip;
+}

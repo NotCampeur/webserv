@@ -5,6 +5,11 @@ _state(PATH),
 _uri(uri)
 {}
 
+RequestUriParser::RequestUriParser(RequestUriParser const & src) :
+_state(src._state),
+_uri(src._uri)
+{}
+
 RequestUriParser::~RequestUriParser(void) {}
 
 void

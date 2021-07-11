@@ -92,30 +92,3 @@ Demultiplexer::end()
 {
 	return _pollfds.end();
 }
-
-// Demultiplexer::PollingError::PollingError() throw()
-// : _msg("Unable to poll descriptors : ")
-// {
-// 	_msg += strerror(errno);
-// }
-
-// Demultiplexer::PollingError::~PollingError() throw()
-// {}
-
-// const char *
-// Demultiplexer::PollingError::what(void) const throw()
-// {
-// 	return _msg.c_str();
-// }
-
-// const char *
-// Demultiplexer::PollingTimeout::what(void) const throw()
-// {
-// 	return ("The polling timeout.");
-// }
-
-// const char *
-// Demultiplexer::FdNotFound::what(void) const throw()
-// {
-// 	return ("Cannot remove fd from pollfds: fd not found");
-// }

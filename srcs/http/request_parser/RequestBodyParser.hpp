@@ -25,14 +25,14 @@ class RequestBodyParser
 	public:
 
     	RequestBodyParser(Request & req);
-    	~RequestBodyParser(void);
+		RequestBodyParser(RequestBodyParser const & src);
+		~RequestBodyParser(void);
 
 		bool	parse_char(char c);
 		void	reset(void);
 
 	private:
 		RequestBodyParser(void);
-		RequestBodyParser(RequestBodyParser const & src);
 		RequestBodyParser &  operator=(RequestBodyParser const & src);
 };
 

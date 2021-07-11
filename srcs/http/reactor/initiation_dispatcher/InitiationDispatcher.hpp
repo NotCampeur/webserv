@@ -5,6 +5,10 @@
 # include "HandlerTable.hpp"
 # include "ClientHandler.hpp"
 # include "ServerHandler.hpp"
+# include "Exception.hpp"
+# include "SYSException.hpp"
+# include "ServerSYSException.hpp"
+# include "ClientSYSException.hpp"
 
 class InitiationDispatcher
 {
