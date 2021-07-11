@@ -130,13 +130,15 @@ RequestParser::parse_char(char c)
 				if (_request.method().has_body())
 					_request_state = BODY;
 				else
+				{
 					_request_state = DONE;
+					break ;
+				}
 			}
 			else
 			{
 				throw HttpException(HttpException::BAD_REQUEST_400);
 			}
-			break ;
 		}
 		case BODY :
 		{
