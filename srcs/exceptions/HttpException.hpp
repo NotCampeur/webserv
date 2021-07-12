@@ -53,7 +53,8 @@ class HttpException
 	    HttpException(HttpException const & src) throw();    	
 		~HttpException(void) throw();
 		
-		std::string & get_error_msg(void) const throw();
+		std::string &	get_error_msg(void) const throw();
+		int				get_error_value(void) const throw();
 
 	private:
 		HttpException(void) throw();

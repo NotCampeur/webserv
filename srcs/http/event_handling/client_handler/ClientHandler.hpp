@@ -3,6 +3,8 @@
 
 # include "IEventHandler.hpp"
 # include "Client.hpp"
+# include "Request.hpp"
+# include "Response.hpp"
 # include "RequestParser.hpp"
 # include "Timeout.hpp"
 # include "Exception.hpp"
@@ -15,6 +17,7 @@ class ClientHandler : public IEventHandler
 
 		const Client &			_client;
 		Request					_request;
+		Response				_response;
 		RequestParser			_req_parser;
 		Timeout					_timeout;
 		int						_event_flag;

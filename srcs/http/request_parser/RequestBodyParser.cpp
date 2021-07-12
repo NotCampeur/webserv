@@ -74,15 +74,21 @@ RequestBodyParser::parse_char(char c)
 					throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
 				}
 				if (_size == 0)
+				{
 					_last_chunk = true;
+				}
 				_state = CHUNK_META_CRLF;
 			}
 			else
 			{
 				if (ishex(c))
+				{
 					_hex += std::toupper(c);
+				}
 				else
+				{
 					throw HttpException(HttpException::BAD_REQUEST_400);
+				}
 			}
 			break ;
 		}
