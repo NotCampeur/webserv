@@ -11,10 +11,9 @@ class RequestBodyParser
 			START,
 			CONTENT_LEN,
 			CHUNK_SIZE,
-			CHUNK_EXTENSION,
 			CHUNK_META_CRLF,
 			CHUNK_DATA,
-			CHUNK_DATA_CRLF,
+			CHUNK_DATA_CRLF
 		};
 
 		body_state			_state;
@@ -35,6 +34,7 @@ class RequestBodyParser
 	private:
 		RequestBodyParser(void);
 		RequestBodyParser &  operator=(RequestBodyParser const & src);
+		bool	ishex(char c) const;
 };
 
 #endif

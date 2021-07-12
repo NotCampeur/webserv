@@ -19,7 +19,6 @@ RequestBodyParser::~RequestBodyParser(void) {}
 bool
 RequestBodyParser::parse_char(char c)
 {
-	std::cerr << "In body parser\n";
 	switch (_state)
 	{
 		case START :
@@ -68,7 +67,9 @@ RequestBodyParser::parse_char(char c)
 			if (c == '\r')
 			{
 				_size = std::strtoul(_hex.c_str(), NULL, 16);
-				if (_size > MAX_CLIENT_BODY_SIZE || _size == ULONG_MAX)
+				std::cerr << "Chunk size: " << _size << "Hex read: " << _hex << '\n';
+				_hex.clear();
+				if ((_size + _request.bodysize()) > MAX_CLIENT_BODY_SIZE || _size == ULONG_MAX)
 				{
 					throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
 				}
@@ -78,7 +79,10 @@ RequestBodyParser::parse_char(char c)
 			}
 			else
 			{
-				_hex += std::toupper(c);
+				if (ishex(c))
+					_hex += std::toupper(c);
+				else
+					throw HttpException(HttpException::BAD_REQUEST_400);
 			}
 			break ;
 		}
@@ -92,6 +96,7 @@ RequestBodyParser::parse_char(char c)
 			{
 				throw HttpException(HttpException::BAD_REQUEST_400);
 			}
+			break ;
 		}
 		case CHUNK_DATA :
 		{
@@ -137,4 +142,13 @@ RequestBodyParser::reset(void)
 	_state = START;
 	_size = 0;
 	_hex.clear();
+	_last_chunk = false;
+}
+
+bool
+RequestBodyParser::ishex(char c) const
+{
+	if (std::isdigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
+		return true;
+	return false;
 }
