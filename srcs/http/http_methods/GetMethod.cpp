@@ -4,6 +4,19 @@ GetMethod::GetMethod(void) {}
 
 GetMethod::~GetMethod(void) {}
 
+GetMethod::GetMethod(GetMethod const & src)
+{
+	(void)src;
+}
+
+GetMethod &
+GetMethod::operator=(GetMethod const & src)
+{
+	(void)src;
+	return *this;
+}
+
+
 void
 GetMethod::handle(void)
 {
@@ -17,7 +30,13 @@ GetMethod::has_body(void)
 }
 
 IHttpMethod *
-GetMethod::create(void)
+GetMethod::create_s(void)
+{
+	return new GetMethod();
+}
+
+IHttpMethod *
+GetMethod::create_v(void)
 {
 	return new GetMethod();
 }

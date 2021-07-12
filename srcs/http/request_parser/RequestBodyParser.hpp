@@ -10,17 +10,18 @@ class RequestBodyParser
 		enum body_state {
 			START,
 			CONTENT_LEN,
-			// CHUNK_SIZE,
-			// CHUNK_EXTENSION,
-			// CHUNK_META_CRLF,
-			// CHUNK_DATA,
-			// CHUNK_DATA_CRLF
+			CHUNK_SIZE,
+			CHUNK_EXTENSION,
+			CHUNK_META_CRLF,
+			CHUNK_DATA,
+			CHUNK_DATA_CRLF,
 		};
 
 		body_state			_state;
 		unsigned long		_size;
 		Request &			_request;
 		std::string			_hex;
+		bool				_last_chunk;
 
 	public:
 

@@ -17,6 +17,7 @@ class RequestHeaderParser
 		header_parsing_state	_state;
 		std::string				_field_name;
 		std::string				_field_value;
+		size_t					_size;
 
 	public:
 

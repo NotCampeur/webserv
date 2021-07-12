@@ -7,6 +7,12 @@ _event_flag(POLLIN)
 {}
 
 
+ServerHandler::ServerHandler(ServerHandler const & src) :
+_server(src._server),
+_idis(src._idis),
+_event_flag(src._event_flag)
+{}
+
 ServerHandler::~ServerHandler(void)
 {
 	delete &_server;

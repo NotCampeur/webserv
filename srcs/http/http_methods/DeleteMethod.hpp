@@ -8,15 +8,15 @@ class DeleteMethod : public IHttpMethod
 	public:
 
     	DeleteMethod(void);
+    	DeleteMethod(DeleteMethod const & src);
     	~DeleteMethod(void);
 
-		void		handle(void);
-		bool		has_body(void);
-		static IHttpMethod	*create(void);
-
-	private:
-    	DeleteMethod(DeleteMethod const & src);
 		DeleteMethod &  operator=(DeleteMethod const & src);
+
+		void				handle(void);
+		bool				has_body(void);
+		static IHttpMethod	*create_s(void);
+		IHttpMethod			*create_v(void);
 };
 
 #endif

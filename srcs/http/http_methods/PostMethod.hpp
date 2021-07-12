@@ -8,14 +8,14 @@ class PostMethod : public IHttpMethod
 	public:
     	PostMethod(void);
     	~PostMethod(void);
-
-		void		handle(void);
-		bool		has_body(void);
-		static IHttpMethod	*create(void);
-
-	private:
     	PostMethod(PostMethod const & src);
+		
 		PostMethod &  operator=(PostMethod const & src);
+
+		void				handle(void);
+		bool				has_body(void);
+		static IHttpMethod	*create_s(void);
+		IHttpMethod			*create_v(void);
 };
 
 #endif

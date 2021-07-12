@@ -1,13 +1,15 @@
 #include "RequestHeaderParser.hpp"
 
 RequestHeaderParser::RequestHeaderParser(void) :
-_state(FIELD_NAME)
+_state(FIELD_NAME),
+_size(0)
 {}
 
 RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src) :
 _state(src._state),
 _field_name(src._field_name),
-_field_value(src._field_value)
+_field_value(src._field_value),
+_size(src._size)
 {}
 
 RequestHeaderParser::~RequestHeaderParser(void) {}
@@ -18,11 +20,17 @@ RequestHeaderParser::reset(void)
 	_state = LEADING_WP;
 	_field_name.clear();
 	_field_value.clear();
+	_size = 0;
 }
 
 bool
 RequestHeaderParser::parse_char(char c)
 {
+	_size++;
+	if (_size > MAX_HEADER_SIZE)
+	{
+		throw HttpException(HttpException::BAD_REQUEST_400);
+	}
 	switch (_state)
 	{
 		case LEADING_WP :
@@ -40,7 +48,7 @@ RequestHeaderParser::parse_char(char c)
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{
-					throw(HttpException::BAD_REQUEST_400);
+					throw HttpException(HttpException::BAD_REQUEST_400);
 				}
 				_state = COLON;
 			}

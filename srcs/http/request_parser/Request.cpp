@@ -2,14 +2,17 @@
 
 Request::Request(void) :
 _complete(false),
-_method(NULL),
-_body_size(0)
-{}
+_method(NULL)
+{
+	_body.reserve(MAX_CLIENT_BODY_SIZE);
+}
 
 Request::Request(Request const & src) :
 _complete(src._complete),
+_method(src._method->create_v()),
 _uri(src._uri),
-_headers(src._headers)
+_headers(src._headers),
+_body(src._body)
 {}
 
 Request::~Request(void)
@@ -44,7 +47,7 @@ Request::headers(void)
 size_t
 Request::bodysize(void) const
 {
-	return _body_size;
+	return _body.size();
 }
 
 bool &
@@ -56,25 +59,15 @@ Request::complete(void)
 void
 Request::add_char_to_body(char c)
 {
-	if (_body_size == MAX_CLIENT_BODY_SIZE)
+	if (_body.size() == MAX_CLIENT_BODY_SIZE)
 		throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
-	_body[_body_size] = c;
-	_body_size++;
+	_body += c;
 }
 
-// To delete
-void
-Request::addbody(char *buf, size_t len)
-{
-	if ((_body_size + len) > MAX_CLIENT_BODY_SIZE)
-		throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
-	std::memcpy(&_body[_body_size], buf, len);
-}
-
-const char *
+const std::string &
 Request::get_body(void) const
 {
-	return &_body[0]; //To return _body directly, need to change return type to char const *
+	return _body;
 }
 
 void
@@ -87,7 +80,7 @@ Request::reset(void)
 	_uri.query.clear();
 	_uri.fragment.clear();
 	_headers.clear();
-	_body_size = 0;
+	_body.clear();
 }
 
 void

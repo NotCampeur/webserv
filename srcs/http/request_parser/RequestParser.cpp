@@ -196,10 +196,10 @@ RequestParser::parse_method(char c)
 
 	static IHttpMethod * (*create[4])(void) =
 	{
-		GetMethod::create,
-		HeadMethod::create,
-		PostMethod::create,
-		DeleteMethod::create
+		GetMethod::create_s,
+		HeadMethod::create_s,
+		PostMethod::create_s,
+		DeleteMethod::create_s
 	};
 
 	if (c == ' ')
