@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JsonFileReader.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/08 22:41:44 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/13 20:15:57 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,8 +336,10 @@ JsonFileReader::remove_whitespaces()
 			if (it != ite)
 				it++;
 		}
-		while (it != ite && std::isspace(*it) == true)
+		while (it != ite && std::isspace(*it) != false)
+		{
 			_file_data.erase(it);
+		}
 		if (it != ite && *it != '"')
 			it++;
 	}
