@@ -11,7 +11,7 @@ class SYSException : std::exception
 
 	public:
 
-    	SYSException(const char *str) throw();
+    	explicit SYSException(const char *str) throw();
     	SYSException(SYSException const & src) throw();
     	~SYSException(void) throw();
 		

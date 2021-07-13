@@ -54,8 +54,10 @@ ClientHandler::readable(void)
 			catch (HttpException & e)
 			{
 				_request.complete() = true;
-				Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << e.get_error_msg();
-				// Later, will set the response status code here and set response to complete
+				Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_error_msg_from_index(e.get_error_index());
+				_response.set_http_code(e.get_error_index());
+				_response.make_ready();
+				_response.make_complete();
 				_event_flag = POLLOUT;
 			}
 		}
@@ -66,6 +68,31 @@ ClientHandler::readable(void)
 void
 ClientHandler::writable(void)
 {
+	if (_response.ready_to_send())
+	{
+		ssize_t	bytes_written = send(get_clientfd(), _response.send().c_str(), _response.send().size(), 0);
+		
+		if (bytes_written < 0)
+		{
+			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
+		}
+		else if (static_cast<size_t>(bytes_written) != _response.send().size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
+		{
+			throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
+		}
+		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << _response.send();
+		if (_response.iscomplete())
+		{
+			_response.reset();
+			_req_parser.next_request();
+			if (!_request.complete())
+				_event_flag = POLLIN;
+		}
+	}
+}
+
+
+/*
 	while (_request.complete())
 	{
 		std::stringstream	ss;
@@ -92,6 +119,7 @@ ClientHandler::writable(void)
 	_event_flag = POLLIN;
 	_timeout.reset();
 }
+*/
 
 bool
 ClientHandler::is_timeoutable(void) const
@@ -110,7 +138,7 @@ ClientHandler::get_event_flag(void) const
 {
 	return _event_flag;
 }
-
+/*
 void
 ClientHandler::set_header(std::stringstream & header, size_t content_length)
 {	
@@ -120,3 +148,4 @@ ClientHandler::set_header(std::stringstream & header, size_t content_length)
 	<< (content_length)
 	<< "\r\n\r\n";
 }
+*/

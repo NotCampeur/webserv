@@ -31,7 +31,7 @@ RequestBodyParser::parse_char(char c)
 				}
 				else
 				{
-					throw HttpException(HttpException::NOT_ACCEPTABLE_406);
+					throw HttpException(StatusCodes::NOT_ACCEPTABLE_406);
 				}
 			}
 			else if (_request.headers().find("content-length") != _request.headers().end())
@@ -40,16 +40,16 @@ RequestBodyParser::parse_char(char c)
 				_size = std::strtoul(_request.headers().find("content-length")->second.c_str(), NULL, 10);
 				if (_size > MAX_CLIENT_BODY_SIZE || _size == ULONG_MAX)
 				{
-					throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
+					throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 				}
 				else if (_size == 0)
 				{
-					throw HttpException(HttpException::BAD_REQUEST_400);
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 			}
 			else
 			{
-				throw HttpException(HttpException::LENGTH_REQUIRED_411);
+				throw HttpException(StatusCodes::LENGTH_REQUIRED_411);
 			}
 			break;
 		}
@@ -71,7 +71,7 @@ RequestBodyParser::parse_char(char c)
 				_hex.clear();
 				if ((_size + _request.bodysize()) > MAX_CLIENT_BODY_SIZE || _size == ULONG_MAX)
 				{
-					throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
+					throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 				}
 				if (_size == 0)
 				{
@@ -87,7 +87,7 @@ RequestBodyParser::parse_char(char c)
 				}
 				else
 				{
-					throw HttpException(HttpException::BAD_REQUEST_400);
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 			}
 			break ;
@@ -100,7 +100,7 @@ RequestBodyParser::parse_char(char c)
 			}
 			else
 			{
-				throw HttpException(HttpException::BAD_REQUEST_400);
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			break ;
 		}
@@ -114,7 +114,7 @@ RequestBodyParser::parse_char(char c)
 				}
 				else
 				{
-					throw HttpException(HttpException::BAD_REQUEST_400);
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 			}
 			else
@@ -134,7 +134,7 @@ RequestBodyParser::parse_char(char c)
 			}
 			else
 			{
-				throw HttpException(HttpException::BAD_REQUEST_400);
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			break ;
 		}

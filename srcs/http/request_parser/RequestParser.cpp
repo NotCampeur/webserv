@@ -34,23 +34,23 @@ RequestParser::parse(const char *buffer, size_t len)
 			_request.complete() = true;
 			_buffer_leftovers = std::string(&buffer[i], len - i - 1);
 
-			std::cerr << "\n### PARSED REQUEST ###\n"
-			<< "Method: " << _http_method << '\n'
-			<< "Uri (path): " << _request.uri().path << '\n'
-			<< "Uri (query): " << _request.uri().query << '\n'
-			<< "Uri (fragment): " << _request.uri().fragment << '\n'
-			<< "Http version: " << _http_version << '\n';
+			// std::cerr << "\n### PARSED REQUEST ###\n"
+			// << "Method: " << _http_method << '\n'
+			// << "Uri (path): " << _request.uri().path << '\n'
+			// << "Uri (query): " << _request.uri().query << '\n'
+			// << "Uri (fragment): " << _request.uri().fragment << '\n'
+			// << "Http version: " << _http_version << '\n';
 
-			for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
-			{
-				std::cerr << "Header name: " << (*it).first << '\t'
-				<< "Header value: " << (*it).second << '\n';
-			}
-			if (_request.method().has_body())
-			{
-				std::cerr << _request.get_body();
-				std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
-			}
+			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
+			// {
+			// 	std::cerr << "Header name: " << (*it).first << '\t'
+			// 	<< "Header value: " << (*it).second << '\n';
+			// }
+			// if (_request.method().has_body())
+			// {
+			// 	std::cerr << _request.get_body();
+			// 	std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
+			// }
 			break ;
 		}
 	}
@@ -95,7 +95,7 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				throw HttpException(HttpException::BAD_REQUEST_400);
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			break ;
 		}
@@ -119,7 +119,7 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				throw HttpException(HttpException::BAD_REQUEST_400);
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			break ;
 		}
@@ -137,7 +137,7 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				throw HttpException(HttpException::BAD_REQUEST_400);
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 		}
 		case BODY :
@@ -151,36 +151,10 @@ RequestParser::parse_char(char c)
 		default :
 		{
 			Logger(LOG_FILE, error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
-			throw HttpException(HttpException::BAD_REQUEST_400); // Defensive: in case something odd happens, send a bad request
+			throw HttpException(StatusCodes::BAD_REQUEST_400); // Defensive: in case something odd happens, send a bad request
 		}
 	}
 }
-
-/*
-
-HttpMethod {
-
-    handle();
-
-}
-
-GetMethod : HttpMethod {
-
-
-}
-
-HttpMethod *method = find_method_by_name("GET")
-if (!method) {
-
-}
-
-method->handle(req, res)
-
-res.body()
-res.status(200)
-res.end()
-
-*/
 
 void
 RequestParser::parse_method(char c)
@@ -214,14 +188,14 @@ RequestParser::parse_method(char c)
 				return ;
             }
         }
-		throw HttpException(HttpException::NOT_IMPLEMENTED_501);
+		throw HttpException(StatusCodes::NOT_IMPLEMENTED_501);
     }
 	else
 	{
         _http_method += c;
 		if (_http_method.size() > 6)
 		{
-			throw HttpException(HttpException::NOT_IMPLEMENTED_501);
+			throw HttpException(StatusCodes::NOT_IMPLEMENTED_501);
 		}
 	}
 }
@@ -240,7 +214,7 @@ RequestParser::check_version(char c)
 		}
 		else
 		{
-			throw HttpException(HttpException::HTTP_VERSION_NOT_SUPPORTE_505);
+			throw HttpException(StatusCodes::HTTP_VERSION_NOT_SUPPORTE_505);
 		}
 	}
 	else
@@ -248,7 +222,7 @@ RequestParser::check_version(char c)
 		_http_version += c;
 		if (_http_version.size() > correct_version.size())
 		{
-			throw HttpException(HttpException::BAD_REQUEST_400); // Not be a bad_version error, but a bad_request error as the size exceeds that of version syntax standard
+			throw HttpException(StatusCodes::BAD_REQUEST_400); // Not be a bad_version error, but a bad_request error as the size exceeds that of version syntax standard
 		}
 	}
 }

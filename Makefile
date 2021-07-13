@@ -36,12 +36,13 @@ SRC	=	main.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
 		ServerHandler.cpp ClientHandler.cpp \
 		Server.cpp Client.cpp \
-		Request.cpp \
+		Request.cpp Response.cpp\
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
 		Timeout.cpp \
 		Exception.cpp SYSException.cpp HttpException.cpp \
 		ServerSYSException.cpp ClientSYSException.cpp ClientException.cpp \
-		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp
+		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
+		StatusCodes.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))

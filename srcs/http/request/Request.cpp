@@ -60,7 +60,7 @@ void
 Request::add_char_to_body(char c)
 {
 	if (_body.size() == MAX_CLIENT_BODY_SIZE)
-		throw HttpException(HttpException::REQUEST_ENTITY_TOO_LARGE_413);
+		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 	_body += c;
 }
 

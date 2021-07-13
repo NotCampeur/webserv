@@ -73,7 +73,7 @@ RequestUriParser::parse_char(char c)
 		}
 	}
 	if (uri_length() > MAX_URI_SIZE)
-		throw HttpException(HttpException::REQUEST_URI_TOO_LONG_414);
+		throw HttpException(StatusCodes::REQUEST_URI_TOO_LONG_414);
 	return false;
 }
 

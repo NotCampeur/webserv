@@ -29,7 +29,7 @@ RequestHeaderParser::parse_char(char c)
 	_size++;
 	if (_size > MAX_HEADER_SIZE)
 	{
-		throw HttpException(HttpException::BAD_REQUEST_400);
+		throw HttpException(StatusCodes::BAD_REQUEST_400);
 	}
 	switch (_state)
 	{
@@ -48,7 +48,7 @@ RequestHeaderParser::parse_char(char c)
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{
-					throw HttpException(HttpException::BAD_REQUEST_400);
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 				_state = COLON;
 			}

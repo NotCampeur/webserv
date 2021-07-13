@@ -37,7 +37,7 @@ class ClientHandler : public IEventHandler
 
 	private:
 		ClientHandler(ClientHandler const & src);
-		void	set_header(std::stringstream & header, size_t content_length);
+		// void	set_header(std::stringstream & header, size_t content_length);
 };
 
 #endif
