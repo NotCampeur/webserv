@@ -38,11 +38,12 @@ class ServerHandler : public IEventHandler
 
         class UnableToAcceptConnection : public std::exception
 		{
+				std::string	_msg;
+
 			public:
-				UnableToAcceptConnection(int error) throw() : _error(error) {}
-			private:
+				UnableToAcceptConnection(int error) throw();
+				~UnableToAcceptConnection() throw();
 				const char *what() const throw();
-				int			_error;
 		};
 };
 

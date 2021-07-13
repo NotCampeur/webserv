@@ -18,8 +18,10 @@ Demultiplexer &
 Demultiplexer::operator=(const Demultiplexer & src)
 {
 	if (this != &src)
+	{
 		_pollfds = src._pollfds;
 		_timeout = src._timeout;
+	}
 	return *this;
 }
 

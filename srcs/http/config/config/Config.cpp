@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/09 01:06:24 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/13 18:08:27 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,14 @@ Config::apply(InitiationDispatcher & idis)
 			case server:
 			{
 				JsonArray	*servers = dynamic_cast<JsonArray *>(it->second);
-				if (servers == nullptr)
+				if (servers == NULL)
 					throw;
 				JsonArray::value_type::const_iterator ait(servers->value_begin());
 				JsonArray::value_type::const_iterator aite(servers->value_end());
 				while (ait != aite)
 				{
 					JsonObject	*server = dynamic_cast<JsonObject *>(*ait);
-					if (server == nullptr)
+					if (server == NULL)
 						throw;
 					JsonObject::value_type::const_iterator oit(server->value_begin());
 					JsonObject::value_type::const_iterator oite(server->value_end());
@@ -85,7 +85,7 @@ Config::apply(InitiationDispatcher & idis)
 							case host:
 							{
 								JsonString	*value = dynamic_cast<JsonString *>(oit->second);
-								if (value == nullptr)
+								if (value == NULL)
 									throw;
 								host_value = value->value();
 								break;
@@ -93,7 +93,7 @@ Config::apply(InitiationDispatcher & idis)
 							case port:
 							{
 								JsonString	*value = dynamic_cast<JsonString *>(oit->second);
-								if (value == nullptr)
+								if (value == NULL)
 									throw;
 								port_value = value->value();
 								break;

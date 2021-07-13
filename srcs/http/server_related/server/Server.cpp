@@ -135,21 +135,24 @@ Server::UnableToSetListener::what() const throw()
 }
 
 Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag() throw()
-: _msg("cannot set nonblocking flag on fd"), _fd(-1)
+: _msg("cannot set nonblocking flag on fd : "), _fd(-1)
 {
-	_msg << " : " << strerror(errno);
+	_msg += strerror(errno);
 }
 
 Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(int fd) throw()
 : _msg("cannot set nonblocking flag on fd : "), _fd(fd)
 {
-	_msg << _fd << " : " << strerror(errno);
+	std::stringstream	converter;
+	
+	converter << _fd << " : " << strerror(errno);
+	_msg += converter.str();
 }
 
 Server::UnableToSetNonblockFlag::UnableToSetNonblockFlag(const UnableToSetNonblockFlag & to_copy) throw()
 {
 	_fd = to_copy._fd;
-	_msg << to_copy._msg.str();
+	_msg = to_copy._msg;
 }
 
 Server::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
@@ -158,5 +161,5 @@ Server::UnableToSetNonblockFlag::~UnableToSetNonblockFlag() throw()
 const char *
 Server::UnableToSetNonblockFlag::what() const throw()
 {
-	return _msg.str().c_str();
+	return _msg.c_str();
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
+#    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/07/06 14:34:37 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/07/13 19:22:31 by notcampeur       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

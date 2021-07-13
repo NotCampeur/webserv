@@ -122,13 +122,13 @@ JsonObject::print_to_buffer(int indent, std::string & buffer) const
 JsonObject::value_type::const_iterator
 JsonObject::value_begin(void) const
 {
-	return _value.cbegin();
+	return _value.begin();
 }
 
 JsonObject::value_type::const_iterator
 JsonObject::value_end(void) const
 {
-	return _value.cend();
+	return _value.end();
 }
 
 JsonObject &

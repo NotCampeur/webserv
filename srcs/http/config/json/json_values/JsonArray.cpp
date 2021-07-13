@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   JsonArray.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/08 21:01:56 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/09 00:29:28 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/13 18:01:35 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ JsonArray::key(void) const
 JsonArray::value_type::const_iterator
 JsonArray::value_begin(void) const
 {
-	return _value.cbegin();
+	return _value.begin();
 }
 
 JsonArray::value_type::const_iterator
 JsonArray::value_end(void) const
 {
-	return _value.cend();
+	return _value.end();
 }
 
 IJsonValue *

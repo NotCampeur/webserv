@@ -57,11 +57,19 @@ ServerHandler::get_serverfd(void) const
     return _server.getsockfd();
 }
 
+ServerHandler::UnableToAcceptConnection::UnableToAcceptConnection(int error) throw()
+: _msg()
+{
+	std::ostringstream oss;
+	oss << "Accept error: " << error << " : errno : " << strerror(errno) << std::endl;
+	_msg = oss.str();
+}
+
+ServerHandler::UnableToAcceptConnection::~UnableToAcceptConnection() throw()
+{}
+
 const char *
 ServerHandler::UnableToAcceptConnection::what() const throw()
 {
-	std::ostringstream oss;
-	oss << "Accept error: " << _error << " : errno : " << strerror(errno) << std::endl;
-	
-	return oss.str().c_str();
+	return _msg.c_str();
 }
