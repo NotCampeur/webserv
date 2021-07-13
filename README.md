@@ -29,11 +29,10 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:  
 *  Comment each methods  
-*  Update setsockopt to be able to reuse sockets after program quits  
+
 ### :boom: Known bugs.. I mean features :boom:  
-* Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
-* Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
-* Server crash if restarted before socket becomes available again
+* Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)  
+* The JsonFileWriting don't erase whitespaces anymore ??  
 
 ## :writing_hand: Change log :writing_hand:  
 * The headers' protection have been standardize.  
