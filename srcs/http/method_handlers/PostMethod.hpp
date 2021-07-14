@@ -12,10 +12,10 @@ class PostMethod : public IHttpMethod
 		
 		PostMethod &  operator=(PostMethod const & src);
 
-		void				handle(void);
-		bool				has_body(void);
-		static IHttpMethod	*create_s(void);
-		IHttpMethod			*create_v(void);
+		StatusCodes::status_index_t	handle(void);
+		bool						has_body(void);
+		static IHttpMethod			*create_s(void);
+		IHttpMethod					*create_v(void);
 };
 
 #endif

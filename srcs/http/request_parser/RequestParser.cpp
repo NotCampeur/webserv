@@ -22,17 +22,30 @@ _http_version(src._http_version)
 RequestParser::~RequestParser(void) {}
 
 void
-RequestParser::parse(const char *buffer, size_t len)
+RequestParser::setbuffer(char *buf, size_t len)
 {
-	std::cerr << "Buffer content: " << std::string(buffer, len) << '\n';
+	_buffer = std::string(buf, len);
+}
 
-	for (size_t i = 0; i < len; i++)
+void
+RequestParser::setbuffer(std::string & str)
+{
+	_buffer = str;
+}
+
+void
+RequestParser::parse(void)
+{
+	std::cerr << "Buffer content: " << _buffer << '\n';
+	
+	size_t i = 0;
+	for (; i < _buffer.size(); i++)
 	{
-		parse_char(buffer[i]);
-		if (_request_state == DONE) // Should set request to Complete here
+		parse_char(_buffer[i]);
+		if (_request_state == DONE)
 		{
 			_request.complete() = true;
-			_buffer_leftovers = std::string(&buffer[i], len - i - 1);
+			_buffer_leftovers = _buffer.substr(i + 1);
 
 			// std::cerr << "\n### PARSED REQUEST ###\n"
 			// << "Method: " << _http_method << '\n'
@@ -54,6 +67,8 @@ RequestParser::parse(const char *buffer, size_t len)
 			break ;
 		}
 	}
+	if (i == _buffer.size())
+		_buffer.clear();
 }
 
 void
@@ -250,6 +265,6 @@ RequestParser::next_request(void)
 {
 	reset();
 	_request.reset();
-	parse(_buffer_leftovers.c_str(), _buffer_leftovers.size());
+	setbuffer(_buffer_leftovers);
 	std::cerr << "* Buffer Leftovers: *\n" << _buffer_leftovers << '\n';
 }

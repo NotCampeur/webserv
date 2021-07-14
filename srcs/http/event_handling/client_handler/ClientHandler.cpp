@@ -46,20 +46,21 @@ ClientHandler::readable(void)
 		}
 		default :
 		{
-			try {
-				_req_parser.parse(read_buff, bytes_read);
-				if (_request.complete())
-					_event_flag = POLLOUT;
-			}
-			catch (HttpException & e)
-			{
-				_request.complete() = true;
-				Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_error_msg_from_index(e.get_error_index());
-				_response.set_http_code(e.get_error_index());
-				_response.make_ready();
-				_response.make_complete();
-				_event_flag = POLLOUT;
-			}
+			_req_parser.setbuffer(read_buff, bytes_read);
+			// try {
+			// 	_req_parser.parse(read_buff, bytes_read);
+			// 	if (_request.complete())
+			// 		_event_flag = POLLOUT;
+			// }
+			// catch (HttpException & e)
+			// {
+			// 	_request.complete() = true;
+			// 	Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_error_msg_from_index(e.get_error_index());
+			// 	_response.set_http_code(e.get_error_index());
+			// 	_response.make_ready();
+			// 	_response.make_complete();
+			// 	_event_flag = POLLOUT;
+			// }
 		}
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
@@ -137,6 +138,49 @@ int
 ClientHandler::get_event_flag(void) const
 {
 	return _event_flag;
+}
+
+void
+ClientHandler::handle_request(void)
+{
+	// Could have a try/catch here catching HttpExceptions and have a routine to handle them
+	
+	try {
+		parse_request();
+		// if (_request.complete())
+			// validate();
+		// if (_request.validated())
+			_request.method().handle();
+	}
+	catch (HttpException & e)
+	{
+		Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_error_msg_from_index(e.get_error_index());
+		_response.set_http_code(e.get_error_index());
+		handle_http_error();
+	}
+	catch (SYSException & e)
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << e.what() << " : " << _client.getip();
+		_response.set_http_code(StatusCodes::INTERNAL_SERVER_ERROR_500);
+		handle_http_error();
+	}
+}
+
+void	
+ClientHandler::parse_request(void)
+{
+	_req_parser.parse();
+	if (_request.complete())
+		_event_flag = POLLOUT;
+}
+
+void
+ClientHandler::handle_http_error(void)
+{
+	_request.complete() = true;
+	_response.make_ready();
+	_response.make_complete();
+	_event_flag = POLLOUT;	
 }
 /*
 void

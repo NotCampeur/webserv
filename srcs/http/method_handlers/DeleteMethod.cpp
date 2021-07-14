@@ -18,7 +18,12 @@ DeleteMethod::operator=(DeleteMethod const & src)
 
 void
 DeleteMethod::handle(void)
-{}
+{
+	int ret = remove(_path.c_str());
+
+	if (ret != 0)
+		throw SYSException("Remove operation failed");
+}
 
 bool
 DeleteMethod::has_body(void)
@@ -36,4 +41,10 @@ IHttpMethod *
 DeleteMethod::create_v(void)
 {
 	return new DeleteMethod();
+}
+
+void
+DeleteMethod::set_path(const std::string & path)
+{
+	_path = path;
 }

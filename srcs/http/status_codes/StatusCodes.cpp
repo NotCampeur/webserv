@@ -62,7 +62,6 @@ StatusCodes::get_error_msg_from_index(status_index_t index)
         "504 Gateway Timeout",
         "505 HTTP Version Not Supported"
     };
-
     return error_msg[index];
 }
 
@@ -111,6 +110,5 @@ StatusCodes::get_code_value(status_index_t index)
 		504,
 		505
 	};
-
 	return values[index];
 }

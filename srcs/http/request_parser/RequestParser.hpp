@@ -29,16 +29,17 @@ class RequestParser {
 		};
 
 	private:
-		Request &							_request;
-		RequestUriParser					_uri_parser;
-		RequestHeaderParser					_header_parser;
-		RequestBodyParser					_body_parser;
+		Request &					_request;
+		RequestUriParser			_uri_parser;
+		RequestHeaderParser			_header_parser;
+		RequestBodyParser			_body_parser;
 
-		request_parsing_state				_request_state;
-		std::string							_buffer_leftovers;
+		request_parsing_state		_request_state;
+		std::string					_buffer;
+		std::string					_buffer_leftovers;
 
-		std::string  						_http_method;
-		std::string							_http_version;
+		std::string  				_http_method;
+		std::string					_http_version;
 
 	public:
 
@@ -47,14 +48,17 @@ class RequestParser {
 		RequestParser(RequestParser const & src);
 		~RequestParser(void);
 
-		// RequestParser &  operator=(RequestParser const & src);
 
-		void    parse(const char *buffer, size_t len);
+		void	setbuffer(char *buf, size_t len);
+		void	setbuffer(std::string & str);
+		void    parse(void);
 		bool	iscomplete(void) const;
+		//Clear content of current request, if there were any buffer leftovers from the previous request, they are set into the main buffer, so a subsequent call to 'parse()' would parse the content
 		void	next_request(void);
 
 	private:
 		RequestParser(void);
+		RequestParser &  operator=(RequestParser const & src);
 		
 		void    reset(void);
 		void	parse_char(char c);
