@@ -34,10 +34,13 @@ GetMethod::handle(Request & req, Response & resp)
 	resp.add_header("Content-Length", ss.str());
 
 	int fd = open(req.uri().path.c_str(), O_RDONLY);
+	
 	if (fd != 0)
 	{
 		throw SYSException("Error on lstat call");
 	}
+
+	// return fd;
 	/*
 		get file size 	-> set Content Length header
 						-> set Content type header
