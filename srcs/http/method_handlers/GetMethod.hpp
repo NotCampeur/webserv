@@ -2,6 +2,7 @@
 # define WEBSERV_GETMETHOD_H
 
 # include "IHttpMethod.hpp"
+# include "SYSException.hpp"
 
 class GetMethod : public IHttpMethod
 {
@@ -12,10 +13,10 @@ class GetMethod : public IHttpMethod
 
 		GetMethod &  operator=(GetMethod const & src);
 
-		StatusCodes::status_index_t	handle(void);
-		bool						has_body(void);
-		static IHttpMethod			*create_s(void);
-		IHttpMethod					*create_v(void);
+		void					handle(Request & req, Response & resp);
+		bool					has_body(void);
+		static IHttpMethod		*create_s(void);
+		IHttpMethod				*create_v(void);
 };
 
 #endif

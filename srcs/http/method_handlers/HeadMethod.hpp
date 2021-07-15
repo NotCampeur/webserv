@@ -11,10 +11,10 @@ class HeadMethod : public IHttpMethod
     	HeadMethod(HeadMethod const & src);
 		HeadMethod &  operator=(HeadMethod const & src);
 
-		StatusCodes::status_index_t	handle(void);
-		bool						has_body(void);
-		static IHttpMethod			*create_s(void);
-		IHttpMethod					*create_v(void);
+		void					handle(Response & resp);
+		bool					has_body(void);
+		static IHttpMethod		*create_s(void);
+		IHttpMethod				*create_v(void);
 };
 
 #endif

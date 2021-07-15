@@ -39,6 +39,7 @@ class Response
 		void				make_complete(void);
 		void				set_http_code(StatusCodes::status_index_t i);
 		void				fill_response(std::string &str);
+		void				add_header(const std::string & name, const std::string & value);
 		const std::string &	send(void);
 		void				reset(void);
 

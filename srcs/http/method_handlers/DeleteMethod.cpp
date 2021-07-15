@@ -17,12 +17,14 @@ DeleteMethod::operator=(DeleteMethod const & src)
 }
 
 void
-DeleteMethod::handle(void)
+DeleteMethod::handle(Request & req, Response & resp)
 {
-	int ret = remove(_path.c_str());
+	int ret = remove((req.uri().path).c_str());
 
 	if (ret != 0)
 		throw SYSException("Remove operation failed");
+
+	resp.set_http_code(StatusCodes::NO_CONTENT_204);
 }
 
 bool
@@ -41,10 +43,4 @@ IHttpMethod *
 DeleteMethod::create_v(void)
 {
 	return new DeleteMethod();
-}
-
-void
-DeleteMethod::set_path(const std::string & path)
-{
-	_path = path;
 }

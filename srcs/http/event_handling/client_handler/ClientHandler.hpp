@@ -39,6 +39,7 @@ class ClientHandler : public IEventHandler
 		ClientHandler(ClientHandler const & src);
 		void	handle_request(void);
 		void	parse_request(void);
+		void	handle_http_error(void);
 		// void	set_header(std::stringstream & header, size_t content_length);
 };
 

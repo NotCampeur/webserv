@@ -112,6 +112,12 @@ Response::set_date(void)
   _headers[DATE_HEADER_INDEX].second = std::string(buf, len);
 }
 
+void	
+Response::add_header(const std::string & name, const std::string & value)
+{
+	_headers.push_back(header_t(name, value));
+}
+
 void
 Response::reset(void)
 {

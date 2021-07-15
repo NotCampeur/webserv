@@ -7,9 +7,6 @@
 
 class DeleteMethod : public IHttpMethod
 {
-	private:
-		std::string	_path = "tst/hihi";
-
 	public:
 
     	DeleteMethod(void);
@@ -18,12 +15,10 @@ class DeleteMethod : public IHttpMethod
 
 		DeleteMethod &  operator=(DeleteMethod const & src);
 
-		StatusCodes::status_index_t	handle(void);
-		bool						has_body(void);
-		static IHttpMethod			*create_s(void);
-		IHttpMethod					*create_v(void);
-
-		void						set_path(const std::string & path);
+		void				handle(Request & req, Response & resp);
+		bool				has_body(void);
+		static IHttpMethod	*create_s(void);
+		IHttpMethod			*create_v(void);
 };
 
 #endif
