@@ -1,39 +1,32 @@
-#include "ClientHandler.hpp"
+#include "ReadHandler.hpp"
 
-ClientHandler::ClientHandler(const Client & client) :
-_client(client),
-_request(),
-_req_parser(_request),
+ReadHandler::ReadHandler(int fd, Response & resp) :
+_fd(fd),
+_response(resp),
 _event_flag(POLLIN)
 {}
 
-ClientHandler::ClientHandler(ClientHandler const & src) :
-_client(src._client),
-_request(src._request),
-_req_parser(src._req_parser),
+ReadHandler::ReadHandler(ReadHandler const & src) :
+_fd(src.fd),
+_response(src.response),
 _timer(src._timer),
 _event_flag(src._event_flag)
 {}
 
-ClientHandler::~ClientHandler(void)
+ReadHandler::~ReadHandler(void)
 {
-	delete &_client;
-}
-
-int
-ClientHandler::get_clientfd(void) const
-{
-	return _client.getsockfd();
+	delete close(_fd);
 }
 
 void 
-ClientHandler::readable(void)
+ReadHandler::readable(void)
 {
-	char		read_buff[RECV_BUF_SIZE] = {0};
+	char		read_buff[FILE_READ_BUF_SIZE];
 	ssize_t		bytes_read;
 
-	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
+	bytes_read = read(_fd, read_buff, FILE_READ_BUF_SIZE);
 
+	// NEED new exceptions!
 	switch (bytes_read)
 	{
 		case -1 :
@@ -68,7 +61,7 @@ ClientHandler::readable(void)
 }
 
 void
-ClientHandler::writable(void)
+ReadHandler::writable(void)
 {
 	if (_response.ready_to_send())
 	{
@@ -124,25 +117,25 @@ ClientHandler::writable(void)
 */
 
 bool
-ClientHandler::is_timeoutable(void) const
+ReadHandler::is_timeoutable(void) const
 {
 	return true;
 }
 
 bool
-ClientHandler::is_timeout(void) const
+ReadHandler::is_timeout(void) const
 {
 	return _timer.expired();
 }
 
 int
-ClientHandler::get_event_flag(void) const
+ReadHandler::get_event_flag(void) const
 {
 	return _event_flag;
 }
 
 void
-ClientHandler::handle_request(void)
+ReadHandler::handle_request(void)
 {
 	// Could have a try/catch here catching HttpExceptions and have a routine to handle them
 	
@@ -168,7 +161,7 @@ ClientHandler::handle_request(void)
 }
 
 void	
-ClientHandler::parse_request(void)
+ReadHandler::parse_request(void)
 {
 	_req_parser.parse();
 	if (_request.complete())
@@ -176,7 +169,7 @@ ClientHandler::parse_request(void)
 }
 
 void
-ClientHandler::handle_http_error(void)
+ReadHandler::handle_http_error(void)
 {
 	_request.complete() = true;
 	_response.make_ready();
@@ -185,7 +178,7 @@ ClientHandler::handle_http_error(void)
 }
 /*
 void
-ClientHandler::set_header(std::stringstream & header, size_t content_length)
+ReadHandler::set_header(std::stringstream & header, size_t content_length)
 {	
 	header << "HTTP/1.1 200 OK\r\n"
 	<< "Content-Type: text\r\n"

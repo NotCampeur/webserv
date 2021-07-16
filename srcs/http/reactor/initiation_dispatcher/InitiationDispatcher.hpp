@@ -9,6 +9,8 @@
 # include "SYSException.hpp"
 # include "ServerSYSException.hpp"
 # include "ClientSYSException.hpp"
+# include "Request.hpp"
+# include "Response.hpp"
 
 class InitiationDispatcher
 {
@@ -20,10 +22,12 @@ class InitiationDispatcher
 		InitiationDispatcher(void);
 		~InitiationDispatcher(void);
 
-		// Main loop: starts the loop that uses the demultiplexor and call event handlers
+		// Main loop: calls the demultiplexor and handle events based on demultiplexor output
 		void					handle_events(void);
 		void					add_handle(const Server & srv);
 		void					add_handle(const Client & clt);
+		void					add_handle(int fd, const Response & resp);
+		void					add_write_handle(int fd, const string & body, const Response & resp);
 		void					remove_handle(int fd);
 
 	private:

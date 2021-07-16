@@ -1,14 +1,14 @@
-#include "Timeout.hpp"
+#include "Timer.hpp"
 
-Timeout::Timeout(void)
+Timer::Timer(void)
 {
 	reset();
 }
 
-Timeout::~Timeout(void) {}
+Timer::~Timer(void) {}
 
 void
-Timeout::reset(void)
+Timer::reset(void)
 {
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
@@ -16,7 +16,7 @@ Timeout::reset(void)
 }
 
 bool
-Timeout::expired(void) const
+Timer::expired(void) const
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);

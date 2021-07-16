@@ -17,6 +17,10 @@ class GetMethod : public IHttpMethod
 		bool					has_body(void);
 		static IHttpMethod		*create_s(void);
 		IHttpMethod				*create_v(void);
+	
+	private:
+
+		void	set_content_length_header(std::string & path, Response & resp);
 };
 
 #endif

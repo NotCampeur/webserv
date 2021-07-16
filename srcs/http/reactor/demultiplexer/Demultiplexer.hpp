@@ -14,11 +14,11 @@ class Demultiplexer
 	private:
 
 		pollfd_arr	_pollfds;
-		int			_timeout;
+		int			_timer;
 
 	public:
 
-		Demultiplexer(int timeout = DEMULTIMPEXER_TIMEOUT);		
+		Demultiplexer(int Timer = DEMULTIMPEXER_timer);		
 		Demultiplexer(const Demultiplexer & src);
 		~Demultiplexer(void);
 		

@@ -45,7 +45,7 @@ StatusCodes::get_error_msg_from_index(status_index_t index)
         "405 Method Not Allowed",
         "406 Not Acceptable",
         "407 Proxy Authentication Required",
-        "408 Request Timeout",
+        "408 Request Timer",
         "409 Conflict",
         "410 Gone",
         "411 Length Required",
@@ -59,7 +59,7 @@ StatusCodes::get_error_msg_from_index(status_index_t index)
         "501 Not Implemented",
         "502 Bad Gateway",
         "503 Service Unavailable",
-        "504 Gateway Timeout",
+        "504 Gateway Timer",
         "505 HTTP Version Not Supported"
     };
     return error_msg[index];

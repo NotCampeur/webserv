@@ -38,7 +38,7 @@ SRC	=	main.cpp \
 		Server.cpp Client.cpp \
 		Request.cpp Response.cpp\
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
-		Timeout.cpp \
+		Timer.cpp \
 		Exception.cpp SYSException.cpp HttpException.cpp \
 		ServerSYSException.cpp ClientSYSException.cpp ClientException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \

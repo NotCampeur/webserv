@@ -16,30 +16,27 @@ GetMethod::operator=(GetMethod const & src)
 	return *this;
 }
 
+/*
+* FILE reader handle
+* Needs: fd (open RDONLY)
+* Buffer to read...
+* Destination
+* access to set flag notifying there's something ready to be sent
+* access to flag to check if the buffer is empty and can be filled
+*/
 
 void
 GetMethod::handle(Request & req, Response & resp)
 {
-	struct stat stat_buf;
-
-	int ret = lstat(req.uri().path.c_str(), &stat_buf);
-	if (ret != 0)
-	{
-		throw SYSException("Error on lstat call");
-	}
-
-	off_t file_size = stat_buf.st_size;
-	std::stringstream ss;
-	ss << file_size;
-	resp.add_header("Content-Length", ss.str());
+	set_content_length_header(req.uri().path.c_str(), resp);
 
 	int fd = open(req.uri().path.c_str(), O_RDONLY);
-	
 	if (fd != 0)
 	{
-		throw SYSException("Error on lstat call");
+		throw SYSException("Error opening file");
 	}
-
+	
+	add file reader handle
 	// return fd;
 	/*
 		get file size 	-> set Content Length header
@@ -71,4 +68,21 @@ IHttpMethod *
 GetMethod::create_v(void)
 {
 	return new GetMethod();
+}
+
+void
+GetMethod::set_content_length_header(std::string & path, Response & resp)
+{
+	struct stat stat_buf;
+
+	int ret = lstat(req.uri().path.c_str(), &stat_buf);
+	if (ret != 0)
+	{
+		throw SYSException("Error on lstat call");
+	}
+
+	off_t file_size = stat_buf.st_size;
+	std::stringstream ss;
+	ss << file_size;
+	resp.add_header("Content-Length", ss.str());
 }

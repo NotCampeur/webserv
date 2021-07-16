@@ -4,7 +4,7 @@ ClientHandler::ClientHandler(const Client & client) :
 _client(client),
 _request(),
 _req_parser(_request),
-_event_flag(POLLIN)
+_event_flag(POLLOUT)
 {}
 
 ClientHandler::ClientHandler(ClientHandler const & src) :

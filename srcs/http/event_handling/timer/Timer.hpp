@@ -1,17 +1,17 @@
-#ifndef WEBSERV_TIMEOUT_H
-# define WEBSERV_TIMEOUT_H
+#ifndef WEBSERV_timer_H
+# define WEBSERV_timer_H
 
 # include "webserv.hpp"
 
-class Timeout
+class Timer
 {
 	private:
 		time_t	_sec;
 
 	public:
 
-		Timeout(void);
-		~Timeout(void);
+		Timer(void);
+		~Timer(void);
 
 		void	reset(void);
 		bool	expired(void) const;

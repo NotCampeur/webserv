@@ -11,7 +11,7 @@ _complete(false)
 }
 
 Response::Response(Response const & src) :
-_buffer(src._buffer),
+_payload(src._payload),
 _version(src._version),
 _headers(src._headers),
 _header_sent(src._header_sent),
@@ -24,7 +24,7 @@ Response::~Response(void) {}
 Response &
 Response::operator=(Response const & src)
 {
-	_buffer = src._buffer;
+	_payload = src._payload;
 	_headers = src._headers;
 	_header_sent = src._header_sent;
 	_ready_to_send = src._ready_to_send;
@@ -73,31 +73,18 @@ Response::send(void)
 {
 	if (!_header_sent)
 	{
-		std::string h(_version);
-		h += ' ';
-		h += StatusCodes::get_error_msg_from_index(_code);
-		h += "\r\n";
-		this->set_date();
-		for (size_t i = 0; i < _headers.size(); i++)
-		{
-			h += _headers[i].first;
-			h += ": ";
-			h += _headers[i].second;
-			h += "\r\n";
-		}
-		h += "\r\n";
-		_buffer.insert(0, h);
+		set_resp_header(void);
 		_header_sent = true;
 	}
 	_ready_to_send = false;
-	return _buffer;
+	return _payload;
 }
 
 void
 Response::set_default_headers(void)
 {
 	_headers[SERVER_HEADER_INDEX].first = "Server";
-	_headers[SERVER_HEADER_INDEX].second = "robin hood";
+	_headers[SERVER_HEADER_INDEX].second = "robin hoodie";
 	_headers[DATE_HEADER_INDEX].first = "Date";
 	_headers[LOCATION_HEADER_INDEX].first = "Location";
 }
@@ -105,7 +92,7 @@ Response::set_default_headers(void)
 void
 Response::set_date(void)
 {
-  char buf[1000];
+  char buf[1000]; //This buffer size should always be big enough to hold the date written by strftime
   time_t now = time(0);
   struct tm tm = *gmtime(&now);
   size_t len = strftime(buf, sizeof buf, "%a, %d %b %Y %H:%M:%S %Z", &tm);
@@ -127,4 +114,24 @@ Response::reset(void)
 	_header_sent = false;
 	_ready_to_send = false;
 	_complete = false;
+}
+
+void
+Response::set_resp_header(void)
+{
+	std::string h(_version);
+	h += ' ';
+	h += StatusCodes::get_error_msg_from_index(_code);
+	h += "\r\n";
+	this->set_date();
+	
+	for (size_t i = 0; i < _headers.size(); i++)
+	{
+		h += _headers[i].first;
+		h += ": ";
+		h += _headers[i].second;
+		h += "\r\n";
+	}
+	h += "\r\n";
+	_payload.insert(0, h);
 }
