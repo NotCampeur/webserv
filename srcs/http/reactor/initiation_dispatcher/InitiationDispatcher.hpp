@@ -26,8 +26,8 @@ class InitiationDispatcher
 		void					handle_events(void);
 		void					add_handle(const Server & srv);
 		void					add_handle(const Client & clt);
-		void					add_handle(int fd, const Response & resp);
-		void					add_write_handle(int fd, const string & body, const Response & resp);
+		void					add_handle(int fd, size_t file_size, Response & resp);
+		void					add_handle(int fd, const string & body, const Response & resp);
 		void					remove_handle(int fd);
 
 	private:

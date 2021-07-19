@@ -19,7 +19,7 @@ GetMethod::operator=(GetMethod const & src)
 /*
 * FILE reader handle
 * Needs: fd (open RDONLY)
-* Buffer to read...
+* Buffer to read: for now reading in its own buffer, but potential optimization would see handler reading directly inside response buffer
 * Destination
 * access to set flag notifying there's something ready to be sent
 * access to flag to check if the buffer is empty and can be filled

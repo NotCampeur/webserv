@@ -7,6 +7,7 @@
 # include "Timer.hpp"
 # include "SYSException.hpp"
 # include "HttpException.hpp"
+# include "StatusCodes.hpp"
 
 class ReadHandler : public IEventHandler
 {
@@ -14,11 +15,13 @@ class ReadHandler : public IEventHandler
 		const int				_fd;
 		Response &				_response;
 		Timer					_timer;
-		const int				_event_flag;
+		int						_event_flag;
+		size_t					_file_size;
+		size_t					_bytes_read;
 
 	public:
 
-		ReadHandler(int fd, Response & resp);
+		ReadHandler(int fd, size_t file_size, Response & resp);
 		~ReadHandler(void);
 
 		virtual void	readable(void);
@@ -29,7 +32,8 @@ class ReadHandler : public IEventHandler
 
 	private:
 		ReadHandler(ReadHandler const & src);
-		void	handle_http_error(void);
+		void	manage_error(void);
+		void	response_complete(void);
 		// void	set_header(std::stringstream & header, size_t content_length);
 };
 

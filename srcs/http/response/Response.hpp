@@ -33,10 +33,11 @@ class Response
 
 		bool				ready_to_send(void) const;
 		bool				iscomplete(void) const;
+		bool				header_sent(void) const;
 		void				make_ready(void);
 		void				make_complete(void);
 		void				set_http_code(StatusCodes::status_index_t i);
-		void				fill_response(std::string &str);
+		void				fill_body(std::string &str);
 		void				add_header(const std::string & name, const std::string & value);
 		
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it

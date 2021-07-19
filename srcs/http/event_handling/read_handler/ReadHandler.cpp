@@ -1,13 +1,15 @@
 #include "ReadHandler.hpp"
 
-ReadHandler::ReadHandler(int fd, Response & resp) :
+ReadHandler::ReadHandler(int fd, size_t file_size, Response & resp) :
 _fd(fd),
+_file_size(file_size),
 _response(resp),
 _event_flag(POLLIN)
 {}
 
 ReadHandler::ReadHandler(ReadHandler const & src) :
 _fd(src.fd),
+_file_size(src.file_size),
 _response(src.response),
 _timer(src._timer),
 _event_flag(src._event_flag)
@@ -21,100 +23,49 @@ ReadHandler::~ReadHandler(void)
 void 
 ReadHandler::readable(void)
 {
-	char		read_buff[FILE_READ_BUF_SIZE];
-	ssize_t		bytes_read;
+	if (_response.iscomplete() || _response.ready_to_send())
+		return ;
 
-	bytes_read = read(_fd, read_buff, FILE_READ_BUF_SIZE);
+	char	read_buff[FILE_READ_BUF_SIZE];
+	ssize_t len = read(_fd, read_buff, FILE_READ_BUF_SIZE);
 
-	// NEED new exceptions!
-	switch (bytes_read)
+	//Missing link: _response.path() -> could potentially get this from "location" header if set during validation (would make sense)
+	switch (len)
 	{
 		case -1 :
 		{
-			throw ClientSYSException("Unable to read from client socket", _client.getip(), _client.getsockfd());
+			manage_error();
+			Logger(LOG_FILE, error_type, error_lvl) << "Unable to read from file: " << _response.path() << " : " << strerror(errno);
+			break ;
 		}
 		case 0 :
 		{
-			throw ClientException("Connection closed by client", _client.getip(), _client.getsockfd());
+			if (_bytes_read == _file_size)
+				response_complete();
+			else
+			{
+				manage_error();
+				Logger(LOG_FILE, error_type, error_lvl) << "Read of size 0 from file: " << _response.path();
+			}
+			break ;
 		}
 		default :
 		{
-			_req_parser.setbuffer(read_buff, bytes_read);
-			handle_request();
-			// try {
-			// 	_req_parser.parse(read_buff, bytes_read);
-			// 	if (_request.complete())
-			// 		_event_flag = POLLOUT;
-			// }
-			// catch (HttpException & e)
-			// {
-			// 	_request.complete() = true;
-			// 	Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_error_msg_from_index(e.get_error_index());
-			// 	_response.set_http_code(e.get_error_index());
-			// 	_response.make_ready();
-			// 	_response.make_complete();
-			// 	_event_flag = POLLOUT;
-			// }
+			_response.fill_payload(std::string(read_buff, len));
+			_bytes_read += static_cast<size_t>(len);
+			_timer.reset();
+
+			if (_bytes_read == _file_size)
+				response_complete();
+			else
+				_response.make_ready();
 		}
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
 void
 ReadHandler::writable(void)
-{
-	if (_response.ready_to_send())
-	{
-		ssize_t	bytes_written = send(get_clientfd(), _response.send().c_str(), _response.send().size(), 0);
-		
-		if (bytes_written < 0)
-		{
-			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
-		}
-		else if (static_cast<size_t>(bytes_written) != _response.send().size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
-		{
-			throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
-		}
-		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << _response.send();
-		if (_response.iscomplete())
-		{
-			_response.reset();
-			_req_parser.next_request();
-			if (!_request.complete())
-				_event_flag = POLLIN;
-		}
-	}
-}
-
-
-/*
-	while (_request.complete())
-	{
-		std::stringstream	ss;
-		static std::string 	msg = "Hello World\n";
-		ssize_t				bytes_written;
-
-		set_header(ss, msg.size());
-
-		ss << msg;
-		std::string datagram = ss.str();
-
-		bytes_written = send(get_clientfd(), datagram.c_str(), datagram.size(), 0);
-		if (bytes_written < 0)
-		{
-			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
-		}
-		else if (static_cast<size_t>(bytes_written) != datagram.size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
-		{
-			throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
-		}
-		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << datagram;
-		_req_parser.next_request();
-	}
-	_event_flag = POLLIN;
-	_timer.reset();
-}
-*/
+{}
 
 bool
 ReadHandler::is_timeoutable(void) const
@@ -135,55 +86,17 @@ ReadHandler::get_event_flag(void) const
 }
 
 void
-ReadHandler::handle_request(void)
+ReadHandler::manage_error(void)
 {
-	// Could have a try/catch here catching HttpExceptions and have a routine to handle them
-	
-	try {
-		parse_request();
-		// if (_request.complete())
-			// validate();
-		// if (_request.validated())
-			_request.method().handle(_response);
-	}
-	catch (HttpException & e)
-	{
-		Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_error_msg_from_index(e.get_error_index());
-		_response.set_http_code(e.get_error_index());
-		handle_http_error();
-	}
-	catch (SYSException & e)
-	{
-		Logger(LOG_FILE, error_type, error_lvl) << e.what() << " : " << _client.getip();
+	if (!_response.header_sent())
 		_response.set_http_code(StatusCodes::INTERNAL_SERVER_ERROR_500);
-		handle_http_error();
-	}
-}
-
-void	
-ReadHandler::parse_request(void)
-{
-	_req_parser.parse();
-	if (_request.complete())
-		_event_flag = POLLOUT;
+	response_complete();
 }
 
 void
-ReadHandler::handle_http_error(void)
+ReadHandler::response_complete(void)
 {
-	_request.complete() = true;
 	_response.make_ready();
 	_response.make_complete();
-	_event_flag = POLLOUT;	
+	_event_flag = 0;
 }
-/*
-void
-ReadHandler::set_header(std::stringstream & header, size_t content_length)
-{	
-	header << "HTTP/1.1 200 OK\r\n"
-	<< "Content-Type: text\r\n"
-	<< "Content-Length: "
-	<< (content_length)
-	<< "\r\n\r\n";
-}
-*/

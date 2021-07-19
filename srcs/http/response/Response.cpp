@@ -63,9 +63,9 @@ Response::make_complete(void)
 }
 
 void
-Response::fill_response(std::string &str)
+Response::fill_body(std::string &str)
 {
-	_buffer += str;
+	_payload += str;
 }
 
 const std::string &
@@ -108,7 +108,7 @@ Response::add_header(const std::string & name, const std::string & value)
 void
 Response::reset(void)
 {
-	_buffer.clear();
+	_payload.clear();
 	_headers.clear();
 	set_default_headers();
 	_header_sent = false;
@@ -134,4 +134,10 @@ Response::set_resp_header(void)
 	}
 	h += "\r\n";
 	_payload.insert(0, h);
+}
+
+bool
+Response::header_sent(void) const
+{
+	return _header_sent;
 }

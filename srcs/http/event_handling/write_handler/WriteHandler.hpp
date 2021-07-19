@@ -11,13 +11,12 @@
 class WriteHandler : public IEventHandler
 {
 	private:
-
-		const Client &			_client;
-		Request					_request;
+		const std::string &		_body;
+		int						_fd;
 		Response				_response;
-		RequestParser			_req_parser;
 		Timer					_timer;
-		const int				_event_flag;
+		int						_event_flag;
+		size_t					_bytes_written;
 
 	public:
 
@@ -33,7 +32,6 @@ class WriteHandler : public IEventHandler
 	private:
 		WriteHandler(WriteHandler const & src);
 		void	handle_http_error(void);
-		// void	set_header(std::stringstream & header, size_t content_length);
 };
 
 #endif
