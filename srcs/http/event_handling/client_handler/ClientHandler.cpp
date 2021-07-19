@@ -4,6 +4,7 @@ ClientHandler::ClientHandler(const Client & client) :
 _client(client),
 _request(),
 _req_parser(_request),
+_timer(CLIENT_TIMEOUT),
 _event_flag(POLLIN)
 {}
 

@@ -6,11 +6,13 @@
 class Timer
 {
 	private:
-		time_t	_sec;
+		time_t			_sec;
+		const time_t	_timeout;
 
 	public:
 
-		Timer(void);
+		Timer(time_t timeout);
+		Timer(Timer const & src);
 		~Timer(void);
 
 		void	reset(void);

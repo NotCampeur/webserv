@@ -4,6 +4,7 @@ ReadHandler::ReadHandler(int fd, size_t file_size, Response & resp) :
 _fd(fd),
 _file_size(file_size),
 _response(resp),
+_timer(FILE_HANDLER_TIMEOUT),
 _event_flag(POLLIN)
 {}
 

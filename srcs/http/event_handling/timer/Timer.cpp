@@ -1,9 +1,15 @@
 #include "Timer.hpp"
 
-Timer::Timer(void)
+Timer::Timer(time_t timeout) :
+_timeout(timeout)
 {
 	reset();
 }
+
+Timer(Timer const & src) :
+_sec(src._sec),
+_timeout(timeout)
+{}
 
 Timer::~Timer(void) {}
 
@@ -21,7 +27,7 @@ Timer::expired(void) const
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 
-	if ((tv.tv_sec - _sec) >= CLIENT_TIMEOUT)
+	if ((tv.tv_sec - _sec) >= _timeout)
 		return true;
 	return false;
 }

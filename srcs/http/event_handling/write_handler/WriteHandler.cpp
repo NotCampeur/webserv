@@ -4,6 +4,7 @@ WriteHandler::WriteHandler(int fd, const std::string & body, Response & resp) :
 _fd(fd),
 _body(body),
 _response(_resp),
+_timer(FILE_HANDLER_TIMEOUT),
 _event_flag(POLLOUT)
 {}
 

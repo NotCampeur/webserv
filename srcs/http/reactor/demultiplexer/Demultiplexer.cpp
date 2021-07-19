@@ -1,12 +1,12 @@
 #include "Demultiplexer.hpp"
 
-Demultiplexer::Demultiplexer(int Timer) :
-_timer(Timer)
+Demultiplexer::Demultiplexer(int timeout) :
+_timeout(timeout)
 {}
 
 Demultiplexer::Demultiplexer(const Demultiplexer & src) :
 _pollfds(src._pollfds),
-_timer(src._timer)
+_timeout(src._timeout)
 {}
 
 Demultiplexer::~Demultiplexer(void)
@@ -18,7 +18,7 @@ Demultiplexer &
 Demultiplexer::operator=(const Demultiplexer & src)
 {
 	_pollfds = src._pollfds;
-	_timer = src._timer;
+	_timeout = src._timeout;
 	return *this;
 }
 
@@ -27,14 +27,14 @@ Demultiplexer::activate()
 {
 	int	result(0);
 
-	result = poll(&_pollfds[0], _pollfds.size(), _timer);
+	result = poll(&_pollfds[0], _pollfds.size(), _timeout);
 	if (result == -1)
 	{
 		throw SYSException("Unable to poll descriptors");
 	}
 	else if (result == 0)
 	{
-		Logger(LOG_FILE, basic_type, minor_lvl) << "Poll Timer";
+		Logger(LOG_FILE, basic_type, minor_lvl) << "Poll timeout";
 		return result;
 	}
 	std::ostringstream	nb;
