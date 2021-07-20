@@ -15,7 +15,7 @@ class DeleteMethod : public IHttpMethod
 
 		DeleteMethod &  operator=(DeleteMethod const & src);
 
-		void				handle(Request & req, Response & resp);
+		void				handle(Request & req, Response & resp, InitiationDispatcher & idis);
 		bool				has_body(void);
 		static IHttpMethod	*create_s(void);
 		IHttpMethod			*create_v(void);

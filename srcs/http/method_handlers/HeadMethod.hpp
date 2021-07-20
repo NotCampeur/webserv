@@ -9,12 +9,17 @@ class HeadMethod : public IHttpMethod
     	HeadMethod(void);
     	~HeadMethod(void);
     	HeadMethod(HeadMethod const & src);
-		HeadMethod &  operator=(HeadMethod const & src);
+		
+		HeadMethod &  		operator=(HeadMethod const & src);
 
-		void					handle(Response & resp);
-		bool					has_body(void);
-		static IHttpMethod		*create_s(void);
-		IHttpMethod				*create_v(void);
+		void				handle(Request & req, Response & resp, InitiationDispatcher & idis);
+		bool				has_body(void);
+		static IHttpMethod	*create_s(void);
+		IHttpMethod			*create_v(void);
+
+	private:
+		void				set_content_length_header(const std::string & path, Response & resp);
+		off_t				get_file_size(const std::string & path);
 };
 
 #endif

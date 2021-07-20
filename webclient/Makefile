@@ -6,7 +6,7 @@
 #    By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/22 11:30:37 by ldutriez_ho       #+#    #+#              #
-#    Updated: 2021/06/22 12:33:07 by ldutriez_ho      ###   ########.fr        #
+#    Updated: 2021/07/20 17:55:53 by jmaydew          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 LIB = 
 
 SRC	=	main.cpp \
-		Client.cpp \
+		UserAgent.cpp \
 		Logger.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))

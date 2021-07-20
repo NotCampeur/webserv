@@ -4,7 +4,6 @@ ReadHandler::ReadHandler(int fd, size_t file_size, Response & resp) :
 _fd(fd),
 _file_size(file_size),
 _response(resp),
-_timer(FILE_HANDLER_TIMEOUT),
 _event_flag(POLLIN)
 {}
 
@@ -12,7 +11,6 @@ ReadHandler::ReadHandler(ReadHandler const & src) :
 _fd(src._fd),
 _file_size(src._file_size),
 _response(src._response),
-_timer(src._timer),
 _event_flag(src._event_flag)
 {}
 
@@ -53,7 +51,6 @@ ReadHandler::readable(void)
 		{
 			_response.fill_payload(std::string(read_buff, len));
 			_bytes_read += static_cast<size_t>(len);
-			_timer.reset();
 
 			if (_bytes_read == _file_size)
 				response_complete();
@@ -70,13 +67,13 @@ ReadHandler::writable(void)
 bool
 ReadHandler::is_timeoutable(void) const
 {
-	return true;
+	return false;
 }
 
 bool
 ReadHandler::is_timeout(void) const
 {
-	return _timer.expired();
+	return false;
 }
 
 int

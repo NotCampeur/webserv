@@ -17,7 +17,7 @@ DeleteMethod::operator=(DeleteMethod const & src)
 }
 
 void
-DeleteMethod::handle(Request & req, Response & resp)
+DeleteMethod::handle(Request & req, Response & resp, InitiationDispatcher & idis)
 {
 	int ret = remove((req.uri().path).c_str());
 
@@ -25,6 +25,7 @@ DeleteMethod::handle(Request & req, Response & resp)
 		throw SYSException("Remove operation failed");
 
 	resp.set_http_code(StatusCodes::NO_CONTENT_204);
+	(void)idis;
 }
 
 bool

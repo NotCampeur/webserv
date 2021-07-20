@@ -17,8 +17,17 @@ PostMethod::operator=(PostMethod const & src)
 }
 
 void
-PostMethod::handle(void)
-{}
+PostMethod::handle(Request & req, Response & resp, InitiationDispatcher & idis)
+{
+	int fd = open(req.uri().path.c_str(), O_RDONLY);
+	
+	if (fd != 0)
+	{
+		throw SYSException("Error opening file");
+	}
+
+	idis.add_write_handle(fd, req.get_body(), resp);
+}
 
 bool
 PostMethod::has_body(void)

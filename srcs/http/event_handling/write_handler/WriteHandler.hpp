@@ -2,19 +2,15 @@
 # define WEBSERV_WRITEHANDLER_HPP
 
 # include "IEventHandler.hpp"
-# include "Request.hpp"
 # include "Response.hpp"
-# include "Timer.hpp"
-# include "SYSException.hpp"
-# include "HttpException.hpp"
+# include "Mime.hpp"
 
 class WriteHandler : public IEventHandler
 {
 	private:
-		const std::string &		_body;
 		int						_fd;
+		const std::string &		_body;
 		Response				_response;
-		Timer					_timer;
 		int						_event_flag;
 		size_t					_bytes_written;
 
@@ -33,6 +29,7 @@ class WriteHandler : public IEventHandler
 		WriteHandler(WriteHandler const & src);
 		void	response_complete(void);
 		void	manage_error(void);
+		void	set_content_type_header(void);
 };
 
 #endif

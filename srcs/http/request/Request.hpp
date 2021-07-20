@@ -3,7 +3,6 @@
 
 # include "webserv.hpp"
 # include "IHttpMethod.hpp"
-# include "Exception.hpp"
 # include "HttpException.hpp"
 
 class Request
@@ -27,9 +26,9 @@ class Request
 	public:
 
 		Request(void);
+		Request(Request const & src);
 		~Request(void);
 
-		Request(Request const & src);
 		void									set_method(IHttpMethod *method);
 		IHttpMethod &							method(void);
 		uri_t &									uri(void);

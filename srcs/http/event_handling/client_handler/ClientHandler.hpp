@@ -15,16 +15,18 @@ class ClientHandler : public IEventHandler
 {
 	private:
 
-		const Client &			_client;
-		Request					_request;
-		Response				_response;
-		RequestParser			_req_parser;
-		const Timer				_timer;
-		int						_event_flag;
+		const Client &					_client;
+		Request							_request;
+		Response						_response;
+		RequestParser					_req_parser;
+		const Timer						_timer;
+		int								_event_flag;
+		InitiationDispatcher &			_idis;
 
 	public:
 
-		ClientHandler(const Client & client);
+		ClientHandler(const Client & client, InitiationDispatcher & idis);
+		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);
 
 		virtual void	readable(void);
@@ -32,14 +34,13 @@ class ClientHandler : public IEventHandler
 		virtual	bool	is_timeoutable(void) const;
 		virtual bool	is_timeout(void) const;
 		virtual int		get_event_flag(void) const;
-
 		int				get_clientfd(void) const;
 
 	private:
-		ClientHandler(ClientHandler const & src);
-		void	handle_request(void);
-		void	parse_request(void);
-		void	handle_http_error(void);
+		ClientHandler &	operator=(ClientHandler const & src);
+		void			handle_request(void);
+		void			parse_request(void);
+		void			handle_http_error(void);
 		// void	set_header(std::stringstream & header, size_t content_length);
 };
 

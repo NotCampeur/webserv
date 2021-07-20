@@ -12,7 +12,7 @@ class PostMethod : public IHttpMethod
 		
 		PostMethod &  operator=(PostMethod const & src);
 
-		void					handle(Response & resp);
+		void					handle(Request & req, Response & resp, InitiationDispatcher & idis);
 		bool					has_body(void);
 		static IHttpMethod		*create_s(void);
 		IHttpMethod				*create_v(void);

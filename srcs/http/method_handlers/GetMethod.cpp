@@ -26,7 +26,7 @@ GetMethod::operator=(GetMethod const & src)
 */
 
 void
-GetMethod::handle(Request & req, Response & resp)
+GetMethod::handle(Request & req, Response & resp, InitiationDispatcher & idis)
 {
 	set_content_length_header(req.uri().path.c_str(), resp);
 
@@ -36,8 +36,8 @@ GetMethod::handle(Request & req, Response & resp)
 		throw SYSException("Error opening file");
 	}
 	
-	add file reader handle
-	// return fd;
+	idis.add_read_handle(fd, get_file_size(req.uri().path.c_str()), resp);
+
 	/*
 		get file size 	-> set Content Length header
 						-> set Content type header
@@ -47,8 +47,6 @@ GetMethod::handle(Request & req, Response & resp)
 			if index off -> Should be handled at the validation level
 		open file(path)
 		new	read handler
-
-
 	*/
 }
 
@@ -71,18 +69,24 @@ GetMethod::create_v(void)
 }
 
 void
-GetMethod::set_content_length_header(std::string & path, Response & resp)
+GetMethod::set_content_length_header(const std::string & path, Response & resp)
+{
+	off_t file_size = get_file_size(path);
+	std::stringstream ss;
+	ss << file_size;
+	resp.add_header("Content-Length", ss.str());
+}
+
+off_t
+GetMethod::get_file_size(const std::string & path)
 {
 	struct stat stat_buf;
 
-	int ret = lstat(req.uri().path.c_str(), &stat_buf);
+	int ret = lstat(path.c_str(), &stat_buf);
 	if (ret != 0)
 	{
 		throw SYSException("Error on lstat call");
 	}
 
-	off_t file_size = stat_buf.st_size;
-	std::stringstream ss;
-	ss << file_size;
-	resp.add_header("Content-Length", ss.str());
+	return stat_buf.st_size;
 }

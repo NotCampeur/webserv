@@ -59,7 +59,7 @@ InitiationDispatcher::handle_events(void)
 				}
 				else if (_event_handler_table->get(it->fd)->is_timeoutable())
 				{
-					if (_event_handler_table->get(it->fd)->is_timeout())
+					if (_event_handler_table->get(it->fd)->is_timeout())	//Only client handlers can timeout for now
 					{
 						Logger(LOG_FILE, basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
 						remove_handle(it->fd);
@@ -112,17 +112,32 @@ InitiationDispatcher::set_demultiplexer_handles(void)
 }
 
 void
-InitiationDispatcher::add_handle(const Server & srv)
+InitiationDispatcher::add_server_handle(const Server & srv)
 {
 	ServerHandler *sh = new ServerHandler(&srv, *this);
 	_event_handler_table->add(sh->get_serverfd(), *sh);
 }
 
 void
-InitiationDispatcher::add_handle(const Client & clt)
+InitiationDispatcher::add_client_handle(const Client & clt)
 {
-	ClientHandler *ch = new ClientHandler(clt);
+	ClientHandler *ch = new ClientHandler(clt, *this);
 	_event_handler_table->add(ch->get_clientfd(), *ch);
+}
+
+void
+InitiationDispatcher::add_read_handle(int fd, size_t file_size, Response & resp)
+{
+	ReadHandler *rh = new ReadHandler(fd, file_size, resp);
+	_event_handler_table->add(fd, *rh);
+}
+
+void
+InitiationDispatcher::add_write_handle(int fd, const std::string & body, Response & resp)
+{
+	WriteHandler *wh = new WriteHandler(fd, body, resp);
+	_event_handler_table->add(fd, *wh);
+
 }
 
 void

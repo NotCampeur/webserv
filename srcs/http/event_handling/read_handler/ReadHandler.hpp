@@ -2,21 +2,15 @@
 # define WEBSERV_READHANDLER_HPP
 
 # include "IEventHandler.hpp"
-# include "Request.hpp"
 # include "Response.hpp"
-# include "Timer.hpp"
-# include "SYSException.hpp"
-# include "HttpException.hpp"
-# include "StatusCodes.hpp"
 
 class ReadHandler : public IEventHandler
 {
 	private:
 		const int				_fd;
-		Response &				_response;
-		Timer					_timer;
-		int						_event_flag;
 		size_t					_file_size;
+		Response &				_response;
+		int						_event_flag;
 		size_t					_bytes_read;
 
 	public:
@@ -34,7 +28,6 @@ class ReadHandler : public IEventHandler
 		ReadHandler(ReadHandler const & src);
 		void	manage_error(void);
 		void	response_complete(void);
-		// void	set_header(std::stringstream & header, size_t content_length);
 };
 
 #endif

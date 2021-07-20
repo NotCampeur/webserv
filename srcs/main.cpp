@@ -26,7 +26,7 @@ void	serv_test(long server_amount)
 			for (long i(0); i < server_amount; i++)
 			{
 				const Server *serv = new Server(8080 + i, inet_addr("127.0.0.1"));
-				idis.add_handle(*serv);
+				idis.add_server_handle(*serv);
 			}
 		}
 		catch(const std::exception& e)

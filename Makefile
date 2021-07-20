@@ -34,15 +34,15 @@ SRC	=	main.cpp \
 		Logger.cpp \
 		sigint_handler.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
-		ServerHandler.cpp ClientHandler.cpp \
+		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
 		Server.cpp Client.cpp \
 		Request.cpp Response.cpp\
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
 		Timer.cpp \
-		Exception.cpp SYSException.cpp HttpException.cpp \
-		ServerSYSException.cpp ClientSYSException.cpp ClientException.cpp \
+		Exception.cpp HttpException.cpp ClientException.cpp \
+		SYSException.cpp ServerSYSException.cpp ClientSYSException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
-		StatusCodes.cpp
+		StatusCodes.cpp Mime.cpp
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))
