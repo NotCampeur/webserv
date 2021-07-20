@@ -10,29 +10,29 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "UserAgent.hpp"
 
 using namespace webclient;
 
-Client::Client(int port, int com_domain, int sock_type)
+UserAgent::UserAgent(int port, int com_domain, int sock_type)
 {
 	create_socket(com_domain, sock_type);
 	init_addr_inputs(com_domain, port);
 	connect_to_serv();
 }
 
-Client::Client(Client const & src)
+UserAgent::UserAgent(UserAgent const & src)
 {
 	(void)src;
 }
 
-Client::~Client(void)
+UserAgent::~UserAgent(void)
 {
 	close(_sockfd);
 }
 
-Client &
-Client::operator=(Client const & src)
+UserAgent &
+UserAgent::operator=(UserAgent const & src)
 {
 	this->_sockfd = src._sockfd;
 	this->_address = src._address;
@@ -40,13 +40,13 @@ Client::operator=(Client const & src)
 }
 
 int
-Client::getsockfd() const
+UserAgent::getsockfd() const
 {
 	return (_sockfd);
 }
 
 void
-Client::create_socket(int domain, int type, int protocol)
+UserAgent::create_socket(int domain, int type, int protocol)
 {
 	int	reuse = 0;
 	int	result = 0;
@@ -59,7 +59,7 @@ Client::create_socket(int domain, int type, int protocol)
 }
 
 void
-Client::init_addr_inputs(int domain, int port)
+UserAgent::init_addr_inputs(int domain, int port)
 {
 	memset(&_address, 0, sizeof(_address));
 	_target_port = port;
@@ -70,7 +70,7 @@ Client::init_addr_inputs(int domain, int port)
 }
 
 void
-Client::connect_to_serv()
+UserAgent::connect_to_serv()
 {
 	if (connect(_sockfd, (struct sockaddr *)&_address, sizeof(_address)) < 0)
 	{
@@ -81,7 +81,7 @@ Client::connect_to_serv()
 }
 
 void
-Client::send_request(std::string file_path)
+UserAgent::send_request(std::string file_path)
 {
 	std::ifstream	file(file_path);
 	std::string		tmp;
@@ -102,7 +102,7 @@ Client::send_request(std::string file_path)
 }
 
 void
-Client::receive_response()
+UserAgent::receive_response()
 {
 	char buffer[1024] = {0};
 	
@@ -112,32 +112,32 @@ Client::receive_response()
 
 // EXCEPTIONS
 
-Client::UnableToCreateClientSocket::UnableToCreateClientSocket() throw()
+UserAgent::UnableToCreateClientSocket::UnableToCreateClientSocket() throw()
 : _msg("Unable to create a socket for the Client : ")
 {
 	_msg += strerror(errno);
 }
 
-Client::UnableToCreateClientSocket::~UnableToCreateClientSocket() throw()
+UserAgent::UnableToCreateClientSocket::~UnableToCreateClientSocket() throw()
 {}
 
 const char *
-Client::UnableToCreateClientSocket::what() const throw()
+UserAgent::UnableToCreateClientSocket::what() const throw()
 {
 	return _msg.c_str();
 }
 
-Client::UnableToConnect::UnableToConnect() throw()
+UserAgent::UnableToConnect::UnableToConnect() throw()
 : _msg("Unable to set socket as listener : ")
 {
 	_msg += strerror(errno);
 }
 
-Client::UnableToConnect::~UnableToConnect() throw()
+UserAgent::UnableToConnect::~UnableToConnect() throw()
 {}
 
 const char *
-Client::UnableToConnect::what() const throw()
+UserAgent::UnableToConnect::what() const throw()
 {
 	return _msg.c_str();
 }

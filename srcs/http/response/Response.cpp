@@ -63,7 +63,7 @@ Response::make_complete(void)
 }
 
 void
-Response::fill_body(std::string &str)
+Response::fill_payload(const std::string & str)
 {
 	_payload += str;
 }
@@ -73,7 +73,7 @@ Response::send(void)
 {
 	if (!_header_sent)
 	{
-		set_resp_header(void);
+		set_resp_header();
 		_header_sent = true;
 	}
 	_ready_to_send = false;
@@ -140,4 +140,10 @@ bool
 Response::header_sent(void) const
 {
 	return _header_sent;
+}
+
+const std::string &
+Response::get_location(void)
+{
+	return _headers[LOCATION_HEADER_INDEX].second;
 }

@@ -152,7 +152,7 @@ ClientHandler::handle_request(void)
 		// if (_request.complete())
 			// validate();
 		// if (_request.validated())
-			_request.method().handle(_response);
+			_request.method().handle(_request, _response);
 	}
 	catch (HttpException & e)
 	{

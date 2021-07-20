@@ -37,9 +37,9 @@ class Response
 		void				make_ready(void);
 		void				make_complete(void);
 		void				set_http_code(StatusCodes::status_index_t i);
-		void				fill_body(std::string &str);
+		void				fill_payload(const std::string & str);
 		void				add_header(const std::string & name, const std::string & value);
-		
+		const std::string &	get_location(void);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
 		const std::string &	send(void);
 		void				reset(void);

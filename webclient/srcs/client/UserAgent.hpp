@@ -16,7 +16,7 @@
 # include "webclient.hpp"
 namespace webclient
 {
-	class Client
+	class UserAgent
 	{
 			private:
 			
@@ -26,20 +26,20 @@ namespace webclient
 
 		public:
 			// With port 0, the OS assigns the port
-			Client(int port, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
-			Client(Client const & src);
+			UserAgent(int port, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
+			UserAgent(UserAgent const & src);
 
 			// Need to unlink socket here
-			~Client(void);
+			~UserAgent(void);
 			
 			void				send_request(std::string file_path);
 			void				receive_response();
 
 			int	getsockfd() const;
-			Client &  operator=(Client const & src);
+			UserAgent &  operator=(UserAgent const & src);
 
 		private:
-			Client(void);
+			UserAgent(void);
 
 			void				create_socket(int domain, int type, int protocol = 0);
 			void				init_addr_inputs(int domain, int port);

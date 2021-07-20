@@ -9,16 +9,16 @@ _event_flag(POLLIN)
 {}
 
 ReadHandler::ReadHandler(ReadHandler const & src) :
-_fd(src.fd),
-_file_size(src.file_size),
-_response(src.response),
+_fd(src._fd),
+_file_size(src._file_size),
+_response(src._response),
 _timer(src._timer),
 _event_flag(src._event_flag)
 {}
 
 ReadHandler::~ReadHandler(void)
 {
-	delete close(_fd);
+	close(_fd);
 }
 
 void 
@@ -30,13 +30,12 @@ ReadHandler::readable(void)
 	char	read_buff[FILE_READ_BUF_SIZE];
 	ssize_t len = read(_fd, read_buff, FILE_READ_BUF_SIZE);
 
-	//Missing link: _response.path() -> could potentially get this from "location" header if set during validation (would make sense)
 	switch (len)
 	{
 		case -1 :
 		{
 			manage_error();
-			Logger(LOG_FILE, error_type, error_lvl) << "Unable to read from file: " << _response.path() << " : " << strerror(errno);
+			Logger(LOG_FILE, error_type, error_lvl) << "Unable to read from file: " << _response.get_location() << " : " << strerror(errno);
 			break ;
 		}
 		case 0 :
@@ -46,7 +45,7 @@ ReadHandler::readable(void)
 			else
 			{
 				manage_error();
-				Logger(LOG_FILE, error_type, error_lvl) << "Read of size 0 from file: " << _response.path();
+				Logger(LOG_FILE, error_type, error_lvl) << "Read of size 0 from file: " << _response.get_location();
 			}
 			break ;
 		}

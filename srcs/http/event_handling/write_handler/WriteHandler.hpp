@@ -20,7 +20,7 @@ class WriteHandler : public IEventHandler
 
 	public:
 
-		WriteHandler(const std::string & body, Response & resp);
+		WriteHandler(int fd, const std::string & body, Response & resp);
 		~WriteHandler(void);
 
 		virtual void	readable(void);
@@ -31,7 +31,8 @@ class WriteHandler : public IEventHandler
 
 	private:
 		WriteHandler(WriteHandler const & src);
-		void	handle_http_error(void);
+		void	response_complete(void);
+		void	manage_error(void);
 };
 
 #endif

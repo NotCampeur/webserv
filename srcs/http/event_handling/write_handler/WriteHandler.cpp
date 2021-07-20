@@ -3,7 +3,7 @@
 WriteHandler::WriteHandler(int fd, const std::string & body, Response & resp) :
 _fd(fd),
 _body(body),
-_response(_resp),
+_response(resp),
 _timer(FILE_HANDLER_TIMEOUT),
 _event_flag(POLLOUT)
 {}
@@ -29,25 +29,27 @@ void
 WriteHandler::writable(void)
 {
 	ssize_t len;
-	if (_bytes_written != 0 && _bytes_written != body.size())
+	if (_bytes_written != 0 && _bytes_written != _body.size())
 	{
-		len = write(_fd, body.substr(_bytes_written).c_str(), body.size() - _bytes_written + 1);
+		len = write(_fd, _body.substr(_bytes_written).c_str(), _body.size() - _bytes_written + 1);
 	}
 	else
 	{
-		len = write(_fd, body.c_str(), body.size());
+		len = write(_fd, _body.c_str(), _body.size());
 	}
 	
 	if (len < 0)
 	{
 		manage_error();
 	}
-	
-	_bytes_written += static_cast<size_t>(len);
-	
-	if (_bytes_written == body.size())
-	{
-		response_complete();
+	else
+	{	
+		_bytes_written += static_cast<size_t>(len); //Cast is safe as negative value would have been caught in above if statement
+		
+		if (_bytes_written == _body.size())
+		{
+			response_complete();
+		}
 	}
 }
 

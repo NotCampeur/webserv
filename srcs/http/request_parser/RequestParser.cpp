@@ -67,8 +67,7 @@ RequestParser::parse(void)
 			break ;
 		}
 	}
-	if (i == _buffer.size())
-		_buffer.clear();
+	_buffer.clear();
 }
 
 void
@@ -266,5 +265,6 @@ RequestParser::next_request(void)
 	reset();
 	_request.reset();
 	setbuffer(_buffer_leftovers);
+	_buffer_leftovers.clear();
 	std::cerr << "* Buffer Leftovers: *\n" << _buffer_leftovers << '\n';
 }
