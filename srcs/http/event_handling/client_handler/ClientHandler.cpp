@@ -1,12 +1,11 @@
 #include "ClientHandler.hpp"
 
-ClientHandler::ClientHandler(const Client & client, InitiationDispatcher & idis) :
+ClientHandler::ClientHandler(const Client & client) :
 _client(client),
 _request(),
 _req_parser(_request),
 _timer(CLIENT_TIMEOUT),
-_event_flag(POLLIN),
-_idis(idis)
+_event_flag(POLLIN)
 {}
 
 ClientHandler::ClientHandler(ClientHandler const & src) :
@@ -14,8 +13,7 @@ _client(src._client),
 _request(src._request),
 _req_parser(src._req_parser),
 _timer(src._timer),
-_event_flag(src._event_flag),
-_idis(src._idis)
+_event_flag(src._event_flag)
 {}
 
 ClientHandler::~ClientHandler(void)
@@ -154,7 +152,7 @@ ClientHandler::handle_request(void)
 		if (_request.complete())
 			// validate();
 		// if (_request.validated())
-			_request.method().handle(_request, _response, _idis);
+			_request.method().handle(_request, _response);
 	}
 	catch (HttpException & e)
 	{

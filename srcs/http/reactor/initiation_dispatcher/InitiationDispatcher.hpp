@@ -11,10 +11,12 @@
 # include "SYSException.hpp"
 # include "ServerSYSException.hpp"
 # include "ClientSYSException.hpp"
-# include "Request.hpp"
-# include "Response.hpp"
+# include "Singleton.hpp"
 
-class InitiationDispatcher
+class Request;
+class Response;
+
+class InitiationDispatcher : public Singleton<InitiationDispatcher>
 {
 	private:
 		Demultiplexer		* const _demultiplexer;

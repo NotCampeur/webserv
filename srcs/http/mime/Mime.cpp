@@ -4,6 +4,7 @@ Mime::Mime(void) {}
 
 Mime::Mime(Mime const & src)
 {
+	(void)src;
     (void)src;
 }
 
@@ -12,16 +13,17 @@ Mime::~Mime(void) {}
 Mime &
 Mime::operator=(Mime const & src)
 {
+	(void)src;
     return (*this);
 }
 
-const std::string &
+const std::string *
 Mime::get_content_type(std::string & extension)
 {
 	std::map<std::string, std::string>::const_iterator val = Mime::init_mime().find(extension);
 	if (val == Mime::init_mime().end())
-		return "text/plain"; // Not sure how it should actually be handled..
-	return val->second;
+		return static_cast<const std::string*>(NULL); // Not sure how it should actually be handled..
+	return &val->second;
 }
 
 

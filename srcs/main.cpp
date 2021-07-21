@@ -14,31 +14,32 @@
 #include "InitiationDispatcher.hpp"
 #include "ServerHandler.hpp"
 #include "Server.hpp"
+#include "SYSException.hpp"
 
 void	serv_test(long server_amount)
 {
+	signal(SIGINT, sigint_handler);
+	InitiationDispatcher & idis = InitiationDispatcher::get_instance();
+
 	try
 	{
-		signal(SIGINT, sigint_handler);
-		InitiationDispatcher idis; // Could create the demultiplexer and the handler table
-		try
+		for (long i(0); i < server_amount; i++)
 		{
-			for (long i(0); i < server_amount; i++)
-			{
-				const Server *serv = new Server(8080 + i, inet_addr("127.0.0.1"));
-				idis.add_server_handle(*serv);
-			}
-		}
-		catch(const std::exception& e)
-		{
-			Logger(LOG_FILE, error_type, error_lvl) << e.what();
-			return ;
+			const Server *serv = new Server(8080 + i, inet_addr("127.0.0.1"));
+			idis.add_server_handle(*serv);
 		}
 		idis.handle_events();
+
 	}
-	catch(const std::exception &e)
+	catch (const SYSException & e)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << e.what();
+		return ;
+	}
+	catch(const std::exception& e)
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << e.what();
+		return ;
 	}
 }
 

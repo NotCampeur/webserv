@@ -13,7 +13,7 @@ class Mime
 		
 		Mime &  operator=(Mime const & src);
 
-		static const std::string &							get_content_type(std::string & extension);
+		static const std::string *	get_content_type(std::string & extension);
 
 	private:
 		static const std::map<std::string, std::string> &	init_mime(void);

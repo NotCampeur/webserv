@@ -3,27 +3,26 @@
 
 # include "IHttpMethod.hpp"
 # include "SYSException.hpp"
+# include "Singleton.hpp"
 
-class GetMethod : public IHttpMethod
+class GetMethod : public IHttpMethod, public Singleton<GetMethod>
 {
-	private:
-		off_t	_file_size;
-
 	public:
-    	GetMethod(void);
+		GetMethod(void);
     	~GetMethod(void);
-    	GetMethod(GetMethod const & src);
 
+		
+		void				handle(Request & req, Response & resp);
+		bool				has_body(void);
+		// static IHttpMethod	*create_s(void);
+		// IHttpMethod			*create_v(void);
+
+	private:
+    	GetMethod(GetMethod const & src);
 		GetMethod &  operator=(GetMethod const & src);
 
-		void					handle(Request & req, Response & resp, InitiationDispatcher & idis);
-		bool					has_body(void);
-		static IHttpMethod		*create_s(void);
-		IHttpMethod				*create_v(void);
-	
-	private:
-
 		void	set_content_length_header(const std::string & path, Response & resp);
+		void	set_content_type_header(Response & resp);
 		off_t	get_file_size(const std::string & path);
 };
 

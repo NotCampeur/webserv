@@ -29,7 +29,6 @@ class WriteHandler : public IEventHandler
 		WriteHandler(WriteHandler const & src);
 		void	response_complete(void);
 		void	manage_error(void);
-		void	set_content_type_header(void);
 };
 
 #endif

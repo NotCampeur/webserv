@@ -4,7 +4,7 @@ SYSException::SYSException(const char *str) throw() :
 _msg(str),
 _errno(errno)
 {
-	_msg += ":";
+	_msg += ": ";
 	_msg += std::strerror(_errno);
 }
 

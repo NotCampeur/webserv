@@ -9,16 +9,14 @@ _method(NULL)
 
 Request::Request(Request const & src) :
 _complete(src._complete),
-_method(src._method->create_v()),
+_method(src._method),
 _uri(src._uri),
 _headers(src._headers),
 _body(src._body)
 {}
 
 Request::~Request(void)
-{
-	delete _method;
-}
+{}
 
 void
 Request::set_method(IHttpMethod *method)
@@ -74,7 +72,6 @@ void
 Request::reset(void)
 {
 	_complete = false;
-	delete _method;
 	_method = NULL;
 	_uri.path.clear();
 	_uri.query.clear();

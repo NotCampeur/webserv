@@ -27,9 +27,6 @@ WriteHandler::readable(void)
 void
 WriteHandler::writable(void)
 {
-
-	set_content_type_header();
-
 	ssize_t len;
 	if (_bytes_written != 0 && _bytes_written != _body.size())
 	{
@@ -87,24 +84,4 @@ WriteHandler::manage_error(void)
 	if (!_response.header_sent())
 		_response.set_http_code(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	response_complete();
-}
-
-void
-WriteHandler::set_content_type_header(void)
-{
-	const std::string path = _response.get_location();
-
-	int i = path.size() - 1;
-	for(; i >= 0; i--)
-	{
-		if (path[i] == '.')
-			break;
-	}
-	if (i >= 0)
-	{
-		std::string file_ext = path.substr(i);
-		_response.add_header("Content-Type", Mime::get_content_type(file_ext));
-	}
-	else
-		_response.add_header("Content-Type", "text/plain"); // Same here, need to clarify
 }

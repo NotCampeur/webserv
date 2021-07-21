@@ -25,7 +25,7 @@ Demultiplexer::operator=(const Demultiplexer & src)
 int
 Demultiplexer::activate()
 {
-	int	result(0);
+	int	result = 0;
 
 	result = poll(&_pollfds[0], _pollfds.size(), _timeout);
 	if (result == -1)

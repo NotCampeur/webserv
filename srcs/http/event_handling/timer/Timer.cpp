@@ -6,9 +6,9 @@ _timeout(timeout)
 	reset();
 }
 
-Timer(Timer const & src) :
+Timer::Timer(Timer const & src) :
 _sec(src._sec),
-_timeout(timeout)
+_timeout(src._timeout)
 {}
 
 Timer::~Timer(void) {}

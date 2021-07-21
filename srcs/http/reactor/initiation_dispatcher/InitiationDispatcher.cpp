@@ -114,14 +114,14 @@ InitiationDispatcher::set_demultiplexer_handles(void)
 void
 InitiationDispatcher::add_server_handle(const Server & srv)
 {
-	ServerHandler *sh = new ServerHandler(&srv, *this);
+	ServerHandler *sh = new ServerHandler(&srv);
 	_event_handler_table->add(sh->get_serverfd(), *sh);
 }
 
 void
 InitiationDispatcher::add_client_handle(const Client & clt)
 {
-	ClientHandler *ch = new ClientHandler(clt, *this);
+	ClientHandler *ch = new ClientHandler(clt);
 	_event_handler_table->add(ch->get_clientfd(), *ch);
 }
 

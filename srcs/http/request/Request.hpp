@@ -2,8 +2,9 @@
 # define WERSERV_REQUEST_H
 
 # include "webserv.hpp"
-# include "IHttpMethod.hpp"
 # include "HttpException.hpp"
+class IHttpMethod;
+# include "IHttpMethod.hpp"
 
 class Request
 {

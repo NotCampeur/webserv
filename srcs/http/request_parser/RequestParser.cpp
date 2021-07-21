@@ -182,12 +182,19 @@ RequestParser::parse_method(char c)
 
     static size_t 		method_count = 4;
 
-	static IHttpMethod * (*create[4])(void) =
-	{
-		GetMethod::create_s,
-		HeadMethod::create_s,
-		PostMethod::create_s,
-		DeleteMethod::create_s
+	// static IHttpMethod * (*create[4])(void) =
+	// {
+	// 	GetMethod::create_s,
+	// 	HeadMethod::create_s,
+	// 	PostMethod::create_s,
+	// 	DeleteMethod::create_s
+	// };
+
+	static IHttpMethod* method[4] = {
+		&GetMethod::get_instance(),
+		&HeadMethod::get_instance(),
+		&PostMethod::get_instance(),
+		&DeleteMethod::get_instance()
 	};
 
 	if (c == ' ')
@@ -197,7 +204,7 @@ RequestParser::parse_method(char c)
             if (available_methods[i] == _http_method)
             {
 				std::cout << "Method: " << i << " created\n";
-				_request.set_method(create[i]());
+				_request.set_method(method[i]);
 				_request_state = URI;
 				return ;
             }

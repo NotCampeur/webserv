@@ -21,11 +21,10 @@ class ClientHandler : public IEventHandler
 		RequestParser					_req_parser;
 		const Timer						_timer;
 		int								_event_flag;
-		InitiationDispatcher &			_idis;
 
 	public:
 
-		ClientHandler(const Client & client, InitiationDispatcher & idis);
+		ClientHandler(const Client & client);
 		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);
 
