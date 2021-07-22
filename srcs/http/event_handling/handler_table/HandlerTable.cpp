@@ -11,7 +11,6 @@ HandlerTable::HandlerTable(const HandlerTable & src)
 
 HandlerTable::~HandlerTable(void)
 {
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Handler table contains " << _handler_table->size() << " elements";
 	if (!_handler_table->empty())
 	{
 		table_type::iterator it = _handler_table->begin();
@@ -25,10 +24,8 @@ HandlerTable::~HandlerTable(void)
 		}
 		std::ostringstream	nb;
 		nb << i;
-		Logger(LOG_FILE, basic_type, debug_lvl) << "Handler table: " << _handler_table->size() << "  IEventHandler elements deleted";
 	}
 	delete _handler_table;
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Handler Table has been destroyed";
 }
 
 HandlerTable &

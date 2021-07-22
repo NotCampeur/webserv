@@ -10,9 +10,7 @@ _timeout(src._timeout)
 {}
 
 Demultiplexer::~Demultiplexer(void)
-{
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Demultiplexer has been destroyed";
-}
+{}
 
 Demultiplexer &
 Demultiplexer::operator=(const Demultiplexer & src)

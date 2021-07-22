@@ -10,6 +10,7 @@
 # include "Exception.hpp"
 # include "ClientException.hpp"
 # include "ClientSYSException.hpp"
+# include "StatusCodes.hpp"
 
 class ClientHandler : public IEventHandler
 {
@@ -39,7 +40,7 @@ class ClientHandler : public IEventHandler
 		ClientHandler &	operator=(ClientHandler const & src);
 		void			handle_request(void);
 		void			parse_request(void);
-		void			handle_http_error(void);
+		void			handle_http_error(StatusCodes::status_index_t error_code);
 		// void	set_header(std::stringstream & header, size_t content_length);
 };
 

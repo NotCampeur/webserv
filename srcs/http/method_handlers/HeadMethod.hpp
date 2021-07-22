@@ -21,7 +21,8 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 		HeadMethod &  		operator=(HeadMethod const & src);
 
 		void				set_content_length_header(const std::string & path, Response & resp);
-		void				set_content_type_header(Response & resp);
+		void				set_content_type_header(const std::string & path, Response & resp);
+		void				set_content_location_header(const std::string & path, Response & resp);
 		off_t				get_file_size(const std::string & path);
 };
 

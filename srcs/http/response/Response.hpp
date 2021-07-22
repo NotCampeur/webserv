@@ -19,13 +19,13 @@ class Response
 		const std::string				_version;
 		StatusCodes::status_index_t 	_code;
 		std::vector<header_t>			_headers;
-		bool							_header_sent;
+		bool							_metadata_sent;
 		bool							_ready_to_send;
 		bool							_complete;
 
 	public:
 
-    	Response(void);
+    	Response(void); // Initialize with ref to error pages locations
     	Response(Response const & src);
     	~Response(void);
 
@@ -33,21 +33,24 @@ class Response
 
 		bool				ready_to_send(void) const;
 		bool				iscomplete(void) const;
-		bool				header_sent(void) const;
+		bool				metadata_sent(void) const;
 		void				make_ready(void);
 		void				make_complete(void);
 		void				set_http_code(StatusCodes::status_index_t i);
-		void				fill_payload(const std::string & str);
+		void				set_payload(const std::string & str);
 		void				add_header(const std::string & name, const std::string & value);
 		const std::string &	get_location(void);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
-		const std::string &	send(void);
+		const std::string &	get_payload(void);
 		void				reset(void);
+		void				http_error(StatusCodes::status_index_t error);
 
 	private:
-		void				set_default_headers(void);
-		void				set_date(void);
-		void				set_resp_header(void);
+		void				add_default_headers(void);
+		void				set_date(std::string & date);
+		void				set_resp_metadata(void);
+		void				set_status_line(std::string & meta);
+		void				add_error_msg(void);
 };
 
 #endif

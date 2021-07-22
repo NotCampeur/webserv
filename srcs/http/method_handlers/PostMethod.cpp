@@ -7,24 +7,18 @@ PostMethod::PostMethod(void) {}
 
 PostMethod::~PostMethod(void) {}
 
-// PostMethod::PostMethod(PostMethod const & src)
-// {
-// 	(void)src;
-// }
-
-// PostMethod &
-// PostMethod::operator=(PostMethod const & src)
-// {
-// 	(void)src;
-// 	return *this;
-// }
-
 void
 PostMethod::handle(Request & req, Response & resp)
 {
-	int fd = open(req.uri().path.c_str(), O_RDONLY);
+	std::string path = req.uri().path;
+	path.erase(path.begin()); // Remove starting '/'
+	std::cerr << "Request path: " << path << '\n';
+	set_content_location_header(path, resp);
+	resp.set_http_code(StatusCodes::CREATED_201);
+
+	int fd = open(path.c_str(), O_RDONLY | O_CREAT);
 	
-	if (fd != 0)
+	if (fd < 0)
 	{
 		throw SYSException("Error opening file");
 	}
@@ -35,4 +29,10 @@ bool
 PostMethod::has_body(void)
 {
 	return true;
+}
+
+void
+PostMethod::set_content_location_header(const std::string & path, Response & resp)
+{
+	resp.add_header("Location", path);
 }

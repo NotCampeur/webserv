@@ -3,6 +3,7 @@
 
 # include "IHttpMethod.hpp"
 # include "Singleton.hpp"
+# include "webserv.hpp"
 
 class PostMethod : public IHttpMethod, public Singleton<PostMethod>
 {
@@ -18,6 +19,8 @@ class PostMethod : public IHttpMethod, public Singleton<PostMethod>
 		private:
 			PostMethod(PostMethod const & src);
 			PostMethod &  operator=(PostMethod const & src);
+
+			void	set_content_location_header(const std::string & path, Response & resp);
 };
 
 #endif

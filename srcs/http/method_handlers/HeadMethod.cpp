@@ -22,8 +22,17 @@ HeadMethod::operator=(HeadMethod const & src)
 void
 HeadMethod::handle(Request & req, Response & resp)
 {
-	set_content_length_header(req.uri().path.c_str(), resp);
-	set_content_type_header(resp);
+	std::string path = req.uri().path;
+	path.erase(path.begin());
+	std::cerr << "Request path: " << path << '\n';
+
+	set_content_length_header(path, resp);
+	set_content_type_header(path, resp);
+	set_content_location_header(path, resp);
+
+	resp.set_http_code(StatusCodes::OK_200);
+	resp.make_ready();
+	resp.make_complete();
 }
 
 bool
@@ -31,18 +40,6 @@ HeadMethod::has_body(void)
 {
 	return false;
 }
-
-// IHttpMethod *
-// HeadMethod::create_s(void)
-// {
-// 	return new HeadMethod();
-// }
-
-// IHttpMethod *
-// HeadMethod::create_v(void)
-// {
-// 	return new HeadMethod();
-// }
 
 void
 HeadMethod::set_content_length_header(const std::string & path, Response & resp)
@@ -68,10 +65,8 @@ HeadMethod::get_file_size(const std::string & path)
 }
 
 void
-HeadMethod::set_content_type_header(Response & resp)
+HeadMethod::set_content_type_header(const std::string & path, Response & resp)
 {
-	const std::string path = resp.get_location();
-
 	int i = path.size() - 1;
 	for(; i >= 0; i--)
 	{
@@ -85,4 +80,10 @@ HeadMethod::set_content_type_header(Response & resp)
 		if (mime_ext != NULL)
 			resp.add_header("Content-Type", *mime_ext);
 	}
+}
+
+void
+HeadMethod::set_content_location_header(const std::string & path, Response & resp)
+{
+	resp.add_header("Location", path);
 }

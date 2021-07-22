@@ -1,4 +1,5 @@
 #include "WriteHandler.hpp"
+#include "InitiationDispatcher.hpp"
 
 WriteHandler::WriteHandler(int fd, const std::string & body, Response & resp) :
 _fd(fd),
@@ -75,13 +76,13 @@ WriteHandler::response_complete(void)
 {
 	_response.make_ready();
 	_response.make_complete();
-	_event_flag = 0;
+	InitiationDispatcher::get_instance().remove_handle(_fd);
 }
 
 void
 WriteHandler::manage_error(void)
 {
-	if (!_response.header_sent())
-		_response.set_http_code(StatusCodes::INTERNAL_SERVER_ERROR_500);
-	response_complete();
+	if (!_response.metadata_sent())
+		_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
+	InitiationDispatcher::get_instance().remove_handle(_fd);
 }

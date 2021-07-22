@@ -2,19 +2,16 @@
 
 Response::Response(void) :
 _version("HTTP/1.1"),
-_headers(DEFAULT_HEADERS_COUNT),
-_header_sent(false),
+_metadata_sent(false),
 _ready_to_send(false),
 _complete(false)
-{
-	set_default_headers();
-}
+{}
 
 Response::Response(Response const & src) :
 _payload(src._payload),
 _version(src._version),
 _headers(src._headers),
-_header_sent(src._header_sent),
+_metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete)
 {}
@@ -26,7 +23,7 @@ Response::operator=(Response const & src)
 {
 	_payload = src._payload;
 	_headers = src._headers;
-	_header_sent = src._header_sent;
+	_metadata_sent = src._metadata_sent;
 	_ready_to_send = src._ready_to_send;
 	_complete = src._complete;
     return (*this);
@@ -63,40 +60,72 @@ Response::make_complete(void)
 }
 
 void
-Response::fill_payload(const std::string & str)
+Response::set_payload(const std::string & str)
 {
-	_payload += str;
+	_payload = str;
 }
 
 const std::string &
-Response::send(void)
+Response::get_payload(void)
 {
-	if (!_header_sent)
+	if (!_metadata_sent)
 	{
-		set_resp_header();
-		_header_sent = true;
+		set_resp_metadata();
+		_metadata_sent = true;
 	}
 	_ready_to_send = false;
 	return _payload;
 }
 
-void
-Response::set_default_headers(void)
+bool
+Response::metadata_sent(void) const
 {
-	_headers[SERVER_HEADER_INDEX].first = "Server";
-	_headers[SERVER_HEADER_INDEX].second = "robin hoodie";
-	_headers[DATE_HEADER_INDEX].first = "Date";
-	_headers[LOCATION_HEADER_INDEX].first = "Location";
+	return _metadata_sent;
 }
 
 void
-Response::set_date(void)
+Response::set_resp_metadata(void)
+{
+	std::string meta;
+	set_status_line(meta);
+	add_default_headers();
+	
+	for (size_t i = 0; i < _headers.size(); i++)
+	{
+		meta += _headers[i].first;
+		meta += ": ";
+		meta += _headers[i].second;
+		meta += "\r\n";
+	}
+	meta += "\r\n";
+	_payload.insert(0, meta);
+}
+
+void
+Response::set_status_line(std::string & meta)
+{
+	meta += _version;
+	meta += ' ';
+	meta += StatusCodes::get_code_msg_from_index(_code);
+	meta += "\r\n";
+}
+
+void
+Response::add_default_headers(void)
+{
+	_headers.insert(_headers.begin(), header_t("Server", "robin hoodie"));
+	_headers.insert(_headers.begin(), header_t("Date", ""));
+	set_date(_headers.begin()->second);
+}
+
+void
+Response::set_date(std::string & date)
 {
   char buf[1000]; //This buffer size should always be big enough to hold the date written by strftime
   time_t now = time(0);
   struct tm tm = *gmtime(&now);
   size_t len = strftime(buf, sizeof buf, "%a, %d %b %Y %H:%M:%S %Z", &tm);
-  _headers[DATE_HEADER_INDEX].second = std::string(buf, len);
+  date = std::string(buf, len);
 }
 
 void	
@@ -110,40 +139,33 @@ Response::reset(void)
 {
 	_payload.clear();
 	_headers.clear();
-	set_default_headers();
-	_header_sent = false;
+	_metadata_sent = false;
 	_ready_to_send = false;
 	_complete = false;
-}
-
-void
-Response::set_resp_header(void)
-{
-	std::string h(_version);
-	h += ' ';
-	h += StatusCodes::get_error_msg_from_index(_code);
-	h += "\r\n";
-	this->set_date();
-	
-	for (size_t i = 0; i < _headers.size(); i++)
-	{
-		h += _headers[i].first;
-		h += ": ";
-		h += _headers[i].second;
-		h += "\r\n";
-	}
-	h += "\r\n";
-	_payload.insert(0, h);
-}
-
-bool
-Response::header_sent(void) const
-{
-	return _header_sent;
 }
 
 const std::string &
 Response::get_location(void)
 {
 	return _headers[LOCATION_HEADER_INDEX].second;
+}
+
+void
+Response::http_error(StatusCodes::status_index_t error)
+{
+	// Check if error code has an error page setup in config file
+	_ready_to_send = true;
+	_complete = true;
+	set_http_code(error);
+
+	static std::string err_msg(
+		"<html>\n<head><title>Webserv Error</title></head>\n<body bgcolor=\"white\">\n<center><h1>Error</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>"
+		);
+
+	std::stringstream ss;
+	ss << err_msg.size();
+	_headers.clear(); // Remove any header that may have been set while processing the request before an error occured
+	add_header("Content-Length", ss.str().c_str());
+	add_header("Content-Type", "text/html");
+	set_payload(err_msg);
 }

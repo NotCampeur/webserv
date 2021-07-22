@@ -17,7 +17,7 @@ StatusCodes::operator=(StatusCodes const & src)
 }
 
 std::string &
-StatusCodes::get_error_msg_from_index(status_index_t index)
+StatusCodes::get_code_msg_from_index(status_index_t index)
 {
     static std::string error_msg[] =
     {
