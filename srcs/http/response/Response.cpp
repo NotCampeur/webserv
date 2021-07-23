@@ -168,16 +168,18 @@ Response::http_error(StatusCodes::status_index_t error)
 	_complete = true;
 	set_http_code(error);
 
-	static std::string err_msg(
-		"<html>\n<head><title>Webserv Error</title></head>\n<body bgcolor=\"white\">\n<center><h1>Error</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>"
-		);
+	static std::string err_msg_part_1("<html>\n<head><title>");
+	static std::string err_msg_part_2("</title></head>\n<body bgcolor=\"white\">\n<center><h1>");
+	static std::string err_msg_part_3("</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>");
+	
+	std::string full_msg = err_msg_part_1 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_2 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_3;
 
 	std::stringstream ss;
-	ss << err_msg.size();
+	ss << full_msg.size();
 	_headers.clear(); // Remove any header that may have been set while processing the request before an error occured
 	add_header("Content-Length", ss.str().c_str());
 	add_header("Content-Type", "text/html");
-	set_payload(err_msg);
+	set_payload(full_msg);
 }
 
 void
