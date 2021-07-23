@@ -33,7 +33,8 @@ GetMethod::handle(Request & req, Response & resp)
 	{
 		throw SYSException("Error opening file");
 	}
-	InitiationDispatcher::get_instance().add_read_handle(fd, get_file_size(path), resp);
+	resp.set_handler_fd(fd);
+	InitiationDispatcher::get_instance().add_read_handle(get_file_size(path), resp);
 	/*
 		get file size 	-> set Content Length header
 						-> set Content type header

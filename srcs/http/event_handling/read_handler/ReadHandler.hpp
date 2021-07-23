@@ -7,7 +7,6 @@
 class ReadHandler : public IEventHandler
 {
 	private:
-		const int				_fd;
 		size_t					_file_size;
 		Response &				_response;
 		int						_event_flag;
@@ -15,7 +14,7 @@ class ReadHandler : public IEventHandler
 
 	public:
 
-		ReadHandler(int fd, size_t file_size, Response & resp);
+		ReadHandler(size_t file_size, Response & resp);
 		~ReadHandler(void);
 
 		virtual void	readable(void);

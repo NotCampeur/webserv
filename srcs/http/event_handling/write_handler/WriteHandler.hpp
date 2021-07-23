@@ -8,7 +8,6 @@
 class WriteHandler : public IEventHandler
 {
 	private:
-		int					_fd;
 		const std::string &	_body;
 		Response &			_response;
 		int					_event_flag;
@@ -16,7 +15,7 @@ class WriteHandler : public IEventHandler
 
 	public:
 
-		WriteHandler(int fd, const std::string & body, Response & resp);
+		WriteHandler(const std::string & body, Response & resp);
 		~WriteHandler(void);
 
 		virtual void	readable(void);

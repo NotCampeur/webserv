@@ -30,8 +30,8 @@ class InitiationDispatcher : public Singleton<InitiationDispatcher>
 		void					handle_events(void);
 		void					add_server_handle(const Server & srv);
 		void					add_client_handle(const Client & clt);
-		void					add_read_handle(int fd, size_t file_size, Response & resp);
-		void					add_write_handle(int fd, const std::string & body, Response & resp);
+		void					add_read_handle(size_t file_size, Response & resp);
+		void					add_write_handle(const std::string & body, Response & resp);
 		void					remove_handle(int fd);
 
 	private:

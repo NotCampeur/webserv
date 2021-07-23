@@ -22,6 +22,7 @@ class Response
 		bool							_metadata_sent;
 		bool							_ready_to_send;
 		bool							_complete;
+		int								_handler_fd;
 
 	public:
 
@@ -31,11 +32,10 @@ class Response
 
 		Response &  operator=(Response const & src);
 
-		bool				ready_to_send(void) const;
-		bool				iscomplete(void) const;
+		// bool				ready_to_send(void) const;
+		bool &				complete(void);
 		bool				metadata_sent(void) const;
-		void				make_ready(void);
-		void				make_complete(void);
+		bool &				ready_to_send(void);
 		void				set_http_code(StatusCodes::status_index_t i);
 		void				set_payload(const std::string & str);
 		void				add_header(const std::string & name, const std::string & value);
@@ -44,6 +44,9 @@ class Response
 		const std::string &	get_payload(void);
 		void				reset(void);
 		void				http_error(StatusCodes::status_index_t error);
+		void				set_handler_fd(int fd);
+		int					get_handler_fd(void) const;
+		void				payload_erase(size_t len);
 
 	private:
 		void				add_default_headers(void);

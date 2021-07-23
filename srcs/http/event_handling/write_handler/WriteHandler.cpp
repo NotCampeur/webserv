@@ -1,8 +1,7 @@
 #include "WriteHandler.hpp"
 #include "InitiationDispatcher.hpp"
 
-WriteHandler::WriteHandler(int fd, const std::string & body, Response & resp) :
-_fd(fd),
+WriteHandler::WriteHandler(const std::string & body, Response & resp) :
 _body(body),
 _response(resp),
 _event_flag(POLLOUT),
@@ -10,7 +9,6 @@ _bytes_written(0)
 {}
 
 WriteHandler::WriteHandler(WriteHandler const & src) :
-_fd(src._fd),
 _body(src._body),
 _response(src._response),
 _event_flag(src._event_flag),
@@ -18,9 +16,7 @@ _bytes_written(src._bytes_written)
 {}
 
 WriteHandler::~WriteHandler(void)
-{
-	close(_fd);
-}
+{}
 
 void 
 WriteHandler::readable(void)
@@ -33,11 +29,11 @@ WriteHandler::writable(void)
 	ssize_t len;
 	if (_bytes_written != 0 && _bytes_written != _body.size()) // Something has already been written to the file, but not the full body content
 	{
-		len = write(_fd, _body.substr(_bytes_written).c_str(), _body.size() - _bytes_written + 1);
+		len = write(_response.get_handler_fd(), _body.substr(_bytes_written).c_str(), _body.size() - _bytes_written + 1);
 	}
 	else
 	{
-		len = write(_fd, _body.c_str(), _body.size());
+		len = write(_response.get_handler_fd(), _body.c_str(), _body.size());
 	}
 	
 	if (len < 0)
@@ -76,10 +72,8 @@ WriteHandler::get_event_flag(void) const
 void
 WriteHandler::response_complete(void)
 {
-	_response.make_ready();
-	_response.make_complete();
-	std::cerr << "Making response ready to send and complete\n";
-	InitiationDispatcher::get_instance().remove_handle(_fd);
+	_response.ready_to_send() = true;
+	_response.complete() = true;
 }
 
 void

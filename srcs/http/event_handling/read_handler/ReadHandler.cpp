@@ -1,8 +1,7 @@
 #include "ReadHandler.hpp"
 #include "InitiationDispatcher.hpp"
 
-ReadHandler::ReadHandler(int fd, size_t file_size, Response & resp) :
-_fd(fd),
+ReadHandler::ReadHandler(size_t file_size, Response & resp) :
 _file_size(file_size),
 _response(resp),
 _event_flag(POLLIN),
@@ -10,25 +9,22 @@ _bytes_read(0)
 {}
 
 ReadHandler::ReadHandler(ReadHandler const & src) :
-_fd(src._fd),
 _file_size(src._file_size),
 _response(src._response),
 _event_flag(src._event_flag)
 {}
 
 ReadHandler::~ReadHandler(void)
-{
-	close(_fd);
-}
+{}
 
 void 
 ReadHandler::readable(void)
 {
-	if (_response.iscomplete() || _response.ready_to_send())
+	if (_response.complete() || _response.ready_to_send())
 		return ;
 
 	char	read_buff[FILE_READ_BUF_SIZE];
-	ssize_t len = read(_fd, read_buff, FILE_READ_BUF_SIZE);
+	ssize_t len = read(_response.get_handler_fd(), read_buff, FILE_READ_BUF_SIZE);
 
 	if (len < 0)
 	{
@@ -53,7 +49,7 @@ ReadHandler::readable(void)
 		if (_bytes_read == _file_size)
 			response_complete();
 		else
-			_response.make_ready();
+			_response.ready_to_send() = true;
 	}
 }
 
@@ -84,13 +80,11 @@ ReadHandler::manage_error(void)
 {
 	if (!_response.metadata_sent())
 		_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
-	InitiationDispatcher::get_instance().remove_handle(_fd);
 }
 
 void
 ReadHandler::response_complete(void)
 {
-	_response.make_ready();
-	_response.make_complete();
-	InitiationDispatcher::get_instance().remove_handle(_fd);
+	_response.ready_to_send() = true;
+	_response.complete() = true;
 }

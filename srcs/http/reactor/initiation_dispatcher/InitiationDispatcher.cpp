@@ -126,17 +126,17 @@ InitiationDispatcher::add_client_handle(const Client & clt)
 }
 
 void
-InitiationDispatcher::add_read_handle(int fd, size_t file_size, Response & resp)
+InitiationDispatcher::add_read_handle(size_t file_size, Response & resp)
 {
-	ReadHandler *rh = new ReadHandler(fd, file_size, resp);
-	_event_handler_table->add(fd, *rh);
+	ReadHandler *rh = new ReadHandler(file_size, resp);
+	_event_handler_table->add(resp.get_handler_fd(), *rh);
 }
 
 void
-InitiationDispatcher::add_write_handle(int fd, const std::string & body, Response & resp)
+InitiationDispatcher::add_write_handle(const std::string & body, Response & resp)
 {
-	WriteHandler *wh = new WriteHandler(fd, body, resp);
-	_event_handler_table->add(fd, *wh);
+	WriteHandler *wh = new WriteHandler(body, resp);
+	_event_handler_table->add(resp.get_handler_fd(), *wh);
 
 }
 

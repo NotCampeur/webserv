@@ -24,7 +24,8 @@ PostMethod::handle(Request & req, Response & resp)
 	{
 		throw SYSException("Error opening file");
 	}
-	InitiationDispatcher::get_instance().add_write_handle(fd, req.get_body(), resp);
+	resp.set_handler_fd(fd);
+	InitiationDispatcher::get_instance().add_write_handle(req.get_body(), resp);
 }
 
 bool

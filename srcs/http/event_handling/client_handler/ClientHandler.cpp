@@ -61,25 +61,28 @@ ClientHandler::writable(void)
 	if (_response.ready_to_send())
 	{
 		ssize_t	bytes_written = send(get_clientfd(), _response.get_payload().c_str(), _response.get_payload().size(), 0);
-		// std::cerr << _response.get_payload();
 		if (bytes_written < 0)
 		{
 			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
 		}
 		else if (static_cast<size_t>(bytes_written) != _response.get_payload().size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
 		{
-			throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
+			_response.payload_erase(static_cast<size_t>(bytes_written));
+			Logger(LOG_FILE, basic_type, minor_lvl) << "Could not write entire buffer content to socket: " << _client.getip() << " : " << _client.getsockfd();
+
+			// throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
 		}
-		// Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << _response.get_payload();
-		
-		_timer.reset();
-		
-		if (_response.iscomplete())
+		else
 		{
-			_response.reset();
-			_req_parser.next_request();
-			if (!_request.complete())
-				_event_flag = POLLIN;
+			_timer.reset();
+			_response.ready_to_send() = false;
+			if (_response.complete())
+			{
+				_response.reset();
+				_req_parser.next_request();
+				if (!_request.complete())
+					_event_flag = POLLIN;
+			}
 		}
 	}
 }
@@ -105,8 +108,6 @@ ClientHandler::get_event_flag(void) const
 void
 ClientHandler::handle_request(void)
 {
-	// Could have a try/catch here catching HttpExceptions and have a routine to handle them
-	
 	try {
 		parse_request();
 		if (_request.complete())
@@ -139,18 +140,7 @@ ClientHandler::handle_http_error(StatusCodes::status_index_t error_code)
 {
 	_request.complete() = true;
 	_response.http_error(error_code);
-	_response.make_ready();
-	_response.make_complete();
+	_response.ready_to_send() = true;
+	_response.complete() = true;
 	_event_flag = POLLOUT;	
 }
-/*
-void
-ClientHandler::set_header(std::stringstream & header, size_t content_length)
-{	
-	header << "HTTP/1.1 200 OK\r\n"
-	<< "Content-Type: text\r\n"
-	<< "Content-Length: "
-	<< (content_length)
-	<< "\r\n\r\n";
-}
-*/

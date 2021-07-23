@@ -20,6 +20,7 @@
 # include <string>
 # include <cstring>
 # include <ctime>
+# include <climits>
 # include <sys/time.h>
 
 # include <algorithm>

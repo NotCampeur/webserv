@@ -19,8 +19,8 @@ DeleteMethod::handle(Request & req, Response & resp)
 		throw SYSException("Remove operation failed");
 
 	resp.set_http_code(StatusCodes::NO_CONTENT_204);
-	resp.make_ready();
-	resp.make_complete();
+	resp.ready_to_send() = true;
+	resp.complete() = true;
 }
 
 bool

@@ -31,8 +31,8 @@ HeadMethod::handle(Request & req, Response & resp)
 	set_content_location_header(path, resp);
 
 	resp.set_http_code(StatusCodes::OK_200);
-	resp.make_ready();
-	resp.make_complete();
+	resp.ready_to_send() = true;
+	resp.complete() = true;
 }
 
 bool

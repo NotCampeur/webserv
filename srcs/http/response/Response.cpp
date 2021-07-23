@@ -1,10 +1,12 @@
 #include "Response.hpp"
+#include "InitiationDispatcher.hpp"
 
 Response::Response(void) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
-_complete(false)
+_complete(false),
+_handler_fd(-1)
 {}
 
 Response::Response(Response const & src) :
@@ -13,10 +15,18 @@ _version(src._version),
 _headers(src._headers),
 _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
-_complete(src._complete)
+_complete(src._complete),
+_handler_fd(src._handler_fd)
 {}
 
-Response::~Response(void) {}
+Response::~Response(void)
+{
+	if (_handler_fd > 0)
+	{
+		InitiationDispatcher::get_instance().remove_handle(_handler_fd);
+		close(_handler_fd);
+	}
+}
 
 Response &
 Response::operator=(Response const & src)
@@ -26,6 +36,7 @@ Response::operator=(Response const & src)
 	_metadata_sent = src._metadata_sent;
 	_ready_to_send = src._ready_to_send;
 	_complete = src._complete;
+	_handler_fd = src._handler_fd;
     return (*this);
 }
 
@@ -35,28 +46,22 @@ Response::set_http_code(StatusCodes::status_index_t i)
 	_code = i;
 }
 
-bool
-Response::ready_to_send(void) const
+// bool
+// Response::ready_to_send(void) const
+// {
+// 	return _ready_to_send;
+// }
+
+bool &
+Response::ready_to_send(void)
 {
 	return _ready_to_send;
 }
 
-void
-Response::make_ready(void)
-{
-	_ready_to_send = true;
-}
-
-bool
-Response::iscomplete(void) const
+bool &
+Response::complete(void)
 {
 	return _complete;
-}
-
-void
-Response::make_complete(void)
-{
-	_complete = true;
 }
 
 void
@@ -73,7 +78,6 @@ Response::get_payload(void)
 		set_resp_metadata();
 		_metadata_sent = true;
 	}
-	_ready_to_send = false;
 	return _payload;
 }
 
@@ -142,6 +146,12 @@ Response::reset(void)
 	_metadata_sent = false;
 	_ready_to_send = false;
 	_complete = false;
+	if (_handler_fd > 0)
+	{
+		InitiationDispatcher::get_instance().remove_handle(_handler_fd);
+		close(_handler_fd);
+		_handler_fd = 0;
+	}
 }
 
 const std::string &
@@ -168,4 +178,22 @@ Response::http_error(StatusCodes::status_index_t error)
 	add_header("Content-Length", ss.str().c_str());
 	add_header("Content-Type", "text/html");
 	set_payload(err_msg);
+}
+
+void
+Response::set_handler_fd(int fd)
+{
+	_handler_fd = fd;
+}
+
+int
+Response::get_handler_fd(void) const
+{
+	return _handler_fd;
+}
+
+void
+Response::payload_erase(size_t len)
+{
+	_payload.erase(0, len);
 }
