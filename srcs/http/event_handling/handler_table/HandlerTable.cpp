@@ -13,17 +13,12 @@ HandlerTable::~HandlerTable(void)
 {
 	if (!_handler_table->empty())
 	{
-		table_type::iterator it = _handler_table->begin();
-		table_type::iterator ite = _handler_table->end();
-
-		int i = 0;
-		for (;it != ite; it++)
+		while (!_handler_table->empty())
 		{
+			table_type::iterator it = _handler_table->begin();
 			delete it->second;
-			i++;
+			_handler_table->erase(it);
 		}
-		std::ostringstream	nb;
-		nb << i;
 	}
 	delete _handler_table;
 }

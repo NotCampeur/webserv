@@ -36,13 +36,13 @@ InitiationDispatcher::handle_events(void)
 			else
 				continue;
 		}
-
 		Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
 		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 		for (;it != ite; it++)
 		{
+			Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
 			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
-			{
+			{					
 				continue;
 			}
 			try {
@@ -56,6 +56,11 @@ InitiationDispatcher::handle_events(void)
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
 					it->events = POLLIN;
+				}
+				else if (POLLHUP == (POLLHUP & it->revents))
+				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
+					remove_handle(it->fd);
 				}
 				else if (_event_handler_table->get(it->fd)->is_timeoutable())
 				{

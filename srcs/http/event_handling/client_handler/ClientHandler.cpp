@@ -68,6 +68,7 @@ ClientHandler::writable(void)
 		else if (static_cast<size_t>(bytes_written) != _response.get_payload().size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
 		{
 			_response.payload_erase(static_cast<size_t>(bytes_written));
+			_timer.reset();
 			Logger(LOG_FILE, basic_type, minor_lvl) << "Could not write entire buffer content to socket: " << _client.getip() << " : " << _client.getsockfd();
 
 			// throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
