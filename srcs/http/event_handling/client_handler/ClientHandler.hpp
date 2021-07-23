@@ -20,7 +20,7 @@ class ClientHandler : public IEventHandler
 		Request							_request;
 		Response						_response;
 		RequestParser					_req_parser;
-		const Timer						_timer;
+		Timer							_timer;
 		int								_event_flag;
 
 	public:

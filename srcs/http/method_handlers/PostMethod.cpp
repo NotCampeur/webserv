@@ -10,14 +10,16 @@ PostMethod::~PostMethod(void) {}
 void
 PostMethod::handle(Request & req, Response & resp)
 {
+	resp.set_http_code(StatusCodes::CREATED_201);
+
 	std::string path = req.uri().path;
 	path.erase(path.begin()); // Remove starting '/'
 	std::cerr << "Request path: " << path << '\n';
-	set_content_location_header(path, resp);
-	resp.set_http_code(StatusCodes::CREATED_201);
-
-	int fd = open(path.c_str(), O_RDONLY | O_CREAT);
 	
+	set_content_location_header(path, resp);
+	
+	int fd = open(path.c_str(), O_WRONLY | O_CREAT, 0666);
+
 	if (fd < 0)
 	{
 		throw SYSException("Error opening file");

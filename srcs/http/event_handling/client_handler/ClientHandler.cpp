@@ -49,6 +49,7 @@ ClientHandler::readable(void)
 		{
 			_req_parser.setbuffer(read_buff, bytes_read);
 			handle_request();
+			_timer.reset();
 		}
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
@@ -60,7 +61,7 @@ ClientHandler::writable(void)
 	if (_response.ready_to_send())
 	{
 		ssize_t	bytes_written = send(get_clientfd(), _response.get_payload().c_str(), _response.get_payload().size(), 0);
-		std::cerr << _response.get_payload();
+		// std::cerr << _response.get_payload();
 		if (bytes_written < 0)
 		{
 			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
@@ -69,7 +70,10 @@ ClientHandler::writable(void)
 		{
 			throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
 		}
-		Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << _response.get_payload();
+		// Logger(LOG_FILE, basic_type, minor_lvl) << "Message written to client socket: " << get_clientfd() << " : " << _response.get_payload();
+		
+		_timer.reset();
+		
 		if (_response.iscomplete())
 		{
 			_response.reset();

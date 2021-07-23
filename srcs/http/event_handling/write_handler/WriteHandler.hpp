@@ -8,11 +8,11 @@
 class WriteHandler : public IEventHandler
 {
 	private:
-		int						_fd;
-		const std::string &		_body;
-		Response				_response;
-		int						_event_flag;
-		size_t					_bytes_written;
+		int					_fd;
+		const std::string &	_body;
+		Response &			_response;
+		int					_event_flag;
+		size_t				_bytes_written;
 
 	public:
 

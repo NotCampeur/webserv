@@ -36,7 +36,7 @@ RequestParser::setbuffer(std::string & str)
 void
 RequestParser::parse(void)
 {
-	std::cerr << "Buffer content: " << _buffer << '\n';
+	// std::cerr << "Buffer content: " << _buffer << '\n';
 	
 	size_t i = 0;
 	for (; i < _buffer.size(); i++)

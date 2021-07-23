@@ -17,6 +17,6 @@
 # define CLIENT_TIMEOUT 30 //In seconds
 # define FILE_HANDLER_TIMEOUT 30
 
-# define FILE_READ_BUF_SIZE 0x4000 // 2^14 (a bit arbitrary, could be updated if not suitable)
+# define FILE_READ_BUF_SIZE 0x20000 // 2^14 (a bit arbitrary, could be updated if not suitable)
 
 #endif
