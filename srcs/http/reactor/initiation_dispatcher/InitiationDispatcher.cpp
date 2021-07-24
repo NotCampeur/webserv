@@ -75,7 +75,6 @@ InitiationDispatcher::handle_events(void)
 			{
 				remove_handle(e.getfd());
 				Logger(LOG_FILE, basic_type, error_lvl) << e.what() << ' ' << it->fd;
-			
 			}
 			catch (const ClientSYSException & e)
 			{

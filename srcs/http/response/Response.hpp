@@ -3,11 +3,7 @@
 
 # include "webserv.hpp"
 # include "StatusCodes.hpp"
-
-# define DEFAULT_HEADERS_COUNT 3
-# define SERVER_HEADER_INDEX 0
-# define DATE_HEADER_INDEX 1
-# define LOCATION_HEADER_INDEX 2
+# include "ServerConfig.hpp"
 
 class Response
 {
@@ -23,10 +19,11 @@ class Response
 		bool							_ready_to_send;
 		bool							_complete;
 		int								_handler_fd;
+		const ServerConfig &			_server_config;
 
 	public:
 
-    	Response(void); // Initialize with ref to error pages locations
+    	Response(const ServerConfig & config);
     	Response(Response const & src);
     	~Response(void);
 
@@ -39,7 +36,6 @@ class Response
 		void				set_http_code(StatusCodes::status_index_t i);
 		void				set_payload(const std::string & str);
 		void				add_header(const std::string & name, const std::string & value);
-		const std::string &	get_location(void);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
 		const std::string &	get_payload(void);
 		void				reset(void);
@@ -49,6 +45,8 @@ class Response
 		void				payload_erase(size_t len);
 
 	private:
+	    Response(void);
+
 		void				add_default_headers(void);
 		void				set_date(std::string & date);
 		void				set_resp_metadata(void);

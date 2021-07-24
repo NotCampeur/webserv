@@ -1,12 +1,13 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 
-Response::Response(void) :
+Response::Response(const ServerConfig & config) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
-_handler_fd(-1)
+_handler_fd(-1),
+_server_config(config)
 {}
 
 Response::Response(Response const & src) :
@@ -16,7 +17,8 @@ _headers(src._headers),
 _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
-_handler_fd(src._handler_fd)
+_handler_fd(src._handler_fd),
+_server_config(src._server_config)
 {}
 
 Response::~Response(void)
@@ -45,12 +47,6 @@ Response::set_http_code(StatusCodes::status_index_t i)
 {
 	_code = i;
 }
-
-// bool
-// Response::ready_to_send(void) const
-// {
-// 	return _ready_to_send;
-// }
 
 bool &
 Response::ready_to_send(void)
@@ -154,32 +150,29 @@ Response::reset(void)
 	}
 }
 
-const std::string &
-Response::get_location(void)
-{
-	return _headers[LOCATION_HEADER_INDEX].second;
-}
-
 void
 Response::http_error(StatusCodes::status_index_t error)
 {
-	// Check if error code has an error page setup in config file
-	_ready_to_send = true;
-	_complete = true;
-	set_http_code(error);
+	const std::string * error_path = _server_config.get_error_page_path(StatusCodes::get_code_value(error));
+	if (error_path == NULL)
+	{
+		_ready_to_send = true;
+		_complete = true;
+		set_http_code(error);
 
-	static std::string err_msg_part_1("<html>\n<head><title>");
-	static std::string err_msg_part_2("</title></head>\n<body bgcolor=\"white\">\n<center><h1>");
-	static std::string err_msg_part_3("</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>");
-	
-	std::string full_msg = err_msg_part_1 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_2 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_3;
+		static std::string err_msg_part_1("<html>\n<head><title>");
+		static std::string err_msg_part_2("</title></head>\n<body bgcolor=\"white\">\n<center><h1>");
+		static std::string err_msg_part_3("</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>");
+		
+		std::string full_msg = err_msg_part_1 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_2 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_3;
 
-	std::stringstream ss;
-	ss << full_msg.size();
-	_headers.clear(); // Remove any header that may have been set while processing the request before an error occured
-	add_header("Content-Length", ss.str().c_str());
-	add_header("Content-Type", "text/html");
-	set_payload(full_msg);
+		std::stringstream ss;
+		ss << full_msg.size();
+		_headers.clear(); // Remove any header that may have been set while processing the request before an error occured
+		add_header("Content-Length", ss.str().c_str());
+		add_header("Content-Type", "text/html");
+		set_payload(full_msg);
+	}
 }
 
 void

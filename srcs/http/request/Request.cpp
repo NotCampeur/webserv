@@ -1,10 +1,11 @@
 #include "Request.hpp"
 
-Request::Request(void) :
+Request::Request(const ServerConfig & config) :
 _complete(false),
-_method(NULL)
+_method(NULL),
+_server_config(config)
 {
-	_body.reserve(MAX_CLIENT_BODY_SIZE);
+	_body.reserve(_server_config.get_max_client_body_size());
 }
 
 Request::Request(Request const & src) :
@@ -12,7 +13,8 @@ _complete(src._complete),
 _method(src._method),
 _uri(src._uri),
 _headers(src._headers),
-_body(src._body)
+_body(src._body),
+_server_config(src._server_config)
 {}
 
 Request::~Request(void)
@@ -57,7 +59,7 @@ Request::complete(void)
 void
 Request::add_char_to_body(char c)
 {
-	if (_body.size() == MAX_CLIENT_BODY_SIZE)
+	if (_body.size() == _server_config.get_max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 	_body += c;
 }
@@ -84,4 +86,10 @@ void
 Request::add_header(std::string & field_name, std::string & field_value)
 {
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
+}
+
+const ServerConfig &
+Request::get_server_config(void) const
+{
+	return _server_config;
 }

@@ -2,7 +2,8 @@
 
 ClientHandler::ClientHandler(const Client & client) :
 _client(client),
-_request(),
+_request(client.get_server_config()),
+_response(client.get_server_config()),
 _req_parser(_request),
 _timer(CLIENT_TIMEOUT),
 _event_flag(POLLIN)
@@ -11,6 +12,7 @@ _event_flag(POLLIN)
 ClientHandler::ClientHandler(ClientHandler const & src) :
 _client(src._client),
 _request(src._request),
+_response(src._response),
 _req_parser(src._req_parser),
 _timer(src._timer),
 _event_flag(src._event_flag)

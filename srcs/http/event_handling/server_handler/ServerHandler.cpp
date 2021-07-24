@@ -44,7 +44,7 @@ ServerHandler::readable(void)
 			}
 			else
 			{
-				Client * client = new Client(fd, address);
+				Client * client = new Client(fd, address, _server.get_server_config());
 				Logger(LOG_FILE, basic_type, minor_lvl) << "A new connection has been accepted on fd : " << fd << " for client " << client->getip();
 				InitiationDispatcher::get_instance().add_client_handle(*client);
 			}

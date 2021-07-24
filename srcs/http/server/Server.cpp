@@ -107,3 +107,9 @@ Server::getip(void) const
 {
 	return _ip;
 }
+
+const ServerConfig &
+Server::get_server_config(void) const
+{
+	return _config;
+}

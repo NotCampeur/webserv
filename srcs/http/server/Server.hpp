@@ -4,6 +4,7 @@
 # include "webserv.hpp"
 # include "webserv_param.hpp"
 # include "SYSException.hpp"
+# include "ServerConfig.hpp"
 
 class Server
 {
@@ -12,18 +13,20 @@ class Server
 		int					_sockfd;
 		struct sockaddr_in  _address;
 		std::string			_ip;
+		ServerConfig		_config;
 
 	public:
 		// With port 0, the OS assigns the port
 		Server(int port, u_int32_t ip = INADDR_ANY, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
 		Server(Server const & src);
-
 		~Server(void);
 
-		int				getsockfd(void) const;
-		int				getport(void) const;
-		const std::string &	getip(void) const;
 		Server &  operator=(Server const & src);
+
+		int						getsockfd(void) const;
+		int						getport(void) const;
+		const std::string &		getip(void) const;
+		const ServerConfig &	get_server_config(void) const;
 
 	private:
 		Server(void);
