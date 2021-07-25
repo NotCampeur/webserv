@@ -20,6 +20,7 @@ class Response
 		bool							_complete;
 		int								_handler_fd;
 		const ServerConfig &			_server_config;
+		std::string						_file_path;
 
 	public:
 
@@ -43,6 +44,8 @@ class Response
 		void				set_handler_fd(int fd);
 		int					get_handler_fd(void) const;
 		void				payload_erase(size_t len);
+		const std::string & get_path(void) const;
+		void				set_path(std::string & path);
 
 	private:
 	    Response(void);

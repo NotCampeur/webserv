@@ -28,12 +28,11 @@ class Validator
 		
 		Validator &  operator=(Validator const & src);
 
-		void	validate_request(const Request & req, Response & resp);
+		void	validate_request(Request & req, Response & resp);
 
 	private:
 		void	is_method_allowed();
-		void	file_exists();
-		void	set_full_path();
+		void	set_full_path(Request & req, Response & resp);
 };
 
 #endif
@@ -45,8 +44,8 @@ class Validator
 	Validator:
 		- Server blocks
 		- Allowed methods
-		- Root
-		- Autoindex: 
+		- Root -> set full path
+		- Autoindex: if path leads to a directory:
 			if ON, do nothing
 			if OFF:
 				if default file provided:
@@ -54,6 +53,7 @@ class Validator
 				else: 404
 
 	Method handlers:
+		- Verify file path (for Post, file does not need to exist)
 		- Nothing (if file is a directory, generate autoindex, as error cases have been delt with in validator)
 
 	Response:

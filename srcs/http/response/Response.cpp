@@ -192,3 +192,15 @@ Response::payload_erase(size_t len)
 {
 	_payload.erase(0, len);
 }
+
+const std::string &
+Response::get_path(void) const
+{
+	return _file_path;
+}
+
+void
+Response::set_path(std::string & path)
+{
+	_file_path = path;
+}
