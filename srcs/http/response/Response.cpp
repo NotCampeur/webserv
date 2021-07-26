@@ -151,28 +151,45 @@ Response::reset(void)
 }
 
 void
-Response::http_error(StatusCodes::status_index_t error)
+Response::set_http_error(StatusCodes::status_index_t error)
 {
+	_headers.clear(); // Remove any header that may have been set while processing the request before an error occured
+
 	const std::string * error_path = _server_config.get_error_page_path(StatusCodes::get_code_value(error));
+
 	if (error_path == NULL)
 	{
-		_ready_to_send = true;
-		_complete = true;
-		set_http_code(error);
-
-		static std::string err_msg_part_1("<html>\n<head><title>");
-		static std::string err_msg_part_2("</title></head>\n<body bgcolor=\"white\">\n<center><h1>");
-		static std::string err_msg_part_3("</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>");
-		
-		std::string full_msg = err_msg_part_1 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_2 + StatusCodes::get_code_msg_from_index(_code) + err_msg_part_3;
-
-		std::stringstream ss;
-		ss << full_msg.size();
-		_headers.clear(); // Remove any header that may have been set while processing the request before an error occured
-		add_header("Content-Length", ss.str().c_str());
-		add_header("Content-Type", "text/html");
-		set_payload(full_msg);
+		set_error_default_msg(error);
 	}
+	else
+	{
+		try {
+				off_t file_size = get_file_size(_file_path);
+				_file_path = *error_path;
+				_complete = false;
+				_ready_to_send = false;
+				InitiationDispatcher::get_instance().add_read_handle(file_size, *this);
+		}
+		catch (SystemException & e)
+		{
+			Logger(LOG_FILE, error_type, error_lvl) << e.what();
+			set_error_default_msg(error);
+		}
+	}
+}
+
+off_t
+Response::get_file_size(const std::string & path)
+{
+	struct stat stat_buf;
+
+	int ret = stat(path.c_str(), &stat_buf);
+	if (ret != 0)
+	{
+		throw SystemException("Error on stat call");
+	}
+
+	return stat_buf.st_size;
 }
 
 void
@@ -200,7 +217,41 @@ Response::get_path(void) const
 }
 
 void
-Response::set_path(std::string & path)
+Response::set_path(const std::string & path)
 {
 	_file_path = path;
+}
+
+const ServerConfig &
+Response::get_server_config(void) const
+{
+	return _server_config;
+}
+
+void
+Response::set_error_default_msg(StatusCodes::status_index_t error)
+{
+	_ready_to_send = true;
+	_complete = true;
+	set_http_code(error);
+
+	set_payload_to_default_error_msg(error);
+
+	std::stringstream ss;
+	ss << _payload.size();
+	
+	add_header("Content-Length", ss.str().c_str());
+	add_header("Content-Type", "text/html");
+}
+
+void
+Response::set_payload_to_default_error_msg(StatusCodes::status_index_t error)
+{
+	static std::string err_msg_part_1("<html>\n<head><title>");
+	static std::string err_msg_part_2("</title></head>\n<body bgcolor=\"white\">\n<center><h1>");
+	static std::string err_msg_part_3("</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>");
+	
+	std::string full_msg = err_msg_part_1 + StatusCodes::get_code_msg_from_index(error) + err_msg_part_2 + StatusCodes::get_code_msg_from_index(error) + err_msg_part_3;
+
+	set_payload(full_msg);
 }

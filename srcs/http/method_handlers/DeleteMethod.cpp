@@ -10,17 +10,16 @@ DeleteMethod::~DeleteMethod(void) {}
 void
 DeleteMethod::handle(Request & req, Response & resp)
 {
-	std::string path = req.uri().path;
-	path.erase(path.begin()); // Remove leading '/'
-
-	int ret = remove((path).c_str());
+	int ret = remove(resp.get_path().c_str());
 
 	if (ret != 0)
-		throw SYSException("Remove operation failed");
+		throw SystemException("Remove operation failed");
 
 	resp.set_http_code(StatusCodes::NO_CONTENT_204);
 	resp.ready_to_send() = true;
 	resp.complete() = true;
+
+	(void)req;
 }
 
 bool

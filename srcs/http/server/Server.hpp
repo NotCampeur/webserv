@@ -3,7 +3,7 @@
 
 # include "webserv.hpp"
 # include "webserv_param.hpp"
-# include "SYSException.hpp"
+# include "SystemException.hpp"
 # include "ServerConfig.hpp"
 
 class Server

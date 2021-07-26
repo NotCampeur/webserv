@@ -9,7 +9,7 @@
 # include "Timer.hpp"
 # include "Exception.hpp"
 # include "ClientException.hpp"
-# include "ClientSYSException.hpp"
+# include "ClientSystemException.hpp"
 # include "StatusCodes.hpp"
 
 class ClientHandler : public IEventHandler

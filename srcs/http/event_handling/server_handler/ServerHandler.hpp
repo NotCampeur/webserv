@@ -4,9 +4,9 @@
 # include "IEventHandler.hpp"
 # include "Server.hpp"
 # include "Client.hpp"
-# include "SYSException.hpp"
-# include "ServerSYSException.hpp"
-# include "ClientSYSException.hpp"
+# include "SystemException.hpp"
+# include "ServerSystemException.hpp"
+# include "ClientSystemException.hpp"
 
 class InitiationDispatcher;
 # include "InitiationDispatcher.hpp"

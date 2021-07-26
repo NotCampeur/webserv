@@ -1,32 +1,25 @@
 #include "Validator.hpp"
 #include "HttpException.hpp"
+#include "SystemException.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "PostMethod.hpp"
 
 Validator::Validator(void) {}
 
-Validator::Validator(Validator const & src)
-{
-    (void)src;
-}
-
 Validator::~Validator(void) {}
 
-Validator &
-Validator::operator=(Validator const & src)
-{
-    return (*this);
-}
-
 void
-Validator::validate_request(Request & req, Response & resp)
+Validator::validate_request_inputs(Request & req, Response & resp)
 {
 	try {
 		is_method_allowed();
+		set_full_path(req, resp);
+		verify_path(req, resp);
 	}
 	catch (HttpException & e)
 	{
-		resp.http_error(e.get_error_index());
+		throw (e);
 	}
 }
 
@@ -53,35 +46,73 @@ Validator::set_full_path(Request & req, Response & resp)
 	{
 		path.insert(0, root);
 	}
-
 	resp.set_path(path);
-
 }
 
-bool is_dir(const std::string & path)
+void
+Validator::verify_path(Request & req, Response & resp)
 {
+	struct stat buf; 
+	int ret = stat(resp.get_path().c_str(), &buf);
 
+	if (ret < 0)
+	{
+			switch (errno)
+		{
+			case EACCES :
+			{
+				throw (HttpException(StatusCodes::FORBIDDEN_403)); // Using 403 for debug purposes, for security, better to use 404
+				break;
+			}
+			case ENOENT :
+			{
+				PostMethod *method = dynamic_cast<PostMethod *>(&req.method());
+				if (method == NULL)
+					throw (HttpException(StatusCodes::NOT_FOUND_404));
+				break ;
+			}
+			default :
+			{
+				std::cerr << "Stat error val: " << errno << '\n';
+				throw (SystemException("Error on stat call"));
+			}
+		}
+	}
+	else
+	{ // Structure to be improved during further development
+		if (is_dir(buf.st_mode))
+		{
+			if (resp.get_server_config().get_autoindex() == false)
+			{
+				if (resp.get_server_config().get_default_file_dir() != NULL)
+				{
+					resp.set_path(*resp.get_server_config().get_default_file_dir());
+				}
+			}
+		}
+		else if (!is_file(buf.st_mode))
+		{
+			throw (HttpException(StatusCodes::NOT_FOUND_404));
+		}
+	}
 }
 
-/*
-	Request_parser:
-		- Max client body size
+bool
+Validator::is_dir(mode_t mode)
+{
+	if ((S_IFMT & mode) == S_IFDIR)
+	{
+		return true;
+	}
+	return false;
+}
 
-	Validator:
-		- Server blocks
-		- Allowed methods
-		- Root -> set full path
-		- Autoindex: if path leads to a directory:
-			if ON, do nothing
-			if OFF:
-				if default file provided:
-					- set file path to this default path
-				else: 404
-
-	Method handlers:
-		- Verify file path (for Post, file does not need to exist)
-		- Nothing (if file is a directory, generate autoindex, as error cases have been delt with in validator)
-
-	Response:
-		- Need to know error files location
-*/
+bool
+Validator::is_file(mode_t mode)
+{
+	if ((S_IFMT & mode) == S_IFREG)
+	{
+		return true;
+	}
+	return false;
+}

@@ -28,7 +28,7 @@ InitiationDispatcher::handle_events(void)
 			set_demultiplexer_handles();
 			_demultiplexer->activate();
 		}
-		catch (const SYSException & e)
+		catch (const SystemException & e)
 		{
 			Logger(LOG_FILE, error_type) << e.what();
 			if (errno != EAGAIN)
@@ -76,13 +76,13 @@ InitiationDispatcher::handle_events(void)
 				remove_handle(e.getfd());
 				Logger(LOG_FILE, basic_type, error_lvl) << e.what() << ' ' << it->fd;
 			}
-			catch (const ClientSYSException & e)
+			catch (const ClientSystemException & e)
 			{
 				remove_handle(e.getfd());
 				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
 			
 			}
-			catch (const ServerSYSException & e)
+			catch (const ServerSystemException & e)
 			{
 				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
 				return ;
@@ -91,7 +91,7 @@ InitiationDispatcher::handle_events(void)
 			{
 				Logger(LOG_FILE, basic_type, debug_lvl) << e.what() << ' ' << it->fd;
 			}
-			catch (const SYSException & e)
+			catch (const SystemException & e)
 			{
 				remove_handle(it->fd);
 				Logger(LOG_FILE, error_type) << e.what();

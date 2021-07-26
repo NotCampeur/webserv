@@ -1,38 +1,37 @@
 #ifndef VALIDATOR_H
 # define VALIDATOR_H
 
-
-// If something is wrong, throw HttpException
-// Is method allowed?
-// uri: is path ok? Select appropriate ressource based on server settings
-
-// Method allowed? -> 405
-// File Exists? -> 404
-// Location is a directory? Default file is set for directory? -> set path || -> 404
-// Set full file path
-
-// Response needs to have access to error_pages
-
 # include <string>
-# include <map>
+# include "Singleton.hpp"
+
 class Request;
 class Response;
 class ServerConfig;
 
-class Validator
+// Check if method is allowed
+// Verify uri and set file path: 
+//	- (Not yet implemented): chose appropriate server block
+//	- Add root from server config file
+//	- Verify if file exists (if not and method is not POST, throw error)
+//	- If path leads to a directory, check if autoindex is on or if a default file is provided (e.g. index.html)
+
+class Validator : public Singleton<Validator>
 {
 	public:
 		Validator(void);
-    	Validator(Validator const & src);
     	~Validator(void);
-		
-		Validator &  operator=(Validator const & src);
 
-		void	validate_request(Request & req, Response & resp);
+		void	validate_request_inputs(Request & req, Response & resp);
 
 	private:
+		Validator(Validator const & src);
+		Validator &  operator=(Validator const & src);
+
 		void	is_method_allowed();
 		void	set_full_path(Request & req, Response & resp);
+		void	verify_path(Request & req, Response & resp);
+		bool	is_dir(mode_t mode);
+		bool	is_file(mode_t mode);
 };
 
 #endif

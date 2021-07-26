@@ -3,7 +3,7 @@
 
 # include "IHttpMethod.hpp"
 # include "webserv.hpp"
-# include "ClientSYSException.hpp"
+# include "ClientSystemException.hpp"
 # include "Singleton.hpp"
 
 class DeleteMethod : public IHttpMethod, public Singleton<DeleteMethod>
@@ -13,8 +13,6 @@ class DeleteMethod : public IHttpMethod, public Singleton<DeleteMethod>
     	~DeleteMethod(void);
 		void				handle(Request & req, Response & resp);
 		bool				has_body(void);
-		// static IHttpMethod	*create_s(void);
-		// IHttpMethod			*create_v(void);
 
 		private:
 			DeleteMethod(DeleteMethod const & src);

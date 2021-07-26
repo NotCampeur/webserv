@@ -14,7 +14,7 @@
 #include "InitiationDispatcher.hpp"
 #include "ServerHandler.hpp"
 #include "Server.hpp"
-#include "SYSException.hpp"
+#include "SystemException.hpp"
 
 void	serv_test(long server_amount)
 {
@@ -31,7 +31,7 @@ void	serv_test(long server_amount)
 		idis.handle_events();
 
 	}
-	catch (const SYSException & e)
+	catch (const SystemException & e)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << e.what();
 		return ;

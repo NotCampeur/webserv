@@ -22,17 +22,15 @@ HeadMethod::operator=(HeadMethod const & src)
 void
 HeadMethod::handle(Request & req, Response & resp)
 {
-	std::string path = req.uri().path;
-	path.erase(path.begin());
-	std::cerr << "Request path: " << path << '\n';
-
-	set_content_length_header(path, resp);
-	set_content_type_header(path, resp);
-	set_content_location_header(path, resp);
+	set_content_length_header(resp);
+	set_content_type_header(resp);
+	// set_content_location_header(resp);
 
 	resp.set_http_code(StatusCodes::OK_200);
 	resp.ready_to_send() = true;
 	resp.complete() = true;
+
+	(void)req;
 }
 
 bool
@@ -42,9 +40,9 @@ HeadMethod::has_body(void)
 }
 
 void
-HeadMethod::set_content_length_header(const std::string & path, Response & resp)
+HeadMethod::set_content_length_header(Response & resp)
 {
-	off_t file_size = get_file_size(path);
+	off_t file_size = get_file_size(resp.get_path());
 	std::stringstream ss;
 	ss << file_size;
 	resp.add_header("Content-Length", ss.str());
@@ -55,18 +53,19 @@ HeadMethod::get_file_size(const std::string & path)
 {
 	struct stat stat_buf;
 
-	int ret = lstat(path.c_str(), &stat_buf);
+	int ret = stat(path.c_str(), &stat_buf);
 	if (ret != 0)
 	{
-		throw SYSException("Error on lstat call");
+		throw SystemException("Error on stat call");
 	}
 
 	return stat_buf.st_size;
 }
 
 void
-HeadMethod::set_content_type_header(const std::string & path, Response & resp)
+HeadMethod::set_content_type_header(Response & resp)
 {
+	const std::string & path = resp.get_path();
 	int i = path.size() - 1;
 	for(; i >= 0; i--)
 	{
@@ -82,8 +81,8 @@ HeadMethod::set_content_type_header(const std::string & path, Response & resp)
 	}
 }
 
-void
-HeadMethod::set_content_location_header(const std::string & path, Response & resp)
-{
-	resp.add_header("Location", path);
-}
+// void
+// HeadMethod::set_content_location_header(Response & resp)
+// {
+// 	resp.add_header("Location", resp.get_path());
+// }

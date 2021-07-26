@@ -53,7 +53,7 @@ ServerHandler::readable(void)
 		{
 			delete address;
 			if (errno != EWOULDBLOCK)
-				throw ServerSYSException("Accept error", _server.getip(), _server.getport());
+				throw ServerSystemException("Accept error", _server.getip(), _server.getport());
 			Logger(LOG_FILE, basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
 			break ;
 		}

@@ -2,7 +2,7 @@
 # define WEBSERV_GETMETHOD_H
 
 # include "IHttpMethod.hpp"
-# include "SYSException.hpp"
+# include "SystemException.hpp"
 # include "Singleton.hpp"
 
 class GetMethod : public IHttpMethod, public Singleton<GetMethod>
@@ -21,9 +21,9 @@ class GetMethod : public IHttpMethod, public Singleton<GetMethod>
     	GetMethod(GetMethod const & src);
 		GetMethod &  operator=(GetMethod const & src);
 
-		void	set_content_length_header(const std::string & path, Response & resp);
-		void	set_content_type_header(const std::string & path, Response & resp);
-		void	set_content_location_header(const std::string & path, Response & resp);
+		void	set_content_length_header(Response & resp);
+		void	set_content_type_header(Response & resp);
+		// void	set_content_location_header(Response & resp);
 		off_t	get_file_size(const std::string & path);
 };
 

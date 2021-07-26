@@ -35,13 +35,14 @@ SRC	=	main.cpp \
 		sigint_handler.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
 		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
+		Timer.cpp \
 		Server.cpp Client.cpp \
 		ServerConfig.cpp \
 		Request.cpp Response.cpp\
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
-		Timer.cpp \
+		Validator.cpp \
 		Exception.cpp HttpException.cpp ClientException.cpp \
-		SYSException.cpp ServerSYSException.cpp ClientSYSException.cpp \
+		SystemException.cpp ServerSystemException.cpp ClientSystemException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
 		StatusCodes.cpp Mime.cpp \
 

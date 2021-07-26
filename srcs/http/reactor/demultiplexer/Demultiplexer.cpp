@@ -28,7 +28,7 @@ Demultiplexer::activate()
 	result = poll(&_pollfds[0], _pollfds.size(), _timeout);
 	if (result == -1)
 	{
-		throw SYSException("Unable to poll descriptors");
+		throw SystemException("Unable to poll descriptors");
 	}
 	else if (result == 0)
 	{

@@ -1,4 +1,5 @@
 #include "ClientHandler.hpp"
+#include "Validator.hpp"
 
 ClientHandler::ClientHandler(const Client & client) :
 _client(client),
@@ -41,7 +42,7 @@ ClientHandler::readable(void)
 	{
 		case -1 :
 		{
-			throw ClientSYSException("Unable to read from client socket", _client.getip(), _client.getsockfd());
+			throw ClientSystemException("Unable to read from client socket", _client.getip(), _client.getsockfd());
 		}
 		case 0 :
 		{
@@ -65,7 +66,7 @@ ClientHandler::writable(void)
 		ssize_t	bytes_written = send(get_clientfd(), _response.get_payload().c_str(), _response.get_payload().size(), 0);
 		if (bytes_written < 0)
 		{
-			throw ClientSYSException("Unable to write to client socket", _client.getip(), _client.getsockfd());
+			throw ClientSystemException("Unable to write to client socket", _client.getip(), _client.getsockfd());
 		}
 		else if (static_cast<size_t>(bytes_written) != _response.get_payload().size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
 		{
@@ -114,16 +115,17 @@ ClientHandler::handle_request(void)
 	try {
 		parse_request();
 		if (_request.complete())
-			// validate();
-		// if (_request.validated())
+		{
+			Validator::get_instance().validate_request_inputs(_request, _response);
 			_request.method().handle(_request, _response);
+		}
 	}
 	catch (HttpException & e)
 	{
 		Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_code_msg_from_index(e.get_error_index());
 		handle_http_error(e.get_error_index());
 	}
-	catch (SYSException & e)
+	catch (SystemException & e)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << e.what() << " : " << _client.getip();
 		handle_http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);

@@ -20,7 +20,7 @@ class PostMethod : public IHttpMethod, public Singleton<PostMethod>
 			PostMethod(PostMethod const & src);
 			PostMethod &  operator=(PostMethod const & src);
 
-			void	set_content_location_header(const std::string & path, Response & resp);
+			// void	set_content_location_header(const std::string & path, Response & resp);
 };
 
 #endif

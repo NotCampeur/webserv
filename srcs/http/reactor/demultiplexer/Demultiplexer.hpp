@@ -3,7 +3,7 @@
 
 # include "webserv.hpp"
 # include "HandlerTable.hpp"
-# include "SYSException.hpp"
+# include "SystemException.hpp"
 # include "Exception.hpp"
 
 class Demultiplexer
