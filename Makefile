@@ -44,7 +44,7 @@ SRC	=	main.cpp \
 		Exception.cpp HttpException.cpp ClientException.cpp \
 		SystemException.cpp ServerSystemException.cpp ClientSystemException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
-		StatusCodes.cpp Mime.cpp \
+		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
 
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))

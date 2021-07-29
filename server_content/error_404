@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Error 404</title>
+		<h1>Error 404<h1/>
+	</head>
+
+	<body>
+		<p>Your request is wrong, don't do this again or else...<br</p>
+	</body>
+</html>

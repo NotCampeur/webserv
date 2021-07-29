@@ -88,6 +88,10 @@ Validator::verify_path(Request & req, Response & resp)
 				{
 					resp.set_path(*resp.get_server_config().get_default_file_dir());
 				}
+				else
+				{
+					throw (HttpException(StatusCodes::NOT_FOUND_404));
+				}
 			}
 		}
 		else if (!is_file(buf.st_mode))

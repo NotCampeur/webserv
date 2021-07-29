@@ -26,7 +26,7 @@ class Server
 		int						getsockfd(void) const;
 		int						getport(void) const;
 		const std::string &		getip(void) const;
-		const ServerConfig &	get_server_config(void) const;
+		ServerConfig &			get_server_config(void) const;
 
 	private:
 		Server(void);

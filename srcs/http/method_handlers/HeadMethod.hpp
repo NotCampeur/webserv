@@ -13,8 +13,7 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 
 		void				handle(Request & req, Response & resp);
 		bool				has_body(void);
-		// static IHttpMethod	*create_s(void);
-		// IHttpMethod			*create_v(void);
+
 
 	private:
     	HeadMethod(HeadMethod const & src);
@@ -22,7 +21,6 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 
 		void				set_content_length_header(Response & resp);
 		void				set_content_type_header(Response & resp);
-		// void				set_content_location_header(Response & resp);
 		off_t				get_file_size(const std::string & path);
 };
 

@@ -145,7 +145,5 @@ ClientHandler::handle_http_error(StatusCodes::status_index_t error_code)
 {
 	_request.complete() = true;
 	_response.http_error(error_code);
-	_response.ready_to_send() = true;
-	_response.complete() = true;
 	_event_flag = POLLOUT;	
 }
