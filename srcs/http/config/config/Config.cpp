@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/13 18:08:27 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/07/29 16:32:42 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ Config::Config(const Config & to_copy)
 {}
 
 Config::~Config()
-{}
+{
+	delete &_global_scope;
+}
 
 Config::global_config
 Config::get_global_key(const std::string & key)
