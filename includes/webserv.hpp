@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/06/17 20:40:14 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/07/30 17:04:20 by jmaydew          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <string>
 # include <cstring>
 # include <ctime>
+# include <climits>
+# include <sys/time.h>
 
 # include <algorithm>
 # include <vector>
@@ -29,6 +31,7 @@
 # include <errno.h>
 
 # include <sys/types.h>
+# include <sys/stat.h>
 # include <sys/socket.h>
 # include <unistd.h>
 # include <netinet/in.h>

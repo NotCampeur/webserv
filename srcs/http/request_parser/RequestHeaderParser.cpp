@@ -1,21 +1,18 @@
 #include "RequestHeaderParser.hpp"
 
 RequestHeaderParser::RequestHeaderParser(void) :
-_state(FIELD_NAME)
+_state(FIELD_NAME),
+_size(0)
 {}
 
-// RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src)
-// {
-//     (void)src;
-// }
+RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src) :
+_state(src._state),
+_field_name(src._field_name),
+_field_value(src._field_value),
+_size(src._size)
+{}
 
 RequestHeaderParser::~RequestHeaderParser(void) {}
-
-// RequestHeaderParser &
-// RequestHeaderParser::operator=(RequestHeaderParser const & src)
-// {
-//     return (*this);
-// }
 
 void
 RequestHeaderParser::reset(void)
@@ -23,11 +20,17 @@ RequestHeaderParser::reset(void)
 	_state = LEADING_WP;
 	_field_name.clear();
 	_field_value.clear();
+	_size = 0;
 }
 
 bool
 RequestHeaderParser::parse_char(char c)
 {
+	_size++;
+	if (_size > MAX_HEADER_SIZE)
+	{
+		throw HttpException(StatusCodes::BAD_REQUEST_400);
+	}
 	switch (_state)
 	{
 		case LEADING_WP :
@@ -35,7 +38,7 @@ RequestHeaderParser::parse_char(char c)
 			if (!iswhitespace(c))
 			{
 				_state = FIELD_NAME;
-				_field_name += c;
+				addto_fieldname(c);
 			}
 			break ;
 		}
@@ -45,22 +48,22 @@ RequestHeaderParser::parse_char(char c)
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{
-					throw(40); // Error code 400
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 				_state = COLON;
 			}
 			else
 			{
-				_field_name += c; // Could use "to_lower" here as field names are case insensitive
+				addto_fieldname(c);
 			}
 			break ;
 		}
 		case COLON :
 		{
-			if (!iswhitespace(c)) // This condition does not break. If we have something else than a WP, we need to store this char (falling into FIELD_VALUE)
+			if (!iswhitespace(c)) // Remove WP
 			{
 				_state = FIELD_VALUE;
-				_field_value += c;
+				addto_fieldvalue(c);
 			}
 			break ;
 		}
@@ -68,11 +71,12 @@ RequestHeaderParser::parse_char(char c)
 		{
 			if (c == '\r')
 			{
+				remove_trailing_wp(_field_value);
 				return true;
 			}
 			else
 			{
-				_field_value += c;
+				addto_fieldvalue(c);
 			}
 			break ;
 		}
@@ -88,15 +92,40 @@ RequestHeaderParser::iswhitespace(char c)
 	return false;
 }
 
-
-std::string
-RequestHeaderParser::get_header_name(void) const
+std::string &
+RequestHeaderParser::get_header_name(void)
 {
 	return _field_name;
 }
 
-std::string
-RequestHeaderParser::get_header_value(void) const
+void	
+RequestHeaderParser::remove_trailing_wp(std::string & s)
+{
+	if (s.size() > 0)
+	{
+		size_t i = _field_value.size() - 1;
+		while (iswhitespace(_field_value[i]))
+		{
+			i--;
+		}
+		_field_value.erase(i + 1);
+	}
+}
+
+std::string &
+RequestHeaderParser::get_header_value(void)
 {
 	return _field_value;
+}
+
+void
+RequestHeaderParser::addto_fieldname(char c)
+{
+	_field_name += std::tolower(c);
+}
+
+void
+RequestHeaderParser::addto_fieldvalue(char c)
+{
+	_field_value += std::tolower(c);
 }

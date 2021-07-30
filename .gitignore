@@ -4,5 +4,6 @@ objs/
 dev_objs/
 libft/libft.a
 libft/objs
+webserv
 webserv_dev
 *.log

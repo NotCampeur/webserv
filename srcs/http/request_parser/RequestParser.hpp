@@ -5,60 +5,66 @@
 # include "Request.hpp"
 # include "RequestUriParser.hpp"
 # include "RequestHeaderParser.hpp"
+# include "RequestBodyParser.hpp"
+# include "DeleteMethod.hpp"
+# include "GetMethod.hpp"
+# include "HeadMethod.hpp"
+# include "PostMethod.hpp"
+# include "HttpException.hpp"
 
 class RequestParser {
 
-public:
-    enum request_parsing_state {
-		START,
-        METHOD,
-        URI,
-        VERSION,
-		REQ_LINE_CRLF,
-        HEADERS,
-		HEADER_CRLF,
-		FINAL_CRLF,
-		ERROR,
-        DONE
-    };
+	public:
+		enum request_parsing_state {
+			START,
+			METHOD,
+			URI,
+			VERSION,
+			REQ_LINE_CRLF,
+			HEADERS,
+			HEADER_CRLF,
+			FINAL_CRLF,
+			BODY,
+			DONE
+		};
 
-private:
-	RequestUriParser					_uri_parser;
-	RequestHeaderParser					_header_parser;
+	private:
+		Request &					_request;
+		RequestUriParser			_uri_parser;
+		RequestHeaderParser			_header_parser;
+		RequestBodyParser			_body_parser;
 
-	bool								_complete;
-    request_parsing_state				_request_state;
-    std::string  						_http_method;
-	std::string							_http_version;
-	std::map<std::string, std::string>	_headers;
+		request_parsing_state		_request_state;
+		std::string					_buffer;
+		std::string					_buffer_leftovers;
 
-	std::string							_buffer_leftovers;
+		std::string  				_http_method;
+		std::string					_http_version;
 
-	size_t								_debug_code;
+	public:
 
-public:
+		RequestParser(Request &req);
 
-    RequestParser(void);
-    // RequestParser(std::string & request);
+		RequestParser(RequestParser const & src);
+		~RequestParser(void);
 
-    // RequestParser(RequestParser const & src);
-    ~RequestParser(void);
 
-    // RequestParser &  operator=(RequestParser const & src);
+		void	setbuffer(char *buf, size_t len);
+		void	setbuffer(std::string & str);
+		void    parse(void);
+		//Clear content of current request, if there were any buffer leftovers from the previous request, they are set into the main buffer, so a subsequent call to 'parse()' would parse the content
+		void	next_request(void);
 
-    void    parse(const char *buffer, size_t len);
-	bool	iscomplete(void) const;
-	void	next_request(void);
-
-private:
-    void    reset(void);
-
-	void	parse_char(char c);
-    void    parse_method(char c);
-    void    check_version(char c);
-    void    request_error(int code);
-
-	void	add_header(void);
+	private:
+		RequestParser(void);
+		RequestParser &  operator=(RequestParser const & src);
+		
+		void    reset(void);
+		void	parse_char(char c);
+		void    parse_method(char c);
+		void    check_version(char c);
+		bool	correct_version_format(void);
+		void	add_header(void);
 };
 
 #endif

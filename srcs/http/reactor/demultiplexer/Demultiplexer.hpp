@@ -3,6 +3,8 @@
 
 # include "webserv.hpp"
 # include "HandlerTable.hpp"
+# include "SystemException.hpp"
+# include "Exception.hpp"
 
 class Demultiplexer
 {
@@ -22,30 +24,12 @@ class Demultiplexer
 		
 		Demultiplexer & operator=(const Demultiplexer & src);
 
-		int						activate(void);
-		void					addfd(int fd);
+		int						activate();
+		void					addfd(int fd, int flag);
 		void					removefd(int fd);
+		void					clear(void);
 		pollfd_arr::iterator	begin();
 		pollfd_arr::iterator	end();
-
-		class PollingError : public std::exception
-		{
-				std::string	_msg;
-			public:
-				PollingError() throw();
-				~PollingError() throw();
-				const char * what(void) const throw();
-		};
-		
-		class PollingTimeout : public std::exception
-		{
-			const char * what(void) const throw();
-		};
-
-		class FdNotFound : public std::exception
-		{
-			const char * what(void) const throw();
-		};
 };
 
 #endif

@@ -2,6 +2,7 @@
 # define WEBSERV_REQUESTHEADERPARSER_HPP
 
 # include "webserv.hpp"
+# include "HttpException.hpp"
 
 class RequestHeaderParser
 {
@@ -16,21 +17,24 @@ class RequestHeaderParser
 		header_parsing_state	_state;
 		std::string				_field_name;
 		std::string				_field_value;
+		size_t					_size;
 
 	public:
 
 		RequestHeaderParser(void);
-		// RequestHeaderParser(RequestHeaderParser const & src);
+		RequestHeaderParser(RequestHeaderParser const & src);
 		~RequestHeaderParser(void);
 
-		// RequestHeaderParser &  operator=(RequestHeaderParser const & src);
-
-		bool		parse_char(char c);
-		void		reset(void);
-		std::string	get_header_name(void) const;
-		std::string	get_header_value(void) const;
+		bool			parse_char(char c);
+		void			reset(void);
+		std::string	&	get_header_name(void);
+		std::string	&	get_header_value(void);
 
 	private:
 		bool	iswhitespace(char c);
+		void	remove_trailing_wp(std::string & s);
+		void	addto_fieldname(char c);
+		void	addto_fieldvalue(char c);
+		RequestHeaderParser &  operator=(RequestHeaderParser const & src);
 };
 #endif

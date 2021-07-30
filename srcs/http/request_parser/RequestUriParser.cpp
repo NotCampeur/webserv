@@ -1,29 +1,21 @@
 #include "RequestUriParser.hpp"
 
-RequestUriParser::RequestUriParser(void) :
-_state(PATH)
+RequestUriParser::RequestUriParser(Request::uri_t & uri) :
+_state(PATH),
+_uri(uri)
 {}
 
-// RequestUriParser::RequestUriParser(RequestUriParser const & src)
-// {
-//     (void)src;
-// }
+RequestUriParser::RequestUriParser(RequestUriParser const & src) :
+_state(src._state),
+_uri(src._uri)
+{}
 
 RequestUriParser::~RequestUriParser(void) {}
-
-// RequestUriParser &
-// RequestUriParser::operator=(RequestUriParser const & src)
-// {
-//     return (*this);
-// }
 
 void
 RequestUriParser::reset(void)
 {
 	_state = PATH;
-	_path.clear();
-	_query.clear();
-	_fragment.clear();
 }
 
 bool
@@ -47,7 +39,7 @@ RequestUriParser::parse_char(char c)
 			}
 			else
 			{
-				_path += c;
+				_uri.path += c;
 			}
 			break ;
 		}
@@ -63,7 +55,7 @@ RequestUriParser::parse_char(char c)
 			}
 			else
 			{
-				_query += c;
+				_uri.query += c;
 			}
 			break ;
 		}
@@ -75,28 +67,19 @@ RequestUriParser::parse_char(char c)
 			}
 			else
 			{
-				_fragment += c;
+				_uri.fragment += c;
 			}
 			break ;
 		}
 	}
+	if (uri_length() > MAX_URI_SIZE)
+		throw HttpException(StatusCodes::REQUEST_URI_TOO_LONG_414);
 	return false;
 }
 
-const std::string &
-RequestUriParser::getpath(void) const
-{
-	return _path;
-}
 
-const std::string &
-RequestUriParser::getquery(void) const
+size_t
+RequestUriParser::uri_length(void) const
 {
-	return _query;
-}
-
-const std::string &
-RequestUriParser::getfragment(void) const
-{
-	return _fragment;
+	return (_uri.path.size() + _uri.query.size() + _uri.fragment.size());
 }

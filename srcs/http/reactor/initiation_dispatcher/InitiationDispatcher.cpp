@@ -24,89 +24,129 @@ InitiationDispatcher::handle_events(void)
 {
 	while (g_run_status)
 	{
-		try
-		{
+		try {
+			set_demultiplexer_handles();
 			_demultiplexer->activate();
-
-			Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
-			Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
-
-			while (it != ite)
-			{
-				if (POLLIN == (POLLIN & it->revents))
+		}
+		catch (const SystemException & e)
+		{
+			Logger(LOG_FILE, error_type) << e.what();
+			if (errno != EAGAIN)
+				break;
+			else
+				continue;
+		}
+		Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
+		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
+		for (;it != ite; it++)
+		{
+			Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
+			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
+			{					
+				continue;
+			}
+			try {
+				if (((POLLHUP | POLLERR) & it->revents) > 0)
 				{
-					// Add handle 
-					// Add bool for close
-					// Check if req is complete to change POLLIN/POLLOUT
+					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
+					remove_handle(it->fd);
+				}
+				else if (POLLIN == (POLLIN & it->revents))
+				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
-					int ret = _event_handler_table->get(it->fd)->readable();
-
-					switch (ret)
-					{
-						case CLIENT_CLOSED_CONNECTION :
-						{
-							remove_handle(it->fd);
-							ite--;
-							break ;
-						}
-						case REQUEST_COMPLETE :
-						{
-							it->events = POLLOUT;
-							it++;
-							break ;
-						}
-						case REQUEST_INCOMPLETE :
-						{
-							it++;
-							break ;
-						}
-						default :
-							it++;
-					}
+					_event_handler_table->get(it->fd)->readable();
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
-					// Should reset revent to POLLIN here
-					remove_handle(it->fd);
-					ite--;
+					it->events = POLLIN;
 				}
-				else
-					it++;
+				else if (_event_handler_table->get(it->fd)->is_timeoutable())
+				{
+					if (_event_handler_table->get(it->fd)->is_timeout())	//Only client handlers can timeout for now
+					{
+						Logger(LOG_FILE, basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
+						remove_handle(it->fd);
+					}
+				}
 			}
-
-		}
-		catch(const std::exception& e)
-		{
-			Logger(LOG_FILE, error_type) << e.what();
-			g_run_status = false;	// FOR TESTING PURPOSES, CONSIDER REMOVING
+			catch (const ClientException & e)
+			{
+				remove_handle(e.getfd());
+				Logger(LOG_FILE, basic_type, error_lvl) << e.what() << ' ' << it->fd;
+			}
+			catch (const ClientSystemException & e)
+			{
+				remove_handle(e.getfd());
+				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+			
+			}
+			catch (const ServerSystemException & e)
+			{
+				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+				return ;
+			}
+			catch (const Exception & e)
+			{
+				Logger(LOG_FILE, basic_type, debug_lvl) << e.what() << ' ' << it->fd;
+			}
+			catch (const SystemException & e)
+			{
+				remove_handle(it->fd);
+				Logger(LOG_FILE, error_type) << e.what();
+			}
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";
 }
 
 void
-InitiationDispatcher::add_handle(const Server & srv)
+InitiationDispatcher::set_demultiplexer_handles(void)
 {
-	ServerHandler *sh = new ServerHandler(&srv, *this);
-	_event_handler_table->add(sh->get_serverfd(), *sh);
-	_demultiplexer->addfd(sh->get_serverfd());
+	_demultiplexer->clear();
+	HandlerTable::iterator it = _event_handler_table->begin();
+	HandlerTable::iterator ite = _event_handler_table->end();
+	
+	while (it != ite)
+	{
+		_demultiplexer->addfd(it->first, it->second->get_event_flag());
+		it++;
+	}
 }
 
 void
-InitiationDispatcher::add_handle(const Client & clt)
+InitiationDispatcher::add_server_handle(const Server & srv)
+{
+	ServerHandler *sh = new ServerHandler(&srv);
+	_event_handler_table->add(sh->get_serverfd(), *sh);
+}
+
+void
+InitiationDispatcher::add_client_handle(const Client & clt)
 {
 	ClientHandler *ch = new ClientHandler(clt);
 	_event_handler_table->add(ch->get_clientfd(), *ch);
-	_demultiplexer->addfd(ch->get_clientfd());
+}
+
+void
+InitiationDispatcher::add_read_handle(size_t file_size, Response & resp)
+{
+	ReadHandler *rh = new ReadHandler(file_size, resp);
+	_event_handler_table->add(resp.get_handler_fd(), *rh);
+}
+
+void
+InitiationDispatcher::add_write_handle(const std::string & body, Response & resp)
+{
+	WriteHandler *wh = new WriteHandler(body, resp);
+	_event_handler_table->add(resp.get_handler_fd(), *wh);
+
 }
 
 void
 InitiationDispatcher::remove_handle(int fd)
 {
 	_event_handler_table->remove(fd);
-	_demultiplexer->removefd(fd);
-
 	Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << fd << " removed";
 }

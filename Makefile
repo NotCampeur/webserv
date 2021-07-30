@@ -6,7 +6,7 @@
 #    By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/06/15 12:36:02 by ldutriez_ho      ###   ########.fr        #
+#    Updated: 2021/07/21 16:14:13 by jmaydew          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,10 +34,17 @@ SRC	=	main.cpp \
 		Logger.cpp \
 		sigint_handler.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
-		ServerHandler.cpp ClientHandler.cpp \
+		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
+		Timer.cpp \
 		Server.cpp Client.cpp \
-		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp \
-		Request.cpp
+		ServerConfig.cpp \
+		Request.cpp Response.cpp\
+		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
+		Validator.cpp \
+		Exception.cpp HttpException.cpp ClientException.cpp \
+		SystemException.cpp ServerSystemException.cpp ClientSystemException.cpp \
+		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
+		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
 
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))

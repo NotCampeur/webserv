@@ -1,66 +1,79 @@
 #include "RequestParser.hpp"
 
-RequestParser::RequestParser(void)
-{
-    reset();
-}
+RequestParser::RequestParser(Request & req) :
+_request(req),
+_uri_parser(req.uri()),
+_body_parser(req),
+_request_state(START)
+{}
 
-// RequestParser::RequestParser(RequestParser const & src) :
-// _request(src._request),
-// _offset(src._offset)
-// {}
+RequestParser::RequestParser(RequestParser const & src) :
+_request(src._request),
+_uri_parser(src._uri_parser),
+_header_parser(src._header_parser),
+_body_parser(src._body_parser),
+_request_state(src._request_state),
+_buffer_leftovers(src._buffer_leftovers),
+_http_method(src._http_method),
+_http_version(src._http_version)
+{}
+
 
 RequestParser::~RequestParser(void) {}
 
-// RequestParser &
-// RequestParser::operator=(RequestParser const & src)
-// {
-//     return (*this);
-// }
+void
+RequestParser::setbuffer(char *buf, size_t len)
+{
+	_buffer = std::string(buf, len);
+}
 
 void
-RequestParser::parse(const char *buffer, size_t len)
+RequestParser::setbuffer(std::string & str)
 {
-	std::cerr << "Buffer content: " << std::string(buffer, len) << '\n';
+	_buffer = str;
+}
 
-	for (size_t i = 0; i < len; i++)
+void
+RequestParser::parse(void)
+{
+	// std::cerr << "Buffer content: " << _buffer << '\n';
+	
+	size_t i = 0;
+	for (; i < _buffer.size(); i++)
 	{
-		parse_char(buffer[i]);
-
-		if (_request_state == ERROR)
+		parse_char(_buffer[i]);
+		if (_request_state == DONE)
 		{
-			_complete = true;
-			_buffer_leftovers.clear(); // In case of an error, flush buffer
+			_request.complete() = true;
+			_buffer_leftovers = _buffer.substr(i + 1);
 
-			std::cerr << "***Request error nb: " << _debug_code << " ***\n";
-			break ;
-		}
-		else if (_request_state == DONE) // Should set request to Complete here
-		{
-			_complete = true;
-			_buffer_leftovers = std::string(&buffer[i], len - i - 1);
+			// std::cerr << "\n### PARSED REQUEST ###\n"
+			// << "Method: " << _http_method << '\n'
+			// << "Uri (path): " << _request.uri().path << '\n'
+			// << "Uri (query): " << _request.uri().query << '\n'
+			// << "Uri (fragment): " << _request.uri().fragment << '\n'
+			// << "Http version: " << _http_version << '\n';
 
-			std::cerr << "\n### PARSED REQUEST ###\n"
-			<< "Method: " << _http_method << '\n'
-			<< "Uri (path): " << _uri_parser.getpath() << '\n'
-			<< "Uri (query): " << _uri_parser.getquery() << '\n'
-			<< "Uri (fragment): " << _uri_parser.getfragment() << '\n'
-			<< "Http version: " << _http_version << '\n';
-
-			for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
-			{
-				std::cerr << "Header name: " << (*it).first << '\t'
-				<< "Header value: " << (*it).second << '\n';
-			}
-			std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
+			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
+			// {
+			// 	std::cerr << "Header name: " << (*it).first << '\t'
+			// 	<< "Header value: " << (*it).second << '\n';
+			// }
+			// if (_request.method().has_body())
+			// {
+			// 	std::cerr << _request.get_body();
+			// 	std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
+			// }
 			break ;
 		}
 	}
+	_buffer.clear();
 }
 
 void
 RequestParser::parse_char(char c)
 {
+
 	switch (_request_state)
 	{
 		case START :
@@ -96,26 +109,19 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				request_error(1); // Request nb TBC
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			break ;
 		}
 		case HEADERS :
 		{
-			if (c == '\r' && _header_parser.get_header_name().empty())
+			if (c == '\r' && _header_parser.get_header_name().empty()) // There are no more headers, move to Final CRLF
 			{
 				_request_state = FINAL_CRLF;
 				break ;
 			}
-			try
-			{
-				if (_header_parser.parse_char(c))
-					_request_state = HEADER_CRLF;
-			}
-			catch(int error_code)
-			{
-				request_error(error_code);
-			}
+			if (_header_parser.parse_char(c))
+				_request_state = HEADER_CRLF;
 			break ;
 		}
 		case HEADER_CRLF :
@@ -127,61 +133,69 @@ RequestParser::parse_char(char c)
 			}
 			else
 			{
-				request_error(2); // Code TBC
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			break ;
 		}
 		case FINAL_CRLF :
 		{
 			if (c == '\n')
-				_request_state = DONE;
+			{
+				if (_request.method().has_body())
+					_request_state = BODY;
+				else
+				{
+					_request_state = DONE;
+					break ;
+				}
+			}
 			else
 			{
-				request_error(3); // Req nb TBC
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 		}
-		case DONE :	// Apparently I need to handle all enumeration variables within switch
+		case BODY :
+		{
+			if (_body_parser.parse_char(c))
+				_request_state = DONE;
+			break;
+		}
+		case DONE :
 			break ;
-		case ERROR :
-			break ;
+		default :
+		{
+			Logger(LOG_FILE, error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
+			throw HttpException(StatusCodes::BAD_REQUEST_400); // Defensive: in case something odd happens, send a bad request
+		}
 	}
 }
-
-/*
-
-HttpMethod {
-
-    handle();
-
-}
-
-GetMethod : HttpMethod {
-
-
-}
-
-HttpMethod *method = find_method_by_name("GET")
-if (!method) {
-
-}
-
-method->handle(req, res)
-
-res.body()
-res.status(200)
-res.end()
-
-*/
 
 void
 RequestParser::parse_method(char c)
 {
     static std::string	available_methods[] = {
         "GET",
+		"HEAD",
         "POST",
         "DELETE"
     };
-    static size_t 		method_count = 3;    
+
+    static size_t 		method_count = 4;
+
+	// static IHttpMethod * (*create[4])(void) =
+	// {
+	// 	GetMethod::create_s,
+	// 	HeadMethod::create_s,
+	// 	PostMethod::create_s,
+	// 	DeleteMethod::create_s
+	// };
+
+	static IHttpMethod* method[4] = {
+		&GetMethod::get_instance(),
+		&HeadMethod::get_instance(),
+		&PostMethod::get_instance(),
+		&DeleteMethod::get_instance()
+	};
 
 	if (c == ' ')
 	{
@@ -189,19 +203,20 @@ RequestParser::parse_method(char c)
         {
             if (available_methods[i] == _http_method)
             {
-                _request_state = URI;
+				std::cout << "Method: " << i << " created\n";
+				_request.set_method(method[i]);
+				_request_state = URI;
 				return ;
             }
         }
-        request_error(4); // Error code TBC
+		throw HttpException(StatusCodes::METHOD_NOT_ALLOWED_405);
     }
 	else
 	{
         _http_method += c;
 		if (_http_method.size() > 6)
 		{
-			request_error(5); // Code 500
-			return ;
+			throw HttpException(StatusCodes::METHOD_NOT_ALLOWED_405);
 		}
 	}
 }
@@ -220,8 +235,14 @@ RequestParser::check_version(char c)
 		}
 		else
 		{
-			request_error(6); // Code 505
-			return ;
+			if (correct_version_format())
+			{
+				throw HttpException(StatusCodes::HTTP_VERSION_NOT_SUPPORTE_505);
+			}
+			else
+			{
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
+			}
 		}
 	}
 	else
@@ -229,46 +250,56 @@ RequestParser::check_version(char c)
 		_http_version += c;
 		if (_http_version.size() > correct_version.size())
 		{
-			request_error(7); // Error code TBC - Should not be a bad_version error, but a bad_request_line error (bad spacing errors fall here)
+			throw HttpException(StatusCodes::BAD_REQUEST_400); // Not be a bad_version error, but a bad_request error as the size exceeds that of version syntax standard
 		}
 	}
 }
 
-void
-RequestParser::request_error(int code)
+
+bool
+RequestParser::correct_version_format(void)
 {
-    _request_state = ERROR;
-	_debug_code = code;
+	if (_http_version.size() == 8)
+	{
+		if (
+			_http_version[0] == 'H' &&
+			_http_version[1] == 'T' &&
+			_http_version[2] == 'T' &&
+			_http_version[3] == 'P' &&
+			_http_version[4] == '/' &&
+			std::isdigit(_http_version[5]) &&
+			_http_version[6] == '.' &&
+			std::isdigit(_http_version[7])
+		)
+			return true;
+	}
+	return false;
 }
 
 void
 RequestParser::add_header(void)
 {
-	_headers.insert(std::pair<std::string, std::string>(_header_parser.get_header_name(), _header_parser.get_header_value()));
+	_request.add_header(_header_parser.get_header_name(), _header_parser.get_header_value());
 	_header_parser.reset();
-}
-
-bool
-RequestParser::iscomplete(void) const
-{
-	return _complete;
 }
 
 void
 RequestParser::reset(void)
 {
-	_complete = false;
     _request_state = START;
-    _http_method.clear();
-	_http_version.clear();
     _uri_parser.reset();
 	_header_parser.reset();
+	_body_parser.reset();
+	_http_method.clear();
+	_http_version.clear();
 }
 
 void
 RequestParser::next_request(void)
 {
 	reset();
-	parse(_buffer_leftovers.c_str(), _buffer_leftovers.size());
+	_request.reset();
+	setbuffer(_buffer_leftovers);
+	_buffer_leftovers.clear();
 	std::cerr << "* Buffer Leftovers: *\n" << _buffer_leftovers << '\n';
 }
