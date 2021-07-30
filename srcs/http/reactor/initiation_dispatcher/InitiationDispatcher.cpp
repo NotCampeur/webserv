@@ -46,7 +46,12 @@ InitiationDispatcher::handle_events(void)
 				continue;
 			}
 			try {
-				if (POLLIN == (POLLIN & it->revents))
+				if (((POLLHUP | POLLERR) & it->revents) > 0)
+				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
+					remove_handle(it->fd);
+				}
+				else if (POLLIN == (POLLIN & it->revents))
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
@@ -56,11 +61,6 @@ InitiationDispatcher::handle_events(void)
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
 					it->events = POLLIN;
-				}
-				else if (POLLHUP == (POLLHUP & it->revents))
-				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
-					remove_handle(it->fd);
 				}
 				else if (_event_handler_table->get(it->fd)->is_timeoutable())
 				{

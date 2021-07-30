@@ -209,14 +209,14 @@ RequestParser::parse_method(char c)
 				return ;
             }
         }
-		throw HttpException(StatusCodes::NOT_IMPLEMENTED_501);
+		throw HttpException(StatusCodes::METHOD_NOT_ALLOWED_405);
     }
 	else
 	{
         _http_method += c;
 		if (_http_method.size() > 6)
 		{
-			throw HttpException(StatusCodes::NOT_IMPLEMENTED_501);
+			throw HttpException(StatusCodes::METHOD_NOT_ALLOWED_405);
 		}
 	}
 }
@@ -235,7 +235,14 @@ RequestParser::check_version(char c)
 		}
 		else
 		{
-			throw HttpException(StatusCodes::HTTP_VERSION_NOT_SUPPORTE_505);
+			if (correct_version_format())
+			{
+				throw HttpException(StatusCodes::HTTP_VERSION_NOT_SUPPORTE_505);
+			}
+			else
+			{
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
+			}
 		}
 	}
 	else
@@ -246,6 +253,27 @@ RequestParser::check_version(char c)
 			throw HttpException(StatusCodes::BAD_REQUEST_400); // Not be a bad_version error, but a bad_request error as the size exceeds that of version syntax standard
 		}
 	}
+}
+
+
+bool
+RequestParser::correct_version_format(void)
+{
+	if (_http_version.size() == 8)
+	{
+		if (
+			_http_version[0] == 'H' &&
+			_http_version[1] == 'T' &&
+			_http_version[2] == 'T' &&
+			_http_version[3] == 'P' &&
+			_http_version[4] == '/' &&
+			std::isdigit(_http_version[5]) &&
+			_http_version[6] == '.' &&
+			std::isdigit(_http_version[7])
+		)
+			return true;
+	}
+	return false;
 }
 
 void

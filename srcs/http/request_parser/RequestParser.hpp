@@ -63,7 +63,7 @@ class RequestParser {
 		void	parse_char(char c);
 		void    parse_method(char c);
 		void    check_version(char c);
-
+		bool	correct_version_format(void);
 		void	add_header(void);
 };
 
