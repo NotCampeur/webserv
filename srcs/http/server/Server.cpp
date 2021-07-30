@@ -1,6 +1,7 @@
 #include "Server.hpp"
 
-Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
+Server::Server(ServerConfig *config, int port, u_int32_t ip, int com_domain, int sock_type) :
+_config(*config)
 {
 	create_socket(com_domain, sock_type);
 	make_nonblocking();
@@ -12,23 +13,19 @@ Server::Server(int port, u_int32_t ip, int com_domain, int sock_type)
 	_ip = std::string(inet_ntoa(_address.sin_addr));
 }
 
-Server::Server(Server const & src)
-{
-	(void)src;
-}
-
 Server::~Server(void)
 {
 	close(_sockfd);
+	delete &_config;
 }
 
-Server &
-Server::operator=(Server const & src)
-{
-	this->_sockfd = src._sockfd;
-	this->_address = src._address;
-	return (*this);
-}
+// Server &
+// Server::operator=(Server const & src)
+// {
+// 	this->_sockfd = src._sockfd;
+// 	this->_address = src._address;
+// 	return (*this);
+// }
 
 int
 Server::getsockfd() const

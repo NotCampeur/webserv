@@ -27,10 +27,10 @@ HttpErrorManager::handle(StatusCodes::status_index_t error)
 	
 	if (path != NULL)
 	{
-		std::cerr << "Error page found!\n";
+		std::cerr << "Error page found: " << *path << '\n';
 		_resp.set_path(*path);
 		_fd = open(_resp.get_path().c_str(), O_RDONLY);
-		if (_fd < 0)
+		if (_fd >= 0)
 		{
 			try {
 					off_t file_size = get_file_size(*path);

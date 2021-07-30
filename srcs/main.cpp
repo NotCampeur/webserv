@@ -15,6 +15,7 @@
 #include "ServerHandler.hpp"
 #include "Server.hpp"
 #include "SystemException.hpp"
+#include "ServerConfig.hpp"
 
 void	serv_test(long server_amount)
 {
@@ -25,22 +26,23 @@ void	serv_test(long server_amount)
 	{
 		for (long i(0); i < server_amount; i++)
 		{
-			const Server *serv = new Server(8080 + i, inet_addr("127.0.0.1"));
-			idis.add_server_handle(*serv);
+			ServerConfig *config = new ServerConfig;
 			std::string default_file_dir = "server_content/index.html";
-			serv->get_server_config().set_default_file_dir(default_file_dir);
+			config->set_default_file_dir(default_file_dir);
 			std::string error_404 = "server_content/error_404";
-			serv->get_server_config().add_error_page_path(404, error_404);
+			config->add_error_page_path(404, error_404);
+			
+			Server *serv = new Server(config, 8080 + i, inet_addr("127.0.0.1"));
+			idis.add_server_handle(*serv);
 		}
 		idis.handle_events();
-
 	}
 	catch (const SystemException & e)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << e.what();
 		return ;
 	}
-	catch(const std::exception& e)
+	catch (const std::exception& e)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << e.what();
 		return ;

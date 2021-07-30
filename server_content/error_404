@@ -3,10 +3,15 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Error 404</title>
-		<h1>Error 404<h1/>
 	</head>
 
-	<body>
-		<p>Your request is wrong, don't do this again or else...<br</p>
+	<body bgcolor="pink">
+		<center>
+			<h1>Error 404<h1/><br>
+		</center>
+		<center>
+			Your request is wrong, don't do this again or else...<br>
+			If you want to learn more about octopus, click <a href="https://www.tfhmagazine.com/articles/saltwater/so-you-want-to-keep-an-octopus">here</a>
+		</center>
 	</body>
 </html>
