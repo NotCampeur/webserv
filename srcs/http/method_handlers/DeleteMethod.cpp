@@ -10,6 +10,11 @@ DeleteMethod::~DeleteMethod(void) {}
 void
 DeleteMethod::handle(Request & req, Response & resp)
 {
+	if (resp.path_is_dir())
+	{
+		throw (HttpException(StatusCodes::FORBIDDEN_403));
+	}
+
 	int ret = remove(resp.get_path().c_str());
 
 	if (ret != 0)

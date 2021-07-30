@@ -25,6 +25,7 @@ class GetMethod : public IHttpMethod, public Singleton<GetMethod>
 		void	set_content_type_header(Response & resp);
 		// void	set_content_location_header(Response & resp);
 		off_t	get_file_size(const std::string & path);
+		void	handle_autoindex(Response & resp);
 };
 
 #endif

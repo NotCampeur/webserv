@@ -15,7 +15,7 @@ class ServerConfig
 		std::string					_default_file_dir;
 
 	public:
-		ServerConfig(size_t max_client_body_size = MAX_CLIENT_BODY_SIZE, bool autoindex = false);
+		ServerConfig(bool autoindex = false, size_t max_client_body_size = MAX_CLIENT_BODY_SIZE);
     	ServerConfig(ServerConfig const & src);
     	~ServerConfig(void);
 		

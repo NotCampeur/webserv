@@ -1,6 +1,6 @@
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(size_t max_client_body_size, bool autoindex) :
+ServerConfig::ServerConfig(bool autoindex, size_t max_client_body_size) :
 _max_client_body_size(max_client_body_size),
 _autoindex(autoindex)
 {}

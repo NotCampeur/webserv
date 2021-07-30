@@ -10,6 +10,10 @@ PostMethod::~PostMethod(void) {}
 void
 PostMethod::handle(Request & req, Response & resp)
 {
+	if (resp.path_is_dir())
+	{
+		throw (HttpException(StatusCodes::FORBIDDEN_403));
+	}
 	resp.set_http_code(StatusCodes::CREATED_201);
 	
 	// set_content_location_header(resp);

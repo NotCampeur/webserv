@@ -26,7 +26,7 @@ void	serv_test(long server_amount)
 	{
 		for (long i(0); i < server_amount; i++)
 		{
-			ServerConfig *config = new ServerConfig;
+			ServerConfig *config = new ServerConfig(true);
 			std::string default_file_dir = "server_content/index.html";
 			config->set_default_file_dir(default_file_dir);
 			std::string error_404 = "server_content/error_404";
