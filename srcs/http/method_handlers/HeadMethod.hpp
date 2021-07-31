@@ -22,6 +22,9 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 		void				set_content_length_header(Response & resp);
 		void				set_content_type_header(Response & resp);
 		off_t				get_file_size(const std::string & path);
+		void				handle_autoindex(Response & resp);
+		void				add_autoindex_line(std::string & dest, const std::string & ressource_name, const std::string & path, bool isdir);
+
 };
 
 #endif

@@ -204,3 +204,16 @@ Response::path_is_dir(void)
 {
 	return _path_is_dir;
 }
+
+void
+Response::http_redirection(StatusCodes::status_index_t code, const std::string & location)
+{
+	reset();
+	set_http_code(code);
+	add_header("Content-Length", "0");
+	std::string complete_location = "http://" + _server_config.get_name() + ':' + _server_config.get_port() + '/' + location;
+	std::cerr << complete_location << '\n';
+	add_header("Location", complete_location);
+	ready_to_send() = true;
+	complete() = true;
+}

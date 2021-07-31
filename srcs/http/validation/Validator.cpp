@@ -83,17 +83,6 @@ Validator::verify_path(Request & req, Response & resp)
 		if (is_dir(buf.st_mode))
 		{
 			resp.path_is_dir() = true;
-			// if (resp.get_server_config().get_autoindex() == false)
-			// {
-			// 	if (resp.get_server_config().get_default_file_dir() != NULL)
-			// 	{
-			// 		resp.set_path(*resp.get_server_config().get_default_file_dir());
-			// 	}
-			// 	else
-			// 	{
-			// 		throw (HttpException(StatusCodes::NOT_FOUND_404));
-			// 	}
-			// }
 		}
 		else if (!is_file(buf.st_mode))
 		{

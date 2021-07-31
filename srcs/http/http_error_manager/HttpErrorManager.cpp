@@ -49,18 +49,15 @@ HttpErrorManager::handle(StatusCodes::status_index_t error)
 		}
 	}
 	std::cerr << "Error page not found...\n";
+	_resp.ready_to_send() = true;
+	_resp.complete() = true;
+	_resp.set_http_code(error);
 	set_default_msg(error);
 }
 
 void
 HttpErrorManager::set_default_msg(StatusCodes::status_index_t error)
 {
-	_resp.ready_to_send() = true;
-	_resp.complete() = true;
-
-	_resp.set_http_code(error);
-
-
 	std::stringstream ss; 
 	ss << set_payload_to_default_msg(error);
 	

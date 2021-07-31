@@ -9,21 +9,17 @@ GetMethod::GetMethod(void) {}
 
 GetMethod::~GetMethod(void) {}
 
-/*
-* FILE reader handle
-* Needs: fd (open RDONLY)
-* Buffer to read: for now reading in its own buffer, but potential optimization would see handler reading directly inside response buffer
-* Destination
-* access to set flag notifying there's something ready to be sent
-* access to flag to check if the buffer is empty and can be filled
-*/
-
 void
 GetMethod::handle(Request & req, Response & resp)
 {
 	if (resp.path_is_dir())
 	{
-		if (resp.get_server_config().get_autoindex() == false)
+		if (!resp.get_path().empty() && (resp.get_path()[resp.get_path().size() - 1]) != '/')
+		{
+			std::string new_path = resp.get_path() + '/';
+			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, new_path));
+		}
+		else if (resp.get_server_config().get_autoindex() == false)
 		{
 			if (resp.get_server_config().get_default_file_dir() != NULL)
 			{
@@ -122,13 +118,11 @@ GetMethod::handle_autoindex(Response & resp)
 	
 	while ((dir_entry = readdir(dirp)) != NULL)
 	{
-		autoindex_content += "<a href=\"http://localhost:8080/"; // TBU!!! Need server name and port from config
-		autoindex_content += resp.get_path();
-		autoindex_content += '/';
-		autoindex_content += dir_entry->d_name;
-		autoindex_content += "\">";
-		autoindex_content += dir_entry->d_name;
-		autoindex_content += "</a><br>";
+		if (dir_entry->d_name[0] == '.' && !dir_entry->d_name[1])
+		{
+			continue;
+		}
+		add_autoindex_line(autoindex_content, dir_entry->d_name, resp.get_path(), (dir_entry->d_type & DT_DIR));
 	}
 	autoindex_content += "</html>";
 
@@ -144,4 +138,19 @@ GetMethod::handle_autoindex(Response & resp)
 	resp.set_payload(autoindex_content);
 	resp.ready_to_send() = true;
 	resp.complete() = true;
+}
+
+void
+GetMethod::add_autoindex_line(std::string & dest, const std::string & ressource_name, const std::string & path, bool isdir)
+{
+		dest += "<a href=\"";
+		(void)path;
+		dest += ressource_name;
+		if (isdir)
+			dest += '/';
+		dest += "\">";
+		dest += ressource_name;
+		if (isdir)
+			dest += '/';
+		dest += "</a><br>";
 }

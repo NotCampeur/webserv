@@ -1,11 +1,15 @@
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(bool autoindex, size_t max_client_body_size) :
+ServerConfig::ServerConfig(std::string & name, std::string & port, bool autoindex, size_t max_client_body_size) :
+_name(name),
+_port(port),
 _max_client_body_size(max_client_body_size),
 _autoindex(autoindex)
 {}
 
 ServerConfig::ServerConfig(ServerConfig const & src) :
+_name(src._name),
+_port(src._port),
 _error_pages(src._error_pages),
 _max_client_body_size(src._max_client_body_size),
 _root_dir(src._root_dir),
@@ -15,15 +19,27 @@ _default_file_dir(src._default_file_dir)
 
 ServerConfig::~ServerConfig(void) {}
 
-ServerConfig &
-ServerConfig::operator=(ServerConfig const & src)
+// ServerConfig &
+// ServerConfig::operator=(ServerConfig const & src)
+// {
+// 	_error_pages = src._error_pages;
+// 	_max_client_body_size = src._max_client_body_size;
+// 	_root_dir = src._root_dir;
+// 	_autoindex = src._autoindex;
+// 	_default_file_dir = src._default_file_dir;
+//     return (*this);
+// }
+
+const std::string &
+ServerConfig::get_name(void) const
 {
-	_error_pages = src._error_pages;
-	_max_client_body_size = src._max_client_body_size;
-	_root_dir = src._root_dir;
-	_autoindex = src._autoindex;
-	_default_file_dir = src._default_file_dir;
-    return (*this);
+	return _name;
+}
+
+const std::string &
+ServerConfig::get_port(void) const
+{
+	return _port;
 }
 
 const std::string *

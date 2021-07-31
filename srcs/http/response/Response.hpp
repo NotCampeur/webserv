@@ -55,7 +55,7 @@ class Response
 		const ServerConfig &	get_server_config(void) const;
 		void					reset(void);
 		void					http_error(StatusCodes::status_index_t error);
-
+		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);
 	private:
 	    Response(void);
 

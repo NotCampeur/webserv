@@ -122,8 +122,17 @@ ClientHandler::handle_request(void)
 	}
 	catch (HttpException & e)
 	{
-		Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_code_msg_from_index(e.get_error_index());
-		handle_http_error(e.get_error_index());
+		Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_code_msg_from_index(e.get_code_index());
+		
+		if (StatusCodes::get_code_value(e.get_code_index()) >= 400)
+		{
+			handle_http_error(e.get_code_index());
+		}
+		else
+		{
+			std::cerr << "Redir caught\n";
+			_response.http_redirection(e.get_code_index(), e.get_location());
+		}
 	}
 	catch (SystemException & e)
 	{
@@ -143,7 +152,6 @@ ClientHandler::parse_request(void)
 void
 ClientHandler::handle_http_error(StatusCodes::status_index_t error_code)
 {
-	_request.complete() = true;
 	_response.http_error(error_code);
 	_event_flag = POLLOUT;	
 }

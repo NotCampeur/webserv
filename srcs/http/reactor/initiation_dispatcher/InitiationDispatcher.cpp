@@ -80,7 +80,6 @@ InitiationDispatcher::handle_events(void)
 			{
 				remove_handle(e.getfd());
 				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
-			
 			}
 			catch (const ServerSystemException & e)
 			{
