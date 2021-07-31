@@ -27,11 +27,10 @@ All libraries will be build and the binary will be ready to launch
  
 ## [The Norm](.readme/norm.md)  
 
-### :zzz: TODO :zzz:  
+### :zzz: TODO :zzz:
+*  Parsing of Hexadecimal values in URL -> in validator class
 *  Comment each methods  
 *  Config file options and parsing
-*  Requests handling
-*  Timeout checks
 ### :boom: Known bugs.. I mean features :boom:  
 * Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
 * Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
