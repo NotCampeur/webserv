@@ -46,7 +46,29 @@ Validator::set_full_path(Request & req, Response & resp)
 	{
 		path.insert(0, root);
 	}
+	parse_hexa(path);
 	resp.set_path(path);
+}
+
+void
+Validator::parse_hexa(std::string & path)
+{
+	for (size_t i = 0; i < path.size(); i++)
+	{
+		if (path[i] == '%')
+		{
+			if ((i + 3) > path.size())
+			{
+				throw (HttpException(StatusCodes::BAD_REQUEST_400));
+			}
+			else
+			{
+				char c = std::strtol(path.substr(i + 1, 2).c_str(), NULL, 16);
+				path[i] = c;
+				path.erase(i + 1, 2);
+			}
+		}
+	}
 }
 
 void
