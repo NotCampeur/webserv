@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/02 19:12:22 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/02 19:29:11 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,7 @@ serv_test(char * config_path)
 int
 main(int ac, char *av[])
 {
-	if (ac <= 1)
-		return EXIT_FAILURE;
-
+	(void)ac;
 	Logger::accept_importance(all_lvl);
 	Logger(LOG_FILE, basic_type, all_lvl) << "Launching the servers " << 42 << " yeah baby";
 

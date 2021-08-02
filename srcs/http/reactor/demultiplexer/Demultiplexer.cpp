@@ -15,16 +15,11 @@ Demultiplexer::~Demultiplexer(void)
 Demultiplexer &
 Demultiplexer::operator=(const Demultiplexer & src)
 {
-<<<<<<< HEAD:srcs/http/server_related/demultiplexer/Demultiplexer.cpp
 	if (this != &src)
 	{
 		_pollfds = src._pollfds;
 		_timeout = src._timeout;
 	}
-=======
-	_pollfds = src._pollfds;
-	_timeout = src._timeout;
->>>>>>> 3c7526089eec1454215423d8f6b04ea9194b436a:srcs/http/reactor/demultiplexer/Demultiplexer.cpp
 	return *this;
 }
 

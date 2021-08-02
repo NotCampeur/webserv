@@ -6,11 +6,7 @@
 #    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-<<<<<<< HEAD
-#    Updated: 2021/07/13 19:22:31 by notcampeur       ###   ########.fr        #
-=======
-#    Updated: 2021/07/21 16:14:13 by jmaydew          ###   ########.fr        #
->>>>>>> 3c7526089eec1454215423d8f6b04ea9194b436a
+#    Updated: 2021/08/02 19:25:13 by notcampeur       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,13 +33,6 @@ LIB = ft
 SRC	=	main.cpp \
 		Logger.cpp \
 		\
-		Demultiplexer.cpp HandlerTable.cpp InitiationDispatcher.cpp \
-		ServerHandler.cpp ClientHandler.cpp Client.cpp \
-		sigint_handler.cpp \
-		\
-		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
-		Config.cpp \
-		\
 		sigint_handler.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
 		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
@@ -57,6 +46,10 @@ SRC	=	main.cpp \
 		SystemException.cpp ServerSystemException.cpp ClientSystemException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
 		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
+		\
+		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
+		Config.cpp \
+
 
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
