@@ -12,12 +12,13 @@ All libraries will be build and the binary will be ready to launch
 ## Content
 * A simple HTTP server.  
  
-## Ressources  
+## Resources  
 * https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select     <-Different API explanation  
 * https://www.restapitutorial.com/httpstatuscodes.html  <-HTTP Return status  
 * https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa      <-HTTP Server tuto  
  
  CGI:
+* http://speed.eik.bme.hu/help/html/Special_Edition-Using_CGI/ch1.htm <- Introduction to CGI
 * http://www.whizkidtech.redprince.net/cgi-bin/tutorial  <- CGI basics
 * https://jkorpela.fi/forms/cgic.html  <- CGI programming tutorial
 * https://www.garshol.priv.no/download/text/http-tut.html <- HTTP and CGI explained
@@ -27,12 +28,13 @@ All libraries will be build and the binary will be ready to launch
  
 ## [The Norm](.readme/norm.md)  
 
-### :zzz: TODO :zzz:  
+### :zzz: TODO :zzz:
+*  Parsing of Hexadecimal values in URL -> in validator class
 *  Comment each methods  
-
+*  Config file options and parsing
 ### :boom: Known bugs.. I mean features :boom:  
-* Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)  
-* The JsonFileWriting don't erase whitespaces anymore ??  
+* Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
+* Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
 
 ## :writing_hand: Change log :writing_hand:  
 * The headers' protection have been standardize.  

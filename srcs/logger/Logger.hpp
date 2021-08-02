@@ -50,7 +50,7 @@ class Logger
 		// If you never set it yourself every messages are accepted.
 		static void	accept_importance(log_importance_level accepted_importance);
 
-		// This function need to be call right before the end of the program.
+		// This function need to be called right before the end of the program.
 		// The ofstream map will be correctly deleted.
 		static void	quit(void);
 

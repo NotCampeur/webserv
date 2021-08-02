@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/29 12:36:56 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/02 19:12:22 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "Server.hpp"
 #include "json.hpp"
 #include "Config.hpp"
+#include "SystemException.hpp"
+#include "ServerConfig.hpp"
 
 JsonFileReader
 read_config(char * path)
@@ -29,23 +31,19 @@ read_config(char * path)
 	return result;
 }
 
-int
-main(int ac, char *av[])
+void
+serv_test(char * config_path)
 {
-	if (ac > 2)
-		return EXIT_FAILURE;
-
 	signal(SIGINT, sigint_handler);
-	Logger::accept_importance(all_lvl);
-	Logger(LOG_FILE, basic_type, all_lvl) << "Launching the servers " << 42 << " yeah baby";
 	try
 	{
-		JsonFileReader	json_reader(read_config(av[1]));
+		JsonFileReader	json_reader(read_config(config_path));
 		Config			config(json_reader.objectify());
+		
 		config.print_to_log();
 		try
 		{
-			InitiationDispatcher idis;
+			InitiationDispatcher & idis = InitiationDispatcher::get_instance();
 			try
 			{
 				config.apply(idis);
@@ -56,15 +54,30 @@ main(int ac, char *av[])
 			}
 			idis.handle_events();
 		}
-		catch(const std::exception &e)
+		catch (const std::exception& e)
 		{
 			Logger(LOG_FILE, error_type, error_lvl) << e.what();
+			return ;
 		}
 	}
-	catch(const std::exception & e)
+	catch (const std::exception& e)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << e.what();
+		return ;
 	}
+}
+
+int
+main(int ac, char *av[])
+{
+	if (ac <= 1)
+		return EXIT_FAILURE;
+
+	Logger::accept_importance(all_lvl);
+	Logger(LOG_FILE, basic_type, all_lvl) << "Launching the servers " << 42 << " yeah baby";
+
+	serv_test(av[1]);
+
 	Logger::quit();
 	return EXIT_SUCCESS;
 }

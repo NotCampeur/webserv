@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/29 16:32:42 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/02 19:09:00 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,14 @@ Config::apply(InitiationDispatcher & idis)
 		{
 			case server:
 			{
-				JsonArray	*servers = dynamic_cast<JsonArray *>(it->second);
+				JsonArray	* servers = dynamic_cast<JsonArray *>(it->second);
 				if (servers == NULL)
 					throw;
 				JsonArray::value_type::const_iterator ait(servers->value_begin());
 				JsonArray::value_type::const_iterator aite(servers->value_end());
 				while (ait != aite)
 				{
-					JsonObject	*server = dynamic_cast<JsonObject *>(*ait);
+					JsonObject	* server = dynamic_cast<JsonObject *>(*ait);
 					if (server == NULL)
 						throw;
 					JsonObject::value_type::const_iterator oit(server->value_begin());
@@ -111,8 +111,9 @@ Config::apply(InitiationDispatcher & idis)
 						}
 						oit++;
 					}
-					const Server *serv = new Server(atoi(port_value.c_str()), inet_addr(host_value.c_str()));
-					idis.add_handle(*serv);
+					ServerConfig	*server_config = new ServerConfig(host_value, port_value);
+					const Server	* serv = new Server(server_config, atoi(port_value.c_str()), inet_addr(host_value.c_str()));
+					idis.add_server_handle(*serv);
 					ait++;
 				}
 				break;

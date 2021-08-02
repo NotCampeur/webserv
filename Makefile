@@ -6,7 +6,11 @@
 #    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2021/07/13 19:22:31 by notcampeur       ###   ########.fr        #
+=======
+#    Updated: 2021/07/21 16:14:13 by jmaydew          ###   ########.fr        #
+>>>>>>> 3c7526089eec1454215423d8f6b04ea9194b436a
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,8 +35,6 @@ vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
 LIB = ft
 
 SRC	=	main.cpp \
-		Server.cpp ClientRequest.cpp \
-		\
 		Logger.cpp \
 		\
 		Demultiplexer.cpp HandlerTable.cpp InitiationDispatcher.cpp \
@@ -40,17 +42,32 @@ SRC	=	main.cpp \
 		sigint_handler.cpp \
 		\
 		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
-		Config.cpp
+		Config.cpp \
+		\
+		sigint_handler.cpp \
+		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
+		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
+		Timer.cpp \
+		Server.cpp Client.cpp \
+		ServerConfig.cpp \
+		Request.cpp Response.cpp\
+		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
+		Validator.cpp \
+		Exception.cpp HttpException.cpp ClientException.cpp \
+		SystemException.cpp ServerSystemException.cpp ClientSystemException.cpp \
+		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
+		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
+
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))
 OBJ_DEV = $(addprefix $(OBJ_DIR_DEV)/, $(SRC:%.cpp=%.o))
 
 #Compilation flag
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 DEBUG =
 ifdef DEBUG
-    CPPFLAGS += -fsanitize=address
+    CPPFLAGS += -g3 -fsanitize=address
 endif
 
 IFLAGS =	$(foreach dir, $(INC_DIR), -I$(dir))
@@ -123,9 +140,6 @@ exec_dev:		$(NAME_DEV)
 				@echo "-----\nExecuting $(_YELLOW)$<$(_WHITE) in verbose mode ... \n"
 				@./$(NAME_DEV) 3
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
-
-norme:
-				norminette $(SRC_DIR)
 
 re:				fclean all
 

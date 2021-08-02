@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "webclient.hpp"
-#include "Client.hpp"
+#include "UserAgent.hpp"
 
 void	simultaneous_test(int amount, std::string request_path, int range_start, int range_end)
 {
@@ -19,12 +19,12 @@ void	simultaneous_test(int amount, std::string request_path, int range_start, in
 	std::random_device					rd;
 	std::mt19937						rng(rd());
 	std::uniform_int_distribution<int>	uni(range_start, range_end);
-	std::vector<webclient::Client> clients;
+	std::vector<webclient::UserAgent>	 clients;
 
 	for (int i(0); i < amount; i++)
 	{
 		port = uni(rng);
-		clients.push_back(webclient::Client(port, AF_INET, SOCK_STREAM));
+		clients.push_back(webclient::UserAgent(port, AF_INET, SOCK_STREAM));
 	}
 	for (int i(0); i < amount; i++)
 		clients[i].send_request(request_path);
@@ -42,8 +42,9 @@ void	unit_test(int amount, std::string request_path, int range_start, int range_
 	for (int i(0); i < amount; i++)
 	{
 		port = uni(rng);
-		webclient::Client cl(port, AF_INET, SOCK_STREAM);
+		webclient::UserAgent cl(port, AF_INET, SOCK_STREAM);
 		cl.send_request(request_path);
+		usleep(10000);
 		cl.receive_response();
 	}
 }
