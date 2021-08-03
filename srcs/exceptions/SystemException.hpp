@@ -3,7 +3,7 @@
 
 # include "webserv.hpp"
 
-class SystemException : std::exception
+class SystemException : public std::exception
 {
 	protected:
 		std::string			_msg;

@@ -148,14 +148,12 @@ ClientHandler::parse_request(void)
 	if (_request.complete())
 	{
 		Request::uri_t		* uri = &_request.uri();
-		std::cout << "URI: " << uri->path << std::endl;
 		if (uri->path == "/")
 		{
 			const ServerConfig & server_config = _request.get_server_config();
 			if (server_config.get_index() != "")
 				uri->path = server_config.get_index();
 		}
-		std::cout << "URI: " << uri->path << std::endl;
 		_event_flag = POLLOUT;
 	}
 }
