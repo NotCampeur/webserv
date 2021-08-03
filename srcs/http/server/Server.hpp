@@ -17,7 +17,7 @@ class Server
 
 	public:
 		// With port 0, the OS assigns the port
-		Server(ServerConfig *config, int port, u_int32_t ip = INADDR_ANY, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
+		Server(ServerConfig *config, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
 		~Server(void);
 
 

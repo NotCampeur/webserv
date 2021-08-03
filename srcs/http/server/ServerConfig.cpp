@@ -1,7 +1,8 @@
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(std::string & name, std::string & port, bool autoindex, size_t max_client_body_size) :
-_name(name),
+ServerConfig::ServerConfig(std::string & port, bool autoindex, size_t max_client_body_size) :
+_name("NAME_NOT_SET"),
+_host("127.0.0.1"),
 _port(port),
 _max_client_body_size(max_client_body_size),
 _autoindex(autoindex)
@@ -9,6 +10,7 @@ _autoindex(autoindex)
 
 ServerConfig::ServerConfig(ServerConfig const & src) :
 _name(src._name),
+_host(src._host),
 _port(src._port),
 _error_pages(src._error_pages),
 _max_client_body_size(src._max_client_body_size),
@@ -36,10 +38,34 @@ ServerConfig::get_name(void) const
 	return _name;
 }
 
+void
+ServerConfig::set_name(std::string & name)
+{
+	_name = name;
+}
+
+const std::string &
+ServerConfig::get_host(void) const
+{
+	return _host;
+}
+
+void
+ServerConfig::set_host(std::string & host)
+{
+	_host = host;
+}
+
 const std::string &
 ServerConfig::get_port(void) const
 {
 	return _port;
+}
+
+void
+ServerConfig::set_port(std::string & port)
+{
+	_port = port;
 }
 
 const std::string *
@@ -62,6 +88,12 @@ size_t
 ServerConfig::get_max_client_body_size(void) const
 {
 	return _max_client_body_size;
+}
+
+void
+ServerConfig::set_max_client_body_size(size_t max_client_body_size)
+{
+	_max_client_body_size = max_client_body_size;
 }
 
 const std::string &

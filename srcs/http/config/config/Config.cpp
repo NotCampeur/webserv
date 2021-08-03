@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/02 19:09:00 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/03 15:43:48 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,20 @@ Config::get_global_key(const std::string & key)
 Config::server_config
 Config::get_server_key(const std::string & key)
 {
-	if (key == "host")
+	if (key == "name")
+		return name;
+	else if (key == "host")
 		return host;
 	else if (key == "port")
 		return port;
+	else if (key == "max_client_body_size")
+		return max_client_body_size;
+	else if (key == "auto_index")
+		return auto_index;
+	else if (key == "default_file_dir")
+		return default_file_dir;
+	else if (key == "error_page_path")
+		return error_page_path;
 	else if (key == "route")
 		return route;
 	return server_unknown;
@@ -77,31 +87,107 @@ Config::apply(InitiationDispatcher & idis)
 						throw;
 					JsonObject::value_type::const_iterator oit(server->value_begin());
 					JsonObject::value_type::const_iterator oite(server->value_end());
-					std::string	host_value("127.0.0.1");
-					std::string	port_value("8080");
+					std::string		port_value("8080");
+					ServerConfig	* server_config = new ServerConfig(port_value);
 					
 					while (oit != oite)
 					{
 						switch (get_server_key(oit->first))
 						{
-							case host:
+							case name:
 							{
-								JsonString	*value = dynamic_cast<JsonString *>(oit->second);
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
 									throw;
-								host_value = value->value();
+								std::string	name_value = value->value();
+								server_config->set_name(name_value);
+								break;
+							}
+							case host:
+							{
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
+								if (value == NULL)
+									throw;
+								std::string	host_value = value->value();
+								server_config->set_host(host_value);
 								break;
 							}
 							case port:
 							{
-								JsonString	*value = dynamic_cast<JsonString *>(oit->second);
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
 									throw;
 								port_value = value->value();
+								server_config->set_port(port_value);
+								break;
+							}
+							case max_client_body_size:
+							{
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
+								if (value == NULL)
+									throw;
+								std::string	s_max_client_body_size_value = value->value();
+								size_t			max_client_body_size_value(0);
+								std::istringstream(s_max_client_body_size_value) >> max_client_body_size_value;
+								server_config->set_max_client_body_size(max_client_body_size_value);
+								break;
+							}
+							case auto_index:
+							{
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
+								if (value == NULL)
+									throw;
+								if (value->value().compare("true") == 0)
+									server_config->set_autoindex(true);
+								else
+									server_config->set_autoindex(false);
+								break;
+							}
+							case default_file_dir:
+							{
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
+								if (value == NULL)
+									throw;
+								std::string	default_file_dir_value = value->value();
+								server_config->set_default_file_dir(default_file_dir_value);
+								break;
+							}
+							case error_page_path:
+							{
+								JsonArray	* value = dynamic_cast<JsonArray *>(oit->second);
+								if (value == NULL)
+									throw;
+								JsonObject	* error_page = dynamic_cast<JsonObject *>(*(value->value_begin()));
+								if (error_page == NULL)
+									throw;
+								JsonObject::value_type::const_iterator error_page_oit(error_page->value_begin());
+								JsonObject::value_type::const_iterator error_page_oite(error_page->value_end());
+								
+								while (error_page_oit != error_page_oite)
+								{
+									JsonString	* error_page_path_value = dynamic_cast<JsonString *>(error_page_oit->second);
+									if (value == NULL)
+										throw;
+									int			page_number(0);
+									std::istringstream(error_page_oit->first) >> page_number;
+									std::string	error_page_path = error_page_path_value->value();
+									
+									server_config->add_error_page_path(page_number, error_page_path);
+									error_page_oit++;
+								}
 								break;
 							}
 							case route:
 							{
+								// JsonArray	* routes = dynamic_cast<JsonArray *>(oit->second);
+								// if (routes == NULL)
+								// 	throw;
+								// JsonArray::value_type::const_iterator routei(routes->value_begin());
+								// JsonArray::value_type::const_iterator routeie(routes->value_end());
+								// while (routei != routeie)
+								// {
+								// 	JsonObject	* route = dynamic_cast<JsonObject *>(routei->second);
+								// }
 								break;
 							}
 							case server_unknown:
@@ -111,8 +197,7 @@ Config::apply(InitiationDispatcher & idis)
 						}
 						oit++;
 					}
-					ServerConfig	*server_config = new ServerConfig(host_value, port_value);
-					const Server	* serv = new Server(server_config, atoi(port_value.c_str()), inet_addr(host_value.c_str()));
+					const Server	* serv = new Server(server_config);
 					idis.add_server_handle(*serv);
 					ait++;
 				}

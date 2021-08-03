@@ -8,8 +8,9 @@
 class ServerConfig
 {
 	private:
-		const std::string			_name;
-		const std::string			_port;
+		std::string					_name;
+		std::string					_host;
+		std::string					_port;
 		std::map<int, std::string>	_error_pages;
 		size_t						_max_client_body_size;
 		std::string					_root_dir;
@@ -17,7 +18,7 @@ class ServerConfig
 		std::string					_default_file_dir;
 
 	public:
-		ServerConfig(std::string & name, std::string & port, bool autoindex = false, size_t max_client_body_size = MAX_CLIENT_BODY_SIZE);
+		ServerConfig(std::string & port, bool autoindex = false, size_t max_client_body_size = MAX_CLIENT_BODY_SIZE);
     	ServerConfig(ServerConfig const & src);
     	~ServerConfig(void);
 		
@@ -29,12 +30,19 @@ class ServerConfig
 	// Default file if request is a directory
 
 		const std::string & get_name(void) const;
+		void				set_name(std::string & name);
+
+		const std::string & get_host(void) const;
+		void				set_host(std::string & host);
+
 		const std::string & get_port(void) const;
+		void				set_port(std::string & port);
 
 		const std::string *	get_error_page_path(int error) const;
 		void				add_error_page_path(int error, std::string & path);
 		
 		size_t				get_max_client_body_size(void) const;
+		void				set_max_client_body_size(size_t max_client_body_size);
 
 		const std::string &	get_root_dir(void) const;
 		void				set_root_dir(std::string & root);

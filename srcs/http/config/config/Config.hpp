@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/29 12:39:12 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/03 14:47:47 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,13 @@ class Config
 		};
 		enum server_config
 		{
+			name,
 			host,
 			port,
+			max_client_body_size,
+			auto_index,
+			default_file_dir,
+			error_page_path,
 			route,
 			server_unknown
 		};
