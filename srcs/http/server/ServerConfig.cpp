@@ -4,8 +4,12 @@ ServerConfig::ServerConfig(std::string & port, bool autoindex, size_t max_client
 _name("NAME_NOT_SET"),
 _host("127.0.0.1"),
 _port(port),
+_error_pages(),
 _max_client_body_size(max_client_body_size),
-_autoindex(autoindex)
+_root_dir(""),
+_index(),
+_autoindex(autoindex),
+_default_file_dir()
 {}
 
 ServerConfig::ServerConfig(ServerConfig const & src) :
@@ -106,6 +110,18 @@ void
 ServerConfig::set_root_dir(std::string & root)
 {
 	_root_dir = root;
+}
+
+const std::string &
+ServerConfig::get_index(void) const
+{
+	return _index;
+}
+
+void			
+ServerConfig::set_index(std::string & root)
+{
+	_index = root;
 }
 
 bool

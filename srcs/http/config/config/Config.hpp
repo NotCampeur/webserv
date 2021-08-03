@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/03 14:47:47 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/03 17:55:47 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class Config
 			port,
 			max_client_body_size,
 			auto_index,
+			root,
+			index,
 			default_file_dir,
 			error_page_path,
 			route,

@@ -14,6 +14,7 @@ class ServerConfig
 		std::map<int, std::string>	_error_pages;
 		size_t						_max_client_body_size;
 		std::string					_root_dir;
+		std::string					_index;
 		bool						_autoindex;
 		std::string					_default_file_dir;
 
@@ -46,6 +47,9 @@ class ServerConfig
 
 		const std::string &	get_root_dir(void) const;
 		void				set_root_dir(std::string & root);
+	
+		const std::string &	get_index(void) const;
+		void				set_index(std::string & root);
 	
 		bool				get_autoindex(void) const;
 		void				set_autoindex(bool autoindex);

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/03 15:43:48 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/03 18:05:23 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ Config::get_server_key(const std::string & key)
 		return max_client_body_size;
 	else if (key == "auto_index")
 		return auto_index;
+	else if (key == "root")
+		return root;
+	else if (key == "index")
+		return index;
 	else if (key == "default_file_dir")
 		return default_file_dir;
 	else if (key == "error_page_path")
@@ -141,6 +145,24 @@ Config::apply(InitiationDispatcher & idis)
 									server_config->set_autoindex(true);
 								else
 									server_config->set_autoindex(false);
+								break;
+							}
+							case root:
+							{
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
+								if (value == NULL)
+									throw;
+								std::string	root_value = value->value();
+								server_config->set_root_dir(root_value);
+								break;
+							}
+							case index:
+							{
+								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
+								if (value == NULL)
+									throw;
+								std::string	index_value = value->value();
+								server_config->set_index(index_value);
 								break;
 							}
 							case default_file_dir:
