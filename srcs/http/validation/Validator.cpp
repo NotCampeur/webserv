@@ -93,6 +93,11 @@ Validator::verify_path(Request & req, Response & resp)
 					throw (HttpException(StatusCodes::NOT_FOUND_404));
 				break ;
 			}
+			case ENOTDIR :
+			{
+				throw (HttpException(StatusCodes::NOT_FOUND_404));
+				break ;
+			}
 			default :
 			{
 				std::cerr << "Stat error val: " << errno << '\n';
