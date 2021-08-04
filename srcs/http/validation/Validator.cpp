@@ -79,7 +79,7 @@ Validator::verify_path(Request & req, Response & resp)
 
 	if (ret < 0)
 	{
-			switch (errno)
+		switch (errno)
 		{
 			case EACCES :
 			{
@@ -93,15 +93,20 @@ Validator::verify_path(Request & req, Response & resp)
 					throw (HttpException(StatusCodes::NOT_FOUND_404));
 				break ;
 			}
-			case ENOTDIR :
-			{
-				throw (HttpException(StatusCodes::NOT_FOUND_404));
-				break ;
-			}
-			default :
+			case EIO :
 			{
 				std::cerr << "Stat error val: " << errno << '\n';
 				throw (SystemException("Error on stat call"));
+			}
+			case EOVERFLOW :
+			{
+				std::cerr << "Stat error val: " << errno << '\n';
+				throw (SystemException("Error on stat call"));
+			}
+			default :
+			{
+				throw (HttpException(StatusCodes::NOT_FOUND_404));
+				break ;
 			}
 		}
 	}
