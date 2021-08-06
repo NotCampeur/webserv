@@ -23,7 +23,7 @@ void
 HttpErrorManager::handle(StatusCodes::status_index_t error)
 {
 	_resp.set_http_code(error);
-	const std::string * path = _config.get_error_page_path(StatusCodes::get_code_value(error));
+	const std::string * path = _config.error_page_path(StatusCodes::get_code_value(error));
 	
 	if (path != NULL)
 	{

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/05 17:48:47 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/06 15:25:59 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ class Config
 		};
 		enum route_config
 		{
-			path,
-			accepted_method,
-			redirection,
-			root,
-			auto_index,
-			default_file_dir,
-			cgi,
-			upload_path,
+			route_path,
+			route_accepted_method,
+			route_redirection,
+			route_root,
+			route_auto_index,
+			route_default_file_dir,
+			route_cgi,
+			route_upload_path,
 			route_unknown
 		};
 		global_config	get_global_key(const std::string & key);

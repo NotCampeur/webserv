@@ -6,10 +6,11 @@ _host("127.0.0.1"),
 _port(port),
 _error_pages(),
 _max_client_body_size(max_client_body_size),
-_root_dir(""),
+_root_dir("/"),
 _index(),
-_autoindex(autoindex),
-_default_file_dir()
+_is_autoindex_on(autoindex),
+_default_file_dir(),
+_routes()
 {}
 
 ServerConfig::ServerConfig(ServerConfig const & src) :
@@ -19,11 +20,21 @@ _port(src._port),
 _error_pages(src._error_pages),
 _max_client_body_size(src._max_client_body_size),
 _root_dir(src._root_dir),
-_autoindex(src._autoindex),
-_default_file_dir(src._default_file_dir)
+_is_autoindex_on(src._is_autoindex_on),
+_default_file_dir(src._default_file_dir),
+_routes(src._routes)
 {}
 
-ServerConfig::~ServerConfig(void) {}
+ServerConfig::~ServerConfig(void)
+{
+	size_t i(0);
+
+	i = _routes.size();
+	while (i--)
+	{
+		delete &_routes[i];
+	}
+}
 
 // ServerConfig &
 // ServerConfig::operator=(ServerConfig const & src)
@@ -37,7 +48,7 @@ ServerConfig::~ServerConfig(void) {}
 // }
 
 const std::string &
-ServerConfig::get_name(void) const
+ServerConfig::name(void) const
 {
 	return _name;
 }
@@ -49,7 +60,7 @@ ServerConfig::set_name(std::string & name)
 }
 
 const std::string &
-ServerConfig::get_host(void) const
+ServerConfig::host(void) const
 {
 	return _host;
 }
@@ -61,7 +72,7 @@ ServerConfig::set_host(std::string & host)
 }
 
 const std::string &
-ServerConfig::get_port(void) const
+ServerConfig::port(void) const
 {
 	return _port;
 }
@@ -73,7 +84,7 @@ ServerConfig::set_port(std::string & port)
 }
 
 const std::string *
-ServerConfig::get_error_page_path(int error) const
+ServerConfig::error_page_path(int error) const
 {
 
 	if (_error_pages.find(error) == _error_pages.end())
@@ -89,7 +100,7 @@ ServerConfig::add_error_page_path(int error, std::string & path)
 }
 
 size_t			
-ServerConfig::get_max_client_body_size(void) const
+ServerConfig::max_client_body_size(void) const
 {
 	return _max_client_body_size;
 }
@@ -101,7 +112,7 @@ ServerConfig::set_max_client_body_size(size_t max_client_body_size)
 }
 
 const std::string &
-ServerConfig::get_root_dir(void) const
+ServerConfig::root_dir(void) const
 {
 	return _root_dir;
 }
@@ -113,7 +124,7 @@ ServerConfig::set_root_dir(std::string & root)
 }
 
 const std::string &
-ServerConfig::get_index(void) const
+ServerConfig::index(void) const
 {
 	return _index;
 }
@@ -125,19 +136,19 @@ ServerConfig::set_index(std::string & root)
 }
 
 bool
-ServerConfig::get_autoindex(void) const
+ServerConfig::is_autoindex_on(void) const
 {
-	return _autoindex;
+	return _is_autoindex_on;
 }
 
 void
 ServerConfig::set_autoindex(bool autoindex)
 {
-	_autoindex = autoindex;
+	_is_autoindex_on = autoindex;
 }
 
 const std::string *
-ServerConfig::get_default_file_dir(void) const
+ServerConfig::default_file_dir(void) const
 {
 	if (_default_file_dir.empty())
 		return NULL;
@@ -150,3 +161,14 @@ ServerConfig::set_default_file_dir(std::string & path)
 	_default_file_dir = path;
 }
 
+const std::vector<RouteConfig *> &
+ServerConfig::routes(void) const
+{
+	return _routes;
+}
+
+void
+ServerConfig::add_route(RouteConfig & route)
+{
+	_routes.push_back(&route);
+}

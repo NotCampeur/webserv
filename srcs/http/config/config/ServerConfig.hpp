@@ -2,8 +2,10 @@
 # define SERVERCONFIG_H
 
 # include <string>
+# include <vector>
 # include <map>
 # include "webserv_param.hpp"
+# include "RouteConfig.hpp"
 
 class ServerConfig
 {
@@ -15,8 +17,9 @@ class ServerConfig
 		size_t						_max_client_body_size;
 		std::string					_root_dir;
 		std::string					_index;
-		bool						_autoindex;
+		bool						_is_autoindex_on;
 		std::string					_default_file_dir;
+		std::vector<RouteConfig *>	_routes;
 
 	public:
 		ServerConfig(std::string & port, bool autoindex = false, size_t max_client_body_size = MAX_CLIENT_BODY_SIZE);
@@ -30,32 +33,35 @@ class ServerConfig
 	// Autoindex
 	// Default file if request is a directory
 
-		const std::string & get_name(void) const;
+		const std::string & name(void) const;
 		void				set_name(std::string & name);
 
-		const std::string & get_host(void) const;
+		const std::string & host(void) const;
 		void				set_host(std::string & host);
 
-		const std::string & get_port(void) const;
+		const std::string & port(void) const;
 		void				set_port(std::string & port);
 
-		const std::string *	get_error_page_path(int error) const;
+		const std::string *	error_page_path(int error) const;
 		void				add_error_page_path(int error, std::string & path);
 		
-		size_t				get_max_client_body_size(void) const;
+		size_t				max_client_body_size(void) const;
 		void				set_max_client_body_size(size_t max_client_body_size);
 
-		const std::string &	get_root_dir(void) const;
+		const std::string &	root_dir(void) const;
 		void				set_root_dir(std::string & root);
 	
-		const std::string &	get_index(void) const;
+		const std::string &	index(void) const;
 		void				set_index(std::string & root);
 	
-		bool				get_autoindex(void) const;
+		bool				is_autoindex_on(void) const;
 		void				set_autoindex(bool autoindex);
 	
-		const std::string * get_default_file_dir(void) const;
+		const std::string * default_file_dir(void) const;
 		void				set_default_file_dir(std::string & path);
+
+		const std::vector<RouteConfig *> & routes(void) const;
+		void				add_route(RouteConfig & route);
 
 	private:
 		ServerConfig &  operator=(ServerConfig const & src);

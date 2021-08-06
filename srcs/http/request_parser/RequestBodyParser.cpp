@@ -38,7 +38,7 @@ RequestBodyParser::parse_char(char c)
 			{
 				_state = CONTENT_LEN;
 				_size = std::strtoul(_request.headers().find("content-length")->second.c_str(), NULL, 10);
-				if (_size > _request.get_server_config().get_max_client_body_size() || _size == ULONG_MAX)
+				if (_size > _request.get_server_config().max_client_body_size() || _size == ULONG_MAX)
 				{
 					throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 				}
@@ -69,7 +69,7 @@ RequestBodyParser::parse_char(char c)
 				_size = std::strtoul(_hex.c_str(), NULL, 16);
 				std::cerr << "Chunk size: " << _size << "Hex read: " << _hex << '\n';
 				_hex.clear();
-				if ((_size + _request.bodysize()) > _request.get_server_config().get_max_client_body_size() || _size == ULONG_MAX)
+				if ((_size + _request.bodysize()) > _request.get_server_config().max_client_body_size() || _size == ULONG_MAX)
 				{
 					throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 				}

@@ -33,7 +33,7 @@ void
 Validator::set_full_path(Request & req, Response & resp)
 {
 	std::string path = req.uri().path;
-	std::string root = req.get_server_config().get_root_dir();
+	std::string root = req.get_server_config().root_dir();
 
 	if (root.empty())
 	{

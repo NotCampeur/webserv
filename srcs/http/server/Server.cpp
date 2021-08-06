@@ -6,7 +6,7 @@ _config(*config)
 	create_socket(com_domain, sock_type);
 	make_nonblocking();
 	set_sock_opt();
-	init_addr_inputs(com_domain, atoi(_config.get_port().c_str()), inet_addr(_config.get_host().c_str()));
+	init_addr_inputs(com_domain, atoi(_config.port().c_str()), inet_addr(_config.host().c_str()));
 	name_serv_socket();
 	set_listener();
 

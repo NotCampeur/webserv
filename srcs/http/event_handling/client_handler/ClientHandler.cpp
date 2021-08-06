@@ -151,8 +151,8 @@ ClientHandler::parse_request(void)
 		if (uri->path == "/")
 		{
 			const ServerConfig & server_config = _request.get_server_config();
-			if (server_config.get_index() != "")
-				uri->path = server_config.get_index();
+			if (server_config.index() != "")
+				uri->path = server_config.index();
 		}
 		_event_flag = POLLOUT;
 	}

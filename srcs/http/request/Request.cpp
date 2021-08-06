@@ -5,7 +5,7 @@ _complete(false),
 _method(NULL),
 _server_config(config)
 {
-	_body.reserve(_server_config.get_max_client_body_size());
+	_body.reserve(_server_config.max_client_body_size());
 }
 
 Request::Request(Request const & src) :
@@ -59,7 +59,7 @@ Request::complete(void)
 void
 Request::add_char_to_body(char c)
 {
-	if (_body.size() == _server_config.get_max_client_body_size())
+	if (_body.size() == _server_config.max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 	_body += c;
 }

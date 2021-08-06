@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/03 18:05:23 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/06 19:09:37 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,21 @@ Config::route_config
 Config::get_route_key(const std::string & key)
 {
 	if (key == "path")
-		return path;
+		return route_path;
+	else if (key == "accepted_method")
+		return route_accepted_method;
+	else if (key == "redirection")
+		return route_redirection;
+	else if (key == "root")
+		return route_root;
+	else if (key == "auto_index")
+		return route_auto_index;
+	else if (key == "default_file_dir")
+		return route_default_file_dir;
+	else if (key == "cgi")
+		return route_cgi;
+	else if (key == "upload_path")
+		return route_upload_path;
 	return route_unknown;
 }
 
