@@ -9,6 +9,7 @@ class ServerConfig;
 
 typedef enum RouteMethod
 {
+	NOTHING = 0x000,
 	GET = 0x001,
 	POST = 0x002,
 	DELETE = 0x004,
@@ -27,32 +28,34 @@ class RouteConfig
 		//For the moment the cgi will be stored as a string.
 		std::string				_cgi;
 		std::string				_upload_path;
+								RouteConfig();
 
 	public:
 		//Constructors & Destructor
-					RouteConfig();
+					RouteConfig(ServerConfig & config);
 					RouteConfig(std::string path, ServerConfig & config);
 					RouteConfig(const RouteConfig & to_copy);
 					~RouteConfig();
 
 		//Getters
-		std::string path() const;
-		RouteMethod accepted_method() const;
-		std::string redirection() const;
-		std::string root() const;
+		std::string	path() const;
+		RouteMethod	accepted_method() const;
+		std::string	redirection() const;
+		std::string	root() const;
 		bool		is_autoindex_on() const;
-		std::string default_file_dir() const;
-		std::string cgi() const;
-		std::string upload_path() const;
+		std::string	default_file_dir() const;
+		std::string	cgi() const;
+		std::string	upload_path() const;
 
 		//Setters
-		void set_autoindex(bool value);
-		void set_default_file_dir(std::string value);
-		void set_cgi(std::string value);
-		void set_upload_path(std::string value);
-		void set_redirection(std::string value);
-		void set_root(std::string value);
-		void set_accepted_method(RouteMethod value);
+		void	set_path(std::string path);
+		void	set_autoindex(bool value);
+		void	set_default_file_dir(std::string value);
+		void	set_cgi(std::string value);
+		void	set_upload_path(std::string value);
+		void	set_redirection(std::string value);
+		void	set_root(std::string value);
+		void	set_accepted_method(RouteMethod value);
 
 		//Operators
 		RouteConfig & operator=(const RouteConfig & to_assign);

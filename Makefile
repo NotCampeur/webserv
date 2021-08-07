@@ -6,7 +6,7 @@
 #    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/08/02 19:25:13 by notcampeur       ###   ########.fr        #
+#    Updated: 2021/08/07 18:15:02 by notcampeur       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,6 @@ SRC	=	main.cpp \
 		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
 		Timer.cpp \
 		Server.cpp Client.cpp \
-		ServerConfig.cpp \
 		Request.cpp Response.cpp\
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
 		Validator.cpp \
@@ -48,7 +47,7 @@ SRC	=	main.cpp \
 		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
 		\
 		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
-		Config.cpp \
+		ServerConfig.cpp RouteConfig.cpp Config.cpp \
 
 
 

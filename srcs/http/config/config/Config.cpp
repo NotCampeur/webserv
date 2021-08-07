@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/06 19:09:37 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/07 18:25:40 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ Config::get_route_key(const std::string & key)
 	if (key == "path")
 		return route_path;
 	else if (key == "accepted_method")
-		return route_accepted_method;
+		return route_method;
 	else if (key == "redirection")
 		return route_redirection;
 	else if (key == "root")
@@ -155,7 +155,7 @@ Config::apply(InitiationDispatcher & idis)
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
 									throw;
-								if (value->value().compare("true") == 0)
+								if (value->value() == "true")
 									server_config->set_autoindex(true);
 								else
 									server_config->set_autoindex(false);
@@ -215,15 +215,109 @@ Config::apply(InitiationDispatcher & idis)
 							}
 							case route:
 							{
-								// JsonArray	* routes = dynamic_cast<JsonArray *>(oit->second);
-								// if (routes == NULL)
-								// 	throw;
-								// JsonArray::value_type::const_iterator routei(routes->value_begin());
-								// JsonArray::value_type::const_iterator routeie(routes->value_end());
-								// while (routei != routeie)
-								// {
-								// 	JsonObject	* route = dynamic_cast<JsonObject *>(routei->second);
-								// }
+								JsonArray	* routes = dynamic_cast<JsonArray *>(oit->second);
+								if (routes == NULL)
+									throw;
+								JsonArray::value_type::const_iterator routes_it(routes->value_begin());
+								JsonArray::value_type::const_iterator routes_ite(routes->value_end());
+								while (routes_it != routes_ite)
+								{
+									JsonObject	* route = dynamic_cast<JsonObject *>(*routes_it);
+									if (route == NULL)
+										throw;
+									JsonObject::value_type::const_iterator route_it(route->value_begin());
+									JsonObject::value_type::const_iterator route_ite(route->value_end());
+									RouteConfig	* route_config = new RouteConfig(*server_config);
+									while (route_it != route_ite)
+									{
+										switch (get_route_key(route_it->first))
+										{
+											case route_path:
+											{
+												JsonString	* path = dynamic_cast<JsonString *>(route_it->second);
+												if (path == NULL)
+													throw;
+												route_config->set_path(path->value());
+												break;
+											}
+											case route_method:
+											{
+												JsonString	* method = dynamic_cast<JsonString *>(route_it->second);
+												RouteMethod	route_method(NOTHING);
+												if (method == NULL)
+													throw;
+												if (method->value().find("GET") != std::string::npos)
+													route_method = GET;
+												if (method->value().find("POST") != std::string::npos)
+													route_method = static_cast<RouteMethod>(route_method | POST);
+												if (method->value().find("DELETE") != std::string::npos)
+													route_method = static_cast<RouteMethod>(route_method | DELETE);
+												if (method->value().find("ALL") != std::string::npos)
+													route_method = ALL;
+												route_config->set_accepted_method(route_method);
+												break;
+											}
+											case route_redirection:
+											{
+												JsonString	* redirection = dynamic_cast<JsonString *>(route_it->second);
+												if (redirection == NULL)
+													throw;
+												route_config->set_redirection(redirection->value());
+												break;
+											}
+											case route_root:
+											{
+												JsonString	* root = dynamic_cast<JsonString *>(route_it->second);
+												if (root == NULL)
+													throw;
+												route_config->set_root(root->value());
+												break;
+											}
+											case route_auto_index:
+											{
+												JsonString	* auto_index = dynamic_cast<JsonString *>(route_it->second);
+												if (auto_index == NULL)
+													throw;
+												if (auto_index->value() == "true")
+													route_config->set_autoindex(true);
+												else
+													route_config->set_autoindex(false);
+												break;
+											}
+											case route_default_file_dir:
+											{
+												JsonString	* default_file_dir = dynamic_cast<JsonString *>(route_it->second);
+												if (default_file_dir == NULL)
+													throw;
+												route_config->set_default_file_dir(default_file_dir->value());
+												break;
+											}
+											case route_cgi:
+											{
+												JsonString	* cgi = dynamic_cast<JsonString *>(route_it->second);
+												if (cgi == NULL)
+													throw;
+												route_config->set_cgi(cgi->value());
+												break;
+											}
+											case route_upload_path:
+											{
+												JsonString	* upload_path = dynamic_cast<JsonString *>(route_it->second);
+												if (upload_path == NULL)
+													throw;
+												route_config->set_upload_path(upload_path->value());
+												break;
+											}
+											case route_unknown:
+											{
+												throw;
+											}
+										}
+										route_it++;
+									}
+									server_config->add_route(route_config);
+									routes_it++;
+								}
 								break;
 							}
 							case server_unknown:

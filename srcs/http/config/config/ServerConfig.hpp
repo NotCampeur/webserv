@@ -7,6 +7,8 @@
 # include "webserv_param.hpp"
 # include "RouteConfig.hpp"
 
+class RouteConfig;
+
 class ServerConfig
 {
 	private:
@@ -61,7 +63,7 @@ class ServerConfig
 		void				set_default_file_dir(std::string & path);
 
 		const std::vector<RouteConfig *> & routes(void) const;
-		void				add_route(RouteConfig & route);
+		void				add_route(RouteConfig * route);
 
 	private:
 		ServerConfig &  operator=(ServerConfig const & src);

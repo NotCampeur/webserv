@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/06 15:25:59 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/07 18:03:28 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class Config
 		enum route_config
 		{
 			route_path,
-			route_accepted_method,
+			route_method,
 			route_redirection,
 			route_root,
 			route_auto_index,

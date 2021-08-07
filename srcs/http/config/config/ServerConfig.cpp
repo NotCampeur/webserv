@@ -27,13 +27,11 @@ _routes(src._routes)
 
 ServerConfig::~ServerConfig(void)
 {
-	size_t i(0);
+	size_t size(0);
 
-	i = _routes.size();
-	while (i--)
-	{
-		delete &_routes[i];
-	}
+	size = _routes.size();
+	for (size_t i(0); i < size; i++)
+		delete _routes[i];
 }
 
 // ServerConfig &
@@ -168,7 +166,7 @@ ServerConfig::routes(void) const
 }
 
 void
-ServerConfig::add_route(RouteConfig & route)
+ServerConfig::add_route(RouteConfig * route)
 {
-	_routes.push_back(&route);
+	_routes.push_back(route);
 }

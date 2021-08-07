@@ -12,8 +12,20 @@ RouteConfig::RouteConfig() :
 	_upload_path()
 {}
 
+RouteConfig::RouteConfig(ServerConfig & config)
+	: _path("NOT_SET"), _accepted_method(ALL)
+{
+	_redirection = "NOT_SET";
+	_root = const_cast<std::string &>(config.root_dir());
+	_is_autoindex_on = config.is_autoindex_on();
+	std::string * const_tmp = const_cast<std::string *>(config.default_file_dir());
+	_default_file_dir = *const_tmp;
+	_cgi = "NOT_SET";
+	_upload_path = "NOT_SET";
+}
+
 RouteConfig::RouteConfig(std::string path, ServerConfig & config)
-	: _path(path), _accepted_method(RouteMethod::ALL)
+	: _path(path), _accepted_method(ALL)
 {
 	_redirection = "NOT_SET";
 	_root = const_cast<std::string &>(config.root_dir());
@@ -83,6 +95,12 @@ RouteConfig::upload_path() const
 }
 
 //Setters
+void
+RouteConfig::set_path(std::string path)
+{
+	_path = path;
+}
+
 void
 RouteConfig::set_autoindex(bool value)
 {
