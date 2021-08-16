@@ -16,6 +16,7 @@
 #include "Server.hpp"
 #include "SystemException.hpp"
 #include "ServerConfig.hpp"
+#include "Environment.hpp"
 
 void	serv_test(long server_amount)
 {
@@ -51,13 +52,16 @@ void	serv_test(long server_amount)
 	}
 }
 
-int	main(int ac, char *av[])
+int	main(int ac, char *av[], char *envp[])
 {
 	if (ac <= 1)
 		return EXIT_FAILURE;
 
 	Logger::accept_importance(all_lvl);
 	Logger(LOG_FILE, basic_type, all_lvl) << "Launching the servers " << 42 << " yeah baby";
+
+	Environment::set_program_env(envp);
+	Environment::print_env();
 
 	serv_test(std::atol(av[1]));
 
