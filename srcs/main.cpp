@@ -63,6 +63,13 @@ int	main(int ac, char *av[], char *envp[])
 	Environment::set_program_env(envp);
 	Environment::print_env();
 
+	Environment e1;
+	e1.add_cgi_env_var("HIHI", "hihi");
+	e1.add_cgi_env_var("HOHO", "hoho");
+	char **env = e1.get_cgi_env();
+	for (size_t i = 0; env[i]; i++)
+		std::cout << env[i] << '\n';
+
 	serv_test(std::atol(av[1]));
 
 	Logger::quit();
