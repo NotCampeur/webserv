@@ -33,6 +33,8 @@ class Validator : public Singleton<Validator>
 		bool	is_dir(mode_t mode);
 		bool	is_file(mode_t mode);
 		void	parse_hexa(std::string & path);
+		void	resolve_relative_path(std::string & path);
+		void	remove_last_path_elem(std::string & path);
 };
 
 #endif

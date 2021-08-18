@@ -21,6 +21,10 @@ RequestUriParser::reset(void)
 bool
 RequestUriParser::parse_char(char c)
 {
+	if (std::iscntrl(c))
+	{
+		throw HttpException(StatusCodes::BAD_REQUEST_400);
+	}
 	switch (_state)
 	{
 		case PATH :

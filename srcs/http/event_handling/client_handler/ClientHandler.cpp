@@ -128,7 +128,7 @@ ClientHandler::handle_request(void)
 		{
 			handle_http_error(e.get_code_index());
 		}
-		else
+		else if (StatusCodes::get_code_value(e.get_code_index()) >= 300)
 		{
 			std::cerr << "Redir caught\n";
 			_response.http_redirection(e.get_code_index(), e.get_location());

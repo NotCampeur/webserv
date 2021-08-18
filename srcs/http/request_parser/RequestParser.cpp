@@ -47,18 +47,18 @@ RequestParser::parse(void)
 			_request.complete() = true;
 			_buffer_leftovers = _buffer.substr(i + 1);
 
-			// std::cerr << "\n### PARSED REQUEST ###\n"
-			// << "Method: " << _http_method << '\n'
-			// << "Uri (path): " << _request.uri().path << '\n'
-			// << "Uri (query): " << _request.uri().query << '\n'
-			// << "Uri (fragment): " << _request.uri().fragment << '\n'
-			// << "Http version: " << _http_version << '\n';
+			std::cerr << "\n### PARSED REQUEST ###\n"
+			<< "Method: " << _http_method << '\n'
+			<< "Uri (path): " << _request.uri().path << '\n'
+			<< "Uri (query): " << _request.uri().query << '\n'
+			<< "Uri (fragment): " << _request.uri().fragment << '\n'
+			<< "Http version: " << _http_version << '\n';
 
-			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
-			// {
-			// 	std::cerr << "Header name: " << (*it).first << '\t'
-			// 	<< "Header value: " << (*it).second << '\n';
-			// }
+			for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
+			{
+				std::cerr << "Header name: " << (*it).first << '\t'
+				<< "Header value: " << (*it).second << '\n';
+			}
 			// if (_request.method().has_body())
 			// {
 			// 	std::cerr << _request.get_body();
