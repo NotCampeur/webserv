@@ -74,6 +74,13 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
+	/* ADDED HERE FOR NOW BUT COULD BE MOVED TO A MORE SUITABLE ROUTINE */
+	if (resp.get_path().substr(resp.get_path().find(".")) == ".py")
+	{
+		resp.need_cgi() = true;
+	}
+	/* .PY FOR TESTING PURPOSES, WILL BE IN CONFIG FILE */
+
 	struct stat buf; 
 	int ret = stat(resp.get_path().c_str(), &buf);
 

@@ -24,6 +24,7 @@ class Response
 		std::string						_file_path;
 		HttpErrorManager				_error_manager;
 		bool							_path_is_dir;
+		bool							_need_cgi;
 
 	public:
 
@@ -38,6 +39,7 @@ class Response
 		bool					metadata_sent(void) const;
 		bool &					ready_to_send(void);
 		bool &					path_is_dir(void);
+		bool &					need_cgi(void);
 		void					set_http_code(StatusCodes::status_index_t i);
 		void					set_payload(const std::string & str);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it

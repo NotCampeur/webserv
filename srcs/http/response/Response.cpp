@@ -9,7 +9,8 @@ _complete(false),
 _handler_fd(-1),
 _server_config(config),
 _error_manager(_server_config, *this),
-_path_is_dir(false)
+_path_is_dir(false),
+_need_cgi(false)
 {}
 
 Response::Response(Response const & src) :
@@ -22,7 +23,8 @@ _complete(src._complete),
 _handler_fd(src._handler_fd),
 _server_config(src._server_config),
 _error_manager(src._error_manager),
-_path_is_dir(src._path_is_dir)
+_path_is_dir(src._path_is_dir),
+_need_cgi(src._need_cgi)
 {}
 
 Response::~Response(void)
@@ -44,6 +46,7 @@ Response::operator=(Response const & src)
 	_complete = src._complete;
 	_handler_fd = src._handler_fd;
 	_path_is_dir = src._path_is_dir;
+	_need_cgi = src._need_cgi;
     return (*this);
 }
 
@@ -148,6 +151,7 @@ Response::reset(void)
 	_ready_to_send = false;
 	_complete = false;
 	_path_is_dir = false;
+	_need_cgi = false;
 	if (_handler_fd > 0)
 	{
 		InitiationDispatcher::get_instance().remove_handle(_handler_fd);
