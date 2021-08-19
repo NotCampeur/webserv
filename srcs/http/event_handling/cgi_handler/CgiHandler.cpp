@@ -3,7 +3,7 @@
 #include "Utils.hpp"
 #include "Mime.hpp"
 
-CgiHandler::CgiHandler(const Request & req, Response & resp) :
+CgiHandler::CgiHandler(Request & req, Response & resp) :
 _request(req),
 _response(resp),
 _event_flag(POLLIN)
@@ -65,16 +65,24 @@ CgiHandler::set_environment(void)
 			}
 		}
 	}
-	// Gateway Interface
 	_env.add_cgi_env_var("GATEWAY_INTERFACE", "CGI/1.1");
-
-	// Path Info
-	_env.add_cgi_env_var("PATH_INFO", _response.get_server_config().get_cgi_path())
-
-		
-
+	_env.add_cgi_env_var("PATH_INFO", _response.get_path()); // /!\ NEEDS TO BE THE FULL PATH!!
+	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path()); // /!\ This is most likely wrong, but at this point, I am not sure what this variable is about
+	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
+	// _env.add_cgi_env_var("REMOTE_ADDR", _response.) NEED CLIENT IP
+	_env.add_cgi_env_var("REMOTE_HOST", "NULL"); //Clients are not expected to have a domain name
+	// _env.add_cgi_env_var("REQUEST_METHOD", ) NEED request method here
+	if (_request.get_server_config().get_cgi_path(file_ext))
+	{
+		_env.add_cgi_env_var("SCRIPT_NAME", *_request.get_server_config().get_cgi_path(file_ext));
 	}
-
+	else
+	{
+		_env.add_cgi_env_var("SCRIPT_NAME", "NULL");
+	}
+	_env.add_cgi_env_var("SERVER_PORT", _request.get_server_config().get_port());
+	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
+	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
 }
 
 

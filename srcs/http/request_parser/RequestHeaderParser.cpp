@@ -44,7 +44,11 @@ RequestHeaderParser::parse_char(char c)
 		}
 		case FIELD_NAME :
 		{
-			if(c == ':')
+			if (std::iscntrl(c))
+			{
+				throw HttpException(StatusCodes::BAD_REQUEST_400);
+			}
+			else if(c == ':')
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{

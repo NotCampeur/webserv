@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-class string;
+#include <string>
 
 class Utils
 {

@@ -27,7 +27,8 @@ class Validator : public Singleton<Validator>
 		Validator(Validator const & src);
 		Validator &  operator=(Validator const & src);
 
-		void	is_method_allowed();
+		void	host_header_ok(Request & req);
+		void	is_method_allowed(void);
 		void	set_full_path(Request & req, Response & resp);
 		void	verify_path(Request & req, Response & resp);
 		bool	is_dir(mode_t mode);

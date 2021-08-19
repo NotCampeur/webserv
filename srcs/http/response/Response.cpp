@@ -209,6 +209,12 @@ Response::path_is_dir(void)
 	return _path_is_dir;
 }
 
+bool &
+Response::need_cgi(void)
+{
+	return _need_cgi;
+}
+
 void
 Response::http_redirection(StatusCodes::status_index_t code, const std::string & location)
 {

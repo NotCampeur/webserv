@@ -45,7 +45,7 @@ class ServerConfig
 		const std::string * get_default_file_dir(void) const;
 		void				set_default_file_dir(std::string & path);
 
-		const std::string * get_cgi_path(const std::string & cgi_ext) const;
+		const std::string *	get_cgi_path(const std::string cgi_ext) const;
 		void				add_cgi_path(const std::string & cgi_ext, const std::string & path);
 
 

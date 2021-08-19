@@ -1,5 +1,4 @@
 #include "Utils.hpp"
-#include <string>
 
 Utils::Utils(void) {}
 
@@ -13,6 +12,7 @@ Utils::~Utils(void) {}
 Utils &
 Utils::operator=(Utils const & src)
 {
+	(void)src;
     return (*this);
 }
 

@@ -9,14 +9,14 @@
 class CgiHandler : public IEventHandler
 {
 	private:
-		const Request &			_request;
+		Request &				_request;
 		Response &				_response;
 		int						_event_flag;
 		Environment				_env;
 
 	public:
 
-		CgiHandler(const Request & req, Response & resp);
+		CgiHandler(Request & req, Response & resp);
 		~CgiHandler(void);
 
 		virtual void	readable(void);

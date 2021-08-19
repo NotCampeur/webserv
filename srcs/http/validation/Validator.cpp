@@ -14,6 +14,7 @@ void
 Validator::validate_request_inputs(Request & req, Response & resp)
 {
 	try {
+		host_header_ok(req);
 		is_method_allowed();
 		set_full_path(req, resp);
 		verify_path(req, resp);
@@ -21,6 +22,15 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 	catch (HttpException & e)
 	{
 		throw (e);
+	}
+}
+
+void
+Validator::host_header_ok(Request & req)
+{
+	if (req.headers().find("host") == req.headers().end())
+	{
+		throw HttpException(StatusCodes::BAD_REQUEST_400);
 	}
 }
 
