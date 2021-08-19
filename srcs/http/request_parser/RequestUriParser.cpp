@@ -77,7 +77,6 @@ RequestUriParser::parse_char(char c)
 	return false;
 }
 
-
 size_t
 RequestUriParser::uri_length(void) const
 {
