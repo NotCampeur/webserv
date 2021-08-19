@@ -4,6 +4,7 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "PostMethod.hpp"
+#include "Utils.hpp"
 
 Validator::Validator(void) {}
 
@@ -75,7 +76,7 @@ void
 Validator::verify_path(Request & req, Response & resp)
 {
 	/* ADDED HERE FOR NOW BUT COULD BE MOVED TO A MORE SUITABLE ROUTINE */
-	if (resp.get_path().substr(resp.get_path().find(".")) == ".py")
+	if (Utils::get_file_ext(resp.get_path()) == ".py")
 	{
 		resp.need_cgi() = true;
 	}

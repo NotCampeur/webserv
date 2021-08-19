@@ -3,6 +3,7 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 #include "HttpException.hpp"
+#include "Utils.hpp"
 
 HttpErrorManager::HttpErrorManager(const ServerConfig & config, Response & resp) :
 _fd(-1),
@@ -104,15 +105,10 @@ void
 HttpErrorManager::set_content_type_header(void)
 {
 	const std::string & path = _resp.get_path();
-	int i = path.size() - 1;
-	for(; i >= 0; i--)
+
+	std::string file_ext = Utils::get_file_ext(path);
+	if (!file_ext.empty())
 	{
-		if (path[i] == '.')
-			break;
-	}
-	if (i >= 0)
-	{
-		std::string file_ext = path.substr(i);
 		const std::string * mime_ext = Mime::get_content_type(file_ext);
 		if (mime_ext != NULL)
 			_resp.add_header("Content-Type", *mime_ext);

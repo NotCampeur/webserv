@@ -102,3 +102,18 @@ ServerConfig::set_default_file_dir(std::string & path)
 	_default_file_dir = path;
 }
 
+const std::string *
+ServerConfig::get_cgi_path(const std::string cgi_ext) const
+{
+	std::string cgi_path = _cgi_paths.at(cgi_ext);
+	if (cgi_path.empty())
+	{
+		return NULL;
+	}
+	return & cgi_path;
+}
+void
+ServerConfig::add_cgi_path(const std::string & cgi_ext, const std::string & path)
+{
+	_cgi_paths.insert(cgi_ext, path);
+}

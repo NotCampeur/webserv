@@ -12,7 +12,6 @@ class CgiHandler : public IEventHandler
 		const Request &			_request;
 		Response &				_response;
 		int						_event_flag;
-		bool					_env_set;
 		Environment				_env;
 
 	public:

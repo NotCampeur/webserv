@@ -15,12 +15,12 @@ class ServerConfig
 		std::string					_root_dir;
 		bool						_autoindex;
 		std::string					_default_file_dir;
+		std::map<const std::string, const std::string> _cgi_paths;
 
 	public:
 		ServerConfig(std::string & name, std::string & port, bool autoindex = false, size_t max_client_body_size = MAX_CLIENT_BODY_SIZE);
     	ServerConfig(ServerConfig const & src);
     	~ServerConfig(void);
-		
 
 	// Error pages path: use map
 	// Max client body size: use size_t ? Default should be 1M
@@ -44,6 +44,10 @@ class ServerConfig
 	
 		const std::string * get_default_file_dir(void) const;
 		void				set_default_file_dir(std::string & path);
+
+		const std::string * get_cgi_path(const std::string & cgi_ext) const;
+		void				add_cgi_path(const std::string & cgi_ext, const std::string & path);
+
 
 	private:
 		ServerConfig &  operator=(ServerConfig const & src);
