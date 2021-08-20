@@ -11,12 +11,14 @@ class CgiHandler : public IEventHandler
 	private:
 		Request &				_request;
 		Response &				_response;
+		const std::string		_method;
+		int						_pipe_fd[2];
 		int						_event_flag;
 		Environment				_env;
 
 	public:
 
-		CgiHandler(Request & req, Response & resp);
+		CgiHandler(Request & req, Response & resp, std::string client_ip, std::string method);
 		~CgiHandler(void);
 
 		virtual void	readable(void);
@@ -24,6 +26,8 @@ class CgiHandler : public IEventHandler
 		virtual	bool	is_timeoutable(void) const;
 		virtual bool	is_timeout(void) const;
 		virtual int		get_event_flag(void) const;
+
+		int				get_write_fd(void) const;
 
 	private:
 		CgiHandler(CgiHandler const & src);

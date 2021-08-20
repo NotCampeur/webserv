@@ -2,14 +2,21 @@
 #include "InitiationDispatcher.hpp"
 #include "Utils.hpp"
 #include "Mime.hpp"
+#include "unistd.h"
+#include "SystemException.hpp"
 
-CgiHandler::CgiHandler(Request & req, Response & resp) :
+CgiHandler::CgiHandler(Request & req, Response & resp, std::string client_ip, std::string method) :
 _request(req),
 _response(resp),
-_event_flag(POLLIN)
+_event_flag(POLLOUT),
+_method(method)
 {
-	// Needs CGI path!!
 	set_environment();
+	int ret = pipe(_pipe_fd);
+	if (ret < 0)
+	{
+		throw SystemException("pipe error");
+	}
 }
 
 CgiHandler::~CgiHandler(void)
@@ -23,7 +30,9 @@ CgiHandler::readable(void)
 
 void
 CgiHandler::writable(void)
-{}
+{
+	
+}
 
 bool
 CgiHandler::is_timeoutable(void) const
@@ -41,6 +50,12 @@ int
 CgiHandler::get_event_flag(void) const
 {
 	return _event_flag;
+}
+
+int
+CgiHandler::get_write_fd(void) const
+{
+	return _pipe_fd[1];
 }
 
 void
@@ -69,9 +84,9 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("PATH_INFO", _response.get_path()); // /!\ NEEDS TO BE THE FULL PATH!!
 	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path()); // /!\ This is most likely wrong, but at this point, I am not sure what this variable is about
 	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
-	// _env.add_cgi_env_var("REMOTE_ADDR", _response.) NEED CLIENT IP
+	_env.add_cgi_env_var("REMOTE_ADDR", _response.get_ip());
 	_env.add_cgi_env_var("REMOTE_HOST", "NULL"); //Clients are not expected to have a domain name
-	// _env.add_cgi_env_var("REQUEST_METHOD", ) NEED request method here
+	_env.add_cgi_env_var("REQUEST_METHOD", _method);
 	if (_request.get_server_config().get_cgi_path(file_ext))
 	{
 		_env.add_cgi_env_var("SCRIPT_NAME", *_request.get_server_config().get_cgi_path(file_ext));
@@ -84,7 +99,6 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
 }
-
 
 // void
 // CgiHandler::manage_error(void)

@@ -13,6 +13,7 @@ class Response
 
 	private:
 		std::string						_payload;
+		const std::string				_ip;
 		const std::string				_version;
 		StatusCodes::status_index_t 	_code;
 		std::vector<header_t>			_headers;
@@ -28,13 +29,13 @@ class Response
 
 	public:
 
-    	Response(const ServerConfig & config);
+    	Response(const ServerConfig & config, const std::string & ip);
     	Response(Response const & src);
     	~Response(void);
 
 		Response &  operator=(Response const & src);
 
-		// bool				ready_to_send(void) const;
+		const std::string &		get_ip(void);
 		bool &					complete(void);
 		bool					metadata_sent(void) const;
 		bool &					ready_to_send(void);

@@ -1,7 +1,8 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 
-Response::Response(const ServerConfig & config) :
+Response::Response(const ServerConfig & config, const std::string & ip) :
+_ip(ip),
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
@@ -15,6 +16,7 @@ _need_cgi(false)
 
 Response::Response(Response const & src) :
 _payload(src._payload),
+_ip(src._ip),
 _version(src._version),
 _headers(src._headers),
 _metadata_sent(src._metadata_sent),
@@ -226,4 +228,10 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	add_header("Location", complete_location);
 	ready_to_send() = true;
 	complete() = true;
+}
+
+const std::string &
+Response::get_ip(void)
+{
+	return _ip;
 }

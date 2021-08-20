@@ -4,7 +4,7 @@
 ClientHandler::ClientHandler(const Client & client) :
 _client(client),
 _request(client.get_server_config()),
-_response(client.get_server_config()),
+_response(client.get_server_config(), client.getip()),
 _req_parser(_request),
 _timer(CLIENT_TIMEOUT),
 _event_flag(POLLIN)
