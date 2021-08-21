@@ -34,6 +34,7 @@ void	serv_test(long server_amount)
 			config->set_default_file_dir(default_file_dir);
 			std::string error_404 = "server_content/error_404";
 			config->add_error_page_path(404, error_404);
+			config->add_cgi_path("py", "server_content/cgi-bin/bin.py");
 			
 			Server *serv = new Server(config, 8080 + i, inet_addr("127.0.0.1"));
 			idis.add_server_handle(*serv);

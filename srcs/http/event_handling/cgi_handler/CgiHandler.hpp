@@ -1,5 +1,5 @@
-#ifndef WEBSERV_READHANDLER_HPP
-# define WEBSERV_READHANDLER_HPP
+#ifndef WEBSERV_CGIHANDLER_HPP
+# define WEBSERV_CGIHANDLER_HPP
 
 # include "IEventHandler.hpp"
 # include "Request.hpp"
@@ -12,13 +12,17 @@ class CgiHandler : public IEventHandler
 		Request &				_request;
 		Response &				_response;
 		const std::string		_method;
+		std::string				_file_ext;
 		int						_pipe_fd[2];
 		int						_event_flag;
 		Environment				_env;
+		int						_pid;
+		ssize_t					_written_size;
+		bool					_cgi_done;
 
 	public:
 
-		CgiHandler(Request & req, Response & resp, std::string client_ip, std::string method);
+		CgiHandler(Request & req, Response & resp, std::string method);
 		~CgiHandler(void);
 
 		virtual void	readable(void);
@@ -27,11 +31,13 @@ class CgiHandler : public IEventHandler
 		virtual bool	is_timeout(void) const;
 		virtual int		get_event_flag(void) const;
 
-		int				get_write_fd(void) const;
+		int				get_fd(void) const;
+		void			start_cgi();
 
 	private:
 		CgiHandler(CgiHandler const & src);
 		void	set_environment(void);
+		void	manage_error(void);
 
 };
 

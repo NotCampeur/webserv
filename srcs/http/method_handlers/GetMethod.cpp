@@ -1,9 +1,10 @@
 #include "GetMethod.hpp"
-# include "Request.hpp"
-# include "Response.hpp"
-# include "InitiationDispatcher.hpp"
-# include <dirent.h>
-# include <sstream>
+#include "Request.hpp"
+#include "Response.hpp"
+#include "InitiationDispatcher.hpp"
+#include "Mime.hpp"
+#include <dirent.h>
+#include <sstream>
 
 GetMethod::GetMethod(void) {}
 
@@ -12,6 +13,11 @@ GetMethod::~GetMethod(void) {}
 void
 GetMethod::handle(Request & req, Response & resp)
 {
+	if (resp.need_cgi())
+	{
+		InitiationDispatcher::get_instance().add_cgi_handle(req, resp, "GET");
+		return ;
+	}
 	if (resp.path_is_dir())
 	{
 		if (!resp.get_path().empty() && (resp.get_path()[resp.get_path().size() - 1]) != '/')

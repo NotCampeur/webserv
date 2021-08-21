@@ -1,4 +1,6 @@
 #include "Utils.hpp"
+#include "CgiHandler.hpp"
+#include "InitiationDispatcher.hpp"
 
 Utils::Utils(void) {}
 

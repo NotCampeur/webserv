@@ -3,16 +3,9 @@
 
 # include "Demultiplexer.hpp"
 # include "HandlerTable.hpp"
-# include "ClientHandler.hpp"
-# include "ServerHandler.hpp"
-# include "ReadHandler.hpp"
-# include "WriteHandler.hpp"
-# include "Exception.hpp"
-# include "SystemException.hpp"
-# include "ServerSystemException.hpp"
-# include "ClientSystemException.hpp"
 # include "Singleton.hpp"
-
+class Server;
+class Client;
 class Request;
 class Response;
 
@@ -32,6 +25,7 @@ class InitiationDispatcher : public Singleton<InitiationDispatcher>
 		void					add_client_handle(const Client & clt);
 		void					add_read_handle(size_t file_size, Response & resp);
 		void					add_write_handle(const std::string & body, Response & resp);
+		void					add_cgi_handle(Request & req, Response & resp, const std::string & method);
 		void					remove_handle(int fd);
 
 	private:

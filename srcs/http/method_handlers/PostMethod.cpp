@@ -10,6 +10,12 @@ PostMethod::~PostMethod(void) {}
 void
 PostMethod::handle(Request & req, Response & resp)
 {
+	if (resp.need_cgi())
+	{
+		InitiationDispatcher::get_instance().add_cgi_handle(req, resp, "POST");
+		return ;
+	}
+
 	if (resp.path_is_dir())
 	{
 		throw (HttpException(StatusCodes::FORBIDDEN_403));

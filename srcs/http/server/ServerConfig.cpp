@@ -101,17 +101,21 @@ ServerConfig::set_default_file_dir(std::string & path)
 {
 	_default_file_dir = path;
 }
-
+// #include <iostream> //DELETE
 const std::string *
 ServerConfig::get_cgi_path(const std::string cgi_ext) const
 {
-	const std::string *cgi_path = &_cgi_paths.at(cgi_ext);
-	if (cgi_path->empty())
+	// std::cerr << "cgi_ext" << '\n';
+	if (_cgi_paths.find(cgi_ext) == _cgi_paths.end())
 	{
 		return NULL;
 	}
-	return cgi_path;
+	else
+	{
+		return &(*_cgi_paths.find(cgi_ext)).second;
+	}
 }
+
 void
 ServerConfig::add_cgi_path(const std::string & cgi_ext, const std::string & path)
 {

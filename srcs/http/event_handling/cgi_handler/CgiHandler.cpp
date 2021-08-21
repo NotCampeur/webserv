@@ -5,11 +5,15 @@
 #include "unistd.h"
 #include "SystemException.hpp"
 
-CgiHandler::CgiHandler(Request & req, Response & resp, std::string client_ip, std::string method) :
+CgiHandler::CgiHandler(Request & req, Response & resp, std::string method) :
 _request(req),
 _response(resp),
+_method(method),
+_file_ext(Utils::get_file_ext(resp.get_path())),
 _event_flag(POLLOUT),
-_method(method)
+_pid(0),
+_written_size(0),
+_cgi_done(false)
 {
 	set_environment();
 	int ret = pipe(_pipe_fd);
@@ -17,21 +21,94 @@ _method(method)
 	{
 		throw SystemException("pipe error");
 	}
+	_response.set_handler_fd(_pipe_fd[1]);
 }
 
 CgiHandler::~CgiHandler(void)
-{}
-
-
+{
+	if (!_cgi_done)
+	{
+		if (waitpid(_pid, NULL, WNOHANG) == 0)
+		{
+			kill(_pid, SIGTERM);
+		}
+	}
+}
 
 void 
 CgiHandler::readable(void)
-{}
+{
+	/*
+	Check if cgi process is terminated and if any error occured there
+	Read from pipe (READ_BUF_SIZE)
+	Parse buffer using cgi_parser
+	Once parsing is done: Set response params
+	*/
+	if (!_cgi_done)
+	{
+		int status = 0;
+		if (waitpid(_pid, &status, WNOHANG) == _pid)
+		{
+			_cgi_done = true;
+			if (WEXITSTATUS(status) != EXIT_SUCCESS)
+			{
+				throw SystemException("Error in cgi process");
+			}
+		}
+	}
+
+	if (_response.complete() || _response.ready_to_send())
+		return ;
+
+	char		read_buff[FILE_READ_BUF_SIZE] = {0};
+	ssize_t		bytes_read;
+
+	bytes_read = read(_pipe_fd[1], read_buff, FILE_READ_BUF_SIZE);
+
+	switch (bytes_read)
+	{
+		case -1 :
+		{
+			throw SystemException("read");
+		}
+		// case 0 :
+		// {
+			// Make complete
+		// }
+		default :
+		{
+			std::stringstream ss;
+			ss << bytes_read;
+			_response.add_header("Content-Length", ss.str());
+			_response.add_header("Content-Type", "text/html");
+			_response.set_payload(read_buff);
+			_response.ready_to_send() = true;
+			_response.complete() = true;
+			// _cgi_parser.setbuffer(read_buff, bytes_read);
+			// handle_request();
+		}
+	}
+	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
+}
 
 void
 CgiHandler::writable(void)
 {
-	
+	if (_method == "POST" && _request.bodysize() > 0)
+	{
+		ssize_t len = write(_pipe_fd[1], _request.get_body().c_str() + _written_size, _request.bodysize() - _written_size);
+		if (len < 0)
+		{
+			throw SystemException("write");
+		}
+		_written_size += len;
+		if (static_cast<size_t>(_written_size) < _request.bodysize())
+		{
+			return ;
+		}
+	}
+	_event_flag = POLLIN;
+	start_cgi();
 }
 
 bool
@@ -53,7 +130,7 @@ CgiHandler::get_event_flag(void) const
 }
 
 int
-CgiHandler::get_write_fd(void) const
+CgiHandler::get_fd(void) const
 {
 	return _pipe_fd[1];
 }
@@ -61,8 +138,6 @@ CgiHandler::get_write_fd(void) const
 void
 CgiHandler::set_environment(void)
 {
-	std::string file_ext = Utils::get_file_ext(_response.get_path());
-
 	if (!_request.get_body().empty())
 	{
 	// Content Lenght
@@ -73,7 +148,7 @@ CgiHandler::set_environment(void)
 		}
 	// Content Type
 		{
-			const std::string *mime_ext = Mime::get_content_type(file_ext);
+			const std::string *mime_ext = Mime::get_content_type(_file_ext);
 			if (mime_ext != NULL)
 			{
 				_env.add_cgi_env_var("CONTENT_TYPE", *mime_ext);
@@ -87,9 +162,9 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("REMOTE_ADDR", _response.get_ip());
 	_env.add_cgi_env_var("REMOTE_HOST", "NULL"); //Clients are not expected to have a domain name
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	if (_request.get_server_config().get_cgi_path(file_ext))
+	if (_request.get_server_config().get_cgi_path(_file_ext))
 	{
-		_env.add_cgi_env_var("SCRIPT_NAME", *_request.get_server_config().get_cgi_path(file_ext));
+		_env.add_cgi_env_var("SCRIPT_NAME", *_request.get_server_config().get_cgi_path(_file_ext));
 	}
 	else
 	{
@@ -100,12 +175,68 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
 }
 
-// void
-// CgiHandler::manage_error(void)
-// {
-// 	if (!_response.metadata_sent())
-// 		_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
-// }
+void
+CgiHandler::start_cgi(void)
+{
+	/*
+	start new process
+	Set stdin/stdout to pipe in/out (maybe we'll need a second pipe bcs CGI needs EOF to stop reading)
+	execve with cgi env
+	*/
+
+	_pid = fork();
+	if (_pid < 0)
+	{
+		throw SystemException("Fork");
+	}
+	if (_pid == 0)
+	{
+		std::cerr << "Hello from chile\n";
+		int ret = dup2(_pipe_fd[0], STDIN_FILENO);
+		if (ret < 0)
+		{
+			exit(EXIT_FAILURE);
+		}
+		ret = dup2(_pipe_fd[1], STDOUT_FILENO);
+		if (ret < 0)
+		{
+			exit(EXIT_FAILURE);
+		}
+
+		const std::string *cgi_bin = _request.get_server_config().get_cgi_path(_file_ext);
+		if (cgi_bin == NULL)
+		{
+			exit(EXIT_FAILURE);
+		}
+		else
+		{
+			std::cerr << "Chile about to execve\n";
+			execve(cgi_bin->c_str(), NULL, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
+		}
+		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		int ret = dup2(_pipe_fd[0], _pipe_fd[1]); // Replace write fd by read fd so we can keep using this object + closing write fd so that if there's an error in child, main process will get a "read event"
+		if (ret < 0)
+		{
+			throw SystemException("dup2");
+		}
+		close (_pipe_fd[0]);
+	}
+	/*
+	Need to waitpid (non-block) to check if errors occured and ensure clean termination of process
+	Need to be able to kill the process if an error occurs (put in handler destructor)
+	*/
+}
+
+void
+CgiHandler::manage_error(void)
+{
+	if (!_response.metadata_sent())
+		_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
+}
 
 // void
 // CgiHandler::response_complete(void)

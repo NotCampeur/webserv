@@ -2,6 +2,7 @@
 #include "Request.hpp"
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
+#include "Mime.hpp"
 #include "HttpException.hpp"
 #include "Utils.hpp"
 

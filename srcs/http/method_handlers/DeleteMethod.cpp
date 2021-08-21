@@ -10,6 +10,12 @@ DeleteMethod::~DeleteMethod(void) {}
 void
 DeleteMethod::handle(Request & req, Response & resp)
 {
+	if (resp.need_cgi())
+	{
+		InitiationDispatcher::get_instance().add_cgi_handle(req, resp, "DELETE");
+		return ;
+	}
+
 	if (resp.path_is_dir())
 	{
 		throw (HttpException(StatusCodes::FORBIDDEN_403));
