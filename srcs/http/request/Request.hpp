@@ -22,7 +22,7 @@ class Request
 		IHttpMethod *						_method;
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
-		std::string							_body;
+		std::vector<char>					_body;
 		const ServerConfig &				_server_config;
 
 	public:
@@ -35,7 +35,7 @@ class Request
 		uri_t &									uri(void);
 		std::map<std::string, std::string> &	headers(void);
 		void									add_char_to_body(char c);
-		const std::string &						get_body(void) const;
+		const std::vector<char> &				get_body(void) const;
 		size_t									bodysize(void) const;
 		bool &									complete();
 		void									reset(void);

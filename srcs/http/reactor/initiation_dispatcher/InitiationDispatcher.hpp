@@ -24,7 +24,7 @@ class InitiationDispatcher : public Singleton<InitiationDispatcher>
 		void					add_server_handle(const Server & srv);
 		void					add_client_handle(const Client & clt);
 		void					add_read_handle(size_t file_size, Response & resp);
-		void					add_write_handle(const std::string & body, Response & resp);
+		void					add_write_handle(const std::vector<char> & body, Response & resp);
 		void					add_cgi_handle(Request & req, Response & resp, const std::string & method);
 		void					remove_handle(int fd);
 

@@ -145,7 +145,7 @@ InitiationDispatcher::add_read_handle(size_t file_size, Response & resp)
 }
 
 void
-InitiationDispatcher::add_write_handle(const std::string & body, Response & resp)
+InitiationDispatcher::add_write_handle(const std::vector<char> & body, Response & resp)
 {
 	WriteHandler *wh = new WriteHandler(body, resp);
 	_event_handler_table->add(resp.get_handler_fd(), *wh);

@@ -35,9 +35,8 @@ class RequestParser {
 		RequestBodyParser			_body_parser;
 
 		request_parsing_state		_request_state;
-		std::string					_buffer;
-		std::string					_buffer_leftovers;
-
+		std::vector<char>			_buffer;
+		std::vector<char>			_buffer_leftovers;
 		std::string  				_http_method;
 		std::string					_http_version;
 
@@ -50,7 +49,7 @@ class RequestParser {
 
 
 		void	setbuffer(char *buf, size_t len);
-		void	setbuffer(std::string & str);
+		// void	setbuffer(std::string & str);
 		void    parse(void);
 		//Clear content of current request, if there were any buffer leftovers from the previous request, they are set into the main buffer, so a subsequent call to 'parse()' would parse the content
 		void	next_request(void);

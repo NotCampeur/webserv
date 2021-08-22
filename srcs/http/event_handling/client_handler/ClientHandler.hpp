@@ -41,7 +41,6 @@ class ClientHandler : public IEventHandler
 		void			handle_request(void);
 		void			parse_request(void);
 		void			handle_http_error(StatusCodes::status_index_t error_code);
-		// void	set_header(std::stringstream & header, size_t content_length);
 };
 
 #endif

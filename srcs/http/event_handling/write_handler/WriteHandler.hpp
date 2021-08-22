@@ -8,14 +8,14 @@
 class WriteHandler : public IEventHandler
 {
 	private:
-		const std::string &	_body;
-		Response &			_response;
-		int					_event_flag;
-		size_t				_bytes_written;
+		const std::vector<char> &	_body;
+		Response &					_response;
+		int							_event_flag;
+		size_t						_bytes_written;
 
 	public:
 
-		WriteHandler(const std::string & body, Response & resp);
+		WriteHandler(const std::vector<char> & body, Response & resp);
 		~WriteHandler(void);
 
 		virtual void	readable(void);

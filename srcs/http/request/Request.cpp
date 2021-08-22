@@ -61,10 +61,10 @@ Request::add_char_to_body(char c)
 {
 	if (_body.size() == _server_config.get_max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
-	_body += c;
+	_body.push_back(c);
 }
 
-const std::string &
+const std::vector<char> &
 Request::get_body(void) const
 {
 	return _body;

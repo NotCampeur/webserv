@@ -92,12 +92,18 @@ CgiHandler::readable(void)
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
+// void
+// CgiHandler::make_resp_ready(void)
+// {
+// 	if (!_response.hea)
+// }
+
 void
 CgiHandler::writable(void)
 {
 	if (_method == "POST" && _request.bodysize() > 0)
 	{
-		ssize_t len = write(_pipe_fd[1], _request.get_body().c_str() + _written_size, _request.bodysize() - _written_size);
+		ssize_t len = write(_pipe_fd[1], &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
 			throw SystemException("write");
