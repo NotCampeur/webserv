@@ -85,12 +85,12 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
-	/* ADDED HERE FOR NOW BUT COULD BE MOVED TO A MORE SUITABLE ROUTINE */
-	if (Utils::get_file_ext(resp.get_path()) == ".py")
+	std::cerr << Utils::get_file_ext(resp.get_path()) << '\n';
+	if (req.get_server_config().get_cgi_path(Utils::get_file_ext(resp.get_path())))
 	{
 		resp.need_cgi() = true;
+		return ;
 	}
-	/* .PY FOR TESTING PURPOSES, WILL BE IN CONFIG FILE */
 
 	struct stat buf; 
 	int ret = stat(resp.get_path().c_str(), &buf);

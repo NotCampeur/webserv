@@ -31,7 +31,7 @@ Utils::get_file_ext(const std::string & filename)
 	std::string file_ext;
 	if (i >= 0)
 	{
-		file_ext = filename.substr(i);
+		file_ext = filename.substr(i + 1);
 	}
 	return file_ext;
 }

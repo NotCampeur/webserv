@@ -79,6 +79,7 @@ CgiHandler::readable(void)
 		{
 			std::stringstream ss;
 			ss << bytes_read;
+			_response.set_http_code(StatusCodes::OK_200);
 			_response.add_header("Content-Length", ss.str());
 			_response.add_header("Content-Type", "text/html");
 			_response.set_payload(read_buff);
