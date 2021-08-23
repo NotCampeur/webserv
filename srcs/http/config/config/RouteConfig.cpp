@@ -13,26 +13,24 @@ RouteConfig::RouteConfig() :
 {}
 
 RouteConfig::RouteConfig(ServerConfig & config)
-	: _path("NOT_SET"), _accepted_method(ALL)
+	: _path("NOT_SET"), _accepted_method(ALL), _cgi()
 {
 	_redirection = "NOT_SET";
 	_root = const_cast<std::string &>(config.root_dir());
 	_is_autoindex_on = config.is_autoindex_on();
 	if (config.default_file_dir() != NULL)
 		_default_file_dir = *config.default_file_dir();
-	_cgi = "NOT_SET";
 	_upload_path = "NOT_SET";
 }
 
 RouteConfig::RouteConfig(std::string path, ServerConfig & config)
-	: _path(path), _accepted_method(ALL)
+	: _path(path), _accepted_method(ALL), _cgi()
 {
 	_redirection = "NOT_SET";
 	_root = const_cast<std::string &>(config.root_dir());
 	_is_autoindex_on = config.is_autoindex_on();
 	std::string * const_tmp = const_cast<std::string *>(config.default_file_dir());
 	_default_file_dir = *const_tmp;
-	_cgi = "NOT_SET";
 	_upload_path = "NOT_SET";
 }
 
@@ -82,7 +80,7 @@ RouteConfig::default_file_dir() const
 	return _default_file_dir;
 }
 
-std::string
+std::map<std::string, std::string>
 RouteConfig::cgi() const
 {
 	return _cgi;
@@ -114,9 +112,10 @@ RouteConfig::set_default_file_dir(std::string value)
 }
 
 void
-RouteConfig::set_cgi(std::string value)
+RouteConfig::add_cgi(std::string key, std::string value)
 {
-	_cgi = value;
+	if (_cgi.insert(std::pair<std::string, std::string>(key, value)).second == false)
+		throw Exception("You cannot set the same cgi more than once");
 }
 
 void

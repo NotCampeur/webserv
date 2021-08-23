@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/07 18:25:40 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/23 14:41:18 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,14 +95,14 @@ Config::apply(InitiationDispatcher & idis)
 			{
 				JsonArray	* servers = dynamic_cast<JsonArray *>(it->second);
 				if (servers == NULL)
-					throw;
+					throw Exception("Server must be an [array of {objects}]");
 				JsonArray::value_type::const_iterator ait(servers->value_begin());
 				JsonArray::value_type::const_iterator aite(servers->value_end());
 				while (ait != aite)
 				{
 					JsonObject	* server = dynamic_cast<JsonObject *>(*ait);
 					if (server == NULL)
-						throw;
+						throw Exception("Server must be an [array of {objects}]");
 					JsonObject::value_type::const_iterator oit(server->value_begin());
 					JsonObject::value_type::const_iterator oite(server->value_end());
 					std::string		port_value("8080");
@@ -116,7 +116,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's name must be a \"string\"");
 								std::string	name_value = value->value();
 								server_config->set_name(name_value);
 								break;
@@ -125,7 +125,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's host must be a \"string\"");
 								std::string	host_value = value->value();
 								server_config->set_host(host_value);
 								break;
@@ -134,7 +134,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's port must be a \"string\"");
 								port_value = value->value();
 								server_config->set_port(port_value);
 								break;
@@ -143,7 +143,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's max_client_body_size must be a \"string\"");
 								std::string	s_max_client_body_size_value = value->value();
 								size_t			max_client_body_size_value(0);
 								std::istringstream(s_max_client_body_size_value) >> max_client_body_size_value;
@@ -154,7 +154,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's auto_index must be a \"string\"");
 								if (value->value() == "true")
 									server_config->set_autoindex(true);
 								else
@@ -165,7 +165,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's root must be a \"string\"");
 								std::string	root_value = value->value();
 								server_config->set_root_dir(root_value);
 								break;
@@ -174,7 +174,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's index must be a \"string\"");
 								std::string	index_value = value->value();
 								server_config->set_index(index_value);
 								break;
@@ -183,7 +183,7 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonString	* value = dynamic_cast<JsonString *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's default_file_dir must be a \"string\"");
 								std::string	default_file_dir_value = value->value();
 								server_config->set_default_file_dir(default_file_dir_value);
 								break;
@@ -192,10 +192,10 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonArray	* value = dynamic_cast<JsonArray *>(oit->second);
 								if (value == NULL)
-									throw;
+									throw Exception("Server's error_page_path must be an [array of {objects}]");
 								JsonObject	* error_page = dynamic_cast<JsonObject *>(*(value->value_begin()));
 								if (error_page == NULL)
-									throw;
+									throw Exception("Server's error_page_path must be an [array of {objects}]");
 								JsonObject::value_type::const_iterator error_page_oit(error_page->value_begin());
 								JsonObject::value_type::const_iterator error_page_oite(error_page->value_end());
 								
@@ -203,7 +203,7 @@ Config::apply(InitiationDispatcher & idis)
 								{
 									JsonString	* error_page_path_value = dynamic_cast<JsonString *>(error_page_oit->second);
 									if (value == NULL)
-										throw;
+										throw Exception("Error_page_path's values must be \"strings\"");
 									int			page_number(0);
 									std::istringstream(error_page_oit->first) >> page_number;
 									std::string	error_page_path = error_page_path_value->value();
@@ -217,14 +217,14 @@ Config::apply(InitiationDispatcher & idis)
 							{
 								JsonArray	* routes = dynamic_cast<JsonArray *>(oit->second);
 								if (routes == NULL)
-									throw;
+									throw Exception("Server's routes must be an [array of {objects}]");
 								JsonArray::value_type::const_iterator routes_it(routes->value_begin());
 								JsonArray::value_type::const_iterator routes_ite(routes->value_end());
 								while (routes_it != routes_ite)
 								{
 									JsonObject	* route = dynamic_cast<JsonObject *>(*routes_it);
 									if (route == NULL)
-										throw;
+										throw Exception("Server's routes must be an [array of {objects}]");;
 									JsonObject::value_type::const_iterator route_it(route->value_begin());
 									JsonObject::value_type::const_iterator route_ite(route->value_end());
 									RouteConfig	* route_config = new RouteConfig(*server_config);
@@ -236,7 +236,7 @@ Config::apply(InitiationDispatcher & idis)
 											{
 												JsonString	* path = dynamic_cast<JsonString *>(route_it->second);
 												if (path == NULL)
-													throw;
+													throw Exception("Route's path must be a \"string\"");
 												route_config->set_path(path->value());
 												break;
 											}
@@ -245,7 +245,7 @@ Config::apply(InitiationDispatcher & idis)
 												JsonString	* method = dynamic_cast<JsonString *>(route_it->second);
 												RouteMethod	route_method(NOTHING);
 												if (method == NULL)
-													throw;
+													throw Exception("Route's accepted_method must be a \"string, string\"");
 												if (method->value().find("GET") != std::string::npos)
 													route_method = GET;
 												if (method->value().find("POST") != std::string::npos)
@@ -261,7 +261,7 @@ Config::apply(InitiationDispatcher & idis)
 											{
 												JsonString	* redirection = dynamic_cast<JsonString *>(route_it->second);
 												if (redirection == NULL)
-													throw;
+													throw Exception("Route's redirection must be a \"string\"");
 												route_config->set_redirection(redirection->value());
 												break;
 											}
@@ -269,7 +269,7 @@ Config::apply(InitiationDispatcher & idis)
 											{
 												JsonString	* root = dynamic_cast<JsonString *>(route_it->second);
 												if (root == NULL)
-													throw;
+													throw Exception("Route's root must be a \"string\"");
 												route_config->set_root(root->value());
 												break;
 											}
@@ -277,7 +277,7 @@ Config::apply(InitiationDispatcher & idis)
 											{
 												JsonString	* auto_index = dynamic_cast<JsonString *>(route_it->second);
 												if (auto_index == NULL)
-													throw;
+													throw Exception("Route's auto_index must be a \"string\"");
 												if (auto_index->value() == "true")
 													route_config->set_autoindex(true);
 												else
@@ -288,23 +288,35 @@ Config::apply(InitiationDispatcher & idis)
 											{
 												JsonString	* default_file_dir = dynamic_cast<JsonString *>(route_it->second);
 												if (default_file_dir == NULL)
-													throw;
+													throw Exception("Route's default_file_dir must be a \"string\"");
 												route_config->set_default_file_dir(default_file_dir->value());
 												break;
 											}
 											case route_cgi:
 											{
-												JsonString	* cgi = dynamic_cast<JsonString *>(route_it->second);
-												if (cgi == NULL)
-													throw;
-												route_config->set_cgi(cgi->value());
+												JsonArray	* cgi_array = dynamic_cast<JsonArray *>(route_it->second);
+												if (cgi_array == NULL)
+													throw Exception("Route's cgi must be an [array of {objects}]");
+												JsonObject	* cgi_object = dynamic_cast<JsonObject *>(*(cgi_array->value_begin()));
+												if (cgi_object == NULL)
+													throw Exception("Route's cgi must be an [array of {objects}]");
+												JsonObject::value_type::const_iterator cgi_object_it(cgi_object->value_begin());
+												JsonObject::value_type::const_iterator cgi_object_ite(cgi_object->value_end());
+												while (cgi_object_it != cgi_object_ite)
+												{
+													JsonString	* cgi_path = dynamic_cast<JsonString *>(cgi_object_it->second);
+													if (cgi_path == NULL)
+														throw Exception("Cgi_path's values must be \"strings\"");
+													route_config->add_cgi(cgi_object_it->first, cgi_path->value());
+													cgi_object_it++;
+												}
 												break;
 											}
 											case route_upload_path:
 											{
 												JsonString	* upload_path = dynamic_cast<JsonString *>(route_it->second);
 												if (upload_path == NULL)
-													throw;
+													throw Exception("Route's upload_path must be a \"string\"");
 												route_config->set_upload_path(upload_path->value());
 												break;
 											}
