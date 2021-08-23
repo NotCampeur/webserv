@@ -257,7 +257,6 @@ RequestParser::check_version(char c)
 	}
 }
 
-
 bool
 RequestParser::correct_version_format(void)
 {

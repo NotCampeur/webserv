@@ -21,10 +21,14 @@ RequestUriParser::reset(void)
 bool
 RequestUriParser::parse_char(char c)
 {
+	if (std::iscntrl(c))
+	{
+		throw HttpException(StatusCodes::BAD_REQUEST_400);
+	}
 	switch (_state)
 	{
 		case PATH :
-		{
+		{	
 			if (c == '?')
 			{
 				_state = QUERY;
@@ -73,7 +77,9 @@ RequestUriParser::parse_char(char c)
 		}
 	}
 	if (uri_length() > MAX_URI_SIZE)
+	{
 		throw HttpException(StatusCodes::REQUEST_URI_TOO_LONG_414);
+	}
 	return false;
 }
 
