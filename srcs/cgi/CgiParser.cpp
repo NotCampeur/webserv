@@ -18,9 +18,6 @@ void
 CgiParser::parse(void)
 {
 	// std::cerr << "Buffer content: " << _buffer << '\n';
-	
-
-	
 	size_t i = 0;
 	for (; i < _buffer.size(); i++)
 	{
@@ -31,11 +28,8 @@ CgiParser::parse(void)
 			{
 				_buffer.erase(&_buffer[0], &_buffer[i]);
 			}
+			return ;
 		}
-		if (_request_state == DONE)
-		{
-			_request.complete() = true;
-
 			// std::cerr << "\n### PARSED CGI REQUEST ###\n"
 			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
 			// {
@@ -48,7 +42,6 @@ CgiParser::parse(void)
 			// 	std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
 			// }
 			break ;
-		}
 	}
 	_buffer.clear();
 }

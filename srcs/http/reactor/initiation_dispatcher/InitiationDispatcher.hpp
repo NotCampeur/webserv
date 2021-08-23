@@ -33,6 +33,8 @@ class InitiationDispatcher : public Singleton<InitiationDispatcher>
 		InitiationDispatcher &	operator=(const InitiationDispatcher & src);
 
 		void					set_demultiplexer_handles(void);
+
+		FILE
 };
 
 #endif
