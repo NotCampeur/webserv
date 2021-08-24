@@ -100,7 +100,7 @@ HeadMethod::set_content_type_header(Response & resp)
 	}
 	if (i >= 0)
 	{
-		std::string file_ext = path.substr(i);
+		std::string file_ext = path.substr(i + 1);
 		const std::string * mime_ext = Mime::get_content_type(file_ext);
 		if (mime_ext != NULL)
 			resp.add_header("Content-Type", *mime_ext);
