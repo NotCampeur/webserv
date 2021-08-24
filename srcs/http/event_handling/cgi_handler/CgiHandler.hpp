@@ -5,6 +5,7 @@
 # include "Request.hpp"
 # include "Response.hpp"
 # include "Environment.hpp"
+# include "CgiParser.hpp"
 
 class CgiHandler : public IEventHandler
 {
@@ -19,6 +20,8 @@ class CgiHandler : public IEventHandler
 		int						_pid;
 		ssize_t					_written_size;
 		bool					_cgi_done;
+		CgiParser				_parser;
+
 
 	public:
 
@@ -38,6 +41,8 @@ class CgiHandler : public IEventHandler
 		CgiHandler(CgiHandler const & src);
 		void	set_environment(void);
 		void	manage_error(void);
+		void	make_complete(void);
+		bool	cgi_process_error(void);
 
 };
 

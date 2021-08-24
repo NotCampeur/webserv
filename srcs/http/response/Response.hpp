@@ -12,7 +12,7 @@ class Response
 		typedef std::pair<std::string, std::string>	header_t;
 
 	private:
-		std::string						_payload;
+		std::vector<char>				_payload;
 		const std::string				_ip;
 		const std::string				_version;
 		StatusCodes::status_index_t 	_code;
@@ -26,6 +26,7 @@ class Response
 		HttpErrorManager				_error_manager;
 		bool							_path_is_dir;
 		bool							_need_cgi;
+		bool							_chunked;
 
 	public:
 
@@ -42,9 +43,10 @@ class Response
 		bool &					path_is_dir(void);
 		bool &					need_cgi(void);
 		void					set_http_code(StatusCodes::status_index_t i);
-		void					set_payload(const std::string & str);
+		void					set_payload(char *buf, size_t len);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
-		const std::string &		get_payload(void);
+		//Returns a pair with the first argument set to the return value of function send(), and the second set to the initial size of the buffer
+		std::pair<ssize_t, ssize_t>	send_payload(int fd);
 		void					payload_erase(size_t len);
 		
 		void					add_header(const std::string & name, const std::string & value);
@@ -59,6 +61,7 @@ class Response
 		void					reset(void);
 		void					http_error(StatusCodes::status_index_t error);
 		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);
+		void					send_chunks(void);
 	private:
 	    Response(void);
 
@@ -66,6 +69,7 @@ class Response
 		void	set_date(std::string & date);
 		void	set_resp_metadata(void);
 		void	set_status_line(std::string & meta);
+		void	add_payload_crlf(void);
 };
 
 #endif

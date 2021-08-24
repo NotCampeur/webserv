@@ -13,13 +13,15 @@ _file_ext(Utils::get_file_ext(resp.get_path())),
 _event_flag(POLLOUT),
 _pid(0),
 _written_size(0),
-_cgi_done(false)
+_cgi_done(false),
+_parser(resp)
 {
 	set_environment();
 	int ret = pipe(_pipe_fd);
 	if (ret < 0)
 	{
-		throw SystemException("pipe error");
+		manage_error();
+		Logger(LOG_FILE, error_type, error_lvl) << "Pipe: " << std::strerror(errno);
 	}
 	_response.set_handler_fd(_pipe_fd[1]);
 }
@@ -44,23 +46,18 @@ CgiHandler::readable(void)
 	Parse buffer using cgi_parser
 	Once parsing is done: Set response params
 	*/
-	if (!_cgi_done)
-	{
-		int status = 0;
-		if (waitpid(_pid, &status, WNOHANG) == _pid)
-		{
-			_cgi_done = true;
-			if (WEXITSTATUS(status) != EXIT_SUCCESS)
-			{
-				throw SystemException("Error in cgi process");
-			}
-		}
-	}
 
 	if (_response.complete() || _response.ready_to_send())
+	{
 		return ;
+	}
 
-	char		read_buff[FILE_READ_BUF_SIZE] = {0};
+	if (cgi_process_error())
+	{
+		return ;
+	}
+
+	char		read_buff[FILE_READ_BUF_SIZE];
 	ssize_t		bytes_read;
 
 	bytes_read = read(_pipe_fd[1], read_buff, FILE_READ_BUF_SIZE);
@@ -69,34 +66,31 @@ CgiHandler::readable(void)
 	{
 		case -1 :
 		{
-			throw SystemException("read");
+			manage_error();
+			Logger(LOG_FILE, error_type, error_lvl) << "Read: " << std::strerror(errno);
 		}
-		// case 0 :
-		// {
-			// Make complete
-		// }
+		case 0 :
+		{
+			make_complete();
+		}
 		default :
 		{
-			std::stringstream ss;
-			ss << bytes_read;
-			_response.set_http_code(StatusCodes::OK_200);
-			_response.add_header("Content-Length", ss.str());
-			_response.add_header("Content-Type", "text/html");
-			_response.set_payload(read_buff);
-			_response.ready_to_send() = true;
-			_response.complete() = true;
+			_parser.parse();
+			// _p
+			// std::stringstream ss;
+			// ss << bytes_read;
+			// _response.set_http_code(StatusCodes::OK_200);
+			// _response.add_header("Content-Length", ss.str());
+			// _response.add_header("Content-Type", "text/html");
+			// _response.set_payload(read_buff);
+			// _response.ready_to_send() = true;
+			// _response.complete() = true;
 			// _cgi_parser.setbuffer(read_buff, bytes_read);
 			// handle_request();
 		}
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
-
-// void
-// CgiHandler::make_resp_ready(void)
-// {
-// 	if (!_response.hea)
-// }
 
 void
 CgiHandler::writable(void)
@@ -106,7 +100,8 @@ CgiHandler::writable(void)
 		ssize_t len = write(_pipe_fd[1], &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
-			throw SystemException("write");
+			manage_error();
+			Logger(LOG_FILE, error_type, error_lvl) << "Write: " << std::strerror(errno);
 		}
 		_written_size += len;
 		if (static_cast<size_t>(_written_size) < _request.bodysize())
@@ -187,14 +182,15 @@ CgiHandler::start_cgi(void)
 {
 	/*
 	start new process
-	Set stdin/stdout to pipe in/out (maybe we'll need a second pipe bcs CGI needs EOF to stop reading)
+	Set new process stdin/stdout to pipe in/out
 	execve with cgi env
 	*/
 
 	_pid = fork();
 	if (_pid < 0)
 	{
-		throw SystemException("Fork");
+		manage_error();
+		Logger(LOG_FILE, error_type, error_lvl) << "Fork: " << std::strerror(errno);
 	}
 	if (_pid == 0)
 	{
@@ -228,7 +224,8 @@ CgiHandler::start_cgi(void)
 		int ret = dup2(_pipe_fd[0], _pipe_fd[1]); // Replace write fd by read fd so we can keep using this object + closing write fd so that if there's an error in child, main process will get a "read event"
 		if (ret < 0)
 		{
-			throw SystemException("dup2");
+			manage_error();
+			Logger(LOG_FILE, error_type, error_lvl) << "Pipe: " << std::strerror(errno);
 		}
 		close (_pipe_fd[0]);
 	}
@@ -242,12 +239,44 @@ void
 CgiHandler::manage_error(void)
 {
 	if (!_response.metadata_sent())
+	{
 		_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
+	}
+	else
+	{
+		make_complete();
+	}
 }
 
-// void
-// CgiHandler::response_complete(void)
-// {
-// 	_response.ready_to_send() = true;
-// 	_response.complete() = true;
-// }
+void
+CgiHandler::make_complete(void)
+{
+	_response.ready_to_send() = true;
+	_response.complete() = true;
+}
+
+bool
+CgiHandler::cgi_process_error(void)
+{
+	if (!_cgi_done)
+	{
+		int status = 0;
+		if (waitpid(_pid, &status, WNOHANG) == _pid)
+		{
+			_cgi_done = true;
+			if (WEXITSTATUS(status) != EXIT_SUCCESS)
+			{
+				if(_response.metadata_sent())
+				{
+					make_complete();
+				}
+				else
+				{
+					_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
+				}
+				return true;
+			}
+		}
+	}
+	return false;
+}

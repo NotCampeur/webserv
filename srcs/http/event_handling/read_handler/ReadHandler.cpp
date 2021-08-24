@@ -43,7 +43,7 @@ ReadHandler::readable(void)
 	}
 	else
 	{
-		_response.set_payload(std::string(read_buff, len));
+		_response.set_payload(read_buff, len);
 		_bytes_read += static_cast<size_t>(len);
 		// std::cerr << "Total bytes read: " << _bytes_read << '\n';
 		if (_bytes_read == _file_size)

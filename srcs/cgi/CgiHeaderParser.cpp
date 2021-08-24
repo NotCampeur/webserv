@@ -76,7 +76,7 @@ CgiHeaderParser::parse_char(char c)
 		}
 		case FIELD_VALUE :
 		{
-			if (c == '\r')
+			if (c == '\n')
 			{
 				remove_trailing_wp(_field_value);
 				return true;
@@ -105,6 +105,12 @@ CgiHeaderParser::get_header_name(void)
 	return _field_name;
 }
 
+std::string &
+CgiHeaderParser::get_header_value(void)
+{
+	return _field_value;
+}
+
 void	
 CgiHeaderParser::remove_trailing_wp(std::string & s)
 {
@@ -117,12 +123,6 @@ CgiHeaderParser::remove_trailing_wp(std::string & s)
 		}
 		_field_value.erase(i + 1);
 	}
-}
-
-std::string &
-CgiHeaderParser::get_header_value(void)
-{
-	return _field_value;
 }
 
 void
