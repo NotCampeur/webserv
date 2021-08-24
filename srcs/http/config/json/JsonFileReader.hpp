@@ -51,6 +51,16 @@ class JsonFileReader
 		void	check_quotes_scope();
 		//	Remove the useless white spaces (keep the ones in values).
 		void	remove_whitespaces();
+		//	JsonObject	& objectify(void)'s tools.
+		void	get_key(std::string::iterator & pos, std::pair<std::string, IJsonValue *> &data,
+						bool & is_key);
+		void	get_string_value(std::string::iterator & pos, std::pair<std::string, IJsonValue *> &data,
+									std::stack<IJsonValue *> & current_value);
+		void	get_array_value(std::pair<std::string, IJsonValue *> &data,
+									std::stack<IJsonValue *> & current_value);
+		void	get_object_value(std::string::iterator & pos, std::string::iterator & end,
+									std::pair<std::string, IJsonValue *> &data,
+									std::stack<IJsonValue *> & current_value);
 
 	public:
 		//	Load a file given by the path to create a JsonFileReader which get the raw data.

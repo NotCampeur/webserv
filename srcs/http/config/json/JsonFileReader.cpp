@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/24 12:46:43 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/24 16:35:18 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,84 @@ JsonFileReader::JsonFileReader(char * path)
 JsonFileReader::~JsonFileReader()
 {}
 
+void
+JsonFileReader::get_key(std::string::iterator & pos, std::pair<std::string, IJsonValue *> &data,
+							bool & is_key)
+{
+	size_t	start = pos - _file_data.begin();
+	size_t	end = _file_data.find('"', start + 1);
+
+	is_key = false;
+	data.first = _file_data.substr(start + 1, end - 1 - start);
+	pos = _file_data.begin() + end;
+}
+
+void
+JsonFileReader::get_string_value(std::string::iterator & pos, std::pair<std::string, IJsonValue *> &data,
+							std::stack<IJsonValue *> & current_value)
+{
+	size_t	start = pos - _file_data.begin();
+	size_t	end = _file_data.find('"', start + 1);
+	
+	data.second = new JsonString(data.first ,_file_data.substr(start + 1, end - 1 - start));
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
+	pos = _file_data.begin() + end;
+	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
+	if (obj != NULL)
+		obj->add_value(data);
+	else
+	{
+		JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+		array->add_value(data.second);
+	}
+}
+
+void
+JsonFileReader::get_array_value(std::pair<std::string, IJsonValue *> &data,
+								std::stack<IJsonValue *> & current_value)
+{
+	data.first = current_value.top()->key();
+	data.second = current_value.top();
+	Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " array end";
+	current_value.pop();
+	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
+	if (obj != NULL)
+		obj->add_value(data);
+	else
+	{
+		JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+		array->add_value(data.second);
+	}
+}
+
+void
+JsonFileReader::get_object_value(std::string::iterator & pos, std::string::iterator & end,
+									std::pair<std::string, IJsonValue *> &data,
+									std::stack<IJsonValue *> & current_value)
+{
+	data.first = current_value.top()->key();
+	data.second = current_value.top();
+	Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " object end";
+	if (current_value.size() == 1)
+	{
+		if (end - pos > 1)
+		{
+			delete data.second;
+			throw Exception("Another global scope has been detected");
+		}
+		return ;
+	}
+	current_value.pop();
+	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
+	if (obj != NULL)
+		obj->add_value(data);
+	else
+	{
+		JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+		array->add_value(data.second);
+	}
+}
+
 JsonObject &
 JsonFileReader::objectify(void)
 {
@@ -42,99 +120,32 @@ JsonFileReader::objectify(void)
 		switch(*it)
 		{
 			case '"' :
-			{
 				if (is_key == true)
-				{
-					size_t	start = it - _file_data.begin();
-					size_t	end = _file_data.find('"', start + 1);
-
-					is_key = false;
-					data.first = _file_data.substr(start + 1, end - 1 - start);
-					it = _file_data.begin() + end;
-				}
+					get_key(it, data, is_key);
 				else
-				{
-					size_t	start = it - _file_data.begin();
-					size_t	end = _file_data.find('"', start + 1);
-					
-					data.second = new JsonString(data.first ,_file_data.substr(start + 1, end - 1 - start));
-					Logger(LOG_FILE, basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
-					it = _file_data.begin() + end;
-					JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
-					if (obj != NULL)
-						obj->add_value(data);
-					else
-					{
-						JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
-						array->add_value(data.second);
-					}
-				}
+					get_string_value(it, data, current_value);
 				break;
-			}
 			case '[' :
-			{
 				current_value.push(new JsonArray(data.first));
 				break;
-			}
 			case '{' :
-			{
 				is_key = true;
 				current_value.push(new JsonObject(data.first));
 				break;
-			}
 			case ':' :
-			{
 				is_key = false;
 				break;
-			}
 			case ']' :
-			{
-				data.first = current_value.top()->key();
-				data.second = current_value.top();
-				Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " array end";
-				current_value.pop();
-				JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
-				if (obj != NULL)
-					obj->add_value(data);
-				else
-				{
-					JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
-					array->add_value(data.second);
-				}
+				get_array_value(data, current_value);
 				break;
-			}
 			case '}' :
-			{
-				data.first = current_value.top()->key();
-				data.second = current_value.top();
-				Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " object end";
-				if (current_value.size() == 1)
-				{
-					if (ite - it > 1)
-					{
-						delete data.second;
-						throw Exception("Another global scope has been detected");
-					}
-					return *dynamic_cast<JsonObject *>(data.second);
-				}
-				current_value.pop();
-				JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
-				if (obj != NULL)
-					obj->add_value(data);
-				else
-				{
-					JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
-					array->add_value(data.second);
-				}
+				get_object_value(it, ite, data, current_value);
 				break;
-			}
 			case ',' :
-			{
 				JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
 				if (array == NULL)
 					is_key = true;
 				break;
-			}
 		}
 		it++;
 	}
