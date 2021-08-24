@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/24 11:20:15 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/24 14:40:22 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,8 +341,59 @@ Config::load_route_upload_path(IJsonValue * route_upload_path, RouteConfig & rou
 	route.set_upload_path(upload_path->value());
 }
 
+ServerConfig *
+Config::load_server_config(IJsonValue * server_object)
+{
+	JsonObject		* server = dynamic_cast<JsonObject *>(server_object);
+	if (server == NULL)
+		throw Exception("Server must be an [array of {objects}]");
+	ServerConfig	* server_config = new ServerConfig();
+	JsonObject::value_type::const_iterator ite(server->value_end());
+	
+	for (JsonObject::value_type::const_iterator it(server->value_begin())
+		; it != ite; it++)
+	{
+		switch (get_server_key(it->first))
+		{
+			case name:
+				load_server_name(it->second, *server_config);
+				break;
+			case host:
+				load_server_host(it->second, *server_config);
+				break;
+			case port:
+				load_server_port(it->second, *server_config);
+				break;
+			case max_client_body_size:
+				load_server_max_client_body_size(it->second, *server_config);
+				break;
+			case auto_index:
+				load_server_auto_index(it->second, *server_config);
+				break;
+			case root:
+				load_server_root(it->second, *server_config);
+				break;
+			case index:
+				load_server_index(it->second, *server_config);
+				break;
+			case default_file_dir:
+				load_server_default_file_dir(it->second, *server_config);
+				break;
+			case error_page_path:
+				load_server_error_page_path(it->second, *server_config);
+				break;
+			case route:
+				load_server_route(it->second, *server_config);
+				break;
+			case server_unknown:
+				throw Exception("Unknown server's key detected");
+		}
+	}
+	return server_config;
+}
+
 void
-Config::load_server_config(IJsonValue * server_array, InitiationDispatcher & idis)
+Config::load_servers_config(IJsonValue * server_array, InitiationDispatcher & idis)
 {
 	JsonArray	* servers = dynamic_cast<JsonArray *>(server_array);
 	if (servers == NULL)
@@ -351,52 +402,7 @@ Config::load_server_config(IJsonValue * server_array, InitiationDispatcher & idi
 	JsonArray::value_type::const_iterator aite(servers->value_end());
 	while (ait != aite)
 	{
-		JsonObject	* server = dynamic_cast<JsonObject *>(*ait);
-		if (server == NULL)
-			throw Exception("Server must be an [array of {objects}]");
-		JsonObject::value_type::const_iterator oit(server->value_begin());
-		JsonObject::value_type::const_iterator oite(server->value_end());
-		ServerConfig	* server_config = new ServerConfig();
-		while (oit != oite)
-		{
-			switch (get_server_key(oit->first))
-			{
-				case name:
-					load_server_name(oit->second, *server_config);
-					break;
-				case host:
-					load_server_host(oit->second, *server_config);
-					break;
-				case port:
-					load_server_port(oit->second, *server_config);
-					break;
-				case max_client_body_size:
-					load_server_max_client_body_size(oit->second, *server_config);
-					break;
-				case auto_index:
-					load_server_auto_index(oit->second, *server_config);
-					break;
-				case root:
-					load_server_root(oit->second, *server_config);
-					break;
-				case index:
-					load_server_index(oit->second, *server_config);
-					break;
-				case default_file_dir:
-					load_server_default_file_dir(oit->second, *server_config);
-					break;
-				case error_page_path:
-					load_server_error_page_path(oit->second, *server_config);
-					break;
-				case route:
-					load_server_route(oit->second, *server_config);
-					break;
-				case server_unknown:
-					throw Exception("Unknown server's key detected");
-			}
-			oit++;
-		}
-		const Server	* serv = new Server(server_config);
+		const Server	* serv = new Server(load_server_config(*ait));
 		idis.add_server_handle(*serv);
 		ait++;
 	}
@@ -414,7 +420,7 @@ Config::apply(InitiationDispatcher & idis)
 		{
 			case server:
 			{
-				load_server_config(it->second, idis);
+				load_servers_config(it->second, idis);
 				break;
 			}
 			case global_unknown:
