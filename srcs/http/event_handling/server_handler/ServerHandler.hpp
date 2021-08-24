@@ -13,36 +13,32 @@ class InitiationDispatcher;
 
 class ServerHandler : public IEventHandler
 {
-    private:
-
-        const Server &          _server;
+	private:
+		const Server &			_server;
 		int						_event_flag;
 
-    public:
+	public:
+		ServerHandler(const Server * server);
+		ServerHandler(ServerHandler const & src);
+		~ServerHandler(void);
 
-        ServerHandler(const Server * server);
-        ServerHandler(ServerHandler const & src);
-        ~ServerHandler(void);
+		ServerHandler &  operator=(ServerHandler const & src);
 
-        ServerHandler &  operator=(ServerHandler const & src);
-
-        virtual void	readable(void);
-        virtual void	writable(void);
+		virtual void	readable(void);
+		virtual void	writable(void);
 		virtual	bool	is_timeoutable(void) const;
 		virtual bool	is_timeout(void) const;
 		virtual int		get_event_flag(void) const;
 
-        int             get_serverfd(void) const;
+		int			 	get_serverfd(void) const;
 
-    private:
+	private:
+		ServerHandler(void);	// Default constructor
+		void	new_client_handler(Client & client);
 
-        ServerHandler(void);    // Default constructor
-        void    new_client_handler(Client & client);
-
-    // Exceptions
-    public:
-
-        class UnableToAcceptConnection : public std::exception
+	// Exceptions
+	public:
+		class UnableToAcceptConnection : public std::exception
 		{
 				std::string	_msg;
 

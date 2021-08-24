@@ -23,7 +23,6 @@ class RequestBodyParser
 		bool				_last_chunk;
 
 	public:
-
     	RequestBodyParser(Request & req);
 		RequestBodyParser(RequestBodyParser const & src);
 		~RequestBodyParser(void);

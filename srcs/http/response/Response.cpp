@@ -128,7 +128,8 @@ Response::set_date(std::string & date)
 {
   char buf[1000]; //This buffer size should always be big enough to hold the date written by strftime
   time_t now = time(0);
-  struct tm tm = *gmtime(&now);
+  struct tm tm;
+  gmtime_r(&now, &tm);
   size_t len = strftime(buf, sizeof buf, "%a, %d %b %Y %H:%M:%S %Z", &tm);
   date = std::string(buf, len);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   UserAgent.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:48:33 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/23 19:51:28 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/08/24 18:14:13 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ namespace webclient
 {
 	class UserAgent
 	{
-			private:
-			
+		private:
 			int					_target_port;
 			int					_sockfd;
 			struct sockaddr_in  _address;
@@ -65,7 +64,6 @@ namespace webclient
 					~UnableToConnect() throw();
 					const char *what() const throw();
 			};
-
 	};
 }
 

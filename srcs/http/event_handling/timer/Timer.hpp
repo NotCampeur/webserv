@@ -10,14 +10,12 @@ class Timer
 		const time_t	_timeout;
 
 	public:
-
 		Timer(time_t timeout);
 		Timer(Timer const & src);
 		~Timer(void);
 
 		void	reset(void);
 		bool	expired(void) const;
-
 };
 
 #endif

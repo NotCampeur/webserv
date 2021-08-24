@@ -9,7 +9,6 @@
 class Server
 {
 	private:
-		
 		int						_sockfd;
 		struct sockaddr_in  	_address;
 		std::string				_ip;

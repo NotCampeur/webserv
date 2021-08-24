@@ -84,7 +84,6 @@ ServerConfig::set_port(std::string & port)
 const std::string *
 ServerConfig::error_page_path(int error) const
 {
-
 	if (_error_pages.find(error) == _error_pages.end())
 		return NULL;
 	else

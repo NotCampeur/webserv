@@ -67,7 +67,6 @@ class ServerConfig
 
 	private:
 		ServerConfig &  operator=(ServerConfig const & src);
-
 };
 
 #endif

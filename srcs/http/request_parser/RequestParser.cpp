@@ -73,7 +73,6 @@ RequestParser::parse(void)
 void
 RequestParser::parse_char(char c)
 {
-
 	switch (_request_state)
 	{
 		case START :
@@ -104,13 +103,9 @@ RequestParser::parse_char(char c)
 		case REQ_LINE_CRLF :
 		{
 			if (c == '\n')
-			{
 				_request_state = HEADERS;
-			}
 			else
-			{
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
-			}
 			break ;
 		}
 		case HEADERS :
@@ -132,9 +127,7 @@ RequestParser::parse_char(char c)
 				add_header();
 			}
 			else
-			{
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
-			}
 			break ;
 		}
 		case FINAL_CRLF :

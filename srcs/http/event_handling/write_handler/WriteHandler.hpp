@@ -14,7 +14,6 @@ class WriteHandler : public IEventHandler
 		size_t				_bytes_written;
 
 	public:
-
 		WriteHandler(const std::string & body, Response & resp);
 		~WriteHandler(void);
 

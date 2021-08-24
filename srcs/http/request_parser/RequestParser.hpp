@@ -12,10 +12,11 @@
 # include "PostMethod.hpp"
 # include "HttpException.hpp"
 
-class RequestParser {
-
+class RequestParser
+{
 	public:
-		enum request_parsing_state {
+		enum request_parsing_state
+		{
 			START,
 			METHOD,
 			URI,
@@ -42,12 +43,10 @@ class RequestParser {
 		std::string					_http_version;
 
 	public:
-
 		RequestParser(Request &req);
 
 		RequestParser(RequestParser const & src);
 		~RequestParser(void);
-
 
 		void	setbuffer(char *buf, size_t len);
 		void	setbuffer(std::string & str);

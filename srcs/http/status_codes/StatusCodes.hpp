@@ -6,7 +6,6 @@
 class StatusCodes
 {
 	public:
-
 		typedef enum	status_index_e {
 			CONTINUE_100,
 			SWITCHING_PROTOCOLS_101,

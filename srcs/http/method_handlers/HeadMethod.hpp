@@ -14,7 +14,6 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 		void				handle(Request & req, Response & resp);
 		bool				has_body(void);
 
-
 	private:
     	HeadMethod(HeadMethod const & src);
 		HeadMethod &  		operator=(HeadMethod const & src);
@@ -24,7 +23,6 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 		off_t				get_file_size(const std::string & path);
 		void				handle_autoindex(Response & resp);
 		void				add_autoindex_line(std::string & dest, const std::string & ressource_name, const std::string & path, bool isdir);
-
 };
 
 #endif

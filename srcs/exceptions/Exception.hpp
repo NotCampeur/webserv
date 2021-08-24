@@ -9,7 +9,6 @@ class Exception : public std::exception
 		std::string	_msg;
 
 	public:
-
     	Exception(const char *str) throw();
     	Exception(Exception const & src) throw();
     	~Exception(void) throw();

@@ -26,7 +26,6 @@ class Response
 		bool							_path_is_dir;
 
 	public:
-
     	Response(const ServerConfig & config);
     	Response(Response const & src);
     	~Response(void);
