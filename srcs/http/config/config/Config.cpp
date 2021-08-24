@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/23 20:54:05 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/24 11:20:15 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,8 +356,7 @@ Config::load_server_config(IJsonValue * server_array, InitiationDispatcher & idi
 			throw Exception("Server must be an [array of {objects}]");
 		JsonObject::value_type::const_iterator oit(server->value_begin());
 		JsonObject::value_type::const_iterator oite(server->value_end());
-		std::string		port_value("8080");
-		ServerConfig	* server_config = new ServerConfig(port_value);
+		ServerConfig	* server_config = new ServerConfig();
 		while (oit != oite)
 		{
 			switch (get_server_key(oit->first))

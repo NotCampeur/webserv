@@ -1,14 +1,14 @@
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(std::string & port, bool autoindex, size_t max_client_body_size) :
+ServerConfig::ServerConfig(void) :
 _name("NAME_NOT_SET"),
 _host("127.0.0.1"),
-_port(port),
+_port("8080"),
 _error_pages(),
-_max_client_body_size(max_client_body_size),
+_max_client_body_size(MAX_CLIENT_BODY_SIZE),
 _root_dir("/"),
 _index(),
-_is_autoindex_on(autoindex),
+_is_autoindex_on(false),
 _default_file_dir(),
 _routes()
 {}

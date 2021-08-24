@@ -17,6 +17,8 @@
 # include "JsonObject.hpp"
 # include "JsonString.hpp"
 # include "JsonArray.hpp"
+# include "SystemException.hpp"
+# include "Exception.hpp"
 
 class JsonFileReader
 {
@@ -52,23 +54,11 @@ class JsonFileReader
 
 	public:
 		//	Load a file given by the path to create a JsonFileReader which get the raw data.
-		JsonFileReader(std::string path = "ressources/config/webserv.conf");
+		JsonFileReader(char * path);
 		~JsonFileReader();
 
 		//	Return the json file formated into a JsonObject.
 		JsonObject	& objectify(void);
-
-		// TODO : Will be modified in SysException
-		class NotAbleToOpen : public std::exception
-		{
-				std::string _msg;
-				
-			public:
-				NotAbleToOpen() throw();
-				~NotAbleToOpen() throw();
-
-				const char * what() const throw();
-		};
 
 		class MissingToken : public std::exception
 		{
@@ -77,17 +67,6 @@ class JsonFileReader
 			public:
 				MissingToken(std::string precision) throw();
 				~MissingToken() throw();
-				const char * what() const throw();
-		};
-
-		class JsonFileReaderException : public std::exception
-		{
-				std::string _msg;
-				
-			public:
-				JsonFileReaderException(std::string msg) throw();
-				~JsonFileReaderException() throw();
-
 				const char * what() const throw();
 		};
 };

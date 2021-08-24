@@ -24,7 +24,7 @@ class ServerConfig
 		std::vector<RouteConfig *>	_routes;
 
 	public:
-		ServerConfig(std::string & port, bool autoindex = false, size_t max_client_body_size = MAX_CLIENT_BODY_SIZE);
+		ServerConfig(void);
     	ServerConfig(ServerConfig const & src);
     	~ServerConfig(void);
 		

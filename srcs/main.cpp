@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/03 19:25:41 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/24 11:40:33 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,13 @@
 #include "SystemException.hpp"
 #include "ServerConfig.hpp"
 
-JsonFileReader
-read_config(char * path)
-{
-	if (path != NULL)
-	{
-		JsonFileReader result(path);
-		return result;
-	}
-	JsonFileReader result;
-	return result;
-}
-
 void
 serv_test(char * config_path)
 {
 	signal(SIGINT, sigint_handler);
 	try
 	{
-		JsonFileReader	json_reader(read_config(config_path));
+		JsonFileReader	json_reader(config_path);
 		Config			config(json_reader.objectify());
 		
 		config.print_to_log();
