@@ -6,7 +6,7 @@
 #    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/08/07 18:15:02 by notcampeur       ###   ########.fr        #
+#    Updated: 2021/08/25 21:14:48 by notcampeur       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ SRC	=	main.cpp \
 		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
 		\
 		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
-		ServerConfig.cpp RouteConfig.cpp Config.cpp \
+		ServerConfig.cpp RouteConfig.cpp Config.cpp ValidatorConfig.cpp \
 
 
 

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/24 11:40:33 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/25 19:13:41 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ serv_test(char * config_path)
 	try
 	{
 		JsonFileReader	json_reader(config_path);
-		Config			config(json_reader.objectify());
-		
-		config.print_to_log();
 		try
 		{
 			InitiationDispatcher & idis = InitiationDispatcher::get_instance();
 			try
 			{
+				Config		config(json_reader.objectify());
+				
+				config.print_to_log();
 				config.apply(idis);
 			}
 			catch(const std::exception& e)

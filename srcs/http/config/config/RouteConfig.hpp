@@ -14,6 +14,7 @@ typedef enum RouteMethod
 	GET = 0x001,
 	POST = 0x002,
 	DELETE = 0x004,
+	HEAD = 0x008,
 	ALL = 0xFFF
 }	RouteMethod;
 

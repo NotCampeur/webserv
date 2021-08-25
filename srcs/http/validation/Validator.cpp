@@ -3,6 +3,9 @@
 #include "SystemException.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
+#include "DeleteMethod.hpp"
+#include "GetMethod.hpp"
+#include "HeadMethod.hpp"
 #include "PostMethod.hpp"
 
 Validator::Validator(void) {}
@@ -13,8 +16,9 @@ void
 Validator::validate_request_inputs(Request & req, Response & resp)
 {
 	try {
-		is_method_allowed();
+		load_desired_config(req);
 		set_full_path(req, resp);
+		is_method_allowed(req);
 		verify_path(req, resp);
 	}
 	catch (HttpException & e)
@@ -24,9 +28,44 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 }
 
 void
-Validator::is_method_allowed()
+Validator::load_desired_config(Request & req)
 {
-	return ;
+	ValidatorConfig & config = ValidatorConfig::get_instance();
+	const std::vector<RouteConfig *> routes = req.get_server_config().routes();
+
+	for (std::vector<RouteConfig *>::const_iterator it = routes.begin();
+			it != routes.end(); ++it)
+	{
+		if ((*it)->path() == req.uri().path)
+		{
+			config = *(*it);
+			Logger(LOG_FILE, basic_type, debug_lvl) << "Route Config loaded";
+			return ;
+		}
+	}
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config loaded";
+	config = req.get_server_config();
+}
+
+void
+Validator::is_method_allowed(Request & req)
+{
+	RouteMethod method = ValidatorConfig::get_instance().accepted_method();
+	if (dynamic_cast<GetMethod *>(&req.method()) != NULL)
+	{
+		if ((GET & method) != NOTHING)
+			return ;
+	}
+	if (dynamic_cast<HeadMethod *>(&req.method()) != NULL)
+		if (HEAD & method)
+			return ;
+	if (dynamic_cast<PostMethod *>(&req.method()) != NULL)
+		if ((POST & method) != 0)
+			return ;
+	if (dynamic_cast<DeleteMethod *>(&req.method()) != NULL)
+		if ((DELETE & method) != 0)
+			return ;
+	throw (HttpException(StatusCodes::METHOD_NOT_ALLOWED_405));
 }
 
 // Assumes that "root" from config is terminated with a '/'
@@ -36,7 +75,7 @@ Validator::set_full_path(Request & req, Response & resp)
 	std::string path = req.uri().path;
 	path.erase(path.begin()); // remove '/'
 	resolve_relative_path(path);
-	std::string root = req.get_server_config().root_dir();
+	std::string root = ValidatorConfig::get_instance().root_dir();
 	
 	if (!root.empty())
 	{
