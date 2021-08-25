@@ -30,14 +30,9 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:
 *  Parsing of Hexadecimal values in URL -> in validator class
-*  Comment each methods  
-*  Need to manage the route in the config
+*  Need to implement the routes on the request manager.  
 
 ### :boom: Known bugs.. I mean features :boom:  
-* Getting "Relais brisé (pipe)" error sometimes when trying to read clients' requests.
-* Valrgind throwing errors following SIGINT: seems to come from poll, as poll gets interupted by SIGINT (signal handler seems to be reset during poll call)
-* When you try to get a file inside a file you get a 500 error. -> "[Tue Aug  3 20:03:05 2021] {ERROR} Error on stat call: Not a directory : 192.168.0.139"
+
 ## :writing_hand: Change log :writing_hand:  
-* The headers' protection have been standardize.  
-* Sources directories restructuring.  
-* Fixed a SystemException bug, the class was not a correct derived class of std::exception.
+* JsonParser branch has been merged.
