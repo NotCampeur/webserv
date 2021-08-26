@@ -1,12 +1,13 @@
 #include "Server.hpp"
 
 Server::Server(ServerConfig *config, int com_domain, int sock_type) :
-_config(*config)
+_config()
 {
+	_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
 	create_socket(com_domain, sock_type);
 	make_nonblocking();
 	set_sock_opt();
-	init_addr_inputs(com_domain, atoi(_config.port().c_str()), inet_addr(_config.host().c_str()));
+	init_addr_inputs(com_domain, atoi(config->port().c_str()), inet_addr(config->host().c_str()));
 	name_serv_socket();
 	set_listener();
 
@@ -16,7 +17,9 @@ _config(*config)
 Server::~Server(void)
 {
 	close(_sockfd);
-	delete &_config;
+	Server::config_type::iterator it = _config.begin();
+	for (; it != _config.end(); ++it)
+		delete &it->second;
 }
 
 // Server &
@@ -120,8 +123,17 @@ Server::getip(void) const
 	return _ip;
 }
 
-const ServerConfig &
+const Server::config_type &
 Server::get_server_config(void) const
 {
 	return _config;
+}
+
+void
+Server::add_server_config(const ServerConfig &config)
+{
+	std::pair<Server::config_type::iterator, bool> result;
+	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.name(), config));
+	if (result.second == false)
+		throw Exception("Servers must be differentiable (By name or by IP or by port).");
 }

@@ -150,7 +150,7 @@ ClientHandler::parse_request(void)
 		Request::uri_t		* uri = &_request.uri();
 		if (uri->path == "/")
 		{
-			const ServerConfig & server_config = _request.get_server_config();
+			const ServerConfig & server_config = _request.get_server_config().begin()->second;
 			if (server_config.index() != "")
 				uri->path = server_config.index();
 		}

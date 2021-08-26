@@ -10,6 +10,7 @@ class IHttpMethod;
 class Request
 {
 	public:
+		typedef std::map<std::string, const ServerConfig &> config_type;
 		typedef struct	uri_s
 		{
 			std::string path;
@@ -23,10 +24,10 @@ class Request
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
-		const ServerConfig &				_server_config;
+		const config_type &					_server_config;
 
 	public:
-		Request(const ServerConfig & config);
+		Request(const config_type & config);
 		Request(Request const & src);
 		~Request(void);
 
@@ -40,7 +41,7 @@ class Request
 		bool &									complete();
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
-		const ServerConfig &					get_server_config(void) const;
+		const config_type &						get_server_config(void) const;
 
 	private:
 		Request(void);

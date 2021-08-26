@@ -9,7 +9,8 @@
 class Response
 {
 	public:
-		typedef std::pair<std::string, std::string>	header_t;
+		typedef std::pair<std::string, std::string>		header_t;
+		typedef std::map<std::string, const ServerConfig &>	config_type;
 
 	private:
 		std::string						_payload;
@@ -20,13 +21,13 @@ class Response
 		bool							_ready_to_send;
 		bool							_complete;
 		int								_handler_fd;
-		const ServerConfig &			_server_config;
+		const config_type &				_server_config;
 		std::string						_file_path;
 		HttpErrorManager				_error_manager;
 		bool							_path_is_dir;
 
 	public:
-    	Response(const ServerConfig & config);
+    	Response(const config_type & config);
     	Response(Response const & src);
     	~Response(void);
 
@@ -51,7 +52,7 @@ class Response
 		void					set_path(const std::string & path);
 		const std::string & 	get_path(void) const;
 
-		const ServerConfig &	get_server_config(void) const;
+		const config_type &		get_server_config(void) const;
 		void					reset(void);
 		void					http_error(StatusCodes::status_index_t error);
 		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);

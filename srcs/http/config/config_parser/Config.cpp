@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/24 14:40:22 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/26 13:53:27 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,23 +393,45 @@ Config::load_server_config(IJsonValue * server_object)
 }
 
 void
-Config::load_servers_config(IJsonValue * server_array, InitiationDispatcher & idis)
+Config::load_servers_config(IJsonValue * server_array)
 {
-	JsonArray	* servers = dynamic_cast<JsonArray *>(server_array);
+	JsonArray *	servers = dynamic_cast<JsonArray *>(server_array);
 	if (servers == NULL)
 		throw Exception("Server must be an [array of {objects}]");
 	JsonArray::value_type::const_iterator ait(servers->value_begin());
 	JsonArray::value_type::const_iterator aite(servers->value_end());
+	std::vector<ServerConfig *>	servers_config;
+	std::vector<Server *>		server_list;
+	bool						is_same_server(false);
 	while (ait != aite)
 	{
-		const Server	* serv = new Server(load_server_config(*ait));
-		idis.add_server_handle(*serv);
+		servers_config.push_back(load_server_config(*ait));
 		ait++;
 	}
+	for (size_t i(0); i < servers_config.size(); i++)
+	{
+		for (size_t j(0); j < server_list.size(); j++)
+		{
+			Server::config_type::const_iterator it(server_list[j]->get_server_config().begin());
+			if (servers_config[i]->host() == it->second.host()
+			&& servers_config[i]->port() == it->second.port())
+			{
+				server_list[j]->add_server_config(*servers_config[i]);
+				Logger(LOG_FILE, basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.host();
+				is_same_server = true;
+				break;
+			}
+		}
+		if (is_same_server == false)
+			server_list.push_back(new Server(servers_config[i]));
+		is_same_server = false;
+	}
+	for (size_t i(0); i < server_list.size(); i++)
+		InitiationDispatcher::get_instance().add_server_handle(*server_list[i]);
 }
 
 void
-Config::apply(InitiationDispatcher & idis)
+Config::apply()
 {
 	JsonObject::value_type::const_iterator it(_global_scope.value_begin());
 	JsonObject::value_type::const_iterator ite(_global_scope.value_end());
@@ -420,7 +442,7 @@ Config::apply(InitiationDispatcher & idis)
 		{
 			case server:
 			{
-				load_servers_config(it->second, idis);
+				load_servers_config(it->second);
 				break;
 			}
 			case global_unknown:

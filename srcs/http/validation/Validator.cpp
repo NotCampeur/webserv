@@ -30,8 +30,8 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 void
 Validator::load_desired_config(Request & req)
 {
-	ValidatorConfig & config = ValidatorConfig::get_instance();
-	const std::vector<RouteConfig *> routes = req.get_server_config().routes();
+	ValidatorConfig &					config = ValidatorConfig::get_instance();
+	const std::vector<RouteConfig *>	routes = req.get_server_config().begin()->second.routes();
 
 	for (std::vector<RouteConfig *>::const_iterator it = routes.begin();
 			it != routes.end(); ++it)
@@ -44,7 +44,7 @@ Validator::load_desired_config(Request & req)
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config loaded";
-	config = req.get_server_config();
+	config = req.get_server_config().begin()->second;
 }
 
 void

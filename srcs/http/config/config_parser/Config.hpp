@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/24 14:36:17 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/26 12:28:52 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class Config
 		
 		JsonObject & 	_global_scope;
 		
-		void			load_servers_config(IJsonValue * server_array, InitiationDispatcher & idis);
+		void			load_servers_config(IJsonValue * server_array);
 		ServerConfig	*load_server_config(IJsonValue * server_object);
 
 		void			load_server_name(IJsonValue * server_name, ServerConfig & server);
@@ -89,7 +89,7 @@ class Config
 						~Config();
 
 		
-		void			apply(InitiationDispatcher & idis);
+		void			apply();
 
 		void			print_to_log(void) const;
 

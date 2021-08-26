@@ -6,20 +6,22 @@
 
 class Client
 {
+	public:
+		typedef std::map<std::string, const ServerConfig &> config_type;
     private:
-        const int               _sockfd;
-        const struct sockaddr * _address;
+        const int				_sockfd;
+        const struct sockaddr *	_address;
 		const std::string		_ip;
-		const ServerConfig &	_server_config;
+		const config_type &		_server_config;
 
     public:
-        Client(int sockfd, struct sockaddr *address, const ServerConfig & config);
+        Client(int sockfd, struct sockaddr *address, const config_type & config);
         ~Client(void);
 
 
-        int     				getsockfd(void) const;
-		const std::string & 	getip(void) const;
-		const ServerConfig &	get_server_config(void) const;
+        int     					getsockfd(void) const;
+		const std::string & 		getip(void) const;
+		const config_type &	get_server_config(void) const;
 
     private:
         Client(void);
