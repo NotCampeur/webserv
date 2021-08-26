@@ -16,7 +16,7 @@ class Response
 		const std::string				_ip;
 		const std::string				_version;
 		StatusCodes::status_index_t 	_code;
-		std::vector<header_t>			_headers;
+		std::vector<header_t>			_headers;	//Using a vector to order headers properly (e.g. good practice to send date first)
 		bool							_metadata_sent;
 		bool							_ready_to_send;
 		bool							_complete;
@@ -43,7 +43,7 @@ class Response
 		bool &					path_is_dir(void);
 		bool &					need_cgi(void);
 		void					set_http_code(StatusCodes::status_index_t i);
-		void					set_payload(char *buf, size_t len);
+		void					set_payload(const char *buf, size_t len);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
 		//Returns a pair with the first argument set to the return value of function send(), and the second set to the initial size of the buffer
 		std::pair<ssize_t, ssize_t>	send_payload(int fd);
@@ -70,6 +70,7 @@ class Response
 		void	set_resp_metadata(void);
 		void	set_status_line(std::string & meta);
 		void	add_payload_crlf(void);
+		void	insert_chunk_size(size_t len);
 };
 
 #endif

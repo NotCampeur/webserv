@@ -9,18 +9,11 @@ _request_state(HEADERS)
 CgiParser::~CgiParser(void) {}
 
 void
-CgiParser::setbuffer(char *buf, size_t len)
-{
-	_buffer.clear();
-	_buffer.insert(_buffer.begin(), buf, buf + len);
-}
-
-void
-CgiParser::parse(void)
+CgiParser::parse(char * buf, size_t len)
 {	
-	for (size_t i = 0; i < _buffer.size(); i++)
+	for (size_t i = 0; i < len; i++)
 	{
-		char c = _buffer[i];
+		char c = buf[i];
 
 		switch (_request_state)
 		{
@@ -50,11 +43,9 @@ CgiParser::parse(void)
 			}
 			case BODY :
 			{
-				if (i > 0)
-				{
-					std::vector<char>::iterator it = _buffer.begin();
-					_buffer.erase(it, it + i);
-				}
+				_resp.set_payload(&buf[i], len - i);
+				_resp.ready_to_send();
+				return ;
 			}
 			default :
 			{
@@ -74,13 +65,13 @@ CgiParser::parse(void)
 			// 	std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
 			// }
 	}
-	_buffer.clear();
 }
 
 void
 CgiParser::add_header(void)
 {
-	_headers.insert(_header_parser.get_header_name(), _header_parser.get_header_value());
+	std::pair<std::string, std::string> p(_header_parser.get_header_name(), _header_parser.get_header_value());
+	_headers.insert(p);
 	_header_parser.reset();
 }
 
@@ -127,14 +118,21 @@ CgiParser::set_resp_params(void)
 		_resp.set_http_code(StatusCodes::OK_200);
 		_headers.erase("status");
 	}
+
+	if (_headers.find("content-length") != _headers.end())
+	{
+		_resp.add_header("Content-Length", _headers.find("content-length")->second);
+		_headers.erase("content-length");	
+	}
+	else
+	{
+		_resp.send_chunks();
+	}
+
 	//Add protocol specific headers that might have been returned by the cgi
 	for (str_map::iterator it = _headers.begin(); it != _headers.end(); it++)
 	{
 		_resp.add_header(it->first, it->second);
-	}
-	if (_headers.find("content-length") != _headers.end())
-	{
-
 	}
 	return true;
 }

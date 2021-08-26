@@ -75,18 +75,7 @@ CgiHandler::readable(void)
 		}
 		default :
 		{
-			_parser.parse();
-			// _p
-			// std::stringstream ss;
-			// ss << bytes_read;
-			// _response.set_http_code(StatusCodes::OK_200);
-			// _response.add_header("Content-Length", ss.str());
-			// _response.add_header("Content-Type", "text/html");
-			// _response.set_payload(read_buff);
-			// _response.ready_to_send() = true;
-			// _response.complete() = true;
-			// _cgi_parser.setbuffer(read_buff, bytes_read);
-			// handle_request();
+			_parser.parse(read_buff, bytes_read);
 		}
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;

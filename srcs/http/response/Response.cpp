@@ -75,31 +75,23 @@ Response::complete(void)
 }
 
 void
-Response::set_payload(char *buf, size_t len)
+Response::set_payload(const char *buf, size_t len)
 {
 	_payload.clear();
 	if (_chunked)
 	{
-		size_t size = len;
-		while (size != 0)
-		{
-			_payload.insert(_payload.begin(), (size % 10) + '0');
-			size /= 10;
-		}
-		add_payload_crlf();
+		insert_chunk_size(len);
 		_payload.insert(_payload.end(), buf, buf + len);
 		add_payload_crlf();
 		if (_complete)
 		{
-			_payload.push_back('0');
-			add_payload_crlf();
-			add_payload_crlf();
+			insert_chunk_size(0);
+			add_payload_crlf(); //Final CRLF
 		}
 	}
 	else
 	{
 		_payload.insert(_payload.begin(), buf, buf + len);
-
 	}
 }
 
@@ -220,7 +212,7 @@ void
 Response::payload_erase(size_t len)
 {
 	std::vector<char>::iterator it = _payload.begin();
-	_payload.erase(it, it + _payload.size());
+	_payload.erase(it, it + len);
 }
 
 const std::string &
@@ -290,4 +282,24 @@ Response::add_payload_crlf(void)
 {
 	_payload.push_back('\r');
 	_payload.push_back('\n');
+}
+
+void
+Response::insert_chunk_size(size_t len)
+{
+	if (len == 0)
+	{		
+		_payload.insert(_payload.begin(), '0');
+	}
+	else
+	{
+		size_t size = len;
+		char hex[] = "0123456789ABCDEF";
+		while (size != 0)
+		{
+			_payload.insert(_payload.begin(), hex[(size % 16)]);
+			size /= 16;
+		}
+	}
+	add_payload_crlf();
 }

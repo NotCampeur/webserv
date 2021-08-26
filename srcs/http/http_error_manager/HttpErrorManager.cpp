@@ -75,7 +75,7 @@ HttpErrorManager::set_payload_to_default_msg(StatusCodes::status_index_t error)
 	static std::string err_msg_part_3("</h1></center>\n<hr><center>webserv</center>\n</body>\n</html>");
 	
 	std::string full_msg = err_msg_part_1 + StatusCodes::get_code_msg_from_index(error) + err_msg_part_2 + StatusCodes::get_code_msg_from_index(error) + err_msg_part_3;
-	_resp.set_payload(full_msg);
+	_resp.set_payload(full_msg.c_str(), full_msg.size());
 	
 	return full_msg.size();
 }

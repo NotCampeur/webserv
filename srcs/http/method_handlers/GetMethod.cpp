@@ -141,7 +141,7 @@ GetMethod::handle_autoindex(Response & resp)
 	resp.set_http_code(StatusCodes::OK_200);
 	resp.add_header("Content-Length", ss.str());
 	resp.add_header("Content-Type", "text/html");
-	resp.set_payload(autoindex_content);
+	resp.set_payload(autoindex_content.c_str(), autoindex_content.size());
 	resp.ready_to_send() = true;
 	resp.complete() = true;
 }

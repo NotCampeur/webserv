@@ -13,7 +13,6 @@ class CgiParser {
 		typedef std::map<std::string, std::string> str_map;
 
 		enum request_parsing_state {
-			// START,
 			HEADERS,
 			FINAL_NL,
 			BODY,
@@ -24,15 +23,13 @@ class CgiParser {
 		Response &				_resp;
 		CgiHeaderParser			_header_parser;
 		request_parsing_state	_request_state;
-		std::vector<char>		_buffer;
 		str_map					_headers;
 
 	public:
 		CgiParser(Response & resp);
 		~CgiParser(void);
 
-		void	parse(void);
-		void	setbuffer(char *buf, size_t len);
+		void	parse(char * buf, size_t len);
 
 	private:
 		CgiParser(void);

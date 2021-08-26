@@ -68,7 +68,7 @@ ClientHandler::writable(void)
 		{
 			throw ClientSystemException("Unable to write to client socket", _client.getip(), _client.getsockfd());
 		}
-		else if (static_cast<size_t>(output.first) < output.second) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
+		else if (output.first < output.second) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
 		{
 			_response.payload_erase(static_cast<size_t>(output.first));
 			_timer.reset();
