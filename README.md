@@ -31,6 +31,7 @@ All libraries will be build and the binary will be ready to launch
 ### :zzz: TODO :zzz:
 *  Parsing of Hexadecimal values in URL -> in validator class
 *  Need to implement the routes on the request manager.  
+*  The server must have a map <server_name, server_config>.
 
 ### :boom: Known bugs.. I mean features :boom:  
 
