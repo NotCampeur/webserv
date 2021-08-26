@@ -83,11 +83,6 @@ Response::set_payload(const char *buf, size_t len)
 		insert_chunk_size(len);
 		_payload.insert(_payload.end(), buf, buf + len);
 		add_payload_crlf();
-		if (_complete)
-		{
-			insert_chunk_size(0);
-			add_payload_crlf(); //Final CRLF
-		}
 	}
 	else
 	{
@@ -95,25 +90,31 @@ Response::set_payload(const char *buf, size_t len)
 	}
 }
 
-std::pair<ssize_t, ssize_t>
+// std::pair<ssize_t, ssize_t>
+ssize_t
 Response::send_payload(int fd)
 {
-	std::pair<ssize_t, ssize_t> output;
+	// std::pair<ssize_t, ssize_t> send_output;
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();
-		output.first = send(fd, &_payload[0], _payload.size(), 0);
-		output.second = _payload.size();
-
 		_metadata_sent = true;
-		return output;
 	}
-	else
+	if (_chunked && _complete)
 	{
-		output.first = send(fd, &_payload[0], _payload.size(), 0);
-		output.second = _payload.size();
-		return output;
+		add_last_chunk();
 	}
+	ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
+
+	// send_output.first = send(fd, &_payload[0], _payload.size(), 0);
+	// send_output.second = _payload.size();
+	if (static_cast<size_t>(ret) < _payload.size())
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
+	}
+	// std::cerr << "Resp content:\n" << std::string(&_payload[0], _payload.size()) << '\n';
+	// return send_output;
+	return ret;
 }
 
 bool
@@ -301,5 +302,13 @@ Response::insert_chunk_size(size_t len)
 			size /= 16;
 		}
 	}
+	add_payload_crlf();
+}
+
+void
+Response::add_last_chunk(void)
+{
+	_payload.push_back('0');
+	add_payload_crlf();
 	add_payload_crlf();
 }

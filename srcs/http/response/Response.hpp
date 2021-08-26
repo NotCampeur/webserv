@@ -46,7 +46,7 @@ class Response
 		void					set_payload(const char *buf, size_t len);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
 		//Returns a pair with the first argument set to the return value of function send(), and the second set to the initial size of the buffer
-		std::pair<ssize_t, ssize_t>	send_payload(int fd);
+		ssize_t					send_payload(int fd);
 		void					payload_erase(size_t len);
 		
 		void					add_header(const std::string & name, const std::string & value);
@@ -71,6 +71,7 @@ class Response
 		void	set_status_line(std::string & meta);
 		void	add_payload_crlf(void);
 		void	insert_chunk_size(size_t len);
+		void	add_last_chunk(void);
 };
 
 #endif

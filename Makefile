@@ -57,7 +57,7 @@ CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 DEBUG =
 ifdef DEBUG
-    CPPFLAGS += -g3 -fsanitize=address
+    CPPFLAGS += -g3 #-fsanitize=address
 endif
 
 IFLAGS =	$(foreach dir, $(INC_DIR), -I$(dir))

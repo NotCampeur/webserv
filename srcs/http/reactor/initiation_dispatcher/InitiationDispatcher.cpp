@@ -55,15 +55,15 @@ InitiationDispatcher::handle_events(void)
 				continue;
 			}
 			try {
-				if (((POLLHUP | POLLERR) & it->revents) > 0)
-				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
-					remove_handle(it->fd);
-				}
-				else if (POLLIN == (POLLIN & it->revents))
+				if (POLLIN == (POLLIN & it->revents))	// Important to check POLLIN before POLLHUP: in case of the CGI, POLLHUP happens when cgi process is terminated, but there might still be content to read in the pipe.
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
+				}
+				else if (((POLLHUP | POLLERR) & it->revents) > 0)
+				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
+					remove_handle(it->fd);
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{

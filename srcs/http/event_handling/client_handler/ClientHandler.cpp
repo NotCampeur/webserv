@@ -63,21 +63,22 @@ ClientHandler::writable(void)
 {
 	if (_response.ready_to_send())
 	{
-		std::pair<ssize_t, ssize_t> output = _response.send_payload(_client.getsockfd());
-		if (output.first < 0)
+		ssize_t send_output = _response.send_payload(_client.getsockfd());
+		if (send_output < 0)
 		{
 			throw ClientSystemException("Unable to write to client socket", _client.getip(), _client.getsockfd());
 		}
-		else if (output.first < output.second) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
-		{
-			_response.payload_erase(static_cast<size_t>(output.first));
-			_timer.reset();
-			Logger(LOG_FILE, basic_type, minor_lvl) << "Could not write entire buffer content to socket: " << _client.getip() << " : " << _client.getsockfd();
+		// else if (send_output.first < send_output.second) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
+		// {
+		// 	_response.payload_erase(static_cast<size_t>(send_output.first));
+		// 	_timer.reset();
+		// 	Logger(LOG_FILE, basic_type, minor_lvl) << "Could not write entire buffer content to socket: " << _client.getip() << " : " << _client.getsockfd();
 
-			// throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
-		}
+		// 	// throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
+		// }
 		else
 		{
+			Logger(LOG_FILE, basic_type, minor_lvl) << "Bytes written to socket: " << send_output;
 			_timer.reset();
 			_response.ready_to_send() = false;
 			if (_response.complete())

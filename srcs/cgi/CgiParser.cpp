@@ -32,38 +32,34 @@ CgiParser::parse(char * buf, size_t len)
 			}
 			case FINAL_NL :
 			{
+				std::cerr << "\n### PARSED CGI REQUEST HEADERS###\n";
+				for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
+				{
+					std::cerr << "Header name: " << (*it).first << '\t'
+					<< "Header value: " << (*it).second << '\n';
+				}
 				if (!set_resp_params())
 				{
 					return ;
 				}
 				else
 				{
-					_request_state = BODY;
+					_request_state = BODY; //No break here --> we fall directly in case BODY
 				}
 			}
 			case BODY :
 			{
 				_resp.set_payload(&buf[i], len - i);
-				_resp.ready_to_send();
+				// std::cerr << "Payload set with:\n" << std::string(&buf[i], len - i) << '\n';
+				_resp.ready_to_send() = true;
 				return ;
 			}
 			default :
 			{
 				Logger(LOG_FILE, error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
-				break;
+				return ;
 			}
 		}
-			// std::cerr << "\n### PARSED CGI REQUEST ###\n"
-			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
-			// {
-			// 	std::cerr << "Header name: " << (*it).first << '\t'
-			// 	<< "Header value: " << (*it).second << '\n';
-			// }
-			// if (_request.method().has_body())
-			// {
-			// 	std::cerr << _request.get_body();
-			// 	std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
-			// }
 	}
 }
 

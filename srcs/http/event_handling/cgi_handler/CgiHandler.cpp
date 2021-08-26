@@ -71,14 +71,21 @@ CgiHandler::readable(void)
 		}
 		case 0 :
 		{
+			std::cerr << "Cgi Pipe empty - done reading\n";
 			make_complete();
 		}
 		default :
 		{
+			// std::cerr << "Cgi read buf:\n" << std::string(read_buff, bytes_read) << '\n';
 			_parser.parse(read_buff, bytes_read);
+			if (bytes_read < FILE_READ_BUF_SIZE)
+			{
+				std::cerr << "Read less than Buf_Size\n";
+				make_complete();
+			}
 		}
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
+	// Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read);
 }
 
 void
@@ -183,7 +190,7 @@ CgiHandler::start_cgi(void)
 	}
 	if (_pid == 0)
 	{
-		std::cerr << "Hello from chile\n";
+		// std::cerr << "Hello from chile\n";
 		int ret = dup2(_pipe_fd[0], STDIN_FILENO);
 		if (ret < 0)
 		{
@@ -202,7 +209,7 @@ CgiHandler::start_cgi(void)
 		}
 		else
 		{
-			std::cerr << "Chile about to execve\n";
+			// std::cerr << "Chile about to execve\n";
 			execve(cgi_bin->c_str(), NULL, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
@@ -255,6 +262,7 @@ CgiHandler::cgi_process_error(void)
 			_cgi_done = true;
 			if (WEXITSTATUS(status) != EXIT_SUCCESS)
 			{
+			Logger(LOG_FILE, error_type, error_lvl) << "CGI error - exit status:" << WEXITSTATUS(status);
 				if(_response.metadata_sent())
 				{
 					make_complete();
