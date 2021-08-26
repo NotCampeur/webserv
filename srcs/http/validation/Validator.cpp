@@ -30,9 +30,20 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 void
 Validator::load_desired_config(Request & req)
 {
-	ValidatorConfig &					config = ValidatorConfig::get_instance();
-	const std::vector<RouteConfig *>	routes = req.get_server_config().begin()->second.routes();
+	ValidatorConfig &			config = ValidatorConfig::get_instance();
+	std::vector<RouteConfig *>	routes = req.get_server_config().begin()->second.routes();
 
+	for (Request::config_type::const_iterator	it = req.get_server_config().begin()
+			; it != req.get_server_config().end(); it++)
+	{
+		if (req.headers()["host"] == it->first + ":" + it->second.port())
+		{
+			config = it->second;
+			routes = it->second.routes();
+			Logger(LOG_FILE, basic_type, debug_lvl) << "Named Server config loaded";
+			break;
+		}
+	}
 	for (std::vector<RouteConfig *>::const_iterator it = routes.begin();
 			it != routes.end(); ++it)
 	{
@@ -44,7 +55,6 @@ Validator::load_desired_config(Request & req)
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config loaded";
-	config = req.get_server_config().begin()->second;
 }
 
 void

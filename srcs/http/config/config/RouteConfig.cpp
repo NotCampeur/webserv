@@ -35,7 +35,6 @@ RouteConfig::RouteConfig(std::string path, ServerConfig & config)
 }
 
 RouteConfig::RouteConfig(const RouteConfig & to_copy)
-	: _path(to_copy._path), _accepted_method(to_copy._accepted_method)
 {
 	*this = to_copy;
 }

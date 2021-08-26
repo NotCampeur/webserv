@@ -65,7 +65,6 @@ class ServerConfig
 		const std::vector<RouteConfig *> & routes(void) const;
 		void				add_route(RouteConfig * route);
 
-	private:
 		ServerConfig &  operator=(ServerConfig const & src);
 };
 

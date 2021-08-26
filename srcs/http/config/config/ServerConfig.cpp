@@ -34,16 +34,25 @@ ServerConfig::~ServerConfig(void)
 		delete _routes[i];
 }
 
-// ServerConfig &
-// ServerConfig::operator=(ServerConfig const & src)
-// {
-// 	_error_pages = src._error_pages;
-// 	_max_client_body_size = src._max_client_body_size;
-// 	_root_dir = src._root_dir;
-// 	_autoindex = src._autoindex;
-// 	_default_file_dir = src._default_file_dir;
-//     return (*this);
-// }
+ServerConfig &
+ServerConfig::operator=(ServerConfig const & src)
+{
+	if (this != &src)
+	{
+		_name = src._name;
+		_host = src._host;
+		_port = src._port;
+		_error_pages = src._error_pages;
+		_max_client_body_size = src._max_client_body_size;
+		_root_dir = src._root_dir;
+		_index = src._index;
+		_is_autoindex_on = src._is_autoindex_on;
+		_default_file_dir = src._default_file_dir;
+		for (size_t i(0); i < src._routes.size(); i++)
+			_routes.push_back(new RouteConfig(*src._routes[i]));
+	}
+    return (*this);
+}
 
 const std::string &
 ServerConfig::name(void) const
