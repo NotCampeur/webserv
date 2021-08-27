@@ -11,6 +11,9 @@ CgiParser::~CgiParser(void) {}
 void
 CgiParser::parse(char * buf, size_t len)
 {	
+	write(2, "Cgi read buf content:\n", 22);
+	write(2, buf, len);
+	write(2, "\n", 1);
 	for (size_t i = 0; i < len; i++)
 	{
 		char c = buf[i];
@@ -24,11 +27,17 @@ CgiParser::parse(char * buf, size_t len)
 					_request_state = FINAL_NL;
 					break ;
 				}
-				if (_header_parser.parse_char(c))
-				{
-					add_header();
+				try {
+					if (_header_parser.parse_char(c))
+					{
+						add_header();
+					}
+					break ;
 				}
-				break ;
+				catch(HttpException & e)
+				{
+					handle_error(e.get_code_index());
+				}
 			}
 			case FINAL_NL :
 			{
@@ -85,7 +94,7 @@ CgiParser::set_resp_params(void)
 {
 	if (_headers.find("content-type") == _headers.end())
 	{
-		_resp.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500); // But most likely that's a CGI error..
+		handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500); // But most likely that's a CGI error..
 		Logger(LOG_FILE, error_type, error_lvl) << "Missing 'content-type' header in cgi response";
 		return false;
 	}
@@ -108,7 +117,7 @@ CgiParser::set_resp_params(void)
 		if (status_code != 200)
 		{
 			Logger(LOG_FILE, error_type, error_lvl) << "Cgi status code: " << status;
-			_resp.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
+			handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
 			return false;
 		}
 		_resp.set_http_code(StatusCodes::OK_200);
@@ -131,4 +140,10 @@ CgiParser::set_resp_params(void)
 		_resp.add_header(it->first, it->second);
 	}
 	return true;
+}
+
+void
+CgiParser::handle_error(StatusCodes::status_index_t code)
+{
+	_resp.http_error(code);
 }

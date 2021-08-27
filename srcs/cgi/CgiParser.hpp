@@ -40,6 +40,7 @@ class CgiParser {
 		void	parse_char(char c);
 		void	add_header(void);
 		bool	set_resp_params(void);
+		void	handle_error(StatusCodes::status_index_t code);
 };
 
 #endif

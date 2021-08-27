@@ -32,6 +32,7 @@ CgiHeaderParser::parse_char(char c)
 	_size++;
 	if (_size > MAX_CGI_HEADER_SIZE)
 	{
+		Logger(LOG_FILE, error_type, error_lvl) << "Max cgi header file size reached";
 		throw HttpException(StatusCodes::BAD_REQUEST_400);
 	}
 	switch (_state)
@@ -49,12 +50,14 @@ CgiHeaderParser::parse_char(char c)
 		{
 			if (std::iscntrl(c))
 			{
+				Logger(LOG_FILE, error_type, error_lvl) << "Cgi header parsing: control character found in cgi header field name \"" << _field_name << "\"";
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			else if(c == ':')
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{
+					Logger(LOG_FILE, error_type, error_lvl) << "Cgi header parsing: whitespace found in field name: \"" << _field_name << "\"";
 					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 				_state = COLON;
