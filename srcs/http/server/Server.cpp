@@ -1,31 +1,40 @@
 #include "Server.hpp"
 
 Server::Server(ServerConfig *config, int port, u_int32_t ip, int com_domain, int sock_type) :
+_sockfd(-1),
 _config(*config)
 {
-	create_socket(com_domain, sock_type);
-	make_nonblocking();
-	set_sock_opt();
-	init_addr_inputs(com_domain, port, ip);
-	name_serv_socket();
-	set_listener();
+	try {
+		create_socket(com_domain, sock_type);
+		make_nonblocking();
+		set_sock_opt();
+		init_addr_inputs(com_domain, port, ip);
+		name_serv_socket();
+		set_listener();
 
-	_ip = std::string(inet_ntoa(_address.sin_addr));
+		_ip = std::string(inet_ntoa(_address.sin_addr));
+	}
+	catch (...)
+	{
+		cleanup();
+		throw;
+	}
 }
 
 Server::~Server(void)
 {
-	close(_sockfd);
-	delete &_config;
+	cleanup();
 }
 
-// Server &
-// Server::operator=(Server const & src)
-// {
-// 	this->_sockfd = src._sockfd;
-// 	this->_address = src._address;
-// 	return (*this);
-// }
+void
+Server::cleanup(void)
+{
+	if (_sockfd != -1)
+	{
+		close(_sockfd);
+	}
+	delete &_config;
+}
 
 int
 Server::getsockfd() const

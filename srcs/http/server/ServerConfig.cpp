@@ -14,7 +14,8 @@ _error_pages(src._error_pages),
 _max_client_body_size(src._max_client_body_size),
 _root_dir(src._root_dir),
 _autoindex(src._autoindex),
-_default_file_dir(src._default_file_dir)
+_default_file_dir(src._default_file_dir),
+_cgi_paths(src._cgi_paths)
 {}
 
 ServerConfig::~ServerConfig(void) {}

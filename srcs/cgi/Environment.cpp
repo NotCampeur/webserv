@@ -11,7 +11,13 @@ _cgi_env(NULL)
 //     (void)src;
 // }
 
-Environment::~Environment(void) {}
+Environment::~Environment(void)
+{
+	if (_cgi_env != NULL)
+	{
+		delete_cgi_env();
+	}
+}
 
 // Environment &
 // Environment::operator=(Environment const & src)
