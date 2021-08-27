@@ -4,6 +4,9 @@
 #include "Mime.hpp"
 #include "unistd.h"
 #include "SystemException.hpp"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 CgiHandler::CgiHandler(Request & req, Response & resp, std::string method) :
 _request(req),
@@ -93,6 +96,7 @@ CgiHandler::writable(void)
 {
 	if (_method == "POST" && _request.bodysize() > 0)
 	{
+		//Exposed if max pipe capacity is reached
 		ssize_t len = write(_pipe_fd[1], &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
@@ -209,8 +213,9 @@ CgiHandler::start_cgi(void)
 		}
 		else
 		{
+			char * const av[] = {const_cast<char *>(_response.get_path().c_str()), NULL};
 			// std::cerr << "Chile about to execve\n";
-			execve(cgi_bin->c_str(), NULL, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
+			execve(cgi_bin->c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
 		exit(EXIT_FAILURE);
