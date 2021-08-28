@@ -152,10 +152,9 @@ InitiationDispatcher::add_write_handle(const std::vector<char> & body, Response 
 }
 
 void
-InitiationDispatcher::add_cgi_handle(Request & req, Response & resp, const std::string & method)
+InitiationDispatcher::add_cgi_handle(Request & req, Response & resp, int open_pipe[2], const std::string & method)
 {
-	CgiHandler *ch = new CgiHandler(req, resp, method);
-
+	CgiHandler *ch = new CgiHandler(req, resp, open_pipe, method);
 	_event_handler_table->add(resp.get_handler_fd(), *ch);
 }
 

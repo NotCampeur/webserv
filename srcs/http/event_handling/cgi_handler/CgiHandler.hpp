@@ -14,7 +14,8 @@ class CgiHandler : public IEventHandler
 		Response &				_response;
 		const std::string		_method;
 		std::string				_file_ext;
-		int						_pipe_fd[2];
+		int						_pipe_one_fd[2];
+		int						_pipe_two_fd[2];
 		int						_event_flag;
 		Environment				_env;
 		int						_pid;
@@ -25,7 +26,7 @@ class CgiHandler : public IEventHandler
 
 	public:
 
-		CgiHandler(Request & req, Response & resp, std::string method);
+		CgiHandler(Request & req, Response & resp, int open_pipe[2], std::string method);
 		~CgiHandler(void);
 
 		virtual void	readable(void);
@@ -34,7 +35,6 @@ class CgiHandler : public IEventHandler
 		virtual bool	is_timeout(void) const;
 		virtual int		get_event_flag(void) const;
 
-		int				get_fd(void) const;
 		void			start_cgi();
 
 	private:
@@ -43,7 +43,9 @@ class CgiHandler : public IEventHandler
 		void	manage_error(void);
 		void	make_complete(void);
 		bool	cgi_process_error(void);
-
+		bool	open_pipe_two(void);
+		void	close_pipes(void);
+		bool	set_nonblock(void);
 };
 
 #endif

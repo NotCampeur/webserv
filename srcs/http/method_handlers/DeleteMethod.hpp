@@ -18,6 +18,8 @@ class DeleteMethod : public IHttpMethod, public Singleton<DeleteMethod>
 			DeleteMethod(DeleteMethod const & src);
 			DeleteMethod &  operator=(DeleteMethod const & src);
 
+			void	add_cgi_handle(Request & req, Response & resp);
+
 };
 
 #endif

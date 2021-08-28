@@ -89,12 +89,10 @@ Response::set_payload(const char *buf, size_t len)
 		_payload.insert(_payload.begin(), buf, buf + len);
 	}
 }
-
-// std::pair<ssize_t, ssize_t>
-ssize_t
+// Return -1 if an error occured, 0 if some data was sent but tje entire payload content, 1 if the entire payload was sent successfully
+int
 Response::send_payload(int fd)
 {
-	// std::pair<ssize_t, ssize_t> send_output;
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();
@@ -106,15 +104,29 @@ Response::send_payload(int fd)
 	}
 	ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
 
-	// send_output.first = send(fd, &_payload[0], _payload.size(), 0);
-	// send_output.second = _payload.size();
+	if (ret < 0)
+	{
+		if (errno == EAGAIN)
+		{
+			return 0;
+		}
+		return -1;
+	}
 	if (static_cast<size_t>(ret) < _payload.size())
 	{
+		payload_erase(ret);
 		Logger(LOG_FILE, error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
+		return 0;
+	}
+	else
+	{
+		_payload.clear();
+		_ready_to_send = false;
+		return 1;
 	}
 	// std::cerr << "Resp content:\n" << std::string(&_payload[0], _payload.size()) << '\n';
 	// return send_output;
-	return ret;
+
 }
 
 bool
