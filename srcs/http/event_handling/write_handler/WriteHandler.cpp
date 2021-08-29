@@ -27,12 +27,16 @@ void
 WriteHandler::writable(void)
 {
 	ssize_t len;
-	if (_bytes_written != 0 && _bytes_written != _body.size()) // Something has already been written to the file, but not the full body content
+	if (!_response.complete()) // Something has already been written to the file, but not the full body content
 	{
 		len = write(_response.get_handler_fd(), &_body[_bytes_written], _body.size() - _bytes_written); //Removed the +1
 		
 		if (len < 0)
 		{
+			if (errno == EAGAIN)
+			{
+				return ;
+			}
 			manage_error();
 		}
 		else

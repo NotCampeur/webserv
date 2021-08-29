@@ -51,7 +51,7 @@ PostMethod::add_cgi_handle(Request & req, Response & resp)
 		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
 	resp.set_handler_fd(pipe_fd[1]); // Setting handler to write end of the pipe, as CGI handler will first need to write to the pipe
-	InitiationDispatcher::get_instance().add_cgi_handle(req, resp, pipe_fd, "GET");
+	InitiationDispatcher::get_instance().add_cgi_handle(req, resp, pipe_fd, "POST");
 }
 
 // void
