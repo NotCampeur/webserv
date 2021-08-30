@@ -1,6 +1,6 @@
 #include "Client.hpp"
 
-Client::Client(int sockfd, struct sockaddr *address, const ServerConfig & config) :
+Client::Client(int sockfd, struct sockaddr *address, const config_type & config) :
 _sockfd(sockfd),
 _address(address),
 _ip(inet_ntoa((reinterpret_cast<sockaddr_in *>(address))->sin_addr)),
@@ -26,7 +26,7 @@ Client::getip(void) const
 	return _ip;
 }
 
-const ServerConfig &
+const Client::config_type &
 Client::get_server_config(void) const
 {
 	return _server_config;

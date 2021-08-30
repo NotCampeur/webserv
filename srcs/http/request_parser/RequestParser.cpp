@@ -49,18 +49,18 @@ RequestParser::parse(void)
 			_buffer_leftovers.clear();
 			_buffer_leftovers.insert(_buffer_leftovers.begin(), &_buffer[i + 1], &_buffer[_buffer.size()]);
 
-			// std::cerr << "\n### PARSED REQUEST ###\n"
-			// << "Method: " << _http_method << '\n'
-			// << "Uri (path): " << _request.uri().path << '\n'
-			// << "Uri (query): " << _request.uri().query << '\n'
-			// << "Uri (fragment): " << _request.uri().fragment << '\n'
-			// << "Http version: " << _http_version << '\n';
+			std::cerr << "\n### PARSED REQUEST ###\n"
+			<< "Method: " << _http_method << '\n'
+			<< "Uri (path): " << _request.uri().path << '\n'
+			<< "Uri (query): " << _request.uri().query << '\n'
+			<< "Uri (fragment): " << _request.uri().fragment << '\n'
+			<< "Http version: " << _http_version << '\n';
 
-			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
-			// {
-			// 	std::cerr << "Header name: " << (*it).first << '\t'
-			// 	<< "Header value: " << (*it).second << '\n';
-			// }
+			for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
+			{
+				std::cerr << "Header name: " << (*it).first << '\t'
+				<< "Header value: " << (*it).second << '\n';
+			}
 			// if (_request.method().has_body())
 			// {
 			// 	std::cerr << _request.get_body();
@@ -75,7 +75,6 @@ RequestParser::parse(void)
 void
 RequestParser::parse_char(char c)
 {
-
 	switch (_request_state)
 	{
 		case START :
@@ -106,13 +105,9 @@ RequestParser::parse_char(char c)
 		case REQ_LINE_CRLF :
 		{
 			if (c == '\n')
-			{
 				_request_state = HEADERS;
-			}
 			else
-			{
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
-			}
 			break ;
 		}
 		case HEADERS :
@@ -134,9 +129,7 @@ RequestParser::parse_char(char c)
 				add_header();
 			}
 			else
-			{
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
-			}
 			break ;
 		}
 		case FINAL_CRLF :

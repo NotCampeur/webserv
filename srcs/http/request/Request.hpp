@@ -10,6 +10,7 @@ class IHttpMethod;
 class Request
 {
 	public:
+		typedef std::map<std::string, const ServerConfig &> config_type;
 		typedef struct	uri_s
 		{
 			std::string path;
@@ -23,10 +24,10 @@ class Request
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
 		std::vector<char>					_body;
-		const ServerConfig &				_server_config;
+		const config_type &					_server_config;
 
 	public:
-		Request(const ServerConfig & config);
+		Request(const config_type & config);
 		Request(Request const & src);
 		~Request(void);
 

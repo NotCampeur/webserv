@@ -13,7 +13,6 @@ class ReadHandler : public IEventHandler
 		size_t					_bytes_read;
 
 	public:
-
 		ReadHandler(size_t file_size, Response & resp);
 		~ReadHandler(void);
 

@@ -10,16 +10,13 @@
 class HandlerTable
 {
 	public:
-
 		typedef std::map<int, IEventHandler *>				table_type;
 		typedef std::map<int, IEventHandler *>::iterator	iterator;
 
 	private:
-
 		table_type *					_handler_table;
 	
 	public:
-
 		HandlerTable(void);
 		HandlerTable(const HandlerTable & src);
 		~HandlerTable(void);
@@ -31,7 +28,7 @@ class HandlerTable
 		iterator		find(int fd) const;
 		IEventHandler *	get(int fd) const;
 		size_t			size(void) const;
-		
+
 		HandlerTable &	operator=(const HandlerTable & src);
 };
 

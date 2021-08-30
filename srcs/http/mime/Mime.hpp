@@ -6,7 +6,6 @@
 class Mime
 {
 	public:
-
     	Mime(void);
     	Mime(Mime const & src);
     	~Mime(void);
@@ -17,7 +16,6 @@ class Mime
 
 	private:
 		static const std::map<std::string, std::string> &	init_mime(void);
-
 };
 
 #endif

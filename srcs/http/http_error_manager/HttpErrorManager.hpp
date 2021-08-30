@@ -8,13 +8,15 @@ class ServerConfig;
 
 class HttpErrorManager
 {
+	public:
+		typedef std::map<std::string, const ServerConfig &>	config_type;
 	private:
 		int						_fd;
-		const ServerConfig &	_config;
+		const config_type &	_config;
 		Response &				_resp;
 	
 	public:
-		HttpErrorManager(const ServerConfig & config, Response & resp);
+		HttpErrorManager(const config_type & config, Response & resp);
 		HttpErrorManager(HttpErrorManager const & src);
     	~HttpErrorManager(void);
 

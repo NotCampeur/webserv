@@ -10,7 +10,6 @@ class ClientSystemException : public SystemException
 		int	_fd;
 
 	public:
-
     	ClientSystemException(const char *str, const std::string & ip, int fd) throw();
     	ClientSystemException(ClientSystemException const & src) throw();
     	~ClientSystemException(void) throw();

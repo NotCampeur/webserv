@@ -4,6 +4,7 @@
 # include <string>
 # include "Singleton.hpp"
 # include "webserv.hpp"
+# include "ValidatorConfig.hpp"
 class Request;
 class Response;
 class ServerConfig;
@@ -28,12 +29,15 @@ class Validator : public Singleton<Validator>
 		Validator &  operator=(Validator const & src);
 
 		void	host_header_ok(Request & req);
-		void	is_method_allowed(void);
+		void	load_desired_config(Request & req);
+		void	is_method_allowed(Request & req);
 		void	set_full_path(Request & req, Response & resp);
 		void	verify_path(Request & req, Response & resp);
 		bool	is_dir(mode_t mode);
 		bool	is_file(mode_t mode);
 		void	parse_hexa(std::string & path);
+		void	resolve_relative_path(std::string & path);
+		void	remove_last_path_elem(std::string & path);
 };
 
 #endif

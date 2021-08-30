@@ -33,7 +33,6 @@ Logger::put_timestamp(void)
 	now = time(0);
 	msg = ctime(&now);
 	msg.erase(msg.end() - 1);
-	// msg += " : ";
 	*_files[_path] << '[' << msg << "] ";
 	if (_type == error_type)
 		*_files[_path] << "{ERROR} ";

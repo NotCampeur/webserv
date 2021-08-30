@@ -15,7 +15,6 @@
 class ClientHandler : public IEventHandler
 {
 	private:
-
 		const Client &					_client;
 		Request							_request;
 		Response						_response;
@@ -24,7 +23,6 @@ class ClientHandler : public IEventHandler
 		int								_event_flag;
 
 	public:
-
 		ClientHandler(const Client & client);
 		ClientHandler(ClientHandler const & src);
 		~ClientHandler(void);

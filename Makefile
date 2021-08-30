@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ldutriez_home <ldutriez@student.42.fr>     +#+  +:+       +#+         #
+#    By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/07/21 16:14:13 by jmaydew          ###   ########.fr        #
+#    Updated: 2021/08/30 20:22:43 by jmaydew          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,12 +32,12 @@ LIB = ft
 
 SRC	=	main.cpp \
 		Logger.cpp \
+		\
 		sigint_handler.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \
 		ServerHandler.cpp ClientHandler.cpp ReadHandler.cpp WriteHandler.cpp\
 		Timer.cpp \
 		Server.cpp Client.cpp \
-		ServerConfig.cpp \
 		Request.cpp Response.cpp\
 		RequestParser.cpp RequestUriParser.cpp RequestHeaderParser.cpp RequestBodyParser.cpp\
 		Validator.cpp \
@@ -46,7 +46,12 @@ SRC	=	main.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
 		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp \
 		CgiHandler.cpp CgiParser.cpp CgiHeaderParser.cpp Environment.cpp \
-		Utils.cpp
+		Utils.cpp \
+		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\
+		\
+		JsonFileReader.cpp JsonObject.cpp JsonArray.cpp JsonString.cpp \
+		ServerConfig.cpp RouteConfig.cpp Config.cpp ValidatorConfig.cpp \
+
 
 
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:%.cpp=%.o))

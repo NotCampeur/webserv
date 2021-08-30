@@ -3,13 +3,12 @@
 
 # include "webserv.hpp"
 
-class Exception : std::exception
+class Exception : public std::exception
 {
 	protected:
 		std::string	_msg;
 
 	public:
-
     	Exception(const char *str) throw();
     	Exception(Exception const & src) throw();
     	~Exception(void) throw();

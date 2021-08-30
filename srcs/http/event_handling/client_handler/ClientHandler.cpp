@@ -4,7 +4,7 @@
 ClientHandler::ClientHandler(const Client & client) :
 _client(client),
 _request(client.get_server_config()),
-_response(client.get_server_config(), client.getip()),
+_response(client.get_server_config()),
 _req_parser(_request),
 _timer(CLIENT_TIMEOUT),
 _event_flag(POLLIN)
@@ -127,7 +127,7 @@ ClientHandler::handle_request(void)
 		{
 			handle_http_error(e.get_code_index());
 		}
-		else
+		else if (StatusCodes::get_code_value(e.get_code_index()) >= 300)
 		{
 			std::cerr << "Redir caught\n";
 			_response.http_redirection(e.get_code_index(), e.get_location());
@@ -145,7 +145,16 @@ ClientHandler::parse_request(void)
 {
 	_req_parser.parse();
 	if (_request.complete())
+	{
+		Request::uri_t		* uri = &_request.uri();
+		if (uri->path == "/")
+		{
+			const ServerConfig & server_config = _request.get_server_config().begin()->second;
+			if (server_config.index() != "")
+				uri->path = server_config.index();
+		}
 		_event_flag = POLLOUT;
+	}
 }
 
 void

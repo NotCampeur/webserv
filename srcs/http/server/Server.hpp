@@ -8,23 +8,26 @@
 
 class Server
 {
+	public:
+		typedef std::map<std::string, const ServerConfig &>	config_type;
+
 	private:
-		
-		int						_sockfd;
-		struct sockaddr_in  	_address;
-		std::string				_ip;
-		const ServerConfig &	_config;
+		int					_sockfd;
+		struct sockaddr_in	_address;
+		std::string			_ip;
+		config_type			_config;
 
 	public:
 		// With port 0, the OS assigns the port
-		Server(ServerConfig *config, int port, u_int32_t ip = INADDR_ANY, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
+		Server(ServerConfig *config, int domain = AF_INET, int sock_protocol = SOCK_STREAM);
 		~Server(void);
 
 
-		int						getsockfd(void) const;
-		int						getport(void) const;
-		const std::string &		getip(void) const;
-		const ServerConfig &	get_server_config(void) const;
+		int					getsockfd(void) const;
+		int					getport(void) const;
+		const std::string &	getip(void) const;
+		const config_type &	get_server_config(void) const;
+		void				add_server_config(const ServerConfig &config);
 
 	private:
 		Server(void);

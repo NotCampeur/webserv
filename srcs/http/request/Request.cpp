@@ -1,11 +1,14 @@
 #include "Request.hpp"
 
-Request::Request(const ServerConfig & config) :
+//TODO: Need to first check the headers to know the config to use.
+
+Request::Request(const Request::config_type & config) :
 _complete(false),
 _method(NULL),
 _server_config(config)
 {
-	_body.reserve(_server_config.get_max_client_body_size());
+	// Now using vectors along with push_back()
+	// _body.reserve(_server_config.begin()->second.max_client_body_size());
 }
 
 Request::Request(Request const & src) :
@@ -59,7 +62,8 @@ Request::complete(void)
 void
 Request::add_char_to_body(char c)
 {
-	if (_body.size() == _server_config.get_max_client_body_size())
+	
+	if (_body.size() == get_server_config().get_max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 	_body.push_back(c);
 }
@@ -91,5 +95,24 @@ Request::add_header(std::string & field_name, std::string & field_value)
 const ServerConfig &
 Request::get_server_config(void) const
 {
-	return _server_config;
+	std::string host;
+	if (_headers.find("host") != _headers.end())	// Defensive: there should always be a host
+	{
+		host = _headers.find("host")->second;
+	}
+	else
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << "Host header file not found in Request::get_server_config()";
+		host = "default";
+	}
+
+	if (_server_config.find(host) != _server_config.end())
+	{
+		return _server_config.find(host)->second;
+	}
+	else
+	{
+		// return _server_config.find("default")->second; 
+		return _server_config.begin()->second; // TBU -> remove this line and uncomment the above once we're sure there'll always be a "default" config
+	}
 }

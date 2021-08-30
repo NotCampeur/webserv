@@ -12,12 +12,10 @@ class Demultiplexer
 		typedef std::vector<struct pollfd>	pollfd_arr;
 
 	private:
-
 		pollfd_arr	_pollfds;
 		int			_timeout;
 
 	public:
-
 		Demultiplexer(int timeout = DEMULTIMPEXER_TIMEOUT);		
 		Demultiplexer(const Demultiplexer & src);
 		~Demultiplexer(void);

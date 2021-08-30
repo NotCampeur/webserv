@@ -10,7 +10,6 @@ class ClientException : public Exception
 		int	_fd;
 
 	public:
-
     	ClientException(const char *str, const std::string & ip, int fd) throw();
     	ClientException(ClientException const & src) throw();
     	~ClientException(void) throw();

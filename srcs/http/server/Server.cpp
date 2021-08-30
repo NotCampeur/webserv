@@ -1,14 +1,14 @@
 #include "Server.hpp"
 
-Server::Server(ServerConfig *config, int port, u_int32_t ip, int com_domain, int sock_type) :
-_sockfd(-1),
-_config(*config)
+Server::Server(ServerConfig *config, int com_domain, int sock_type) :
+_config()
 {
 	try {
+		_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
 		create_socket(com_domain, sock_type);
 		make_nonblocking();
 		set_sock_opt();
-		init_addr_inputs(com_domain, port, ip);
+		init_addr_inputs(com_domain, atoi(config->port().c_str()), inet_addr(config->host().c_str()));
 		name_serv_socket();
 		set_listener();
 
@@ -24,6 +24,10 @@ _config(*config)
 Server::~Server(void)
 {
 	cleanup();
+	// Should do this if failure in constructor?
+	Server::config_type::iterator it = _config.begin();
+	for (; it != _config.end(); ++it)
+		delete &it->second;
 }
 
 void
@@ -47,7 +51,10 @@ Server::create_socket(int domain, int type, int protocol)
 {
 	this->_sockfd = socket(domain, type, protocol);
  	if (_sockfd == -1)
+	{
+		delete &_config;
 		throw SystemException("Unable to create server socket");
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
 }
 
@@ -56,7 +63,10 @@ Server::make_nonblocking()
 {
 	int ret = fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
+	{
+		delete &_config;
 		throw SystemException("Cannot set nonblocking flag on server socket");
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
 }
 
@@ -67,7 +77,10 @@ Server::set_sock_opt()
 	int enable = 1;
 	int result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 	if (result == -1)
+	{
+		delete &_config;
 		throw SystemException("Unable to set socket option");
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
 }
 
@@ -87,7 +100,10 @@ Server::name_serv_socket()
 
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
+	{
+		delete &_config;
 		throw SystemException("Unable to name the server socket");
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
 }
 
@@ -98,7 +114,10 @@ Server::set_listener()
 
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
+	{
+		delete &_config;
 		throw SystemException("Unable to set socket as listener");
+	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << getport();
 }
 
@@ -114,8 +133,20 @@ Server::getip(void) const
 	return _ip;
 }
 
-const ServerConfig &
+const Server::config_type &
 Server::get_server_config(void) const
 {
 	return _config;
 }
+<<<<<<< HEAD
+=======
+
+void
+Server::add_server_config(const ServerConfig &config)
+{
+	std::pair<Server::config_type::iterator, bool> result;
+	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.name(), config));
+	if (result.second == false)
+		throw Exception("Servers must be differentiable (By name or by IP or by port).");
+}
+>>>>>>> main

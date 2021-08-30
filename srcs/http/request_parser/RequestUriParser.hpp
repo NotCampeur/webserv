@@ -8,8 +8,8 @@
 class RequestUriParser
 {
 	private:
-
-		enum uri_parsing_state {
+		enum uri_parsing_state
+		{
 			PATH,
 			QUERY,
 			FRAGMENT
@@ -19,7 +19,6 @@ class RequestUriParser
 		Request::uri_t &	_uri;
 
 	public:
-
 		RequestUriParser(Request::uri_t & uri);
 		RequestUriParser(RequestUriParser const & src);
 		~RequestUriParser(void);

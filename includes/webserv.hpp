@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmaydew <jmaydew@student.42.fr>            +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/30 17:04:20 by jmaydew          ###   ########.fr       */
+/*   Updated: 2021/08/02 18:58:55 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <exception>
 # include <string>
 # include <cstring>
+# include <cctype>
 # include <ctime>
 # include <climits>
 # include <sys/time.h>
@@ -26,6 +27,7 @@
 # include <algorithm>
 # include <vector>
 # include <map>
+# include <stack>
 # include <utility>
 
 # include <errno.h>

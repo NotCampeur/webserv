@@ -2,8 +2,7 @@
 #include "InitiationDispatcher.hpp"
 #include <sys/socket.h>
 
-Response::Response(const ServerConfig & config, const std::string & ip) :
-_ip(ip),
+Response::Response(const config_type & config) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
@@ -179,7 +178,8 @@ Response::set_date(std::string & date)
 {
   char buf[1000]; //This buffer size should always be big enough to hold the date written by strftime
   time_t now = time(0);
-  struct tm tm = *gmtime(&now);
+  struct tm tm;
+  gmtime_r(&now, &tm);
   size_t len = strftime(buf, sizeof buf, "%a, %d %b %Y %H:%M:%S %Z", &tm);
   date = std::string(buf, len);
 }
@@ -240,7 +240,7 @@ Response::set_path(const std::string & path)
 	_file_path = path;
 }
 
-const ServerConfig &
+const Response::config_type &
 Response::get_server_config(void) const
 {
 	return _server_config;
@@ -271,7 +271,7 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	reset();
 	set_http_code(code);
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + _server_config.get_name() + ':' + _server_config.get_port() + '/' + location;
+	std::string complete_location = "http://" + _server_config.begin()->second.name() + ':' + _server_config.begin()->second.port() + '/' + location;
 	std::cerr << complete_location << '\n';
 	add_header("Location", complete_location);
 	ready_to_send() = true;

@@ -20,7 +20,6 @@ class RequestHeaderParser
 		size_t					_size;
 
 	public:
-
 		RequestHeaderParser(void);
 		RequestHeaderParser(RequestHeaderParser const & src);
 		~RequestHeaderParser(void);

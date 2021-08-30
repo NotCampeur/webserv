@@ -7,7 +7,6 @@
 class ServerSystemException : public SystemException
 {
 	public:
-
     	ServerSystemException(const char *str, const std::string & ip, int port) throw();
     	ServerSystemException(ServerSystemException const & src) throw();
     	~ServerSystemException(void) throw();

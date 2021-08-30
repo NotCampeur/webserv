@@ -11,7 +11,6 @@ class HttpException
 		const std::string			_location;
 
 	public:
-
     	HttpException(StatusCodes::status_index_t error) throw();
 		HttpException(StatusCodes::status_index_t redir_code, std::string & location) throw();
 	    HttpException(HttpException const & src) throw();    	
