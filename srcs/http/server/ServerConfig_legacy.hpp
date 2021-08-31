@@ -1,5 +1,5 @@
-#ifndef SERVERCONFIG_H
-# define SERVERCONFIG_H
+#ifndef SERVERCONFIG_LEGACY_H
+# define SERVERCONFIG_LEGACY_H
 
 # include <string>
 # include <map>
@@ -47,7 +47,6 @@ class ServerConfig
 
 		const std::string *	get_cgi_path(const std::string cgi_ext) const;
 		void				add_cgi_path(const std::string & cgi_ext, const std::string & path);
-
 
 	private:
 		ServerConfig &  operator=(ServerConfig const & src);

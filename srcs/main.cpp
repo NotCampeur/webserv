@@ -16,6 +16,7 @@
 #include "Server.hpp"
 #include "json.hpp"
 #include "Config.hpp"
+#include "RouteConfig.hpp"
 #include "SystemException.hpp"
 #include "ServerConfig.hpp"
 #include "Environment.hpp"
@@ -72,7 +73,7 @@ int	main(int ac, char *av[], char *envp[])
 	// for (size_t i = 0; env[i]; i++)
 	// 	std::cout << env[i] << '\n';
 
-	serv_test(std::atol(av[1]));
+	// serv_test(std::atol(av[1]));
 	serv_test(av[1]);
 
 	Logger::quit();

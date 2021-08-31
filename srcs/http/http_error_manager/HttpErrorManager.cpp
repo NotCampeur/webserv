@@ -6,15 +6,13 @@
 #include "HttpException.hpp"
 #include "Utils.hpp"
 
-HttpErrorManager::HttpErrorManager(const config_type & config, Response & resp) :
+HttpErrorManager::HttpErrorManager(Response & resp) :
 _fd(-1),
-_config(config),
 _resp(resp)
 {}
 
 HttpErrorManager::HttpErrorManager(HttpErrorManager const & src) :
 _fd(src._fd),
-_config(src._config),
 _resp(src._resp)
 {}
 
@@ -25,7 +23,7 @@ void
 HttpErrorManager::handle(StatusCodes::status_index_t error)
 {
 	_resp.set_http_code(error);
-	const std::string * path = _config.begin()->second.error_page_path(StatusCodes::get_code_value(error));
+	const std::string * path = _resp.get_server_config().error_page_path(StatusCodes::get_code_value(error));
 	
 	if (path != NULL)
 	{

@@ -35,13 +35,13 @@ class ServerConfig
 	// Autoindex
 	// Default file if request is a directory
 
-		const std::string & name(void) const;
+		const std::string & get_name(void) const;
 		void				set_name(std::string & name);
 
-		const std::string & host(void) const;
+		const std::string & get_host(void) const;
 		void				set_host(std::string & host);
 
-		const std::string & port(void) const;
+		const std::string & get_port(void) const;
 		void				set_port(std::string & port);
 
 		const std::string *	error_page_path(int error) const;
@@ -53,7 +53,7 @@ class ServerConfig
 		const std::string &	root_dir(void) const;
 		void				set_root_dir(std::string & root);
 	
-		const std::string &	index(void) const;
+		const std::string &	get_index(void) const;
 		void				set_index(std::string & root);
 	
 		bool				is_autoindex_on(void) const;

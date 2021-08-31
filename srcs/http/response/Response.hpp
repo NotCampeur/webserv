@@ -5,12 +5,16 @@
 # include "StatusCodes.hpp"
 # include "ServerConfig.hpp"
 # include "HttpErrorManager.hpp"
+class ServerConfig;
+class Request;
 
 class Response
 {
 	public:
 		typedef std::pair<std::string, std::string>		header_t;
 		typedef std::map<std::string, const ServerConfig &>	config_type;
+
+		// typedef const ServerConfig & (Request::*get_config_t)(void);
 
 	private:
 		std::vector<char>				_payload;
@@ -22,15 +26,20 @@ class Response
 		bool							_ready_to_send;
 		bool							_complete;
 		int								_handler_fd;
-		const config_type &				_server_config;
+		// const config_type &				_server_config;
+		const Request &					_req;
 		std::string						_file_path;
 		HttpErrorManager				_error_manager;
 		bool							_path_is_dir;
 		bool							_need_cgi;
 		bool							_chunked;
+		// get_config_t					_get_config;
 
 	public:
-    	Response(const config_type & config);
+    	// Response(const ServerConfig & (Request::*get_config)(void));
+		Response(const Request & req);
+		// Response(const config_type & config);
+		// Response(void);
     	Response(Response const & src);
     	~Response(void);
 
@@ -57,13 +66,13 @@ class Response
 		void					set_path(const std::string & path);
 		const std::string & 	get_path(void) const;
 
-		const config_type &		get_server_config(void) const;
+		const ServerConfig &	get_server_config(void) const;
 		void					reset(void);
 		void					http_error(StatusCodes::status_index_t error);
 		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);
 		void					send_chunks(void);
 	private:
-	    Response(void);
+	    // Response(void);
 
 		void	add_default_headers(void);
 		void	set_date(std::string & date);

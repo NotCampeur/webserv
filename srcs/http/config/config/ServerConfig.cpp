@@ -46,7 +46,7 @@ ServerConfig::~ServerConfig(void)
 // }
 
 const std::string &
-ServerConfig::name(void) const
+ServerConfig::get_name(void) const
 {
 	return _name;
 }
@@ -58,7 +58,7 @@ ServerConfig::set_name(std::string & name)
 }
 
 const std::string &
-ServerConfig::host(void) const
+ServerConfig::get_host(void) const
 {
 	return _host;
 }
@@ -70,7 +70,7 @@ ServerConfig::set_host(std::string & host)
 }
 
 const std::string &
-ServerConfig::port(void) const
+ServerConfig::get_port(void) const
 {
 	return _port;
 }
@@ -121,7 +121,7 @@ ServerConfig::set_root_dir(std::string & root)
 }
 
 const std::string &
-ServerConfig::index(void) const
+ServerConfig::get_index(void) const
 {
 	return _index;
 }

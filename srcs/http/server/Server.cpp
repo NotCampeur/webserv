@@ -1,14 +1,15 @@
 #include "Server.hpp"
+#include "Exception.hpp"
 
 Server::Server(ServerConfig *config, int com_domain, int sock_type) :
 _config()
 {
 	try {
-		_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
+		_config.insert(std::pair<std::string, const ServerConfig &>(config->get_name(), *config));
 		create_socket(com_domain, sock_type);
 		make_nonblocking();
 		set_sock_opt();
-		init_addr_inputs(com_domain, atoi(config->port().c_str()), inet_addr(config->host().c_str()));
+		init_addr_inputs(com_domain, atoi(config->get_port().c_str()), inet_addr(config->get_host().c_str()));
 		name_serv_socket();
 		set_listener();
 
@@ -138,15 +139,12 @@ Server::get_server_config(void) const
 {
 	return _config;
 }
-<<<<<<< HEAD
-=======
 
 void
 Server::add_server_config(const ServerConfig &config)
 {
 	std::pair<Server::config_type::iterator, bool> result;
-	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.name(), config));
+	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.get_name(), config));
 	if (result.second == false)
 		throw Exception("Servers must be differentiable (By name or by IP or by port).");
 }
->>>>>>> main

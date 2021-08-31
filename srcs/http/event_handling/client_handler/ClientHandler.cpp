@@ -146,13 +146,13 @@ ClientHandler::parse_request(void)
 	_req_parser.parse();
 	if (_request.complete())
 	{
-		Request::uri_t		* uri = &_request.uri();
-		if (uri->path == "/")
-		{
-			const ServerConfig & server_config = _request.get_server_config().begin()->second;
-			if (server_config.index() != "")
-				uri->path = server_config.index();
-		}
+		// Request::uri_t		* uri = &_request.uri();
+		// if (uri->path == "/")
+		// {
+		// 	const ServerConfig & server_config = _request.get_server_config().begin()->second;
+		// 	if (server_config.get_index() != "")
+		// 		uri->path = server_config.index();
+		// }
 		_event_flag = POLLOUT;
 	}
 }

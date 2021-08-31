@@ -238,7 +238,6 @@ CgiHandler::start_cgi(void)
 		{
 			exit(EXIT_FAILURE);
 		}
-
 		const std::string *cgi_bin = _request.get_server_config().get_cgi_path(_file_ext);
 		if (cgi_bin == NULL)
 		{
@@ -247,6 +246,7 @@ CgiHandler::start_cgi(void)
 		else
 		{
 			char * const av[] = {
+				const_cast<char *>(cgi_bin->c_str()),
 				const_cast<char *>(_response.get_path().c_str()),
 				NULL
 				};

@@ -1,15 +1,17 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 #include <sys/socket.h>
+#include "Request.hpp"
+// #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-Response::Response(const config_type & config) :
+Response::Response(const Request & req) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
 _handler_fd(-1),
-_server_config(config),
-_error_manager(_server_config, *this),
+_req(req),
+_error_manager(*this),
 _path_is_dir(false),
 _need_cgi(false),
 _chunked(false)
@@ -24,7 +26,8 @@ _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
 _handler_fd(src._handler_fd),
-_server_config(src._server_config),
+// _server_config(src._server_config),
+_req(src._req),
 _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir),
 _need_cgi(src._need_cgi),
@@ -240,10 +243,12 @@ Response::set_path(const std::string & path)
 	_file_path = path;
 }
 
-const Response::config_type &
+const ServerConfig &
 Response::get_server_config(void) const
 {
-	return _server_config;
+	return _req.get_server_config();
+	// CALL_MEMBER_FN(*this, _get_config);
+	// return ((*this).*(_get_config));
 }
 
 void
@@ -271,7 +276,7 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	reset();
 	set_http_code(code);
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + _server_config.begin()->second.name() + ':' + _server_config.begin()->second.port() + '/' + location;
+	std::string complete_location = "http://" + get_server_config().get_name() + ':' + get_server_config().get_port() + '/' + location;
 	std::cerr << complete_location << '\n';
 	add_header("Location", complete_location);
 	ready_to_send() = true;

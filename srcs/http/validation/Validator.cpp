@@ -42,7 +42,7 @@ void
 Validator::load_desired_config(Request & req)
 {
 	ValidatorConfig &					config = ValidatorConfig::get_instance();
-	const std::vector<RouteConfig *>	routes = req.get_server_config().begin()->second.routes();
+	const std::vector<RouteConfig *>	routes = req.get_server_config().routes();
 
 	for (std::vector<RouteConfig *>::const_iterator it = routes.begin();
 			it != routes.end(); ++it)

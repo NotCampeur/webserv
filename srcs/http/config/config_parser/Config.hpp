@@ -19,6 +19,7 @@
 # include "JsonObject.hpp"
 # include "JsonArray.hpp"
 # include "JsonString.hpp"
+class RouteConfig;
 
 class Config
 {
