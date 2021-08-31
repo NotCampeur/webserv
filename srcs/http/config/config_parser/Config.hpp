@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/26 12:28:52 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/31 19:52:52 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,24 +39,24 @@ class Config
 			index,
 			default_file_dir,
 			error_page_path,
-			route,
+			location,
 			server_unknown
 		};
-		enum route_config
+		enum location_config
 		{
-			route_path,
-			route_method,
-			route_redirection,
-			route_root,
-			route_auto_index,
-			route_default_file_dir,
-			route_cgi,
-			route_upload_path,
-			route_unknown
+			location_path,
+			location_method,
+			location_redirection,
+			location_root,
+			location_auto_index,
+			location_default_file_dir,
+			location_cgi,
+			location_upload_path,
+			location_unknown
 		};
 		global_config	get_global_key(const std::string & key);
 		server_config	get_server_key(const std::string & key);
-		route_config	get_route_key(const std::string & key);
+		location_config	get_location_key(const std::string & key);
 		
 		JsonObject & 	_global_scope;
 		
@@ -72,16 +72,16 @@ class Config
 		void			load_server_index(IJsonValue * server_index, ServerConfig & server);
 		void			load_server_default_file_dir(IJsonValue * server_default_file_dir, ServerConfig & server);
 		void			load_server_error_page_path(IJsonValue * server_error_page_path, ServerConfig & server);
-		void			load_server_route(IJsonValue * server_route, ServerConfig & server);
+		void			load_server_location(IJsonValue * server_location, ServerConfig & server);
 		
-		void			load_route_path(IJsonValue * route_path, RouteConfig & route);
-		void			load_route_method(IJsonValue * route_method, RouteConfig & route);
-		void			load_route_redirection(IJsonValue * route_redirection, RouteConfig & route);
-		void			load_route_root(IJsonValue * route_root, RouteConfig & route);
-		void			load_route_auto_index(IJsonValue * route_auto_index, RouteConfig & route);
-		void			load_route_default_file_dir(IJsonValue * route_default_file_dir, RouteConfig & route);
-		void			load_route_cgi(IJsonValue * route_cgi, RouteConfig & route);
-		void			load_route_upload_path(IJsonValue * route_upload_path, RouteConfig & route);
+		void			load_location_path(IJsonValue * location_path, LocationConfig & location);
+		void			load_location_method(IJsonValue * location_method, LocationConfig & location);
+		void			load_location_redirection(IJsonValue * location_redirection, LocationConfig & location);
+		void			load_location_root(IJsonValue * location_root, LocationConfig & location);
+		void			load_location_auto_index(IJsonValue * location_auto_index, LocationConfig & location);
+		void			load_location_default_file_dir(IJsonValue * location_default_file_dir, LocationConfig & location);
+		void			load_location_cgi(IJsonValue * location_cgi, LocationConfig & location);
+		void			load_location_upload_path(IJsonValue * location_upload_path, LocationConfig & location);
 
 	public:
 						Config(JsonObject & config_object);

@@ -30,8 +30,9 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 void
 Validator::load_desired_config(Request & req)
 {
-	ValidatorConfig &			config = ValidatorConfig::get_instance();
-	std::vector<RouteConfig *>	routes = req.get_server_config().begin()->second.routes();
+	ValidatorConfig &				config = ValidatorConfig::get_instance();
+	std::vector<LocationConfig *>	locations = req.get_server_config().begin()->second.locations();
+	config = req.get_server_config().begin()->second;
 
 	for (Request::config_type::const_iterator	it = req.get_server_config().begin()
 			; it != req.get_server_config().end(); it++)
@@ -39,18 +40,18 @@ Validator::load_desired_config(Request & req)
 		if (req.headers()["host"] == it->first + ":" + it->second.port())
 		{
 			config = it->second;
-			routes = it->second.routes();
+			locations = it->second.locations();
 			Logger(LOG_FILE, basic_type, debug_lvl) << "Named Server config loaded";
 			break;
 		}
 	}
-	for (std::vector<RouteConfig *>::const_iterator it = routes.begin();
-			it != routes.end(); ++it)
+	for (std::vector<LocationConfig *>::const_iterator it = locations.begin()
+			; it != locations.end(); ++it)
 	{
 		if ((*it)->path() == req.uri().path)
 		{
 			config = *(*it);
-			Logger(LOG_FILE, basic_type, debug_lvl) << "Route Config loaded";
+			Logger(LOG_FILE, basic_type, debug_lvl) << "Location Config loaded";
 			return ;
 		}
 	}
@@ -62,12 +63,10 @@ Validator::is_method_allowed(Request & req)
 {
 	RouteMethod method = ValidatorConfig::get_instance().accepted_method();
 	if (dynamic_cast<GetMethod *>(&req.method()) != NULL)
-	{
-		if ((GET & method) != NOTHING)
+		if ((GET & method) != 0)
 			return ;
-	}
 	if (dynamic_cast<HeadMethod *>(&req.method()) != NULL)
-		if (HEAD & method)
+		if ((HEAD & method) != 0)
 			return ;
 	if (dynamic_cast<PostMethod *>(&req.method()) != NULL)
 		if ((POST & method) != 0)
@@ -87,7 +86,9 @@ Validator::set_full_path(Request & req, Response & resp)
 	resolve_relative_path(path);
 	std::string root = ValidatorConfig::get_instance().root_dir();
 	
-	if (!root.empty())
+	if (path.empty() == true)
+		path = ValidatorConfig::get_instance().index();
+	if (root.empty() == false)
 	{
 		path.insert(0, root);
 	}

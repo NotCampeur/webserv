@@ -113,9 +113,9 @@ configuration file
 it will answer to all request that doesn’t belong to an other server)
 ◦ setup default error pages
 ◦ limit client body size
-◦ setup routes with one or multiple of the following rules/configuration (routes
+◦ setup locations with one or multiple of the following rules/configuration (locations
 wont be using regexp):
-∗ define a list of accepted HTTP Methods for the route
+∗ define a list of accepted HTTP Methods for the location
 ∗ define an HTTP redirection.
 ∗ define a directory or a file from where the file should be search (for example
 if url /kapouet is rooted to /tmp/www, url /kapouet/pouic/toto/pouet is
@@ -131,7 +131,7 @@ from the CGI, EOF will mean the end of the returned data.
 · Your program should call the cgi with the file requested as first argument
 · the cgi should be run in the correct directory for relativ path file access
 · your server should work with one CGI (php-cgi, python...)
-∗ make the route able to accept uploaded files and configure where it should
+∗ make the location able to accept uploaded files and configure where it should
 be saved
 You must provide some configuration files and default basic files to test/demonstrate
 every feature is working during evaluation.

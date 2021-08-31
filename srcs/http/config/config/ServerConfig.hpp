@@ -5,23 +5,23 @@
 # include <vector>
 # include <map>
 # include "webserv_param.hpp"
-# include "RouteConfig.hpp"
+# include "LocationConfig.hpp"
 
-class RouteConfig;
+class LocationConfig;
 
 class ServerConfig
 {
 	private:
-		std::string					_name;
-		std::string					_host;
-		std::string					_port;
-		std::map<int, std::string>	_error_pages;
-		size_t						_max_client_body_size;
-		std::string					_root_dir;
-		std::string					_index;
-		bool						_is_autoindex_on;
-		std::string					_default_file_dir;
-		std::vector<RouteConfig *>	_routes;
+		std::string						_name;
+		std::string						_host;
+		std::string						_port;
+		std::map<int, std::string>		_error_pages;
+		size_t							_max_client_body_size;
+		std::string						_root_dir;
+		std::string						_index;
+		bool							_is_autoindex_on;
+		std::string						_default_file_dir;
+		std::vector<LocationConfig *>	_locations;
 
 	public:
 		ServerConfig(void);
@@ -62,8 +62,8 @@ class ServerConfig
 		const std::string * default_file_dir(void) const;
 		void				set_default_file_dir(std::string & path);
 
-		const std::vector<RouteConfig *> & routes(void) const;
-		void				add_route(RouteConfig * route);
+		const std::vector<LocationConfig *> & locations(void) const;
+		void				add_location(LocationConfig * location);
 
 		ServerConfig &  operator=(ServerConfig const & src);
 };

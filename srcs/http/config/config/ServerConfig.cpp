@@ -6,11 +6,11 @@ _host("127.0.0.1"),
 _port("8080"),
 _error_pages(),
 _max_client_body_size(MAX_CLIENT_BODY_SIZE),
-_root_dir("/"),
+_root_dir("./"),
 _index(),
 _is_autoindex_on(false),
 _default_file_dir(),
-_routes()
+_locations()
 {}
 
 ServerConfig::ServerConfig(ServerConfig const & src) :
@@ -22,16 +22,16 @@ _max_client_body_size(src._max_client_body_size),
 _root_dir(src._root_dir),
 _is_autoindex_on(src._is_autoindex_on),
 _default_file_dir(src._default_file_dir),
-_routes(src._routes)
+_locations(src._locations)
 {}
 
 ServerConfig::~ServerConfig(void)
 {
 	size_t size(0);
 
-	size = _routes.size();
+	size = _locations.size();
 	for (size_t i(0); i < size; i++)
-		delete _routes[i];
+		delete _locations[i];
 }
 
 ServerConfig &
@@ -48,8 +48,8 @@ ServerConfig::operator=(ServerConfig const & src)
 		_index = src._index;
 		_is_autoindex_on = src._is_autoindex_on;
 		_default_file_dir = src._default_file_dir;
-		for (size_t i(0); i < src._routes.size(); i++)
-			_routes.push_back(new RouteConfig(*src._routes[i]));
+		for (size_t i(0); i < src._locations.size(); i++)
+			_locations.push_back(new LocationConfig(*src._locations[i]));
 	}
     return (*this);
 }
@@ -167,14 +167,14 @@ ServerConfig::set_default_file_dir(std::string & path)
 	_default_file_dir = path;
 }
 
-const std::vector<RouteConfig *> &
-ServerConfig::routes(void) const
+const std::vector<LocationConfig *> &
+ServerConfig::locations(void) const
 {
-	return _routes;
+	return _locations;
 }
 
 void
-ServerConfig::add_route(RouteConfig * route)
+ServerConfig::add_location(LocationConfig * location)
 {
-	_routes.push_back(route);
+	_locations.push_back(location);
 }

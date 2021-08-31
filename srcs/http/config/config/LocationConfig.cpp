@@ -1,7 +1,7 @@
-#include "RouteConfig.hpp"
+#include "LocationConfig.hpp"
 
 // Constructors & destructor
-RouteConfig::RouteConfig() :
+LocationConfig::LocationConfig() :
 	_path(),
 	_accepted_method(ALL),
 	_redirection(),
@@ -12,7 +12,7 @@ RouteConfig::RouteConfig() :
 	_upload_path()
 {}
 
-RouteConfig::RouteConfig(ServerConfig & config)
+LocationConfig::LocationConfig(ServerConfig & config)
 	: _path("NOT_SET"), _accepted_method(ALL), _cgi()
 {
 	_redirection = "NOT_SET";
@@ -23,7 +23,7 @@ RouteConfig::RouteConfig(ServerConfig & config)
 	_upload_path = "NOT_SET";
 }
 
-RouteConfig::RouteConfig(std::string path, ServerConfig & config)
+LocationConfig::LocationConfig(std::string path, ServerConfig & config)
 	: _path(path), _accepted_method(ALL), _cgi()
 {
 	_redirection = "NOT_SET";
@@ -34,109 +34,109 @@ RouteConfig::RouteConfig(std::string path, ServerConfig & config)
 	_upload_path = "NOT_SET";
 }
 
-RouteConfig::RouteConfig(const RouteConfig & to_copy)
+LocationConfig::LocationConfig(const LocationConfig & to_copy)
 {
 	*this = to_copy;
 }
 
-RouteConfig::~RouteConfig()
+LocationConfig::~LocationConfig()
 {}
 
 // Getters
 std::string
-RouteConfig::path() const
+LocationConfig::path() const
 {
 	return _path;
 }
 
 RouteMethod
-RouteConfig::accepted_method() const
+LocationConfig::accepted_method() const
 {
 	return _accepted_method;
 }
 
 std::string
-RouteConfig::redirection() const
+LocationConfig::redirection() const
 {
 	return _redirection;
 }
 
 std::string
-RouteConfig::root() const
+LocationConfig::root() const
 {
 	return _root;
 }
 
 bool
-RouteConfig::is_autoindex_on() const
+LocationConfig::is_autoindex_on() const
 {
 	return _is_autoindex_on;
 }
 
 std::string
-RouteConfig::default_file_dir() const
+LocationConfig::default_file_dir() const
 {
 	return _default_file_dir;
 }
 
 std::map<std::string, std::string>
-RouteConfig::cgi() const
+LocationConfig::cgi() const
 {
 	return _cgi;
 }
 
 std::string
-RouteConfig::upload_path() const
+LocationConfig::upload_path() const
 {
 	return _upload_path;
 }
 
 //Setters
 void
-RouteConfig::set_path(std::string path)
+LocationConfig::set_path(std::string path)
 {
 	_path = path;
 }
 
 void
-RouteConfig::set_autoindex(bool value)
+LocationConfig::set_autoindex(bool value)
 {
 	_is_autoindex_on = value;
 }
 
 void
-RouteConfig::set_default_file_dir(std::string value)
+LocationConfig::set_default_file_dir(std::string value)
 {
 	_default_file_dir = value;
 }
 
 void
-RouteConfig::add_cgi(std::string key, std::string value)
+LocationConfig::add_cgi(std::string key, std::string value)
 {
 	if (_cgi.insert(std::pair<std::string, std::string>(key, value)).second == false)
 		throw Exception("You cannot set the same cgi more than once");
 }
 
 void
-RouteConfig::set_upload_path(std::string value)
+LocationConfig::set_upload_path(std::string value)
 {
 	_upload_path = value;
 }
 
 void
-RouteConfig::set_redirection(std::string value)
+LocationConfig::set_redirection(std::string value)
 {
 	_redirection = value;
 }
 
 void
-RouteConfig::set_root(std::string value)
+LocationConfig::set_root(std::string value)
 {
 	_root = value;
 }
 
 void
-RouteConfig::set_accepted_method(RouteMethod value)
+LocationConfig::set_accepted_method(RouteMethod value)
 {
 	_accepted_method = value;
 }
@@ -144,8 +144,8 @@ RouteConfig::set_accepted_method(RouteMethod value)
 
 
 //Operators
-RouteConfig &
-RouteConfig::operator=(const RouteConfig & to_copy)
+LocationConfig &
+LocationConfig::operator=(const LocationConfig & to_copy)
 {
 	if (this != &to_copy)
 	{

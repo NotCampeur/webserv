@@ -1,5 +1,5 @@
-#ifndef WEBSERV_ROUTE_CONFIG_HPP
-# define WEBSERV_ROUTE_CONFIG_HPP
+#ifndef WEBSERV_LOCATION_CONFIG_HPP
+# define WEBSERV_LOCATION_CONFIG_HPP
 
 # include <string>
 # include <vector>
@@ -18,7 +18,7 @@ typedef enum RouteMethod
 	ALL = 0xFFF
 }	RouteMethod;
 
-class RouteConfig
+class LocationConfig
 {
 	private:
 		std::string							_path;
@@ -29,14 +29,14 @@ class RouteConfig
 		std::string							_default_file_dir;
 		std::map<std::string, std::string>	_cgi;
 		std::string							_upload_path;
-								RouteConfig();
+								LocationConfig();
 
 	public:
 		//Constructors & Destructor
-					RouteConfig(ServerConfig & config);
-					RouteConfig(std::string path, ServerConfig & config);
-					RouteConfig(const RouteConfig & to_copy);
-					~RouteConfig();
+					LocationConfig(ServerConfig & config);
+					LocationConfig(std::string path, ServerConfig & config);
+					LocationConfig(const LocationConfig & to_copy);
+					~LocationConfig();
 
 		//Getters
 		std::string							path() const;
@@ -59,7 +59,7 @@ class RouteConfig
 		void	set_accepted_method(RouteMethod value);
 
 		//Operators
-		RouteConfig & operator=(const RouteConfig & to_assign);
+		LocationConfig & operator=(const LocationConfig & to_assign);
 };
 
 #endif

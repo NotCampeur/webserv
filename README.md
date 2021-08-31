@@ -30,10 +30,11 @@ All libraries will be build and the binary will be ready to launch
 
 ### :zzz: TODO :zzz:
 *  Parsing of Hexadecimal values in URL -> in validator class
-*  Need to implement the routes on the request manager.  
+*  Need to implement the locations on the request manager.  
 *  You can configurate multiple configuration for the same server but the first one will always be apply for the moment. Need to modify the request class.  
+* Renaming "host" into "ip" in the config to be less distrubing.  
 
 ### :boom: Known bugs.. I mean features :boom:  
-
+* If the root in the config file is given without ending '/' the server will loop redirections of type 301.
 ## :writing_hand: Change log :writing_hand:  
 * JsonParser branch has been merged.

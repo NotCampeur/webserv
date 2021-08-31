@@ -6,14 +6,15 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/25 18:12:50 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/08/25 21:15:08 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/31 22:13:02 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ValidatorConfig.hpp"
 
 ValidatorConfig::ValidatorConfig()
-: _root_dir("./"), _is_autoindex_on(false), _default_file_dir()
+: _root_dir(), _index(), _is_autoindex_on(false)
+, _default_file_dir(), _accepted_method(NOTHING)
 {}
 
 ValidatorConfig::ValidatorConfig(const ValidatorConfig & to_copy)
@@ -29,6 +30,12 @@ std::string
 ValidatorConfig::root_dir() const
 {
 	return _root_dir;
+}
+
+std::string
+ValidatorConfig::index() const
+{
+	return _index;
 }
 
 bool
@@ -54,6 +61,12 @@ void
 ValidatorConfig::set_root_dir(std::string const &root_dir)
 {
 	_root_dir = root_dir;
+}
+
+void
+ValidatorConfig::set_index(std::string const &index)
+{
+	_index = index;
 }
 
 void
@@ -90,7 +103,7 @@ ValidatorConfig::operator=(const ValidatorConfig & to_assign)
 
 
 ValidatorConfig &
-ValidatorConfig::operator=(const RouteConfig & to_assign)
+ValidatorConfig::operator=(const LocationConfig & to_assign)
 {
 	_root_dir = to_assign.root();
 	_is_autoindex_on = to_assign.is_autoindex_on();
@@ -103,6 +116,7 @@ ValidatorConfig &
 ValidatorConfig::operator=(const ServerConfig & to_assign)
 {
 	_root_dir = to_assign.root_dir();
+	_index = to_assign.index();
 	_is_autoindex_on = to_assign.is_autoindex_on();
 	_default_file_dir = *to_assign.default_file_dir();
 	_accepted_method = GET;

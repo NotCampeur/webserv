@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/26 13:53:27 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/08/31 20:55:07 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,31 +54,31 @@ Config::get_server_key(const std::string & key)
 		return default_file_dir;
 	else if (key == "error_page_path")
 		return error_page_path;
-	else if (key == "route")
-		return route;
+	else if (key == "location")
+		return location;
 	return server_unknown;
 }
 
-Config::route_config
-Config::get_route_key(const std::string & key)
+Config::location_config
+Config::get_location_key(const std::string & key)
 {
 	if (key == "path")
-		return route_path;
+		return location_path;
 	else if (key == "accepted_method")
-		return route_method;
+		return location_method;
 	else if (key == "redirection")
-		return route_redirection;
+		return location_redirection;
 	else if (key == "root")
-		return route_root;
+		return location_root;
 	else if (key == "auto_index")
-		return route_auto_index;
+		return location_auto_index;
 	else if (key == "default_file_dir")
-		return route_default_file_dir;
+		return location_default_file_dir;
 	else if (key == "cgi")
-		return route_cgi;
+		return location_cgi;
 	else if (key == "upload_path")
-		return route_upload_path;
-	return route_unknown;
+		return location_upload_path;
+	return location_unknown;
 }
 
 void
@@ -192,75 +192,75 @@ Config::load_server_error_page_path(IJsonValue * server_error_page_path, ServerC
 }
 
 void
-Config::load_server_route(IJsonValue * server_route, ServerConfig & server)
+Config::load_server_location(IJsonValue * server_location, ServerConfig & server)
 {
-	JsonArray	* routes = dynamic_cast<JsonArray *>(server_route);
-	if (routes == NULL)
-		throw Exception("Server's routes must be an [array of {objects}]");
-	JsonArray::value_type::const_iterator routes_it(routes->value_begin());
-	JsonArray::value_type::const_iterator routes_ite(routes->value_end());
+	JsonArray	* locations = dynamic_cast<JsonArray *>(server_location);
+	if (locations == NULL)
+		throw Exception("Server's locations must be an [array of {objects}]");
+	JsonArray::value_type::const_iterator routes_it(locations->value_begin());
+	JsonArray::value_type::const_iterator routes_ite(locations->value_end());
 	while (routes_it != routes_ite)
 	{
-		JsonObject	* route = dynamic_cast<JsonObject *>(*routes_it);
-		if (route == NULL)
-			throw Exception("Server's routes must be an [array of {objects}]");;
-		JsonObject::value_type::const_iterator route_it(route->value_begin());
-		JsonObject::value_type::const_iterator route_ite(route->value_end());
-		RouteConfig	* route_config = new RouteConfig(server);
-		while (route_it != route_ite)
+		JsonObject	* location = dynamic_cast<JsonObject *>(*routes_it);
+		if (location == NULL)
+			throw Exception("Server's locations must be an [array of {objects}]");;
+		JsonObject::value_type::const_iterator location_it(location->value_begin());
+		JsonObject::value_type::const_iterator location_ite(location->value_end());
+		LocationConfig	* location_config = new LocationConfig(server);
+		while (location_it != location_ite)
 		{
-			switch (get_route_key(route_it->first))
+			switch (get_location_key(location_it->first))
 			{
-				case route_path:
-					load_route_path(route_it->second, *route_config);
+				case location_path:
+					load_location_path(location_it->second, *location_config);
 					break;
-				case route_method:
-					load_route_method(route_it->second, *route_config);
+				case location_method:
+					load_location_method(location_it->second, *location_config);
 					break;
-				case route_redirection:
-					load_route_redirection(route_it->second, *route_config);
+				case location_redirection:
+					load_location_redirection(location_it->second, *location_config);
 					break;
-				case route_root:
-					load_route_root(route_it->second, *route_config);
+				case location_root:
+					load_location_root(location_it->second, *location_config);
 					break;
-				case route_auto_index:
-					load_route_auto_index(route_it->second, *route_config);
+				case location_auto_index:
+					load_location_auto_index(location_it->second, *location_config);
 					break;
-				case route_default_file_dir:
-					load_route_default_file_dir(route_it->second, *route_config);
+				case location_default_file_dir:
+					load_location_default_file_dir(location_it->second, *location_config);
 					break;
-				case route_cgi:
-					load_route_cgi(route_it->second, *route_config);
+				case location_cgi:
+					load_location_cgi(location_it->second, *location_config);
 					break;
-				case route_upload_path:
-					load_route_upload_path(route_it->second, *route_config);
+				case location_upload_path:
+					load_location_upload_path(location_it->second, *location_config);
 					break;
-				case route_unknown:
-					throw Exception("Unknown route's key detected");
+				case location_unknown:
+					throw Exception("Unknown location's key detected");
 			}
-			route_it++;
+			location_it++;
 		}
-		server.add_route(route_config);
+		server.add_location(location_config);
 		routes_it++;
 	}
 }
 
 void
-Config::load_route_path(IJsonValue * route_path, RouteConfig & route)
+Config::load_location_path(IJsonValue * location_path, LocationConfig & location)
 {
-	JsonString	* path = dynamic_cast<JsonString *>(route_path);
+	JsonString	* path = dynamic_cast<JsonString *>(location_path);
 	if (path == NULL)
-		throw Exception("Route's path must be a \"string\"");
-	route.set_path(path->value());
+		throw Exception("Location's path must be a \"string\"");
+	location.set_path(path->value());
 }
 
 void
-Config::load_route_method(IJsonValue * route_method, RouteConfig & route)
+Config::load_location_method(IJsonValue * location_method, LocationConfig & location)
 {
-	JsonString	* method = dynamic_cast<JsonString *>(route_method);
+	JsonString	* method = dynamic_cast<JsonString *>(location_method);
 	RouteMethod	accepted_method(NOTHING);
 	if (method == NULL)
-		throw Exception("Route's accepted_method must be a \"string, string\"");
+		throw Exception("Location's accepted_method must be a \"string, string\"");
 	if (method->value().find("GET") != std::string::npos)
 		accepted_method = GET;
 	if (method->value().find("POST") != std::string::npos)
@@ -269,57 +269,57 @@ Config::load_route_method(IJsonValue * route_method, RouteConfig & route)
 		accepted_method = static_cast<RouteMethod>(accepted_method | DELETE);
 	if (method->value().find("ALL") != std::string::npos)
 		accepted_method = ALL;
-	route.set_accepted_method(accepted_method);
+	location.set_accepted_method(accepted_method);
 }
 
 void
-Config::load_route_redirection(IJsonValue * route_redirection, RouteConfig & route)
+Config::load_location_redirection(IJsonValue * location_redirection, LocationConfig & location)
 {
-	JsonString	* redirection = dynamic_cast<JsonString *>(route_redirection);
+	JsonString	* redirection = dynamic_cast<JsonString *>(location_redirection);
 	if (redirection == NULL)
-		throw Exception("Route's redirection must be a \"string\"");
-	route.set_redirection(redirection->value());
+		throw Exception("Location's redirection must be a \"string\"");
+	location.set_redirection(redirection->value());
 }
 
 void
-Config::load_route_root(IJsonValue * route_root, RouteConfig & route)
+Config::load_location_root(IJsonValue * location_root, LocationConfig & location)
 {
-	JsonString	* root = dynamic_cast<JsonString *>(route_root);
+	JsonString	* root = dynamic_cast<JsonString *>(location_root);
 	if (root == NULL)
-		throw Exception("Route's root must be a \"string\"");
-	route.set_root(root->value());
+		throw Exception("Location's root must be a \"string\"");
+	location.set_root(root->value());
 }
 
 void
-Config::load_route_auto_index(IJsonValue * route_auto_index, RouteConfig & route)
+Config::load_location_auto_index(IJsonValue * location_auto_index, LocationConfig & location)
 {
-	JsonString	* auto_index = dynamic_cast<JsonString *>(route_auto_index);
+	JsonString	* auto_index = dynamic_cast<JsonString *>(location_auto_index);
 	if (auto_index == NULL)
-		throw Exception("Route's auto_index must be a \"string\"");
+		throw Exception("Location's auto_index must be a \"string\"");
 	if (auto_index->value() == "true")
-		route.set_autoindex(true);
+		location.set_autoindex(true);
 	else
-		route.set_autoindex(false);
+		location.set_autoindex(false);
 }
 
 void
-Config::load_route_default_file_dir(IJsonValue * route_default_file_dir, RouteConfig & route)
+Config::load_location_default_file_dir(IJsonValue * location_default_file_dir, LocationConfig & location)
 {
-	JsonString	* default_file_dir = dynamic_cast<JsonString *>(route_default_file_dir);
+	JsonString	* default_file_dir = dynamic_cast<JsonString *>(location_default_file_dir);
 	if (default_file_dir == NULL)
-		throw Exception("Route's default_file_dir must be a \"string\"");
-	route.set_default_file_dir(default_file_dir->value());
+		throw Exception("Location's default_file_dir must be a \"string\"");
+	location.set_default_file_dir(default_file_dir->value());
 }
 
 void
-Config::load_route_cgi(IJsonValue * route_cgi, RouteConfig & route)
+Config::load_location_cgi(IJsonValue * location_cgi, LocationConfig & location)
 {
-	JsonArray	* cgi_array = dynamic_cast<JsonArray *>(route_cgi);
+	JsonArray	* cgi_array = dynamic_cast<JsonArray *>(location_cgi);
 	if (cgi_array == NULL)
-		throw Exception("Route's cgi must be an [array of {objects}]");
+		throw Exception("Location's cgi must be an [array of {objects}]");
 	JsonObject	* cgi_object = dynamic_cast<JsonObject *>(*(cgi_array->value_begin()));
 	if (cgi_object == NULL)
-		throw Exception("Route's cgi must be an [array of {objects}]");
+		throw Exception("Location's cgi must be an [array of {objects}]");
 	JsonObject::value_type::const_iterator cgi_object_it(cgi_object->value_begin());
 	JsonObject::value_type::const_iterator cgi_object_ite(cgi_object->value_end());
 	while (cgi_object_it != cgi_object_ite)
@@ -327,18 +327,18 @@ Config::load_route_cgi(IJsonValue * route_cgi, RouteConfig & route)
 		JsonString	* cgi_path = dynamic_cast<JsonString *>(cgi_object_it->second);
 		if (cgi_path == NULL)
 			throw Exception("Cgi_path's values must be \"strings\"");
-		route.add_cgi(cgi_object_it->first, cgi_path->value());
+		location.add_cgi(cgi_object_it->first, cgi_path->value());
 		cgi_object_it++;
 	}
 }
 
 void
-Config::load_route_upload_path(IJsonValue * route_upload_path, RouteConfig & route)
+Config::load_location_upload_path(IJsonValue * location_upload_path, LocationConfig & location)
 {
-	JsonString	* upload_path = dynamic_cast<JsonString *>(route_upload_path);
+	JsonString	* upload_path = dynamic_cast<JsonString *>(location_upload_path);
 	if (upload_path == NULL)
-		throw Exception("Route's upload_path must be a \"string\"");
-	route.set_upload_path(upload_path->value());
+		throw Exception("Location's upload_path must be a \"string\"");
+	location.set_upload_path(upload_path->value());
 }
 
 ServerConfig *
@@ -382,8 +382,8 @@ Config::load_server_config(IJsonValue * server_object)
 			case error_page_path:
 				load_server_error_page_path(it->second, *server_config);
 				break;
-			case route:
-				load_server_route(it->second, *server_config);
+			case location:
+				load_server_location(it->second, *server_config);
 				break;
 			case server_unknown:
 				throw Exception("Unknown server's key detected");
@@ -403,6 +403,7 @@ Config::load_servers_config(IJsonValue * server_array)
 	std::vector<ServerConfig *>	servers_config;
 	std::vector<Server *>		server_list;
 	bool						is_same_server(false);
+	
 	while (ait != aite)
 	{
 		servers_config.push_back(load_server_config(*ait));

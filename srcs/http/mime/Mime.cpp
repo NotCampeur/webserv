@@ -793,7 +793,7 @@ Mime::init_mime(void)
 		storage["ra"] = "audio/x-realaudio";
 		storage["ram"] = "audio/x-pn-realaudio";
 		storage["raml"] = "application/raml+yaml";
-		storage["rapd"] = "application/route-apd+xml";
+		storage["rapd"] = "application/location-apd+xml";
 		storage["rar"] = "application/x-rar-compressed";
 		storage["ras"] = "image/x-cmu-raster";
 		storage["rcprofile"] = "application/vnd.ipunplugged.rcprofile";
@@ -831,7 +831,7 @@ Mime::init_mime(void)
 		storage["rtf"] = "text/rtf";
 		storage["rtx"] = "text/richtext";
 		storage["run"] = "application/x-makeself";
-		storage["rusd"] = "application/route-usd+xml";
+		storage["rusd"] = "application/location-usd+xml";
 		storage["s"] = "text/x-asm";
 		storage["s3m"] = "audio/s3m";
 		storage["saf"] = "application/vnd.yamaha.smaf-audio";
@@ -892,7 +892,7 @@ Mime::init_mime(void)
 		storage["sldx"] = "application/vnd.openxmlformats-officedocument.presentationml.slide";
 		storage["slim"] = "text/slim";
 		storage["slm"] = "text/slim";
-		storage["sls"] = "application/route-s-tsid+xml";
+		storage["sls"] = "application/location-s-tsid+xml";
 		storage["slt"] = "application/vnd.epson.salt";
 		storage["sm"] = "application/vnd.stepmania.stepchart";
 		storage["smf"] = "application/vnd.stardivision.math";
