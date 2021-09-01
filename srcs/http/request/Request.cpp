@@ -120,3 +120,9 @@ Request::get_server_config(void) const
 		return _server_config.begin()->second; // TBU -> remove this line and uncomment the above once we're sure there'll always be a "default" config
 	}
 }
+
+const Request::cookies_t &
+Request::get_cookies(void) const
+{
+	return _cookies;
+}

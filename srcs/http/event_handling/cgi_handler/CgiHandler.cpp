@@ -198,6 +198,12 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_server_config().get_port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
+
+	Request::cookies_t cookies = _request.get_cookies();
+	for (size_t i = 0; i < cookies.size(); i++)
+	{
+		_env.add_http_env_var("COOKIE", cookies[i]);
+	}
 }
 
 void

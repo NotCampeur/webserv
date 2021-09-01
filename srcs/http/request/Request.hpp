@@ -12,6 +12,7 @@ class Request
 {
 	public:
 		typedef std::map<std::string, const ServerConfig &> config_type;
+		typedef std::vector<const std::string>				cookies_t;
 		typedef struct	uri_s
 		{
 			std::string path;
@@ -24,7 +25,7 @@ class Request
 		IHttpMethod *						_method;
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
-		std::vector<std::string>			_cookies;
+		cookies_t							_cookies;
 		std::vector<char>					_body;
 		const config_type &					_server_config;
 
@@ -44,6 +45,7 @@ class Request
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
 		const ServerConfig &					get_server_config(void) const;
+		const cookies_t &						get_cookies(void) const;
 
 	private:
 		Request(void);

@@ -15,6 +15,7 @@ class Environment
 		static void print_env(void); // DEBUG
 	
 		typedef	std::vector<std::pair<std::string, std::string> > env_vec;
+	
 	private:
 		char	**_cgi_env;
 		env_vec	_cgi_env_var;
@@ -23,10 +24,10 @@ class Environment
 
     	Environment(void);
     	~Environment(void);
-		
 
 		char **		get_cgi_env(void);
 		void		add_cgi_env_var(const std::string & name, const std::string & val);
+		void		add_http_env_var(const std::string & name, const std::string & val);
 
 	private:
     	Environment(Environment const & src);

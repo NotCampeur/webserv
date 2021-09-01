@@ -52,6 +52,27 @@ Environment::add_cgi_env_var(const std::string & name, const std::string & val)
 	_cgi_env_var.push_back(p);
 }
 
+void
+Environment::add_http_env_var(const std::string & name, const std::string & val)
+{
+	std::string env_name = "HTTP_";
+
+	for (size_t i = 0; i < name.size(); i++)
+	{
+		if (name[i] == '-')
+		{
+			env_name += '_';
+		}
+		else
+		{
+			env_name += std::toupper(name[i]);
+		}
+	}
+
+	std::pair<std::string, std::string> p(env_name, val);
+	_cgi_env_var.push_back(p);
+}
+
 char **
 Environment::get_cgi_env(void)
 {
