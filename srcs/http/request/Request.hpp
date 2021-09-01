@@ -6,6 +6,7 @@
 class IHttpMethod;
 # include "IHttpMethod.hpp"
 # include "ServerConfig.hpp"
+# include <vector>
 
 class Request
 {
@@ -23,6 +24,7 @@ class Request
 		IHttpMethod *						_method;
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
+		std::vector<std::string>			_cookies;
 		std::vector<char>					_body;
 		const config_type &					_server_config;
 

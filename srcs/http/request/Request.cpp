@@ -89,6 +89,10 @@ Request::reset(void)
 void
 Request::add_header(std::string & field_name, std::string & field_value)
 {
+	if (field_name == "cookie")
+	{
+		_cookies.push_back(field_value);
+	}
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
 
