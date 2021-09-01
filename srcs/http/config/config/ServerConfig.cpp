@@ -2,7 +2,7 @@
 
 ServerConfig::ServerConfig(void) :
 _name("NAME_NOT_SET"),
-_host("127.0.0.1"),
+_ip("127.0.0.1"),
 _port("8080"),
 _error_pages(),
 _max_client_body_size(MAX_CLIENT_BODY_SIZE),
@@ -15,7 +15,7 @@ _locations()
 
 ServerConfig::ServerConfig(ServerConfig const & src) :
 _name(src._name),
-_host(src._host),
+_ip(src._ip),
 _port(src._port),
 _error_pages(src._error_pages),
 _max_client_body_size(src._max_client_body_size),
@@ -40,7 +40,7 @@ ServerConfig::operator=(ServerConfig const & src)
 	if (this != &src)
 	{
 		_name = src._name;
-		_host = src._host;
+		_ip = src._ip;
 		_port = src._port;
 		_error_pages = src._error_pages;
 		_max_client_body_size = src._max_client_body_size;
@@ -67,15 +67,15 @@ ServerConfig::set_name(std::string & name)
 }
 
 const std::string &
-ServerConfig::host(void) const
+ServerConfig::ip(void) const
 {
-	return _host;
+	return _ip;
 }
 
 void
-ServerConfig::set_host(std::string & host)
+ServerConfig::set_ip(std::string & ip)
 {
-	_host = host;
+	_ip = ip;
 }
 
 const std::string &

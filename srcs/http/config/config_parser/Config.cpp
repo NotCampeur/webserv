@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/31 20:55:07 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 00:40:13 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ Config::get_server_key(const std::string & key)
 {
 	if (key == "name")
 		return name;
-	else if (key == "host")
-		return host;
+	else if (key == "ip")
+		return ip;
 	else if (key == "port")
 		return port;
 	else if (key == "max_client_body_size")
@@ -92,13 +92,13 @@ Config::load_server_name(IJsonValue * server_name, ServerConfig & server)
 }
 
 void
-Config::load_server_host(IJsonValue * server_host, ServerConfig & server)
+Config::load_server_ip(IJsonValue * server_ip, ServerConfig & server)
 {
-	JsonString	* value = dynamic_cast<JsonString *>(server_host);
+	JsonString	* value = dynamic_cast<JsonString *>(server_ip);
 	if (value == NULL)
-		throw Exception("Server's host must be a \"string\"");
-	std::string	host_value = value->value();
-	server.set_host(host_value);
+		throw Exception("Server's ip must be a \"string\"");
+	std::string	ip_value = value->value();
+	server.set_ip(ip_value);
 }
 
 void
@@ -358,8 +358,8 @@ Config::load_server_config(IJsonValue * server_object)
 			case name:
 				load_server_name(it->second, *server_config);
 				break;
-			case host:
-				load_server_host(it->second, *server_config);
+			case ip:
+				load_server_ip(it->second, *server_config);
 				break;
 			case port:
 				load_server_port(it->second, *server_config);
@@ -414,11 +414,11 @@ Config::load_servers_config(IJsonValue * server_array)
 		for (size_t j(0); j < server_list.size(); j++)
 		{
 			Server::config_type::const_iterator it(server_list[j]->get_server_config().begin());
-			if (servers_config[i]->host() == it->second.host()
+			if (servers_config[i]->ip() == it->second.ip()
 			&& servers_config[i]->port() == it->second.port())
 			{
 				server_list[j]->add_server_config(*servers_config[i]);
-				Logger(LOG_FILE, basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.host();
+				Logger(LOG_FILE, basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.ip();
 				is_same_server = true;
 				break;
 			}

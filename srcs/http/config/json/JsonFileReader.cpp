@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/24 16:35:18 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 01:43:18 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -338,24 +338,23 @@ void
 JsonFileReader::remove_whitespaces()
 {
 	std::string::iterator	it(_file_data.begin());
-	std::string::iterator	ite(_file_data.end());
 
-	while (it != ite)
+	while (it != _file_data.end())
 	{
 		if (*it == '"')
 		{
-			it++;
-			while (it != ite && *it != '"')
-				it++;
-			if (it != ite)
-				it++;
+			++it;
+			while (it != _file_data.end() && *it != '"')
+				++it;
+			if (it != _file_data.end())
+				++it;
 		}
-		while (it != ite && std::isspace(*it) != false)
-		{
+		if (*it == '#')
+			_file_data.erase(it, _file_data.begin() + _file_data.find_first_of('\n'));
+		while (it != _file_data.end() && std::isspace(*it) != false)
 			_file_data.erase(it);
-		}
-		if (it != ite && *it != '"')
-			it++;
+		if (it != _file_data.end() && *it != '"' && *it != '#')
+			++it;
 	}
 }
 

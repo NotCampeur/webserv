@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/31 19:52:52 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 00:40:13 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Config
 		enum server_config
 		{
 			name,
-			host,
+			ip,
 			port,
 			max_client_body_size,
 			auto_index,
@@ -64,7 +64,7 @@ class Config
 		ServerConfig	*load_server_config(IJsonValue * server_object);
 
 		void			load_server_name(IJsonValue * server_name, ServerConfig & server);
-		void			load_server_host(IJsonValue * server_host, ServerConfig & server);
+		void			load_server_ip(IJsonValue * server_ip, ServerConfig & server);
 		void			load_server_port(IJsonValue * server_port, ServerConfig & server);
 		void			load_server_max_client_body_size(IJsonValue * server_max_client_body_size, ServerConfig & server);
 		void			load_server_auto_index(IJsonValue * server_auto_index, ServerConfig & server);

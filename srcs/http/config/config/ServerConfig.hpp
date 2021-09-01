@@ -13,7 +13,7 @@ class ServerConfig
 {
 	private:
 		std::string						_name;
-		std::string						_host;
+		std::string						_ip;
 		std::string						_port;
 		std::map<int, std::string>		_error_pages;
 		size_t							_max_client_body_size;
@@ -38,8 +38,8 @@ class ServerConfig
 		const std::string & name(void) const;
 		void				set_name(std::string & name);
 
-		const std::string & host(void) const;
-		void				set_host(std::string & host);
+		const std::string & ip(void) const;
+		void				set_ip(std::string & ip);
 
 		const std::string & port(void) const;
 		void				set_port(std::string & port);
