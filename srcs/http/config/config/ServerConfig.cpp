@@ -169,3 +169,17 @@ ServerConfig::add_route(RouteConfig * route)
 {
 	_routes.push_back(route);
 }
+
+const std::string *
+ServerConfig::get_cgi_path(const std::string & cgi_ext) const
+{
+	const std::vector<RouteConfig *> & rt = routes();
+	for (size_t i = 0; i < rt.size(); i++)
+	{
+		if ((rt[i]->get_cgi().find(cgi_ext)) != rt[i]->get_cgi().end())
+		{
+			return &(rt[i]->get_cgi().find(cgi_ext)->second);
+		}
+	}
+	return NULL;
+}

@@ -18,7 +18,7 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 {
 	try {
 		host_header_ok(req);
-		load_desired_config(req);
+		load_desired_config(req); //URI path is not safe to use, consider
 		set_full_path(req, resp);
 		is_method_allowed(req);
 		verify_path(req, resp);
@@ -55,7 +55,7 @@ Validator::load_desired_config(Request & req)
 		}
 	}
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config loaded";
-	config = req.get_server_config().begin()->second;
+	// config = req.get_server_config().begin()->second;
 }
 
 void
@@ -86,6 +86,8 @@ Validator::set_full_path(Request & req, Response & resp)
 	std::string path = req.uri().path;
 	path.erase(path.begin()); // remove '/'
 	resolve_relative_path(path);
+	
+
 	std::string root = ValidatorConfig::get_instance().root_dir();
 	
 	if (!root.empty())

@@ -33,10 +33,6 @@ WriteHandler::writable(void)
 		
 		if (len < 0)
 		{
-			if (errno == EAGAIN)
-			{
-				return ;
-			}
 			manage_error();
 		}
 		else

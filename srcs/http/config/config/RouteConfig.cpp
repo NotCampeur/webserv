@@ -80,8 +80,8 @@ RouteConfig::default_file_dir() const
 	return _default_file_dir;
 }
 
-std::map<std::string, std::string>
-RouteConfig::cgi() const
+const std::map<std::string, std::string> &
+RouteConfig::get_cgi() const
 {
 	return _cgi;
 }

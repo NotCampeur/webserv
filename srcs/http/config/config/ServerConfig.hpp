@@ -65,6 +65,8 @@ class ServerConfig
 		const std::vector<RouteConfig *> & routes(void) const;
 		void				add_route(RouteConfig * route);
 
+		const std::string * get_cgi_path(const std::string & cgi_ext) const;
+
 	private:
 		ServerConfig &  operator=(ServerConfig const & src);
 };

@@ -24,7 +24,7 @@ class RouteConfig
 		std::string							_path;
 		RouteMethod							_accepted_method;
 		std::string							_redirection;
-		std::string							_root;
+		std::string							_root; //
 		bool								_is_autoindex_on;
 		std::string							_default_file_dir;
 		std::map<std::string, std::string>	_cgi;
@@ -45,7 +45,7 @@ class RouteConfig
 		std::string							root() const;
 		bool								is_autoindex_on() const;
 		std::string							default_file_dir() const;
-		std::map<std::string, std::string>	cgi() const;
+		const std::map<std::string, std::string> & get_cgi() const;
 		std::string							upload_path() const;
 
 		//Setters

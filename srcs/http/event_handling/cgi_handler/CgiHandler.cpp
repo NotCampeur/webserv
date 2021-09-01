@@ -83,10 +83,6 @@ CgiHandler::readable(void)
 	{
 		case -1 :
 		{
-			if (errno == EAGAIN)
-			{
-				return ;
-			}
 			manage_error();
 			Logger(LOG_FILE, error_type, error_lvl) << "Read: " << std::strerror(errno);
 		}
@@ -122,10 +118,6 @@ CgiHandler::writable(void)
 		ssize_t len = write(_pipe_one_fd[1], &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
-			if (errno == EAGAIN)
-			{
-				return ;
-			}
 			manage_error();
 			Logger(LOG_FILE, error_type, error_lvl) << "Write: " << std::strerror(errno);
 		}

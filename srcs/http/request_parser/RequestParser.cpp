@@ -136,6 +136,10 @@ RequestParser::parse_char(char c)
 		{
 			if (c == '\n')
 			{
+				if (_request.headers().find("host") == _request.headers().end())
+				{
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
+				}
 				if (_request.method().has_body())
 					_request_state = BODY;
 				else
@@ -176,14 +180,6 @@ RequestParser::parse_method(char c)
     };
 
     static size_t 		method_count = 4;
-
-	// static IHttpMethod * (*create[4])(void) =
-	// {
-	// 	GetMethod::create_s,
-	// 	HeadMethod::create_s,
-	// 	PostMethod::create_s,
-	// 	DeleteMethod::create_s
-	// };
 
 	static IHttpMethod* method[4] = {
 		&GetMethod::get_instance(),

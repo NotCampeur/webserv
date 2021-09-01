@@ -108,10 +108,6 @@ Response::send_payload(int fd)
 
 	if (ret < 0)
 	{
-		if (errno == EAGAIN)
-		{
-			return 0;
-		}
 		return -1;
 	}
 	if (static_cast<size_t>(ret) < _payload.size())
