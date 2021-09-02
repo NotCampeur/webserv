@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/26 12:31:49 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 16:26:17 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,13 @@ serv_test(char * config_path)
 int
 main(int ac, char *av[])
 {
-	(void)ac;
+	if (ac > 2)
+	{
+		std::cerr << "Usage: ./webserv [config_path]" << std::endl;
+		return EXIT_FAILURE;
+	}
 	Logger::accept_importance(all_lvl);
-	Logger(LOG_FILE, basic_type, all_lvl) << "Launching the servers " << 42 << " yeah baby";
+	Logger(LOG_FILE, basic_type, all_lvl) << "================[Webserv is starting]================";
 
 	serv_test(av[1]);
 

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/07/01 17:46:51 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 01:43:18 by notcampeur       ###   ########.fr       */
+/*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
+/*   Updated: 2021/09/02 16:55:30 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ JsonFileReader::JsonFileReader(char * path)
 		get_data(path);
 	else
 		get_data("ressources/config/webserv.conf");
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Data has been read :\n" << _file_data;
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Raw data read from " << path << " :\n" << _file_data;
 	raw_parsing();
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Primary parsing is done.";
 }
 
 JsonFileReader::~JsonFileReader()
@@ -49,12 +50,18 @@ JsonFileReader::get_string_value(std::string::iterator & pos, std::pair<std::str
 	Logger(LOG_FILE, basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
 	pos = _file_data.begin() + end;
 	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
-	if (obj != NULL)
-		obj->add_value(data);
-	else
+	try	{
+		if (obj != NULL)
+			obj->add_value(data);
+		else
+		{
+			JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+			array->add_value(data.second);
+		}
+	}
+	catch (JsonObject::MultipleDefinitionOfAValue & e)
 	{
-		JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
-		array->add_value(data.second);
+		json_file_reader_exit(e.what());
 	}
 }
 
@@ -67,12 +74,18 @@ JsonFileReader::get_array_value(std::pair<std::string, IJsonValue *> &data,
 	Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " array end";
 	current_value.pop();
 	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
-	if (obj != NULL)
-		obj->add_value(data);
-	else
+	try	{
+		if (obj != NULL)
+			obj->add_value(data);
+		else
+		{
+			JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+			array->add_value(data.second);
+		}
+	}
+	catch (JsonObject::MultipleDefinitionOfAValue & e)
 	{
-		JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
-		array->add_value(data.second);
+		json_file_reader_exit(e.what());
 	}
 }
 
@@ -89,20 +102,35 @@ JsonFileReader::get_object_value(std::string::iterator & pos, std::string::itera
 		if (end - pos > 1)
 		{
 			delete data.second;
-			throw Exception("Another global scope has been detected");
+			throw Exception("Another global scope has been detected in the config file");
 		}
 		return ;
 	}
 	current_value.pop();
 	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
-	if (obj != NULL)
-		obj->add_value(data);
-	else
+	try	{
+		if (obj != NULL)
+			obj->add_value(data);
+		else
+		{
+			JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
+			array->add_value(data.second);
+		}
+	}
+	catch (JsonObject::MultipleDefinitionOfAValue & e)
 	{
-		JsonArray	*array = dynamic_cast<JsonArray *>(current_value.top());
-		array->add_value(data.second);
+		json_file_reader_exit(e.what());
 	}
 }
+
+void
+JsonFileReader::json_file_reader_exit(const std::string & error_msg)
+{
+	Logger(LOG_FILE, error_type, all_lvl) << "Config file is not well formatted : " << error_msg;
+	Logger::quit();
+	exit(EXIT_FAILURE);
+}
+
 
 JsonObject &
 JsonFileReader::objectify(void)
@@ -173,7 +201,7 @@ void
 JsonFileReader::raw_parsing()
 {
 	remove_whitespaces();
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Data without ws :\n" << _file_data;
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Data without white spaces :\n" << _file_data;
 	check_scopes();
 	Logger(LOG_FILE, basic_type, debug_lvl) << "scopes are well closed";
 	check_tokens();
@@ -272,6 +300,8 @@ JsonFileReader::check_comma_token(std::string::iterator pos)
 void
 JsonFileReader::check_scopes()
 {
+	if (*_file_data.begin() != '{' || *(_file_data.end() - 1) != '}')
+		throw MissingToken(_file_data.substr(0, 10));
 	check_curly_bracket_scope();
 	check_bracket_scope();
 	check_quotes_scope();
@@ -290,7 +320,7 @@ JsonFileReader::check_curly_bracket_scope()
 		{
 			closing_c_bracket = _file_data.find('}', opening_c_bracket + 1);
 			if (closing_c_bracket == std::string::npos)
-				throw Exception("Missing enclosing quotes");
+				throw Exception("Missing enclosing curly bracket in the config");
 			closing_c_bracket++;
 		}
 	}
@@ -309,7 +339,7 @@ JsonFileReader::check_bracket_scope()
 		{
 			closing_bracket = _file_data.find(']', opening_bracket + 1);
 			if (closing_bracket == std::string::npos)
-				throw Exception("Missing enclosing quotes");
+				throw Exception("Missing enclosing bracket in the config");
 			closing_bracket++;
 		}
 	}
@@ -328,7 +358,7 @@ JsonFileReader::check_quotes_scope()
 		{
 			closing_dquote = _file_data.find('"', opening_dquote + 1);
 			if (closing_dquote == std::string::npos)
-				throw Exception("Missing enclosing quotes");
+				throw Exception("Missing enclosing quotes in the config");
 			closing_dquote++;
 		}
 	}

@@ -62,6 +62,8 @@ class JsonFileReader
 									std::pair<std::string, IJsonValue *> &data,
 									std::stack<IJsonValue *> & current_value);
 
+		// Call in pecular cases when the config file is not suitable for raw parsing.
+		void	json_file_reader_exit(const std::string & error_msg);
 	public:
 		//	Load a file given by the path to create a JsonFileReader which get the raw data.
 		JsonFileReader(char * path);

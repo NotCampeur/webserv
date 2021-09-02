@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 02:29:12 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 16:19:47 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,9 @@ class Config
 		void			load_location_default_file_dir(IJsonValue * location_default_file_dir, LocationConfig & location);
 		void			load_location_cgi(IJsonValue * location_cgi, LocationConfig & location);
 		void			load_location_upload_path(IJsonValue * location_upload_path, LocationConfig & location);
+
+		// In case of malformed configuration file, the server will stop displaying what's wrong.
+		void			config_exit(const std::string & error_msg);
 
 	public:
 						Config(JsonObject & config_object);
