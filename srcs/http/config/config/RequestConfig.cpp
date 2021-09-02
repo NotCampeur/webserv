@@ -110,67 +110,6 @@ RequestConfig::upload_path(void) const
 	return _upload_path;
 }
 
-//Setters
-// void
-// RequestConfig::set_error_pages(std::map<int, std::string> error_pages)
-// {
-// 	_error_pages = error_pages;
-// }
-
-// void
-// RequestConfig::add_error_pages(int error, const std::string & page_path)
-// {
-// 	_error_pages[error] = page_path;
-// }
-
-// void
-// RequestConfig::set_max_client_body_size(size_t max_size)
-// {
-// 	_max_client_body_size = max_size;
-// }
-
-// void
-// RequestConfig::set_accepted_method(const HTTPMethod & accepted_method)
-// {
-// 	_accepted_method = accepted_method;
-// }
-
-// void
-// RequestConfig::set_redirection(std::pair<int, std::string> & redirection)
-// {
-// 	_redirection = redirection;
-// }
-
-// void
-// RequestConfig::set_root(const std::string & root_path)
-// {
-// 	_root = root_path;
-// }
-
-// void
-// RequestConfig::set_is_autoindex_on(bool is_autoindex_on)
-// {
-// 	_is_autoindex_on = is_autoindex_on;
-// }
-
-// void
-// RequestConfig::set_default_file_dir(const std::string & default_file_dir)
-// {
-// 	_default_file_dir = default_file_dir;
-// }
-
-// void
-// RequestConfig::set_cgi(const std::map<std::string, std::string> & cgi)
-// {
-// 	_cgi = cgi;
-// }
-
-// void
-// RequestConfig::set_upload_path(const std::string & upload_path)
-// {
-// 	_upload_path = upload_path;
-// }
-
 //Operators
 RequestConfig &
 RequestConfig::operator=(const RequestConfig & to_assign)

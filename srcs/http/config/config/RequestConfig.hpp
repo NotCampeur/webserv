@@ -54,20 +54,6 @@ class RequestConfig
 		std::map<std::string, std::string>	cgi(void) const;
 		std::string							upload_path(void) const;
 
-		//The setters can be removed because they are unnecessary.
-		//Setters
-		// void	set_error_pages(std::map<int, std::string> error_pages);
-		// void	add_error_pages(int error, const std::string & page_path);
-		// void	set_max_client_body_size(size_t max_size);
-		// void	set_locations(std::vector<LocationConfig *> locations) const;
-		// void	set_accepted_method(const HTTPMethod & accepted_method);
-		// void	set_redirection(std::pair<int, std::string> & redirection);
-		// void	set_root(const std::string & root_path);
-		// void	set_is_autoindex_on(bool is_autoindex_on);
-		// void	set_default_file_dir(const std::string & default_file_dir);
-		// void	set_cgi(const std::map<std::string, std::string> & cgi);
-		// void	set_upload_path(const std::string & upload_path);
-
 		//Operators
 		RequestConfig	&operator=(const RequestConfig & to_assign);
 		RequestConfig	&operator=(const LocationConfig & to_assign);
