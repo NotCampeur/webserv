@@ -4,7 +4,7 @@
 # include <string>
 # include "Singleton.hpp"
 # include "webserv.hpp"
-# include "ValidatorConfig.hpp"
+# include "RequestConfig.hpp"
 class Request;
 class Response;
 class ServerConfig;

@@ -1,36 +1,27 @@
 #include "LocationConfig.hpp"
 
 // Constructors & destructor
-LocationConfig::LocationConfig() :
-	_path(),
-	_accepted_method(ALL),
-	_redirection(),
-	_root(),
-	_is_autoindex_on(),
-	_default_file_dir(),
-	_cgi(),
-	_upload_path()
+LocationConfig::LocationConfig()
+: _path()
+, _accepted_method(GET)
+, _redirection()
+, _root()
+, _is_autoindex_on()
+, _default_file_dir()
+, _cgi()
+, _upload_path()
 {}
 
-LocationConfig::LocationConfig(ServerConfig & config)
-	: _path("NOT_SET"), _accepted_method(ALL), _redirection(), _cgi()
-{
-	_root = const_cast<std::string &>(config.root_dir());
-	_is_autoindex_on = config.is_autoindex_on();
-	if (config.default_file_dir() != NULL)
-		_default_file_dir = *config.default_file_dir();
-	_upload_path = "NOT_SET";
-}
-
 LocationConfig::LocationConfig(std::string path, ServerConfig & config)
-	: _path(path), _accepted_method(ALL), _redirection(), _cgi()
-{
-	_root = const_cast<std::string &>(config.root_dir());
-	_is_autoindex_on = config.is_autoindex_on();
-	std::string * const_tmp = const_cast<std::string *>(config.default_file_dir());
-	_default_file_dir = *const_tmp;
-	_upload_path = "NOT_SET";
-}
+: _path(path)
+, _accepted_method(GET)
+, _redirection()
+, _root()
+, _is_autoindex_on()
+, _default_file_dir()
+, _cgi()
+, _upload_path()
+{}
 
 LocationConfig::LocationConfig(const LocationConfig & to_copy)
 {
@@ -47,7 +38,7 @@ LocationConfig::path() const
 	return _path;
 }
 
-RouteMethod
+HTTPMethod
 LocationConfig::accepted_method() const
 {
 	return _accepted_method;
@@ -135,7 +126,7 @@ LocationConfig::set_root(std::string value)
 }
 
 void
-LocationConfig::set_accepted_method(RouteMethod value)
+LocationConfig::set_accepted_method(HTTPMethod value)
 {
 	_accepted_method = value;
 }

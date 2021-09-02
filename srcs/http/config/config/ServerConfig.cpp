@@ -6,10 +6,6 @@ _ip("127.0.0.1"),
 _port("8080"),
 _error_pages(),
 _max_client_body_size(MAX_CLIENT_BODY_SIZE),
-_root_dir("./"),
-_index(),
-_is_autoindex_on(false),
-_default_file_dir(),
 _locations()
 {}
 
@@ -19,9 +15,6 @@ _ip(src._ip),
 _port(src._port),
 _error_pages(src._error_pages),
 _max_client_body_size(src._max_client_body_size),
-_root_dir(src._root_dir),
-_is_autoindex_on(src._is_autoindex_on),
-_default_file_dir(src._default_file_dir),
 _locations(src._locations)
 {}
 
@@ -44,10 +37,6 @@ ServerConfig::operator=(ServerConfig const & src)
 		_port = src._port;
 		_error_pages = src._error_pages;
 		_max_client_body_size = src._max_client_body_size;
-		_root_dir = src._root_dir;
-		_index = src._index;
-		_is_autoindex_on = src._is_autoindex_on;
-		_default_file_dir = src._default_file_dir;
 		for (size_t i(0); i < src._locations.size(); i++)
 			_locations.push_back(new LocationConfig(*src._locations[i]));
 	}
@@ -90,6 +79,12 @@ ServerConfig::set_port(std::string & port)
 	_port = port;
 }
 
+const std::map<int, std::string> &
+ServerConfig::error_page_path(void) const
+{
+	return _error_pages;
+}
+
 const std::string *
 ServerConfig::error_page_path(int error) const
 {
@@ -115,56 +110,6 @@ void
 ServerConfig::set_max_client_body_size(size_t max_client_body_size)
 {
 	_max_client_body_size = max_client_body_size;
-}
-
-const std::string &
-ServerConfig::root_dir(void) const
-{
-	return _root_dir;
-}
-
-void			
-ServerConfig::set_root_dir(std::string & root)
-{
-	_root_dir = root;
-}
-
-const std::string &
-ServerConfig::index(void) const
-{
-	return _index;
-}
-
-void			
-ServerConfig::set_index(std::string & root)
-{
-	_index = root;
-}
-
-bool
-ServerConfig::is_autoindex_on(void) const
-{
-	return _is_autoindex_on;
-}
-
-void
-ServerConfig::set_autoindex(bool autoindex)
-{
-	_is_autoindex_on = autoindex;
-}
-
-const std::string *
-ServerConfig::default_file_dir(void) const
-{
-	if (_default_file_dir.empty())
-		return NULL;
-	return &_default_file_dir;
-}
-
-void			
-ServerConfig::set_default_file_dir(std::string & path)
-{
-	_default_file_dir = path;
 }
 
 const std::vector<LocationConfig *> &

@@ -17,10 +17,6 @@ class ServerConfig
 		std::string						_port;
 		std::map<int, std::string>		_error_pages;
 		size_t							_max_client_body_size;
-		std::string						_root_dir;
-		std::string						_index;
-		bool							_is_autoindex_on;
-		std::string						_default_file_dir;
 		std::vector<LocationConfig *>	_locations;
 
 	public:
@@ -44,23 +40,12 @@ class ServerConfig
 		const std::string & port(void) const;
 		void				set_port(std::string & port);
 
-		const std::string *	error_page_path(int error) const;
-		void				add_error_page_path(int error, std::string & path);
+		const std::map<int, std::string> &	error_page_path(void) const;
+		const std::string *					error_page_path(int error) const;
+		void								add_error_page_path(int error, std::string & path);
 		
 		size_t				max_client_body_size(void) const;
 		void				set_max_client_body_size(size_t max_client_body_size);
-
-		const std::string &	root_dir(void) const;
-		void				set_root_dir(std::string & root);
-	
-		const std::string &	index(void) const;
-		void				set_index(std::string & root);
-	
-		bool				is_autoindex_on(void) const;
-		void				set_autoindex(bool autoindex);
-	
-		const std::string * default_file_dir(void) const;
-		void				set_default_file_dir(std::string & path);
 
 		const std::vector<LocationConfig *> & locations(void) const;
 		void				add_location(LocationConfig * location);

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 03:10:38 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 04:41:57 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,15 +208,15 @@ void
 Config::load_location_method(IJsonValue * location_method, LocationConfig & location)
 {
 	JsonString	* method = dynamic_cast<JsonString *>(location_method);
-	RouteMethod	accepted_method(NOTHING);
+	HTTPMethod	accepted_method(NOTHING);
 	if (method == NULL)
 		throw Exception("Location's accepted_method must be a \"string, string\"");
 	if (method->value().find("GET") != std::string::npos)
 		accepted_method = GET;
 	if (method->value().find("POST") != std::string::npos)
-		accepted_method = static_cast<RouteMethod>(accepted_method | POST);
+		accepted_method = static_cast<HTTPMethod>(accepted_method | POST);
 	if (method->value().find("DELETE") != std::string::npos)
-		accepted_method = static_cast<RouteMethod>(accepted_method | DELETE);
+		accepted_method = static_cast<HTTPMethod>(accepted_method | DELETE);
 	if (method->value().find("ALL") != std::string::npos)
 		accepted_method = ALL;
 	location.set_accepted_method(accepted_method);

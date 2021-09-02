@@ -2,25 +2,38 @@
 
 //TODO: Need to first check the headers to know the config to use.
 
-Request::Request(const Request::config_type & config) :
-_complete(false),
-_method(NULL),
-_server_config(config)
+Request::Request(const config_type & server_configs)
+: _complete(false)
+, _method(NULL)
+, _config(NULL)
 {
-	_body.reserve(_server_config.begin()->second.max_client_body_size());
+	// We need to initialize the headers.
+	for (Request::config_type::const_iterator	it = server_configs.begin()
+			; it != server_configs.end(); it++)
+	{
+		if (_headers["host"] == it->first + ":" + it->second.port())
+		{
+			*_config = it->second;
+			Logger(LOG_FILE, basic_type, debug_lvl) << "Named Server config loaded";
+			break;
+		}
+	}
 }
 
-Request::Request(Request const & src) :
-_complete(src._complete),
-_method(src._method),
-_uri(src._uri),
-_headers(src._headers),
-_body(src._body),
-_server_config(src._server_config)
+Request::Request(Request const & src)
+: _complete(src._complete)
+, _method(src._method)
+, _uri(src._uri)
+, _headers(src._headers)
+, _body(src._body)
+, _config(src._config)
 {}
 
 Request::~Request(void)
-{}
+{
+	if (_config != NULL)
+		delete _config;
+}
 
 void
 Request::set_method(IHttpMethod *method)
@@ -61,7 +74,9 @@ Request::complete(void)
 void
 Request::add_char_to_body(char c)
 {
-	if (_body.size() == _server_config.begin()->second.max_client_body_size())
+	if (_config == NULL)
+		Logger(LOG_FILE, error_type, debug_lvl) << "The RequestConfig is not set in add_char_to_body.";
+	if (_body.size() == _config->max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 	_body += c;
 }
@@ -90,8 +105,14 @@ Request::add_header(std::string & field_name, std::string & field_value)
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
 
-const Request::config_type &
-Request::get_server_config(void) const
+RequestConfig *
+Request::config(void) const
 {
-	return _server_config;
+	return _config;
+}
+
+void
+Request::set_config(RequestConfig * config)
+{
+	_config = config;
 }

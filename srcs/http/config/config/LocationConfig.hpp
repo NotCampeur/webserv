@@ -8,7 +8,7 @@
 
 class ServerConfig;
 
-typedef enum RouteMethod
+typedef enum HTTPMethod
 {
 	NOTHING = 0x000,
 	GET = 0x001,
@@ -16,13 +16,13 @@ typedef enum RouteMethod
 	DELETE = 0x004,
 	HEAD = 0x008,
 	ALL = 0xFFF
-}	RouteMethod;
+}	HTTPMethod;
 
 class LocationConfig
 {
 	private:
 		std::string							_path;
-		RouteMethod							_accepted_method;
+		HTTPMethod							_accepted_method;
 		std::pair<int, std::string>			_redirection;
 		std::string							_root;
 		bool								_is_autoindex_on;
@@ -33,14 +33,13 @@ class LocationConfig
 
 	public:
 		//Constructors & Destructor
-					LocationConfig(ServerConfig & config);
 					LocationConfig(std::string path, ServerConfig & config);
 					LocationConfig(const LocationConfig & to_copy);
 					~LocationConfig();
 
 		//Getters
 		std::string							path() const;
-		RouteMethod							accepted_method() const;
+		HTTPMethod							accepted_method() const;
 		std::pair<int, std::string>			redirection() const;
 		std::string							root() const;
 		bool								is_autoindex_on() const;
@@ -56,7 +55,7 @@ class LocationConfig
 		void	set_upload_path(std::string value);
 		void	set_redirection(int type, std::string path);
 		void	set_root(std::string value);
-		void	set_accepted_method(RouteMethod value);
+		void	set_accepted_method(HTTPMethod value);
 
 		//Operators
 		LocationConfig & operator=(const LocationConfig & to_assign);

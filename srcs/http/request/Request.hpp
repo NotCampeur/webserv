@@ -5,7 +5,7 @@
 # include "HttpException.hpp"
 class IHttpMethod;
 # include "IHttpMethod.hpp"
-# include "ServerConfig.hpp"
+# include "RequestConfig.hpp"
 
 class Request
 {
@@ -24,10 +24,10 @@ class Request
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
-		const config_type &					_server_config;
+		RequestConfig *						_config;
 
 	public:
-		Request(const config_type & config);
+		Request(const config_type & server_configs);
 		Request(Request const & src);
 		~Request(void);
 
@@ -41,7 +41,8 @@ class Request
 		bool &									complete();
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
-		const config_type &						get_server_config(void) const;
+		RequestConfig *							config(void) const;
+		void									set_config(RequestConfig * config);
 
 	private:
 		Request(void);

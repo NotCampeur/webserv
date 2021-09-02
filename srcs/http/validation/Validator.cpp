@@ -15,7 +15,8 @@ Validator::~Validator(void) {}
 void
 Validator::validate_request_inputs(Request & req, Response & resp)
 {
-	try {
+	try
+	{
 		load_desired_config(req);
 		set_full_path(req, resp);
 		is_method_allowed(req);
@@ -30,7 +31,7 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 void
 Validator::load_desired_config(Request & req)
 {
-	ValidatorConfig &				config = ValidatorConfig::get_instance();
+	RequestConfig					config;
 	std::vector<LocationConfig *>	locations = req.get_server_config().begin()->second.locations();
 	config = req.get_server_config().begin()->second;
 
@@ -61,7 +62,7 @@ Validator::load_desired_config(Request & req)
 void
 Validator::is_method_allowed(Request & req)
 {
-	RouteMethod method = ValidatorConfig::get_instance().accepted_method();
+	HTTPMethod method = RequestConfig::get_instance().accepted_method();
 	if (dynamic_cast<GetMethod *>(&req.method()) != NULL)
 		if ((GET & method) != 0)
 			return ;
@@ -84,10 +85,10 @@ Validator::set_full_path(Request & req, Response & resp)
 	std::string path = req.uri().path;
 	path.erase(path.begin()); // remove '/'
 	resolve_relative_path(path);
-	std::string root = ValidatorConfig::get_instance().root_dir();
+	std::string root = RequestConfig::get_instance().root_dir();
 	
 	if (path.empty() == true)
-		path = ValidatorConfig::get_instance().index();
+		path = RequestConfig::get_instance().index();
 	if (root.empty() == false)
 	{
 		path.insert(0, root);

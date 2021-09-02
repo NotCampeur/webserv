@@ -3,31 +3,30 @@
 
 # include "webserv.hpp"
 # include "StatusCodes.hpp"
-# include "ServerConfig.hpp"
+# include "RequestConfig.hpp"
 # include "HttpErrorManager.hpp"
 
 class Response
 {
 	public:
 		typedef std::pair<std::string, std::string>		header_t;
-		typedef std::map<std::string, const ServerConfig &>	config_type;
 
 	private:
-		std::string						_payload;
-		const std::string				_version;
-		StatusCodes::status_index_t 	_code;
-		std::vector<header_t>			_headers;
-		bool							_metadata_sent;
-		bool							_ready_to_send;
-		bool							_complete;
-		int								_handler_fd;
-		const config_type &				_server_config;
-		std::string						_file_path;
-		HttpErrorManager				_error_manager;
-		bool							_path_is_dir;
+		std::string					_payload;
+		const std::string			_version;
+		StatusCodes::status_index_t _code;
+		std::vector<header_t>		_headers;
+		bool						_metadata_sent;
+		bool						_ready_to_send;
+		bool						_complete;
+		int							_handler_fd;
+		const RequestConfig &		_server_config;
+		std::string					_file_path;
+		HttpErrorManager			_error_manager;
+		bool						_path_is_dir;
 
 	public:
-    	Response(const config_type & config);
+    	Response(const RequestConfig & config);
     	Response(Response const & src);
     	~Response(void);
 
@@ -52,7 +51,7 @@ class Response
 		void					set_path(const std::string & path);
 		const std::string & 	get_path(void) const;
 
-		const config_type &		get_server_config(void) const;
+		const RequestConfig &	config(void) const;
 		void					reset(void);
 		void					http_error(StatusCodes::status_index_t error);
 		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);
