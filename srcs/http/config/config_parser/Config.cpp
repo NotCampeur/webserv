@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 16:24:41 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 18:48:52 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -382,7 +382,7 @@ Config::load_servers_config(IJsonValue * server_array)
 void
 Config::config_exit(const std::string & error_msg)
 {
-	Logger(LOG_FILE, error_type, all_lvl) << "Config file is not well formatted : " << error_msg;
+	Logger(LOG_FILE, error_type, all_lvl) << "Config file contain error : " << error_msg;
 	Logger::quit();
 	exit(EXIT_FAILURE);
 }

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/02 16:55:30 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 18:46:04 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ JsonFileReader::get_string_value(std::string::iterator & pos, std::pair<std::str
 	}
 	catch (JsonObject::MultipleDefinitionOfAValue & e)
 	{
-		json_file_reader_exit(e.what());
+		json_file_reader_exit(e.what(), current_value);
 	}
 }
 
@@ -85,7 +85,7 @@ JsonFileReader::get_array_value(std::pair<std::string, IJsonValue *> &data,
 	}
 	catch (JsonObject::MultipleDefinitionOfAValue & e)
 	{
-		json_file_reader_exit(e.what());
+		json_file_reader_exit(e.what(), current_value);
 	}
 }
 
@@ -119,13 +119,22 @@ JsonFileReader::get_object_value(std::string::iterator & pos, std::string::itera
 	}
 	catch (JsonObject::MultipleDefinitionOfAValue & e)
 	{
-		json_file_reader_exit(e.what());
+		json_file_reader_exit(e.what(), current_value);
 	}
 }
 
 void
-JsonFileReader::json_file_reader_exit(const std::string & error_msg)
+JsonFileReader::json_file_reader_exit(const std::string & error_msg
+									, std::stack<IJsonValue *> & current_value)
 {
+	IJsonValue	*value;
+	
+	while (current_value.size() > 1)
+	{
+		value = current_value.top();
+		current_value.pop();
+		delete value;
+	}
 	Logger(LOG_FILE, error_type, all_lvl) << "Config file is not well formatted : " << error_msg;
 	Logger::quit();
 	exit(EXIT_FAILURE);
@@ -302,9 +311,40 @@ JsonFileReader::check_scopes()
 {
 	if (*_file_data.begin() != '{' || *(_file_data.end() - 1) != '}')
 		throw MissingToken(_file_data.substr(0, 10));
+	check_number_of_scopes();
 	check_curly_bracket_scope();
 	check_bracket_scope();
 	check_quotes_scope();
+}
+
+void
+JsonFileReader::check_number_of_scopes()
+{
+	std::string				tmp_data = _file_data;
+	std::string::iterator	it(tmp_data.begin());
+	size_t					open_s(0);
+	size_t					close_s(0);
+
+	while (it != tmp_data.end())
+	{
+		if (*it == '"')
+			tmp_data.erase(it, tmp_data.begin() + tmp_data.find('"', std::distance(tmp_data.begin(), it) + 1) + 1);
+		if (it != tmp_data.end() && (*it == ':' || *it == ','))
+			tmp_data.erase(it);
+		if (it != _file_data.end() && *it != '"')
+			++it;
+	}
+	open_s = std::count(tmp_data.begin(), tmp_data.end(), '{');
+	close_s = std::count(tmp_data.begin(), tmp_data.end(), '}');
+	Logger() << "opened \'{\' : " << open_s << " closed \'}\' : " << close_s;
+	if (open_s != close_s)
+		throw Exception("Missing curly bracket in the config");
+	open_s = std::count(tmp_data.begin(), tmp_data.end(), '[');
+	close_s = std::count(tmp_data.begin(), tmp_data.end(), ']');
+	Logger() << "opened \'[\' : " << open_s << " closed \']\' : " << close_s;
+	if (open_s != close_s)
+		throw Exception("Missing bracket in the config");
+
 }
 
 void

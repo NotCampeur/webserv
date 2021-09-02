@@ -46,6 +46,7 @@ class JsonFileReader
 		void	check_comma_token(std::string::iterator pos);
 		//	Check if the scopes are well formated / closed.
 		void	check_scopes();
+		void	check_number_of_scopes();
 		void	check_curly_bracket_scope();
 		void	check_bracket_scope();
 		void	check_quotes_scope();
@@ -63,7 +64,8 @@ class JsonFileReader
 									std::stack<IJsonValue *> & current_value);
 
 		// Call in pecular cases when the config file is not suitable for raw parsing.
-		void	json_file_reader_exit(const std::string & error_msg);
+		void	json_file_reader_exit(const std::string & error_msg
+									, std::stack<IJsonValue *> & current_value);
 	public:
 		//	Load a file given by the path to create a JsonFileReader which get the raw data.
 		JsonFileReader(char * path);
