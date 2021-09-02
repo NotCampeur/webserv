@@ -1,14 +1,14 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 
-Response::Response(const config_type & config) :
+Response::Response(const RequestConfig & config) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
 _handler_fd(-1),
-_server_config(config),
-_error_manager(_server_config, *this),
+_config(config),
+_error_manager(_config, *this),
 _path_is_dir(false)
 {}
 
@@ -20,7 +20,7 @@ _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
 _handler_fd(src._handler_fd),
-_server_config(src._server_config),
+_config(src._config),
 _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir)
 {}
@@ -187,10 +187,10 @@ Response::set_path(const std::string & path)
 	_file_path = path;
 }
 
-const Response::config_type &
-Response::get_server_config(void) const
+const RequestConfig &
+Response::config(void) const
 {
-	return _server_config;
+	return _config;
 }
 
 void
@@ -212,7 +212,7 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	reset();
 	set_http_code(code);
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + _server_config.begin()->second.name() + ':' + _server_config.begin()->second.port() + '/' + location;
+	std::string complete_location = "http://" + _config.name() + ':' + _config.port() + '/' + location;
 	std::cerr << complete_location << '\n';
 	add_header("Location", complete_location);
 	ready_to_send() = true;

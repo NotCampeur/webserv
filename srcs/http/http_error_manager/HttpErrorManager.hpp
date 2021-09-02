@@ -4,19 +4,18 @@
 # include "webserv.hpp"
 # include "StatusCodes.hpp"
 class Response;
-class ServerConfig;
+class RequestConfig;
 
 class HttpErrorManager
 {
 	public:
-		typedef std::map<std::string, const ServerConfig &>	config_type;
 	private:
 		int						_fd;
-		const config_type &	_config;
+		const RequestConfig &	_config;
 		Response &				_resp;
 	
 	public:
-		HttpErrorManager(const config_type & config, Response & resp);
+		HttpErrorManager(const RequestConfig & config, Response & resp);
 		HttpErrorManager(HttpErrorManager const & src);
     	~HttpErrorManager(void);
 

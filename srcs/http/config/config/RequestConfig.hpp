@@ -20,8 +20,12 @@
 class RequestConfig
 {
 	private:
+		std::string							_name;
+		std::string							_ip;
+		std::string							_port;
 		std::map<int, std::string>			_error_pages;
 		size_t								_max_client_body_size;
+		std::vector<LocationConfig *>		_locations;
 		HTTPMethod							_accepted_method;
 		std::pair<int, std::string>			_redirection;
 		std::string							_root;
@@ -36,8 +40,12 @@ class RequestConfig
 		~RequestConfig();
 
 		//Getters
+		std::string							name(void) const;
+		std::string							ip(void) const;
+		std::string							port(void) const;
 		std::map<int, std::string>			error_pages(void) const;
 		size_t								max_client_body_size(void) const;
+		const std::vector<LocationConfig *> &	locations(void) const;
 		HTTPMethod							accepted_method(void) const;
 		std::pair<int, std::string>			redirection(void) const;
 		std::string							root(void) const;
@@ -46,23 +54,19 @@ class RequestConfig
 		std::map<std::string, std::string>	cgi(void) const;
 		std::string							upload_path(void) const;
 
+		//The setters can be removed because they are unnecessary.
 		//Setters
-		void	set_error_pages(std::map<int, std::string> error_pages);
-		void	add_error_pages(int error, const std::string & page_path);
-		void	set_max_client_body_size(size_t max_size);
-		void	set_accepted_method(const HTTPMethod & accepted_method);
-		void	set_redirection(std::pair<int, std::string> & redirection);
-		void	set_root(const std::string & root_path);
-		void	set_is_autoindex_on(bool is_autoindex_on);
-		void	set_default_file_dir(const std::string & default_file_dir);
-		void	set_cgi(const std::map<std::string, std::string> & cgi);
-		void	set_upload_path(const std::string & upload_path);
-
-		void	set_root(std::string const &root_dir);
-		void	set_index(std::string const &index);
-		void	set_autoindex(bool is_autoindex_on);
-		void	set_default_file_dir(std::string const &default_file_dir);
-		void	set_accepted_method(HTTPMethod value);
+		// void	set_error_pages(std::map<int, std::string> error_pages);
+		// void	add_error_pages(int error, const std::string & page_path);
+		// void	set_max_client_body_size(size_t max_size);
+		// void	set_locations(std::vector<LocationConfig *> locations) const;
+		// void	set_accepted_method(const HTTPMethod & accepted_method);
+		// void	set_redirection(std::pair<int, std::string> & redirection);
+		// void	set_root(const std::string & root_path);
+		// void	set_is_autoindex_on(bool is_autoindex_on);
+		// void	set_default_file_dir(const std::string & default_file_dir);
+		// void	set_cgi(const std::map<std::string, std::string> & cgi);
+		// void	set_upload_path(const std::string & upload_path);
 
 		//Operators
 		RequestConfig	&operator=(const RequestConfig & to_assign);

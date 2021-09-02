@@ -14,6 +14,7 @@
 
 RequestConfig::RequestConfig()
 : _error_pages(), _max_client_body_size(1000000)
+, _locations()
 , _accepted_method(GET), _redirection(), _root()
 , _is_autoindex_on(false), _default_file_dir()
 , _cgi(), _upload_path()
@@ -22,6 +23,7 @@ RequestConfig::RequestConfig()
 RequestConfig::RequestConfig(const RequestConfig & to_copy)
 : _error_pages(to_copy._error_pages)
 , _max_client_body_size(to_copy._max_client_body_size)
+, _locations(to_copy._locations)
 , _accepted_method(to_copy._accepted_method)
 , _redirection(to_copy._redirection), _root(to_copy._root)
 , _is_autoindex_on(to_copy._is_autoindex_on)
@@ -30,9 +32,34 @@ RequestConfig::RequestConfig(const RequestConfig & to_copy)
 {}
 
 RequestConfig::~RequestConfig()
-{}
+{
+	for (std::vector<LocationConfig *>::const_iterator it = _locations.begin()
+		; it != _locations.end()
+		; ++it)
+	{
+		delete *it;
+	}
+}
 
 //Getters
+std::string
+RequestConfig::name(void) const
+{
+	return _name;
+}
+
+std::string
+RequestConfig::ip(void) const
+{
+	return _ip;
+}
+
+std::string
+RequestConfig::port(void) const
+{
+	return _port;
+}
+
 std::map<int, std::string>
 RequestConfig::error_pages(void) const
 {
@@ -43,6 +70,12 @@ size_t
 RequestConfig::max_client_body_size(void) const
 {
 	return _max_client_body_size;
+}
+
+const std::vector<LocationConfig *> &
+RequestConfig::locations(void) const
+{
+	return _locations;
 }
 
 HTTPMethod
@@ -88,65 +121,65 @@ RequestConfig::upload_path(void) const
 }
 
 //Setters
-void
-RequestConfig::set_error_pages(std::map<int, std::string> error_pages)
-{
-	_error_pages = error_pages;
-}
+// void
+// RequestConfig::set_error_pages(std::map<int, std::string> error_pages)
+// {
+// 	_error_pages = error_pages;
+// }
 
-void
-RequestConfig::add_error_pages(int error, const std::string & page_path)
-{
-	_error_pages[error] = page_path;
-}
+// void
+// RequestConfig::add_error_pages(int error, const std::string & page_path)
+// {
+// 	_error_pages[error] = page_path;
+// }
 
-void
-RequestConfig::set_max_client_body_size(size_t max_size)
-{
-	_max_client_body_size = max_size;
-}
+// void
+// RequestConfig::set_max_client_body_size(size_t max_size)
+// {
+// 	_max_client_body_size = max_size;
+// }
 
-void
-RequestConfig::set_accepted_method(const HTTPMethod & accepted_method)
-{
-	_accepted_method = accepted_method;
-}
+// void
+// RequestConfig::set_accepted_method(const HTTPMethod & accepted_method)
+// {
+// 	_accepted_method = accepted_method;
+// }
 
-void
-RequestConfig::set_redirection(std::pair<int, std::string> & redirection)
-{
-	_redirection = redirection;
-}
+// void
+// RequestConfig::set_redirection(std::pair<int, std::string> & redirection)
+// {
+// 	_redirection = redirection;
+// }
 
-void
-RequestConfig::set_root(const std::string & root_path)
-{
-	_root = root_path;
-}
+// void
+// RequestConfig::set_root(const std::string & root_path)
+// {
+// 	_root = root_path;
+// }
 
-void
-RequestConfig::set_is_autoindex_on(bool is_autoindex_on)
-{
-	_is_autoindex_on = is_autoindex_on;
-}
+// void
+// RequestConfig::set_is_autoindex_on(bool is_autoindex_on)
+// {
+// 	_is_autoindex_on = is_autoindex_on;
+// }
 
-void
-RequestConfig::set_default_file_dir(const std::string & default_file_dir)
-{
-	_default_file_dir = default_file_dir;
-}
+// void
+// RequestConfig::set_default_file_dir(const std::string & default_file_dir)
+// {
+// 	_default_file_dir = default_file_dir;
+// }
 
-void
-RequestConfig::set_cgi(const std::map<std::string, std::string> & cgi)
-{
-	_cgi = cgi;
-}
+// void
+// RequestConfig::set_cgi(const std::map<std::string, std::string> & cgi)
+// {
+// 	_cgi = cgi;
+// }
 
-void
-RequestConfig::set_upload_path(const std::string & upload_path)
-{
-	_upload_path = upload_path;
-}
+// void
+// RequestConfig::set_upload_path(const std::string & upload_path)
+// {
+// 	_upload_path = upload_path;
+// }
 
 //Operators
 RequestConfig &
@@ -183,7 +216,19 @@ RequestConfig::operator=(const LocationConfig & to_assign)
 RequestConfig &
 RequestConfig::operator=(const ServerConfig & to_assign)
 {
+	_name = to_assign.name();
+	_ip = to_assign.ip();
+	_port = to_assign.port();
 	_error_pages = to_assign.error_page_path();
 	_max_client_body_size = to_assign.max_client_body_size();
+	// Deep copy the server's locations.
+	for (std::vector<LocationConfig *>::const_iterator it = to_assign.locations().begin()
+		; it != to_assign.locations().end()
+		; ++it)
+	{
+		_locations.push_back(new LocationConfig(*(*it)));
+	}
+
+	_locations = to_assign.locations();
 	return *this;
 }

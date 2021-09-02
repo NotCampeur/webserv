@@ -29,11 +29,11 @@ class LocationConfig
 		std::string							_default_file_dir;
 		std::map<std::string, std::string>	_cgi;
 		std::string							_upload_path;
-								LocationConfig();
 
 	public:
 		//Constructors & Destructor
-					LocationConfig(std::string path, ServerConfig & config);
+					LocationConfig();
+					LocationConfig(std::string path);
 					LocationConfig(const LocationConfig & to_copy);
 					~LocationConfig();
 

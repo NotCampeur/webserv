@@ -12,7 +12,7 @@ LocationConfig::LocationConfig()
 , _upload_path()
 {}
 
-LocationConfig::LocationConfig(std::string path, ServerConfig & config)
+LocationConfig::LocationConfig(std::string path)
 : _path(path)
 , _accepted_method(GET)
 , _redirection()

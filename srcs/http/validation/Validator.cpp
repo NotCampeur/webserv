@@ -31,27 +31,14 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 void
 Validator::load_desired_config(Request & req)
 {
-	RequestConfig					config;
-	std::vector<LocationConfig *>	locations = req.get_server_config().begin()->second.locations();
-	config = req.get_server_config().begin()->second;
-
-	for (Request::config_type::const_iterator	it = req.get_server_config().begin()
-			; it != req.get_server_config().end(); it++)
-	{
-		if (req.headers()["host"] == it->first + ":" + it->second.port())
-		{
-			config = it->second;
-			locations = it->second.locations();
-			Logger(LOG_FILE, basic_type, debug_lvl) << "Named Server config loaded";
-			break;
-		}
-	}
+	const std::vector<LocationConfig *> &	locations = req.config()->locations();
 	for (std::vector<LocationConfig *>::const_iterator it = locations.begin()
-			; it != locations.end(); ++it)
+		; it != locations.end()
+		; ++it)
 	{
 		if ((*it)->path() == req.uri().path)
 		{
-			config = *(*it);
+			*req.config() = *(*it);
 			Logger(LOG_FILE, basic_type, debug_lvl) << "Location Config loaded";
 			return ;
 		}
@@ -62,7 +49,7 @@ Validator::load_desired_config(Request & req)
 void
 Validator::is_method_allowed(Request & req)
 {
-	HTTPMethod method = RequestConfig::get_instance().accepted_method();
+	HTTPMethod method = req.config()->accepted_method();
 	if (dynamic_cast<GetMethod *>(&req.method()) != NULL)
 		if ((GET & method) != 0)
 			return ;
@@ -85,10 +72,8 @@ Validator::set_full_path(Request & req, Response & resp)
 	std::string path = req.uri().path;
 	path.erase(path.begin()); // remove '/'
 	resolve_relative_path(path);
-	std::string root = RequestConfig::get_instance().root_dir();
+	std::string root = req.config()->root();
 	
-	if (path.empty() == true)
-		path = RequestConfig::get_instance().index();
 	if (root.empty() == false)
 	{
 		path.insert(0, root);

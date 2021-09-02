@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 04:41:57 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 07:31:19 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,16 +147,16 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 	JsonArray	* locations = dynamic_cast<JsonArray *>(server_location);
 	if (locations == NULL)
 		throw Exception("Server's locations must be an [array of {objects}]");
-	JsonArray::value_type::const_iterator routes_it(locations->value_begin());
-	JsonArray::value_type::const_iterator routes_ite(locations->value_end());
-	while (routes_it != routes_ite)
+	JsonArray::value_type::const_iterator locations_it(locations->value_begin());
+	JsonArray::value_type::const_iterator locations_ite(locations->value_end());
+	while (locations_it != locations_ite)
 	{
-		JsonObject	* location = dynamic_cast<JsonObject *>(*routes_it);
+		JsonObject	* location = dynamic_cast<JsonObject *>(*locations_it);
 		if (location == NULL)
 			throw Exception("Server's locations must be an [array of {objects}]");;
 		JsonObject::value_type::const_iterator location_it(location->value_begin());
 		JsonObject::value_type::const_iterator location_ite(location->value_end());
-		LocationConfig	* location_config = new LocationConfig(server);
+		LocationConfig	* location_config = new LocationConfig();
 		while (location_it != location_ite)
 		{
 			switch (get_location_key(location_it->first))
@@ -191,7 +191,7 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 			location_it++;
 		}
 		server.add_location(location_config);
-		routes_it++;
+		locations_it++;
 	}
 }
 

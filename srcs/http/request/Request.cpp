@@ -74,8 +74,6 @@ Request::complete(void)
 void
 Request::add_char_to_body(char c)
 {
-	if (_config == NULL)
-		Logger(LOG_FILE, error_type, debug_lvl) << "The RequestConfig is not set in add_char_to_body.";
 	if (_body.size() == _config->max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
 	_body += c;

@@ -4,7 +4,7 @@
 #include "InitiationDispatcher.hpp"
 #include "HttpException.hpp"
 
-HttpErrorManager::HttpErrorManager(const config_type & config, Response & resp) :
+HttpErrorManager::HttpErrorManager(const RequestConfig & config, Response & resp) :
 _fd(-1),
 _config(config),
 _resp(resp)
@@ -23,17 +23,17 @@ void
 HttpErrorManager::handle(StatusCodes::status_index_t error)
 {
 	_resp.set_http_code(error);
-	const std::string * path = _config.begin()->second.error_page_path(StatusCodes::get_code_value(error));
+	const std::string path = _config.error_pages()[StatusCodes::get_code_value(error)];
 	
-	if (path != NULL)
+	if (path.empty() == false)
 	{
-		std::cerr << "Error page found: " << *path << '\n';
-		_resp.set_path(*path);
+		std::cerr << "Error page found: " << path << '\n';
+		_resp.set_path(path);
 		_fd = open(_resp.get_path().c_str(), O_RDONLY);
 		if (_fd >= 0)
 		{
 			try {
-					off_t file_size = get_file_size(*path);
+					off_t file_size = get_file_size(path);
 					set_content_length_header(file_size);
 					set_content_type_header();
 					_resp.ready_to_send() = false;
