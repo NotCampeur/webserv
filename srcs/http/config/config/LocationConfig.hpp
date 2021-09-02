@@ -23,7 +23,7 @@ class LocationConfig
 	private:
 		std::string							_path;
 		RouteMethod							_accepted_method;
-		std::string							_redirection;
+		std::pair<int, std::string>			_redirection;
 		std::string							_root;
 		bool								_is_autoindex_on;
 		std::string							_default_file_dir;
@@ -41,7 +41,7 @@ class LocationConfig
 		//Getters
 		std::string							path() const;
 		RouteMethod							accepted_method() const;
-		std::string							redirection() const;
+		std::pair<int, std::string>			redirection() const;
 		std::string							root() const;
 		bool								is_autoindex_on() const;
 		std::string							default_file_dir() const;
@@ -54,7 +54,7 @@ class LocationConfig
 		void	set_default_file_dir(std::string value);
 		void	add_cgi(std::string key, std::string value);
 		void	set_upload_path(std::string value);
-		void	set_redirection(std::string value);
+		void	set_redirection(int type, std::string path);
 		void	set_root(std::string value);
 		void	set_accepted_method(RouteMethod value);
 

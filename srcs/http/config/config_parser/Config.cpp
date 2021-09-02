@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 00:40:13 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/02 03:02:30 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,10 @@ Config::get_server_key(const std::string & key)
 		return ip;
 	else if (key == "port")
 		return port;
-	else if (key == "max_client_body_size")
-		return max_client_body_size;
-	else if (key == "auto_index")
-		return auto_index;
-	else if (key == "root")
-		return root;
-	else if (key == "index")
-		return index;
-	else if (key == "default_file_dir")
-		return default_file_dir;
 	else if (key == "error_page_path")
 		return error_page_path;
+	else if (key == "max_client_body_size")
+		return max_client_body_size;
 	else if (key == "location")
 		return location;
 	return server_unknown;
@@ -121,48 +113,6 @@ Config::load_server_max_client_body_size(IJsonValue * server_max_client_body_siz
 	size_t			max_client_body_size_value(0);
 	std::istringstream(s_max_client_body_size_value) >> max_client_body_size_value;
 	server.set_max_client_body_size(max_client_body_size_value);
-}
-
-void
-Config::load_server_auto_index(IJsonValue * server_auto_index, ServerConfig & server)
-{
-	JsonString	* value = dynamic_cast<JsonString *>(server_auto_index);
-	if (value == NULL)
-		throw Exception("Server's auto_index must be a \"string\"");
-	if (value->value() == "true")
-		server.set_autoindex(true);
-	else
-		server.set_autoindex(false);
-}
-
-void
-Config::load_server_root(IJsonValue * server_root, ServerConfig & server)
-{
-	JsonString	* value = dynamic_cast<JsonString *>(server_root);
-	if (value == NULL)
-		throw Exception("Server's root must be a \"string\"");
-	std::string	root_value = value->value();
-	server.set_root_dir(root_value);
-}
-
-void
-Config::load_server_index(IJsonValue * server_index, ServerConfig & server)
-{
-	JsonString	* value = dynamic_cast<JsonString *>(server_index);
-	if (value == NULL)
-		throw Exception("Server's index must be a \"string\"");
-	std::string	index_value = value->value();
-	server.set_index(index_value);
-}
-
-void
-Config::load_server_default_file_dir(IJsonValue * server_default_file_dir, ServerConfig & server)
-{
-	JsonString	* value = dynamic_cast<JsonString *>(server_default_file_dir);
-	if (value == NULL)
-		throw Exception("Server's default_file_dir must be a \"string\"");
-	std::string	default_file_dir_value = value->value();
-	server.set_default_file_dir(default_file_dir_value);
 }
 
 void
@@ -275,10 +225,17 @@ Config::load_location_method(IJsonValue * location_method, LocationConfig & loca
 void
 Config::load_location_redirection(IJsonValue * location_redirection, LocationConfig & location)
 {
-	JsonString	* redirection = dynamic_cast<JsonString *>(location_redirection);
+	JsonObject	* redirection = dynamic_cast<JsonObject *>(location_redirection);
 	if (redirection == NULL)
-		throw Exception("Location's redirection must be a \"string\"");
-	location.set_redirection(redirection->value());
+		throw Exception("Location's redirection must be an {object}");
+	if (std::distance(redirection->value_begin(), redirection->value_end()) != 1)
+		throw Exception("You can have only one redirection");
+	JsonString	* redirection_path = dynamic_cast<JsonString *>(redirection->value_begin()->second);
+	if (redirection_path == NULL)
+		throw Exception("redirection's path must be a \"string\"");
+	int			redirection_code(0);
+	std::istringstream(redirection->value_begin()->first) >> redirection_code;
+	location.set_redirection(redirection_code, redirection_path->value());
 }
 
 void
@@ -364,29 +321,20 @@ Config::load_server_config(IJsonValue * server_object)
 			case port:
 				load_server_port(it->second, *server_config);
 				break;
-			case max_client_body_size:
-				load_server_max_client_body_size(it->second, *server_config);
-				break;
-			case auto_index:
-				load_server_auto_index(it->second, *server_config);
-				break;
-			case root:
-				load_server_root(it->second, *server_config);
-				break;
-			case index:
-				load_server_index(it->second, *server_config);
-				break;
-			case default_file_dir:
-				load_server_default_file_dir(it->second, *server_config);
-				break;
 			case error_page_path:
 				load_server_error_page_path(it->second, *server_config);
+				break;
+			case max_client_body_size:
+				load_server_max_client_body_size(it->second, *server_config);
 				break;
 			case location:
 				load_server_location(it->second, *server_config);
 				break;
 			case server_unknown:
+			{
+				Logger(LOG_FILE, error_type, debug_lvl) << "The unknown server's key is : " << it->first;
 				throw Exception("Unknown server's key detected");
+			}
 		}
 	}
 	return server_config;

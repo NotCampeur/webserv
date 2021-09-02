@@ -13,9 +13,8 @@ LocationConfig::LocationConfig() :
 {}
 
 LocationConfig::LocationConfig(ServerConfig & config)
-	: _path("NOT_SET"), _accepted_method(ALL), _cgi()
+	: _path("NOT_SET"), _accepted_method(ALL), _redirection(), _cgi()
 {
-	_redirection = "NOT_SET";
 	_root = const_cast<std::string &>(config.root_dir());
 	_is_autoindex_on = config.is_autoindex_on();
 	if (config.default_file_dir() != NULL)
@@ -24,9 +23,8 @@ LocationConfig::LocationConfig(ServerConfig & config)
 }
 
 LocationConfig::LocationConfig(std::string path, ServerConfig & config)
-	: _path(path), _accepted_method(ALL), _cgi()
+	: _path(path), _accepted_method(ALL), _redirection(), _cgi()
 {
-	_redirection = "NOT_SET";
 	_root = const_cast<std::string &>(config.root_dir());
 	_is_autoindex_on = config.is_autoindex_on();
 	std::string * const_tmp = const_cast<std::string *>(config.default_file_dir());
@@ -55,7 +53,7 @@ LocationConfig::accepted_method() const
 	return _accepted_method;
 }
 
-std::string
+std::pair<int, std::string>
 LocationConfig::redirection() const
 {
 	return _redirection;
@@ -124,9 +122,10 @@ LocationConfig::set_upload_path(std::string value)
 }
 
 void
-LocationConfig::set_redirection(std::string value)
+LocationConfig::set_redirection(int type, std::string path)
 {
-	_redirection = value;
+	_redirection.first = type;
+	_redirection.second = path;
 }
 
 void
