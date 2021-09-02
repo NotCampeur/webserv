@@ -3,6 +3,7 @@
 Server::Server(ServerConfig *config, int com_domain, int sock_type) :
 _config()
 {
+	_config.insert(std::pair<std::string, const ServerConfig &>("default", *config));
 	_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
 	create_socket(com_domain, sock_type);
 	make_nonblocking();
