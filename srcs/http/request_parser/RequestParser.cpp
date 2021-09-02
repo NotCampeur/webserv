@@ -59,6 +59,7 @@ RequestParser::parse(void)
 				std::cerr << "Header name: " << (*it).first << '\t'
 				<< "Header value: " << (*it).second << '\n';
 			}
+			_request.load_request_config();
 			// if (_request.method().has_body())
 			// {
 			// 	std::cerr << _request.get_body();

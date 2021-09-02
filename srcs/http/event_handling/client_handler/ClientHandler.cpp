@@ -4,7 +4,7 @@
 ClientHandler::ClientHandler(const Client & client)
 : _client(client)
 , _request(client.get_server_config())
-, _response(*_request.config())
+, _response()
 , _req_parser(_request)
 , _timer(CLIENT_TIMEOUT)
 , _event_flag(POLLIN)
@@ -114,6 +114,7 @@ ClientHandler::handle_request(void)
 {
 	try {
 		parse_request();
+		_response = *_request.config();
 		if (_request.complete())
 		{
 			Validator::get_instance().validate_request_inputs(_request, _response);

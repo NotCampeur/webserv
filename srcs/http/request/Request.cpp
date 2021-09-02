@@ -1,24 +1,11 @@
 #include "Request.hpp"
 
-//TODO: Need to first check the headers to know the config to use.
-
 Request::Request(const config_type & server_configs)
 : _complete(false)
 , _method(NULL)
+, _server_configs(server_configs)
 , _config(NULL)
-{
-	// We need to initialize the headers.
-	for (Request::config_type::const_iterator	it = server_configs.begin()
-			; it != server_configs.end(); it++)
-	{
-		if (_headers["host"] == it->first + ":" + it->second.port())
-		{
-			*_config = it->second;
-			Logger(LOG_FILE, basic_type, debug_lvl) << "Named Server config loaded";
-			break;
-		}
-	}
-}
+{}
 
 Request::Request(Request const & src)
 : _complete(src._complete)
@@ -26,6 +13,7 @@ Request::Request(Request const & src)
 , _uri(src._uri)
 , _headers(src._headers)
 , _body(src._body)
+, _server_configs(src._server_configs)
 , _config(src._config)
 {}
 
@@ -110,7 +98,34 @@ Request::config(void) const
 }
 
 void
-Request::set_config(RequestConfig * config)
+Request::load_request_config()
 {
-	_config = config;
+	if (_config == NULL)
+	{
+		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config has been created";
+		_config = new RequestConfig();
+		*_config = server_config();
+	}
+	else
+		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config is already set";
+}
+
+const ServerConfig &
+Request::server_config(void) const
+{
+	std::string host;
+
+	if (_headers.find("host") != _headers.end())	// Defensive: there should always be a host
+	{
+		host = _headers.find("host")->second;
+	}
+	else
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << "Host header file not found in Request::get_server_config()";
+		host = "default";
+	}
+	if (_server_configs.find(host) != _server_configs.end())
+		return _server_configs.find(host)->second;
+	else
+		return _server_configs.find("default")->second; 
 }

@@ -20,7 +20,12 @@ Server::~Server(void)
 	close(_sockfd);
 	Server::config_type::iterator it = _config.begin();
 	for (; it != _config.end(); ++it)
-		delete &it->second;
+	{
+		if (it->first != "default")
+			delete &it->second;
+		else if (it->first == "default" && it->second.name() == "default")
+			delete &it->second;
+	}
 }
 
 // Server &

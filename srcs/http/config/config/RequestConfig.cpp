@@ -21,24 +21,14 @@ RequestConfig::RequestConfig()
 {}
 
 RequestConfig::RequestConfig(const RequestConfig & to_copy)
-: _error_pages(to_copy._error_pages)
-, _max_client_body_size(to_copy._max_client_body_size)
-, _locations(to_copy._locations)
-, _accepted_method(to_copy._accepted_method)
-, _redirection(to_copy._redirection), _root(to_copy._root)
-, _is_autoindex_on(to_copy._is_autoindex_on)
-, _default_file_dir(to_copy._default_file_dir)
-, _cgi(to_copy._cgi), _upload_path(to_copy._upload_path)
-{}
+{
+	*this = to_copy;
+}
 
 RequestConfig::~RequestConfig()
 {
-	for (std::vector<LocationConfig *>::const_iterator it = _locations.begin()
-		; it != _locations.end()
-		; ++it)
-	{
-		delete *it;
-	}
+	for (size_t i(0); i < _locations.size(); i++)
+		delete _locations[i];
 }
 
 //Getters
@@ -189,6 +179,8 @@ RequestConfig::operator=(const RequestConfig & to_assign)
 	{
 		_error_pages = to_assign._error_pages;
 		_max_client_body_size = to_assign._max_client_body_size;
+		for (size_t i(0); i < to_assign._locations.size(); i++)
+			_locations.push_back(new LocationConfig(*to_assign._locations[i]));
 		_accepted_method = to_assign._accepted_method;
 		_redirection = to_assign._redirection;
 		_root = to_assign._root;
@@ -221,14 +213,7 @@ RequestConfig::operator=(const ServerConfig & to_assign)
 	_port = to_assign.port();
 	_error_pages = to_assign.error_page_path();
 	_max_client_body_size = to_assign.max_client_body_size();
-	// Deep copy the server's locations.
-	for (std::vector<LocationConfig *>::const_iterator it = to_assign.locations().begin()
-		; it != to_assign.locations().end()
-		; ++it)
-	{
-		_locations.push_back(new LocationConfig(*(*it)));
-	}
-
-	_locations = to_assign.locations();
+	for (size_t i(0); i < to_assign.locations().size(); i++)
+		_locations.push_back(new LocationConfig(*to_assign.locations()[i]));
 	return *this;
 }

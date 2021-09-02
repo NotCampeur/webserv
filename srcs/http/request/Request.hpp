@@ -24,6 +24,7 @@ class Request
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
 		std::string							_body;
+		const config_type &					_server_configs;
 		RequestConfig *						_config;
 
 	public:
@@ -41,10 +42,14 @@ class Request
 		bool &									complete();
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
+		// const config_type &						server_configs(void) const;
 		RequestConfig *							config(void) const;
-		void									set_config(RequestConfig * config);
+		// Is called only one time after the headers have been parsed.
+		void									load_request_config(void);
+
 
 	private:
+		const ServerConfig &					server_config(void) const;
 		Request(void);
 };
 

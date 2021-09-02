@@ -20,17 +20,18 @@ class Response
 		bool						_ready_to_send;
 		bool						_complete;
 		int							_handler_fd;
-		const RequestConfig &		_config;
+		RequestConfig				_config;
 		std::string					_file_path;
 		HttpErrorManager			_error_manager;
 		bool						_path_is_dir;
 
 	public:
-    	Response(const RequestConfig & config);
+	    Response(void);
     	Response(Response const & src);
     	~Response(void);
 
 		Response &  operator=(Response const & src);
+		Response &  operator=(const RequestConfig & to_assign);
 
 		// bool				ready_to_send(void) const;
 		bool &					complete(void);
@@ -56,7 +57,6 @@ class Response
 		void					http_error(StatusCodes::status_index_t error);
 		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);
 	private:
-	    Response(void);
 
 		void	add_default_headers(void);
 		void	set_date(std::string & date);

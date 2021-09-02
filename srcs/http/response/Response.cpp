@@ -1,28 +1,28 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 
-Response::Response(const RequestConfig & config) :
-_version("HTTP/1.1"),
-_metadata_sent(false),
-_ready_to_send(false),
-_complete(false),
-_handler_fd(-1),
-_config(config),
-_error_manager(_config, *this),
-_path_is_dir(false)
+Response::Response()
+: _version("HTTP/1.1")
+, _metadata_sent(false)
+, _ready_to_send(false)
+, _complete(false)
+, _handler_fd(-1)
+, _config()
+, _error_manager(_config, *this)
+, _path_is_dir(false)
 {}
 
-Response::Response(Response const & src) :
-_payload(src._payload),
-_version(src._version),
-_headers(src._headers),
-_metadata_sent(src._metadata_sent),
-_ready_to_send(src._ready_to_send),
-_complete(src._complete),
-_handler_fd(src._handler_fd),
-_config(src._config),
-_error_manager(src._error_manager),
-_path_is_dir(src._path_is_dir)
+Response::Response(Response const & src)
+: _payload(src._payload)
+, _version(src._version)
+, _headers(src._headers)
+, _metadata_sent(src._metadata_sent)
+, _ready_to_send(src._ready_to_send)
+, _complete(src._complete)
+, _handler_fd(src._handler_fd)
+, _config(src._config)
+, _error_manager(src._error_manager)
+, _path_is_dir(src._path_is_dir)
 {}
 
 Response::~Response(void)
@@ -44,6 +44,13 @@ Response::operator=(Response const & src)
 	_complete = src._complete;
 	_handler_fd = src._handler_fd;
 	_path_is_dir = src._path_is_dir;
+    return (*this);
+}
+
+Response &
+Response::operator=(const RequestConfig & to_assign)
+{
+	_config = to_assign;
     return (*this);
 }
 
