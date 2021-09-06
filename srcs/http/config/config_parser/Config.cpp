@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 18:48:52 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/06 19:58:46 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ Config::load_server_name(IJsonValue * server_name, ServerConfig & server)
 {
 	JsonString	* value = dynamic_cast<JsonString *>(server_name);
 	if (value == NULL)
-		config_exit("Server's name must be a \"string\"");
+		throw Exception("Config file error : Server's name must be a \"string\"");
 	std::string	name_value = value->value();
 	server.set_name(name_value);
 }
@@ -88,7 +88,7 @@ Config::load_server_ip(IJsonValue * server_ip, ServerConfig & server)
 {
 	JsonString	* value = dynamic_cast<JsonString *>(server_ip);
 	if (value == NULL)
-		config_exit("Server's ip must be a \"string\"");
+		throw Exception("Config file error : Server's ip must be a \"string\"");
 	std::string	ip_value = value->value();
 	server.set_ip(ip_value);
 }
@@ -98,7 +98,7 @@ Config::load_server_port(IJsonValue * server_port, ServerConfig & server)
 {
 	JsonString	* value = dynamic_cast<JsonString *>(server_port);
 	if (value == NULL)
-		config_exit("Server's port must be a \"string\"");
+		throw Exception("Config file error : Server's port must be a \"string\"");
 	std::string port_value = value->value();
 	server.set_port(port_value);
 }
@@ -108,7 +108,7 @@ Config::load_server_max_client_body_size(IJsonValue * server_max_client_body_siz
 {
 	JsonString	* value = dynamic_cast<JsonString *>(server_max_client_body_size);
 	if (value == NULL)
-		config_exit("Server's max_client_body_size must be a \"string\"");
+		throw Exception("Config file error : Server's max_client_body_size must be a \"string\"");
 	std::string	s_max_client_body_size_value = value->value();
 	size_t			max_client_body_size_value(0);
 	std::istringstream(s_max_client_body_size_value) >> max_client_body_size_value;
@@ -120,10 +120,10 @@ Config::load_server_error_page_path(IJsonValue * server_error_page_path, ServerC
 {
 	JsonArray	* value = dynamic_cast<JsonArray *>(server_error_page_path);
 	if (value == NULL)
-		config_exit("Server's error_page_path must be an [array of {objects}]");
+		throw Exception("Config file error : Server's error_page_path must be an [array of {objects}]");
 	JsonObject	* error_page = dynamic_cast<JsonObject *>(*(value->value_begin()));
 	if (error_page == NULL)
-		config_exit("Server's error_page_path must be an [array of {objects}]");
+		throw Exception("Config file error : Server's error_page_path must be an [array of {objects}]");
 	JsonObject::value_type::const_iterator error_page_oit(error_page->value_begin());
 	JsonObject::value_type::const_iterator error_page_oite(error_page->value_end());
 	
@@ -131,7 +131,7 @@ Config::load_server_error_page_path(IJsonValue * server_error_page_path, ServerC
 	{
 		JsonString	* error_page_path_value = dynamic_cast<JsonString *>(error_page_oit->second);
 		if (value == NULL)
-			config_exit("Error_page_path's values must be \"strings\"");
+			throw Exception("Config file error : Error_page_path's values must be \"strings\"");
 		int			page_number(0);
 		std::istringstream(error_page_oit->first) >> page_number;
 		std::string	error_page_path = error_page_path_value->value();
@@ -146,14 +146,14 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 {
 	JsonArray	* locations = dynamic_cast<JsonArray *>(server_location);
 	if (locations == NULL)
-		config_exit("Server's locations must be an [array of {objects}]");
+		throw Exception("Config file error : Server's locations must be an [array of {objects}]");
 	JsonArray::value_type::const_iterator locations_it(locations->value_begin());
 	JsonArray::value_type::const_iterator locations_ite(locations->value_end());
 	while (locations_it != locations_ite)
 	{
 		JsonObject	* location = dynamic_cast<JsonObject *>(*locations_it);
 		if (location == NULL)
-			config_exit("Server's locations must be an [array of {objects}]");;
+			throw Exception("Config file error : Server's locations must be an [array of {objects}]");;
 		JsonObject::value_type::const_iterator location_it(location->value_begin());
 		JsonObject::value_type::const_iterator location_ite(location->value_end());
 		LocationConfig	* location_config = new LocationConfig();
@@ -186,7 +186,9 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 					load_location_upload_path(location_it->second, *location_config);
 					break;
 				case location_unknown:
-					config_exit("Unknown location's key detected");
+					delete location_config;
+					Logger(LOG_FILE, error_type, debug_lvl) << "The unknown location's key is : " << location_it->first;
+					throw Exception("Config file error : Unknown location's key detected");
 			}
 			location_it++;
 		}
@@ -200,7 +202,7 @@ Config::load_location_path(IJsonValue * location_path, LocationConfig & location
 {
 	JsonString	* path = dynamic_cast<JsonString *>(location_path);
 	if (path == NULL)
-		config_exit("Location's path must be a \"string\"");
+		throw Exception("Config file error : Location's path must be a \"string\"");
 	location.set_path(path->value());
 }
 
@@ -210,7 +212,7 @@ Config::load_location_method(IJsonValue * location_method, LocationConfig & loca
 	JsonString	* method = dynamic_cast<JsonString *>(location_method);
 	HTTPMethod	accepted_method(NOTHING);
 	if (method == NULL)
-		config_exit("Location's accepted_method must be a \"string, string\"");
+		throw Exception("Config file error : Location's accepted_method must be a \"string, string\"");
 	if (method->value().find("GET") != std::string::npos)
 		accepted_method = GET;
 	if (method->value().find("POST") != std::string::npos)
@@ -227,12 +229,12 @@ Config::load_location_redirection(IJsonValue * location_redirection, LocationCon
 {
 	JsonObject	* redirection = dynamic_cast<JsonObject *>(location_redirection);
 	if (redirection == NULL)
-		config_exit("Location's redirection must be an {object}");
+		throw Exception("Config file error : Location's redirection must be an {object}");
 	if (std::distance(redirection->value_begin(), redirection->value_end()) != 1)
-		config_exit("You can have only one redirection");
+		throw Exception("Config file error : You can have only one redirection");
 	JsonString	* redirection_path = dynamic_cast<JsonString *>(redirection->value_begin()->second);
 	if (redirection_path == NULL)
-		config_exit("redirection's path must be a \"string\"");
+		throw Exception("Config file error : redirection's path must be a \"string\"");
 	int			redirection_code(0);
 	std::istringstream(redirection->value_begin()->first) >> redirection_code;
 	location.set_redirection(redirection_code, redirection_path->value());
@@ -243,7 +245,7 @@ Config::load_location_root(IJsonValue * location_root, LocationConfig & location
 {
 	JsonString	* root = dynamic_cast<JsonString *>(location_root);
 	if (root == NULL)
-		config_exit("Location's root must be a \"string\"");
+		throw Exception("Config file error : Location's root must be a \"string\"");
 	location.set_root(root->value());
 }
 
@@ -252,7 +254,7 @@ Config::load_location_auto_index(IJsonValue * location_auto_index, LocationConfi
 {
 	JsonString	* auto_index = dynamic_cast<JsonString *>(location_auto_index);
 	if (auto_index == NULL)
-		config_exit("Location's auto_index must be a \"string\"");
+		throw Exception("Config file error : Location's auto_index must be a \"string\"");
 	if (auto_index->value() == "true")
 		location.set_autoindex(true);
 	else
@@ -264,7 +266,7 @@ Config::load_location_default_file_dir(IJsonValue * location_default_file_dir, L
 {
 	JsonString	* default_file_dir = dynamic_cast<JsonString *>(location_default_file_dir);
 	if (default_file_dir == NULL)
-		config_exit("Location's default_file_dir must be a \"string\"");
+		throw Exception("Config file error : Location's default_file_dir must be a \"string\"");
 	location.set_default_file_dir(default_file_dir->value());
 }
 
@@ -273,17 +275,17 @@ Config::load_location_cgi(IJsonValue * location_cgi, LocationConfig & location)
 {
 	JsonArray	* cgi_array = dynamic_cast<JsonArray *>(location_cgi);
 	if (cgi_array == NULL)
-		config_exit("Location's cgi must be an [array of {objects}]");
+		throw Exception("Config file error : Location's cgi must be an [array of {objects}]");
 	JsonObject	* cgi_object = dynamic_cast<JsonObject *>(*(cgi_array->value_begin()));
 	if (cgi_object == NULL)
-		config_exit("Location's cgi must be an [array of {objects}]");
+		throw Exception("Config file error : Location's cgi must be an [array of {objects}]");
 	JsonObject::value_type::const_iterator cgi_object_it(cgi_object->value_begin());
 	JsonObject::value_type::const_iterator cgi_object_ite(cgi_object->value_end());
 	while (cgi_object_it != cgi_object_ite)
 	{
 		JsonString	* cgi_path = dynamic_cast<JsonString *>(cgi_object_it->second);
 		if (cgi_path == NULL)
-			config_exit("Cgi_path's values must be \"strings\"");
+			throw Exception("Config file error : Cgi_path's values must be \"strings\"");
 		location.add_cgi(cgi_object_it->first, cgi_path->value());
 		cgi_object_it++;
 	}
@@ -294,7 +296,7 @@ Config::load_location_upload_path(IJsonValue * location_upload_path, LocationCon
 {
 	JsonString	* upload_path = dynamic_cast<JsonString *>(location_upload_path);
 	if (upload_path == NULL)
-		config_exit("Location's upload_path must be a \"string\"");
+		throw Exception("Config file error : Location's upload_path must be a \"string\"");
 	location.set_upload_path(upload_path->value());
 }
 
@@ -303,7 +305,7 @@ Config::load_server_config(IJsonValue * server_object)
 {
 	JsonObject		* server = dynamic_cast<JsonObject *>(server_object);
 	if (server == NULL)
-		config_exit("Server must be an [array of {objects}]");
+		throw Exception("Config file error : Server must be an [array of {objects}]");
 	ServerConfig	* server_config = new ServerConfig();
 	JsonObject::value_type::const_iterator ite(server->value_end());
 	
@@ -328,12 +330,21 @@ Config::load_server_config(IJsonValue * server_object)
 				load_server_max_client_body_size(it->second, *server_config);
 				break;
 			case location:
-				load_server_location(it->second, *server_config);
-				break;
+				try
+				{
+					load_server_location(it->second, *server_config);
+					break;
+				}
+				catch(const std::exception& e)
+				{
+					delete server_config;
+					throw ;
+				}
 			case server_unknown:
 			{
+				delete server_config;
 				Logger(LOG_FILE, error_type, debug_lvl) << "The unknown server's key is : " << it->first;
-				config_exit("Unknown server's key detected");
+				throw Exception("Config file error : Unknown server's key detected");
 			}
 		}
 	}
@@ -345,7 +356,7 @@ Config::load_servers_config(IJsonValue * server_array)
 {
 	JsonArray *	servers = dynamic_cast<JsonArray *>(server_array);
 	if (servers == NULL)
-		config_exit("Server must be an [array of {objects}]");
+		throw Exception("Config file error : Server must be an [array of {objects}]");
 	JsonArray::value_type::const_iterator ait(servers->value_begin());
 	JsonArray::value_type::const_iterator aite(servers->value_end());
 	std::vector<ServerConfig *>	servers_config_list;
@@ -354,8 +365,16 @@ Config::load_servers_config(IJsonValue * server_array)
 	
 	while (ait != aite)
 	{
-		servers_config_list.push_back(load_server_config(*ait));
-		ait++;
+		try
+		{
+			servers_config_list.push_back(load_server_config(*ait));
+			ait++;
+		}
+		catch(const std::exception& e)
+		{
+			remove_items(servers_config_list);
+			throw ;
+		}
 	}
 	for (size_t i(0); i < servers_config_list.size(); i++)
 	{
@@ -372,7 +391,19 @@ Config::load_servers_config(IJsonValue * server_array)
 			}
 		}
 		if (is_same_server == false)
-			server_list.push_back(new Server(servers_config_list[i]));
+		{
+			try
+			{
+				server_list.push_back(new Server(servers_config_list[i]));
+			}
+			catch(const std::exception& e)
+			{
+				servers_config_list.erase(servers_config_list.begin() + i);
+				remove_items(servers_config_list);
+				remove_items(server_list);
+				throw ;
+			}
+		}
 		is_same_server = false;
 	}
 	for (size_t i(0); i < server_list.size(); i++)
@@ -380,11 +411,27 @@ Config::load_servers_config(IJsonValue * server_array)
 }
 
 void
-Config::config_exit(const std::string & error_msg)
+Config::remove_items(std::vector<ServerConfig *> &vec)
 {
-	Logger(LOG_FILE, error_type, all_lvl) << "Config file contain error : " << error_msg;
-	Logger::quit();
-	exit(EXIT_FAILURE);
+	std::vector<ServerConfig *>::iterator	it(vec.begin());
+
+	while (it != vec.end())
+	{
+		delete *it;
+		vec.erase(it);
+	}
+}
+
+void
+Config::remove_items(std::vector<Server *> &vec)
+{
+	std::vector<Server *>::iterator	it(vec.begin());
+
+	for (; it != vec.end(); it++)
+	{
+		delete *it;
+	}
+	vec.clear();
 }
 
 void
@@ -404,7 +451,7 @@ Config::apply()
 			}
 			case global_unknown:
 			{
-				config_exit("Unknown global's key detected");
+				throw Exception("Config file error : Unknown global's key detected");
 			}
 		}
 		it++;

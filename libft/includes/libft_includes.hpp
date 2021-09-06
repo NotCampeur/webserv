@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft_includes.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/29 17:09:28 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/26 14:28:37 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/06 20:41:50 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

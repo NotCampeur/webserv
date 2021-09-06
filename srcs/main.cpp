@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/02 16:26:17 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/06 19:40:00 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ serv_test(char * config_path)
 			catch(const std::exception& e)
 			{
 				Logger(LOG_FILE, error_type, error_lvl) << e.what();
+				return ;
 			}
 			idis.handle_events();
 		}
@@ -67,7 +68,7 @@ main(int ac, char *av[])
 	Logger(LOG_FILE, basic_type, all_lvl) << "================[Webserv is starting]================";
 
 	serv_test(av[1]);
-
+	
 	Logger::quit();
 	return EXIT_SUCCESS;
 }

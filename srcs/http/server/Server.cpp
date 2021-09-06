@@ -18,13 +18,11 @@ _config()
 Server::~Server(void)
 {
 	close(_sockfd);
-	Server::config_type::iterator it = _config.begin();
-	for (; it != _config.end(); ++it)
+	_config.erase(_config.find("default"));
+	Server::config_type::iterator	it = _config.begin();
+	for (; it != _config.end(); it++)
 	{
-		if (it->first != "default")
-			delete &it->second;
-		else if (it->first == "default" && it->second.name() == "default")
-			delete &it->second;
+		delete &(it->second);
 	}
 }
 
@@ -48,7 +46,7 @@ Server::create_socket(int domain, int type, int protocol)
 	this->_sockfd = socket(domain, type, protocol);
  	if (_sockfd == -1)
 	{
-		delete &_config;
+		this->~Server();
 		throw SystemException("Unable to create server socket");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
@@ -60,7 +58,7 @@ Server::make_nonblocking()
 	int ret = fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 	{
-		delete &_config;
+		this->~Server();
 		throw SystemException("Cannot set nonblocking flag on server socket");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
@@ -74,7 +72,7 @@ Server::set_sock_opt()
 	int result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 	if (result == -1)
 	{
-		delete &_config;
+		this->~Server();
 		throw SystemException("Unable to set socket option");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
@@ -97,7 +95,7 @@ Server::name_serv_socket()
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
 	{
-		delete &_config;
+		this->~Server();
 		throw SystemException("Unable to name the server socket");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
@@ -111,7 +109,7 @@ Server::set_listener()
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
 	{
-		delete &_config;
+		this->~Server();
 		throw SystemException("Unable to set socket as listener");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << getport();
