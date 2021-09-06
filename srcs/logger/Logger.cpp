@@ -29,7 +29,9 @@ Logger::put_timestamp(void)
 	time_t		now(0);
 
 	if (_files.find(_path) == _files.end())
-		_files[_path] = new std::ofstream(_path.c_str());
+	{
+		_files.insert(std::pair<std::string, std::ofstream *>(_path, new std::ofstream(_path.c_str())));
+	}
 	now = time(0);
 	msg = ctime(&now);
 	msg.erase(msg.end() - 1);
@@ -48,13 +50,13 @@ void
 Logger::quit(void)
 {
 	map_type::iterator it = _files.begin();
-	map_type::iterator ite = _files.end();
 
-	for (; it != ite; it++)
+	for (; it != _files.end(); it++)
 	{
 		*it->second << "End of logs" << std::endl;
 		delete it->second;
 	}
+	_files.clear();
 }
 
 bool

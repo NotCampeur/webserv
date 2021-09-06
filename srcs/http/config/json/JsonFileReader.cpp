@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/02 18:46:04 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/07 01:03:25 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ JsonFileReader::json_file_reader_exit(const std::string & error_msg
 		current_value.pop();
 		delete value;
 	}
-	Logger(LOG_FILE, error_type, all_lvl) << "Config file is not well formatted : " << error_msg;
+	Logger(LOG_FILE, error_type, error_lvl) << "Config file is not well formatted : " << error_msg;
 	Logger::quit();
 	exit(EXIT_FAILURE);
 }
@@ -336,15 +336,18 @@ JsonFileReader::check_number_of_scopes()
 	}
 	open_s = std::count(tmp_data.begin(), tmp_data.end(), '{');
 	close_s = std::count(tmp_data.begin(), tmp_data.end(), '}');
-	Logger() << "opened \'{\' : " << open_s << " closed \'}\' : " << close_s;
 	if (open_s != close_s)
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << "opened \'{\' : " << open_s << " closed \'}\' : " << close_s;
 		throw Exception("Missing curly bracket in the config");
+	}
 	open_s = std::count(tmp_data.begin(), tmp_data.end(), '[');
 	close_s = std::count(tmp_data.begin(), tmp_data.end(), ']');
-	Logger() << "opened \'[\' : " << open_s << " closed \']\' : " << close_s;
 	if (open_s != close_s)
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << "opened \'[\' : " << open_s << " closed \']\' : " << close_s;
 		throw Exception("Missing bracket in the config");
-
+	}
 }
 
 void

@@ -30,7 +30,7 @@ InitiationDispatcher::handle_events(void)
 		}
 		catch (const SystemException & e)
 		{
-			Logger(LOG_FILE, error_type) << e.what();
+			Logger(LOG_FILE, error_type, error_lvl) << e.what();
 			if (errno != EAGAIN)
 				break;
 			else
@@ -93,7 +93,7 @@ InitiationDispatcher::handle_events(void)
 			catch (const SystemException & e)
 			{
 				remove_handle(it->fd);
-				Logger(LOG_FILE, error_type) << e.what();
+				Logger(LOG_FILE, error_type, error_lvl) << e.what();
 			}
 		}
 	}

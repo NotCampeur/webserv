@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/06 19:58:46 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/07 01:03:14 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 					break;
 				case location_unknown:
 					delete location_config;
-					Logger(LOG_FILE, error_type, debug_lvl) << "The unknown location's key is : " << location_it->first;
+					Logger(LOG_FILE, error_type, error_lvl) << "The unknown location's key is : " << location_it->first;
 					throw Exception("Config file error : Unknown location's key detected");
 			}
 			location_it++;
@@ -343,7 +343,7 @@ Config::load_server_config(IJsonValue * server_object)
 			case server_unknown:
 			{
 				delete server_config;
-				Logger(LOG_FILE, error_type, debug_lvl) << "The unknown server's key is : " << it->first;
+				Logger(LOG_FILE, error_type, error_lvl) << "The unknown server's key is : " << it->first;
 				throw Exception("Config file error : Unknown server's key detected");
 			}
 		}
@@ -398,7 +398,6 @@ Config::load_servers_config(IJsonValue * server_array)
 			}
 			catch(const std::exception& e)
 			{
-				servers_config_list.erase(servers_config_list.begin() + i);
 				remove_items(servers_config_list);
 				remove_items(server_list);
 				throw ;

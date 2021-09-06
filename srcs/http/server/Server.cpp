@@ -3,16 +3,24 @@
 Server::Server(ServerConfig *config, int com_domain, int sock_type) :
 _config()
 {
-	_config.insert(std::pair<std::string, const ServerConfig &>("default", *config));
-	_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
-	create_socket(com_domain, sock_type);
-	make_nonblocking();
-	set_sock_opt();
-	init_addr_inputs(com_domain, atoi(config->port().c_str()), inet_addr(config->ip().c_str()));
-	name_serv_socket();
-	set_listener();
+	try
+	{
+		_config.insert(std::pair<std::string, const ServerConfig &>("default", *config));
+		_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
+		create_socket(com_domain, sock_type);
+		make_nonblocking();
+		set_sock_opt();
+		init_addr_inputs(com_domain, atoi(config->port().c_str()), inet_addr(config->ip().c_str()));
+		name_serv_socket();
+		set_listener();
 
-	_ip = std::string(inet_ntoa(_address.sin_addr));
+		_ip = std::string(inet_ntoa(_address.sin_addr));
+	}
+	catch(const std::exception& e)
+	{
+		close(_sockfd);
+		throw ;
+	}
 }
 
 Server::~Server(void)
@@ -46,7 +54,6 @@ Server::create_socket(int domain, int type, int protocol)
 	this->_sockfd = socket(domain, type, protocol);
  	if (_sockfd == -1)
 	{
-		this->~Server();
 		throw SystemException("Unable to create server socket");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
@@ -58,7 +65,6 @@ Server::make_nonblocking()
 	int ret = fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 	{
-		this->~Server();
 		throw SystemException("Cannot set nonblocking flag on server socket");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
@@ -72,7 +78,6 @@ Server::set_sock_opt()
 	int result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 	if (result == -1)
 	{
-		this->~Server();
 		throw SystemException("Unable to set socket option");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
@@ -95,7 +100,6 @@ Server::name_serv_socket()
 	binding = bind(_sockfd, (struct sockaddr *)&_address, sizeof(_address));
 	if (binding == -1)
 	{
-		this->~Server();
 		throw SystemException("Unable to name the server socket");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
@@ -109,7 +113,6 @@ Server::set_listener()
 	open_to_connection = listen(_sockfd, MAX_PENDING_CONNECTION);
 	if (open_to_connection == -1)
 	{
-		this->~Server();
 		throw SystemException("Unable to set socket as listener");
 	}
 	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << getport();
