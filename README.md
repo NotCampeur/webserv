@@ -34,5 +34,6 @@ All libraries will be build and the binary will be ready to launch
 ### :boom: Known bugs.. I mean features :boom:  
 * If the root in the config file is given without ending '/' the server will loop redirections of type 301.
 * Possibly lost on config errors.  
+* When there is a request on / there is a huge loop on demultiplexer folowed by "{ERROR} CGI error - exit status:1".
 ## :writing_hand: Change log :writing_hand:  
 * JsonParser branch has been merged.
