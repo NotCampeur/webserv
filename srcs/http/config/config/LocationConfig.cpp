@@ -68,7 +68,7 @@ LocationConfig::default_file_dir() const
 	return _default_file_dir;
 }
 
-std::map<std::string, std::string>
+const std::map<std::string, std::string> &
 LocationConfig::cgi() const
 {
 	return _cgi;

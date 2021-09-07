@@ -24,7 +24,7 @@ class Request
 		IHttpMethod *						_method;
 		uri_t         						_uri;
 		std::map<std::string, std::string>	_headers;
-		std::string							_body;
+		std::vector<char>					_body;
 		const config_type &					_server_configs;
 		RequestConfig *						_config;
 		cookies_t							_cookies;

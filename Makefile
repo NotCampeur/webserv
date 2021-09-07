@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
+#    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/09/07 04:28:27 by notcampeur       ###   ########.fr        #
+#    Updated: 2021/09/07 05:57:03 by ldutriez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,7 +44,6 @@ SRC	=	main.cpp \
 		Exception.cpp HttpException.cpp ClientException.cpp \
 		SystemException.cpp ServerSystemException.cpp ClientSystemException.cpp \
 		DeleteMethod.cpp GetMethod.cpp HeadMethod.cpp PostMethod.cpp \
-		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp \
 		CgiHandler.cpp CgiParser.cpp CgiHeaderParser.cpp Environment.cpp \
 		Utils.cpp \
 		StatusCodes.cpp Mime.cpp HttpErrorManager.cpp\

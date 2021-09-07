@@ -41,7 +41,8 @@ HandlerTable::add(int fd, IEventHandler & event_handler)
 void
 HandlerTable::remove(int fd)
 {
-	delete _handler_table->find(fd)->second;
+	if (_handler_table->find(fd) != _handler_table->end())
+		delete _handler_table->find(fd)->second;
 	_handler_table->erase(fd);
 	Logger(LOG_FILE, basic_type, debug_lvl) << "fd: " << fd << " has been removed from the handler table";
 }

@@ -118,7 +118,8 @@ void
 Validator::verify_path(Request & req, Response & resp)
 {
 	std::cerr << Utils::get_file_ext(resp.get_path()) << '\n';
-	if (req.get_server_config().get_cgi_path(Utils::get_file_ext(resp.get_path())))
+	if (req.config()->cgi().find(Utils::get_file_ext(resp.get_path()))
+		!= req.config()->cgi().end())
 	{
 		resp.need_cgi() = true;
 		return ;
@@ -258,20 +259,21 @@ Validator::remove_last_path_elem(std::string & path)
 	path.clear();
 }
 
-const RouteConfig *
+void
 Validator::get_location_config(Request & req, std::string & path)
 {
-	const ServerConfig server_conf = req.get_server_config();
+	RequestConfig * server_conf = req.config();
 
 	std::string req_path = path;
-	const std::vector<RouteConfig *> server_routes = server_conf.routes(); //Consider using public typedef inside RouteConfig
+	const std::vector<LocationConfig *> & server_routes = server_conf->locations(); //Consider using public typedef inside RouteConfig
 	while (!path.empty())
 	{
 		for (size_t i = 0; i < server_routes.size(); i++)
 		{
 			if (server_routes[i]->path() == req_path)
 			{
-				return server_routes[i];
+				*server_conf = *server_routes[i];
+				return ;
 			}
 		}
 		remove_last_path_elem(req_path);

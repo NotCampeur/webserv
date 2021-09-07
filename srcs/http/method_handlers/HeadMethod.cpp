@@ -38,11 +38,11 @@ HeadMethod::handle(Request & req, Response & resp)
 			std::string new_path = resp.get_path() + '/';
 			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, new_path));
 		}
-		else if (resp.get_server_config().is_autoindex_on() == false)
+		else if (resp.config().is_autoindex_on() == false)
 		{
-			if (resp.get_server_config().default_file_dir() != NULL)
+			if (resp.config().default_file_dir().empty() == false)
 			{
-				resp.set_path(*resp.get_server_config().default_file_dir());
+				resp.set_path(resp.config().default_file_dir());
 			}
 			else
 			{

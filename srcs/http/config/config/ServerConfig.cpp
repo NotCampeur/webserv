@@ -44,7 +44,7 @@ ServerConfig::operator=(ServerConfig const & src)
 }
 
 const std::string &
-ServerConfig::get_name(void) const
+ServerConfig::name(void) const
 {
 	return _name;
 }
@@ -68,7 +68,7 @@ ServerConfig::set_ip(std::string & ip)
 }
 
 const std::string &
-ServerConfig::get_port(void) const
+ServerConfig::port(void) const
 {
 	return _port;
 }
@@ -125,14 +125,14 @@ ServerConfig::add_location(LocationConfig * location)
 }
 
 const std::string *
-ServerConfig::get_cgi_path(const std::string & cgi_ext) const
+ServerConfig::cgi_path(const std::string & cgi_ext) const
 {
 	const std::vector<LocationConfig *> & rt = locations();
 	for (size_t i = 0; i < rt.size(); i++)
 	{
-		if ((rt[i]->get_cgi().find(cgi_ext)) != rt[i]->get_cgi().end())
+		if ((rt[i]->cgi().find(cgi_ext)) != rt[i]->cgi().end())
 		{
-			return &(rt[i]->get_cgi().find(cgi_ext)->second);
+			return &(rt[i]->cgi().find(cgi_ext)->second);
 		}
 	}
 	return NULL;

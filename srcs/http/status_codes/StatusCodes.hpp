@@ -51,7 +51,7 @@ class StatusCodes
 
     	StatusCodes(void);
     	StatusCodes(StatusCodes const & src);
-    	~StatusCodes(void);
+    	~StatusCodes();
 		
 		StatusCodes &  operator=(StatusCodes const & src);
 

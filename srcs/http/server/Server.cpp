@@ -143,7 +143,7 @@ void
 Server::add_server_config(const ServerConfig &config)
 {
 	std::pair<Server::config_type::iterator, bool> result;
-	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.get_name(), config));
+	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.name(), config));
 	if (result.second == false)
 		throw Exception("Servers must be differentiable (By name or by IP or by port).");
 }

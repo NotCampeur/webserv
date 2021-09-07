@@ -44,7 +44,7 @@ class LocationConfig
 		std::string							root() const;
 		bool								is_autoindex_on() const;
 		std::string							default_file_dir() const;
-		const std::map<std::string, std::string> & get_cgi() const;
+		const std::map<std::string, std::string> & cgi() const;
 		std::string							upload_path() const;
 
 		//Setters

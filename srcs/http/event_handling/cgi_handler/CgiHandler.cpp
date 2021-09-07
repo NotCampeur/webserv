@@ -187,15 +187,15 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("REMOTE_ADDR", _response.get_ip());
 	_env.add_cgi_env_var("REMOTE_HOST", "NULL"); //Clients are not expected to have a domain name
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	if (_request.get_server_config().get_cgi_path(_file_ext))
+	if (_request.config()->cgi().find(_file_ext) != _request.config()->cgi().end())
 	{
-		_env.add_cgi_env_var("SCRIPT_NAME", *_request.get_server_config().get_cgi_path(_file_ext));
+		_env.add_cgi_env_var("SCRIPT_NAME", _request.config()->cgi()[_file_ext]);
 	}
 	else
 	{
 		_env.add_cgi_env_var("SCRIPT_NAME", "NULL");
 	}
-	_env.add_cgi_env_var("SERVER_PORT", _request.get_server_config().get_port());
+	_env.add_cgi_env_var("SERVER_PORT", _request.config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
 
@@ -236,20 +236,20 @@ CgiHandler::start_cgi(void)
 		{
 			exit(EXIT_FAILURE);
 		}
-		const std::string *cgi_bin = _request.get_server_config().get_cgi_path(_file_ext);
-		if (cgi_bin == NULL)
+		const std::string cgi_bin = _request.config()->cgi()[_file_ext];
+		if (cgi_bin.empty() == true)
 		{
 			exit(EXIT_FAILURE);
 		}
 		else
 		{
 			char * const av[] = {
-				const_cast<char *>(cgi_bin->c_str()),
+				const_cast<char *>(cgi_bin.c_str()),
 				const_cast<char *>(_response.get_path().c_str()),
 				NULL
 				};
 			// std::cerr << "Chile about to execve\n";
-			execve(cgi_bin->c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
+			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
 		exit(EXIT_FAILURE);

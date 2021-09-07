@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/07 01:03:14 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/07 05:50:26 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-#include "RouteConfig.hpp"
+#include "LocationConfig.hpp"
 
 Config::Config(JsonObject & config_object)
 : _global_scope(config_object)
