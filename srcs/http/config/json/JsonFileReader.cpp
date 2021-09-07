@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/07 01:03:25 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/07 01:59:22 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,10 @@ JsonFileReader::get_data(const char *path)
 	std::ifstream	file;
 	std::string		tmp;
 
+	tmp = path;
+	if (tmp.find(".conf\0") != tmp.size() - 5)
+		throw Exception("Config file must be a .conf file");
+	tmp.clear();
 	file.open(path);
 	if (file.is_open() == false)
 		throw SystemException("Can't open the config file");
