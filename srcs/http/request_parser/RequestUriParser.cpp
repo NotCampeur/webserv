@@ -28,7 +28,7 @@ RequestUriParser::parse_char(char c)
 	switch (_state)
 	{
 		case PATH :
-		{
+		{	
 			if (c == '?')
 			{
 				_state = QUERY;
@@ -77,10 +77,11 @@ RequestUriParser::parse_char(char c)
 		}
 	}
 	if (uri_length() > MAX_URI_SIZE)
+	{
 		throw HttpException(StatusCodes::REQUEST_URI_TOO_LONG_414);
+	}
 	return false;
 }
-
 
 size_t
 RequestUriParser::uri_length(void) const

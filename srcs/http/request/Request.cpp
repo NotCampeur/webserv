@@ -64,10 +64,10 @@ Request::add_char_to_body(char c)
 {
 	if (_body.size() == _config->max_client_body_size())
 		throw HttpException(StatusCodes::REQUEST_ENTITY_TOO_LARGE_413);
-	_body += c;
+	_body.push_back(c);
 }
 
-const std::string &
+const std::vector<char> &
 Request::get_body(void) const
 {
 	return _body;
@@ -88,6 +88,10 @@ Request::reset(void)
 void
 Request::add_header(std::string & field_name, std::string & field_value)
 {
+	if (field_name == "cookie")
+	{
+		_cookies.push_back(field_value);
+	}
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
 
@@ -128,4 +132,10 @@ Request::server_config(void) const
 		return _server_configs.find(host)->second;
 	else
 		return _server_configs.find("default")->second; 
+}
+
+const Request::cookies_t &
+Request::get_cookies(void) const
+{
+	return _cookies;
 }

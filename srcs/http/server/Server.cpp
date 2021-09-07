@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Exception.hpp"
 
 Server::Server(ServerConfig *config, int com_domain, int sock_type) :
 _config()
@@ -34,13 +35,15 @@ Server::~Server(void)
 	}
 }
 
-// Server &
-// Server::operator=(Server const & src)
-// {
-// 	this->_sockfd = src._sockfd;
-// 	this->_address = src._address;
-// 	return (*this);
-// }
+void
+Server::cleanup(void)
+{
+	if (_sockfd != -1)
+	{
+		close(_sockfd);
+	}
+	delete &_config;
+}
 
 int
 Server::getsockfd() const
@@ -140,7 +143,7 @@ void
 Server::add_server_config(const ServerConfig &config)
 {
 	std::pair<Server::config_type::iterator, bool> result;
-	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.name(), config));
+	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.get_name(), config));
 	if (result.second == false)
 		throw Exception("Servers must be differentiable (By name or by IP or by port).");
 }

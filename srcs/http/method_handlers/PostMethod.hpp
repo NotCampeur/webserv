@@ -19,6 +19,8 @@ class PostMethod : public IHttpMethod, public Singleton<PostMethod>
 		private:
 			PostMethod(PostMethod const & src);
 			PostMethod &  operator=(PostMethod const & src);
+			
+			void	add_cgi_handle(Request & req, Response & resp);
 
 			// void	set_content_location_header(const std::string & path, Response & resp);
 };

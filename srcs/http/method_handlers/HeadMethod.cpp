@@ -1,8 +1,10 @@
 #include "HeadMethod.hpp"
-# include "Request.hpp"
-# include "Response.hpp"
-# include "InitiationDispatcher.hpp"
-# include <dirent.h>
+#include "Request.hpp"
+#include "Response.hpp"
+#include "InitiationDispatcher.hpp"
+#include "Mime.hpp"
+#include <dirent.h>
+
 
 HeadMethod::HeadMethod(void) {}
 
@@ -23,6 +25,12 @@ HeadMethod::operator=(HeadMethod const & src)
 void
 HeadMethod::handle(Request & req, Response & resp)
 {
+	if (resp.need_cgi())
+	{
+		add_cgi_handle(req, resp);
+		return ;
+	}
+
 	if (resp.path_is_dir())
 	{
 		if (!resp.get_path().empty() && (resp.get_path()[resp.get_path().size() - 1]) != '/')
@@ -30,11 +38,11 @@ HeadMethod::handle(Request & req, Response & resp)
 			std::string new_path = resp.get_path() + '/';
 			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, new_path));
 		}
-		else if (resp.config().is_autoindex_on() == false)
+		else if (resp.get_server_config().is_autoindex_on() == false)
 		{
-			if (resp.config().default_file_dir().empty() == false)
+			if (resp.get_server_config().default_file_dir() != NULL)
 			{
-				resp.set_path(resp.config().default_file_dir());
+				resp.set_path(*resp.get_server_config().default_file_dir());
 			}
 			else
 			{
@@ -142,7 +150,7 @@ HeadMethod::handle_autoindex(Response & resp)
 	resp.set_http_code(StatusCodes::OK_200);
 	resp.add_header("Content-Length", ss.str());
 	resp.add_header("Content-Type", "text/html");
-	resp.set_payload(autoindex_content);
+	// resp.set_payload(autoindex_content.c_str(), autoindex_content.size());
 	resp.ready_to_send() = true;
 	resp.complete() = true;
 }
@@ -160,4 +168,18 @@ HeadMethod::add_autoindex_line(std::string & dest, const std::string & ressource
 		if (isdir)
 			dest += '/';
 		dest += "</a><br>";
+}
+
+void
+HeadMethod::add_cgi_handle(Request & req, Response & resp)
+{
+	int pipe_fd[2];
+	int ret = pipe(pipe_fd);
+	if (ret < 0)
+	{
+		Logger(LOG_FILE, error_type, error_lvl) << "Pipe: " << std::strerror(errno);
+		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
+	}
+	resp.set_handler_fd(pipe_fd[1]); // Setting handler to write end of the pipe, as CGI handler will first need to write to the pipe
+	InitiationDispatcher::get_instance().add_cgi_handle(req, resp, pipe_fd, "HEAD");
 }

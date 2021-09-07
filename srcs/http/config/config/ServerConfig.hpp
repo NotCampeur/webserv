@@ -31,25 +31,28 @@ class ServerConfig
 	// Autoindex
 	// Default file if request is a directory
 
-		const std::string & name(void) const;
+		const std::string & get_name(void) const;
 		void				set_name(std::string & name);
 
 		const std::string & ip(void) const;
 		void				set_ip(std::string & ip);
 
-		const std::string & port(void) const;
+		const std::string & get_port(void) const;
 		void				set_port(std::string & port);
 
 		const std::map<int, std::string> &	error_page_path(void) const;
 		const std::string *					error_page_path(int error) const;
 		void								add_error_page_path(int error, std::string & path);
-		
+
 		size_t				max_client_body_size(void) const;
 		void				set_max_client_body_size(size_t max_client_body_size);
 
 		const std::vector<LocationConfig *> & locations(void) const;
 		void				add_location(LocationConfig * location);
 
+		const std::string * get_cgi_path(const std::string & cgi_ext) const;
+
+	private:
 		ServerConfig &  operator=(ServerConfig const & src);
 };
 

@@ -1,4 +1,13 @@
-#include "InitiationDispatcher.hpp"
+# include "InitiationDispatcher.hpp"
+# include "ClientHandler.hpp"
+# include "ServerHandler.hpp"
+# include "ReadHandler.hpp"
+# include "WriteHandler.hpp"
+# include "CgiHandler.hpp"
+# include "Exception.hpp"
+# include "SystemException.hpp"
+# include "ServerSystemException.hpp"
+# include "ClientSystemException.hpp"
 
 bool g_run_status = true;
 
@@ -46,21 +55,21 @@ InitiationDispatcher::handle_events(void)
 				continue;
 			}
 			try {
-				if (((POLLHUP | POLLERR) & it->revents) > 0)
-				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
-					remove_handle(it->fd);
-				}
-				else if (POLLIN == (POLLIN & it->revents))
+				if (POLLIN == (POLLIN & it->revents))	// Important to check POLLIN before POLLHUP: in case of the CGI, POLLHUP happens when cgi process is terminated, but there might still be content to read in the pipe.
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
+				}
+				else if (((POLLHUP | POLLERR) & it->revents) > 0)
+				{
+					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
+					remove_handle(it->fd);
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
 					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
-					it->events = POLLIN;
+					// it->events = POLLIN;
 				}
 				else if (_event_handler_table->get(it->fd)->is_timeoutable())
 				{
@@ -136,10 +145,17 @@ InitiationDispatcher::add_read_handle(size_t file_size, Response & resp)
 }
 
 void
-InitiationDispatcher::add_write_handle(const std::string & body, Response & resp)
+InitiationDispatcher::add_write_handle(const std::vector<char> & body, Response & resp)
 {
 	WriteHandler *wh = new WriteHandler(body, resp);
 	_event_handler_table->add(resp.get_handler_fd(), *wh);
+}
+
+void
+InitiationDispatcher::add_cgi_handle(Request & req, Response & resp, int open_pipe[2], const std::string & method)
+{
+	CgiHandler *ch = new CgiHandler(req, resp, open_pipe, method);
+	_event_handler_table->add(resp.get_handler_fd(), *ch);
 }
 
 void

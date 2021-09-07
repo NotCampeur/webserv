@@ -7,6 +7,7 @@
 #include "GetMethod.hpp"
 #include "HeadMethod.hpp"
 #include "PostMethod.hpp"
+#include "Utils.hpp"
 
 Validator::Validator(void) {}
 
@@ -27,6 +28,15 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 		throw (e);
 	}
 }
+
+// void
+// Validator::host_header_ok(Request & req)
+// {
+// 	if (req.headers().find("host") == req.headers().end())
+// 	{
+// 		throw HttpException(StatusCodes::BAD_REQUEST_400);
+// 	}
+// }
 
 void
 Validator::load_desired_config(Request & req)
@@ -107,6 +117,13 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
+	std::cerr << Utils::get_file_ext(resp.get_path()) << '\n';
+	if (req.get_server_config().get_cgi_path(Utils::get_file_ext(resp.get_path())))
+	{
+		resp.need_cgi() = true;
+		return ;
+	}
+
 	struct stat buf; 
 	int ret = stat(resp.get_path().c_str(), &buf);
 
@@ -201,7 +218,7 @@ Validator::resolve_relative_path(std::string & path)
 				std::cerr << "Found ..: " << fragment << '\n';
 				if (resolved_path.empty())
 				{
-					throw (HttpException(StatusCodes::BAD_REQUEST_400));
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 				else
 				{
@@ -218,22 +235,46 @@ Validator::resolve_relative_path(std::string & path)
 	path = resolved_path;
 }
 
-// Assumes that the path passed as argument contain a trailing '/' due to semantics of path "fragments"
 void
 Validator::remove_last_path_elem(std::string & path)
 {
-	int i = static_cast<int>(path.size()) - 1;	// Cast is safe as URI size is limited and should never exceed max_int
-	i--; // Don't start on last '/'
-
-	std::cerr << "Path received: " << path << " ; Size: " << path.size() << '\n';
-	for (; i >= 0; i--)
+	
+	std::string::reverse_iterator rit = path.rbegin();
+	for (; rit != path.rend(); rit++)
 	{
-		if (path[i] == '/')
+		if (*rit == '/')
 		{
-			std::cerr << "Path \\ index: " << i << '\n';
-			path.erase(i, path.size() - i - 1);
-			return ;
+			if (rit == path.rbegin()) //Trailing slash
+			{
+				continue ;
+			}
+			else
+			{
+				path.erase(rit.base(), path.end());
+				return ;
+			}
 		}
 	}
 	path.clear();
+}
+
+const RouteConfig *
+Validator::get_location_config(Request & req, std::string & path)
+{
+	const ServerConfig server_conf = req.get_server_config();
+
+	std::string req_path = path;
+	const std::vector<RouteConfig *> server_routes = server_conf.routes(); //Consider using public typedef inside RouteConfig
+	while (!path.empty())
+	{
+		for (size_t i = 0; i < server_routes.size(); i++)
+		{
+			if (server_routes[i]->path() == req_path)
+			{
+				return server_routes[i];
+			}
+		}
+		remove_last_path_elem(req_path);
+	}
+	throw HttpException(StatusCodes::NOT_FOUND_404);
 }

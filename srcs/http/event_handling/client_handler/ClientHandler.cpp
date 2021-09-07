@@ -63,29 +63,28 @@ ClientHandler::writable(void)
 {
 	if (_response.ready_to_send())
 	{
-		ssize_t	bytes_written = send(get_clientfd(), _response.get_payload().c_str(), _response.get_payload().size(), 0);
-		if (bytes_written < 0)
+		switch(_response.send_payload(_client.getsockfd()))
 		{
-			throw ClientSystemException("Unable to write to client socket", _client.getip(), _client.getsockfd());
-		}
-		else if (static_cast<size_t>(bytes_written) != _response.get_payload().size()) // Static cast is safe here as a negative value would have been caught by prior if statement, then, a positive ssize_t will always fit in a size_t
-		{
-			_response.payload_erase(static_cast<size_t>(bytes_written));
-			_timer.reset();
-			Logger(LOG_FILE, basic_type, minor_lvl) << "Could not write entire buffer content to socket: " << _client.getip() << " : " << _client.getsockfd();
-
-			// throw ClientException("Could not write entire buffer content to socket", _client.getip(), _client.getsockfd()); // This Should eventually be handled properly
-		}
-		else
-		{
-			_timer.reset();
-			_response.ready_to_send() = false;
-			if (_response.complete())
+			case -1 :
 			{
-				_response.reset();
-				_req_parser.next_request();
-				if (!_request.complete())
-					_event_flag = POLLIN;
+				throw ClientSystemException("Unable to write to client socket", _client.getip(), _client.getsockfd());
+			}
+			case 0 :
+			{
+				_timer.reset();
+			}
+			case 1 :
+			{
+				_timer.reset();
+				if (_response.complete())
+				{
+					_response.reset();
+					_req_parser.next_request();
+					if (!_request.complete())
+					{
+						_event_flag = POLLIN;
+					}
+				}
 			}
 		}
 	}
@@ -149,6 +148,12 @@ ClientHandler::parse_request(void)
 	if (_request.complete())
 	{
 		// Request::uri_t		* uri = &_request.uri();
+		// if (uri->path == "/")
+		// {
+		// 	const ServerConfig & server_config = _request.get_server_config().begin()->second;
+		// 	if (server_config.get_index() != "")
+		// 		uri->path = server_config.index();
+		// }
 		_event_flag = POLLOUT;
 	}
 }

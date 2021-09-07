@@ -24,14 +24,15 @@ RequestParser::~RequestParser(void) {}
 void
 RequestParser::setbuffer(char *buf, size_t len)
 {
-	_buffer = std::string(buf, len);
+	_buffer.clear();
+	_buffer.insert(_buffer.begin(), buf, buf + len);
 }
 
-void
-RequestParser::setbuffer(std::string & str)
-{
-	_buffer = str;
-}
+// void
+// RequestParser::setbuffer(std::string & str)
+// {
+// 	_buffer = str;
+// }
 
 void
 RequestParser::parse(void)
@@ -45,7 +46,8 @@ RequestParser::parse(void)
 		if (_request_state == DONE)
 		{
 			_request.complete() = true;
-			_buffer_leftovers = _buffer.substr(i + 1);
+			_buffer_leftovers.clear();
+			_buffer_leftovers.insert(_buffer_leftovers.begin(), &_buffer[i + 1], &_buffer[_buffer.size()]);
 
 			std::cerr << "\n### PARSED REQUEST ###\n"
 			<< "Method: " << _http_method << '\n'
@@ -135,6 +137,10 @@ RequestParser::parse_char(char c)
 		{
 			if (c == '\n')
 			{
+				if (_request.headers().find("host") == _request.headers().end())
+				{
+					throw HttpException(StatusCodes::BAD_REQUEST_400);
+				}
 				if (_request.method().has_body())
 					_request_state = BODY;
 				else
@@ -175,14 +181,6 @@ RequestParser::parse_method(char c)
     };
 
     static size_t 		method_count = 4;
-
-	// static IHttpMethod * (*create[4])(void) =
-	// {
-	// 	GetMethod::create_s,
-	// 	HeadMethod::create_s,
-	// 	PostMethod::create_s,
-	// 	DeleteMethod::create_s
-	// };
 
 	static IHttpMethod* method[4] = {
 		&GetMethod::get_instance(),
@@ -249,7 +247,6 @@ RequestParser::check_version(char c)
 	}
 }
 
-
 bool
 RequestParser::correct_version_format(void)
 {
@@ -293,7 +290,7 @@ RequestParser::next_request(void)
 {
 	reset();
 	_request.reset();
-	setbuffer(_buffer_leftovers);
+	_buffer.insert(_buffer.begin(), _buffer_leftovers.begin(), _buffer_leftovers.end());
 	_buffer_leftovers.clear();
-	std::cerr << "* Buffer Leftovers: *\n" << _buffer_leftovers << '\n';
+	std::cerr << "* Buffer Leftovers: *\n" << std::string(&_buffer_leftovers[0], _buffer_leftovers.size()) << '\n';
 }

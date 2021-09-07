@@ -23,6 +23,7 @@ class HeadMethod : public IHttpMethod, public Singleton<HeadMethod>
 		off_t				get_file_size(const std::string & path);
 		void				handle_autoindex(Response & resp);
 		void				add_autoindex_line(std::string & dest, const std::string & ressource_name, const std::string & path, bool isdir);
+		void				add_cgi_handle(Request & req, Response & resp);
 };
 
 #endif

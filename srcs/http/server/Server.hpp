@@ -40,6 +40,7 @@ class Server
 		void				name_serv_socket(void);
 		void				set_sock_opt(void);
 		void				set_listener(void);
+		void				cleanup(void);
 };
 
 #endif

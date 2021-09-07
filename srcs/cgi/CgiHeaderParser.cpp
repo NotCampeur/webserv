@@ -1,21 +1,24 @@
-#include "RequestHeaderParser.hpp"
+#include "CgiHeaderParser.hpp"
+#include "webserv_param.hpp"
+#include "HttpException.hpp"
+#include "StatusCodes.hpp"
 
-RequestHeaderParser::RequestHeaderParser(void) :
+CgiHeaderParser::CgiHeaderParser(void) :
 _state(FIELD_NAME),
 _size(0)
 {}
 
-RequestHeaderParser::RequestHeaderParser(RequestHeaderParser const & src) :
+CgiHeaderParser::CgiHeaderParser(CgiHeaderParser const & src) :
 _state(src._state),
 _field_name(src._field_name),
 _field_value(src._field_value),
 _size(src._size)
 {}
 
-RequestHeaderParser::~RequestHeaderParser(void) {}
+CgiHeaderParser::~CgiHeaderParser(void) {}
 
 void
-RequestHeaderParser::reset(void)
+CgiHeaderParser::reset(void)
 {
 	_state = LEADING_WP;
 	_field_name.clear();
@@ -24,11 +27,12 @@ RequestHeaderParser::reset(void)
 }
 
 bool
-RequestHeaderParser::parse_char(char c)
+CgiHeaderParser::parse_char(char c)
 {
 	_size++;
-	if (_size > MAX_HEADER_SIZE)
+	if (_size > MAX_CGI_HEADER_SIZE)
 	{
+		Logger(LOG_FILE, error_type, error_lvl) << "Max cgi header file size reached";
 		throw HttpException(StatusCodes::BAD_REQUEST_400);
 	}
 	switch (_state)
@@ -46,12 +50,14 @@ RequestHeaderParser::parse_char(char c)
 		{
 			if (std::iscntrl(c))
 			{
+				Logger(LOG_FILE, error_type, error_lvl) << "Cgi header parsing: control character found in cgi header field name \"" << _field_name << "\"";
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			else if(c == ':')
 			{
 				if (!_field_name.empty() && iswhitespace(_field_name[_field_name.size() - 1])) // Must not be a WP between header name and ':'
 				{
+					Logger(LOG_FILE, error_type, error_lvl) << "Cgi header parsing: whitespace found in field name: \"" << _field_name << "\"";
 					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 				_state = COLON;
@@ -73,7 +79,7 @@ RequestHeaderParser::parse_char(char c)
 		}
 		case FIELD_VALUE :
 		{
-			if (c == '\r')
+			if (c == '\n')
 			{
 				remove_trailing_wp(_field_value);
 				return true;
@@ -89,7 +95,7 @@ RequestHeaderParser::parse_char(char c)
 }
 
 bool
-RequestHeaderParser::iswhitespace(char c)
+CgiHeaderParser::iswhitespace(char c)
 {
 	if (c == ' ' || c == '\t')
 		return true;
@@ -97,13 +103,19 @@ RequestHeaderParser::iswhitespace(char c)
 }
 
 std::string &
-RequestHeaderParser::get_header_name(void)
+CgiHeaderParser::get_header_name(void)
 {
 	return _field_name;
 }
 
+std::string &
+CgiHeaderParser::get_header_value(void)
+{
+	return _field_value;
+}
+
 void	
-RequestHeaderParser::remove_trailing_wp(std::string & s)
+CgiHeaderParser::remove_trailing_wp(std::string & s)
 {
 	if (s.size() > 0)
 	{
@@ -116,20 +128,14 @@ RequestHeaderParser::remove_trailing_wp(std::string & s)
 	}
 }
 
-std::string &
-RequestHeaderParser::get_header_value(void)
-{
-	return _field_value;
-}
-
 void
-RequestHeaderParser::addto_fieldname(char c)
+CgiHeaderParser::addto_fieldname(char c)
 {
 	_field_name += std::tolower(c);
 }
 
 void
-RequestHeaderParser::addto_fieldvalue(char c)
+CgiHeaderParser::addto_fieldvalue(char c)
 {
 	_field_value += std::tolower(c);
 }

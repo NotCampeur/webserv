@@ -1,21 +1,22 @@
 #ifndef WEBSERV_HttpErrorManager_H
 # define WEBSERV_HttpErrorManager_H
 
-# include "webserv.hpp"
 # include "StatusCodes.hpp"
+# include "webserv.hpp"
 class Response;
 class RequestConfig;
 
 class HttpErrorManager
 {
-	public:
+	// public:
+	// 	typedef std::map<std::string, const ServerConfig &>	config_type;
 	private:
 		int						_fd;
-		const RequestConfig &	_config;
+		// const config_type &		_config;
 		Response &				_resp;
 	
 	public:
-		HttpErrorManager(const RequestConfig & config, Response & resp);
+		HttpErrorManager(Response & resp);
 		HttpErrorManager(HttpErrorManager const & src);
     	~HttpErrorManager(void);
 

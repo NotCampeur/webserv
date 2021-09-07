@@ -8,6 +8,7 @@
 class Request;
 class Response;
 class ServerConfig;
+class RouteConfig;
 
 // Check if method is allowed
 // Verify uri and set file path: 
@@ -28,6 +29,7 @@ class Validator : public Singleton<Validator>
 		Validator(Validator const & src);
 		Validator &  operator=(Validator const & src);
 
+		// void	host_header_ok(Request & req);
 		void	load_desired_config(Request & req);
 		void	is_method_allowed(Request & req);
 		void	set_full_path(Request & req, Response & resp);
@@ -37,6 +39,8 @@ class Validator : public Singleton<Validator>
 		void	parse_hexa(std::string & path);
 		void	resolve_relative_path(std::string & path);
 		void	remove_last_path_elem(std::string & path);
+		//Takes the path after relative resolution has been performed, and returns the associated Location config, or NULL if none is found
+		const RouteConfig * get_location_config(Request & req, std::string & path);
 };
 
 #endif

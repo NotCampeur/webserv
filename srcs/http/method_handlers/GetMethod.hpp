@@ -25,6 +25,7 @@ class GetMethod : public IHttpMethod, public Singleton<GetMethod>
 		void	handle_autoindex(Response & resp);
 		void	add_autoindex_line(std::string & dest, const std::string & filename, const std::string & path, bool isdir);
 		std::string	get_previous_dir(const std::string & path);
+		void	add_cgi_handle(Request & req, Response & resp);
 };
 
 #endif

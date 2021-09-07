@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Config.hpp"
+#include "RouteConfig.hpp"
 
 Config::Config(JsonObject & config_object)
 : _global_scope(config_object)

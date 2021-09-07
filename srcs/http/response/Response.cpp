@@ -1,28 +1,38 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
+#include <sys/socket.h>
+#include "Request.hpp"
+// #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-Response::Response()
-: _version("HTTP/1.1")
-, _metadata_sent(false)
-, _ready_to_send(false)
-, _complete(false)
-, _handler_fd(-1)
-, _config()
-, _error_manager(_config, *this)
-, _path_is_dir(false)
+Response::Response(const Request & req) :
+_version("HTTP/1.1"),
+_metadata_sent(false),
+_ready_to_send(false),
+_complete(false),
+_handler_fd(-1),
+_config(),
+_req(req),
+_error_manager(*this),
+_path_is_dir(false),
+_need_cgi(false),
+_chunked(false)
 {}
 
-Response::Response(Response const & src)
-: _payload(src._payload)
-, _version(src._version)
-, _headers(src._headers)
-, _metadata_sent(src._metadata_sent)
-, _ready_to_send(src._ready_to_send)
-, _complete(src._complete)
-, _handler_fd(src._handler_fd)
-, _config(src._config)
-, _error_manager(src._error_manager)
-, _path_is_dir(src._path_is_dir)
+Response::Response(Response const & src) :
+_payload(src._payload),
+_ip(src._ip),
+_version(src._version),
+_headers(src._headers),
+_metadata_sent(src._metadata_sent),
+_ready_to_send(src._ready_to_send),
+_complete(src._complete),
+_handler_fd(src._handler_fd),
+_config(src._config),
+_req(src._req),
+_error_manager(src._error_manager),
+_path_is_dir(src._path_is_dir),
+_need_cgi(src._need_cgi),
+_chunked(src._chunked)
 {}
 
 Response::~Response(void)
@@ -44,6 +54,8 @@ Response::operator=(Response const & src)
 	_complete = src._complete;
 	_handler_fd = src._handler_fd;
 	_path_is_dir = src._path_is_dir;
+	_need_cgi = src._need_cgi;
+	_chunked = src._chunked;
     return (*this);
 }
 
@@ -73,20 +85,54 @@ Response::complete(void)
 }
 
 void
-Response::set_payload(const std::string & str)
+Response::set_payload(const char *buf, size_t len)
 {
-	_payload = str;
+	_payload.clear();
+	if (_chunked)
+	{
+		insert_chunk_size(len);
+		_payload.insert(_payload.end(), buf, buf + len);
+		add_payload_crlf();
+	}
+	else
+	{
+		_payload.insert(_payload.begin(), buf, buf + len);
+	}
 }
-
-const std::string &
-Response::get_payload(void)
+// Return -1 if an error occured, 0 if some data was sent but tje entire payload content, 1 if the entire payload was sent successfully
+int
+Response::send_payload(int fd)
 {
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();
 		_metadata_sent = true;
 	}
-	return _payload;
+	if (_chunked && _complete)
+	{
+		add_last_chunk();
+	}
+	ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
+
+	if (ret < 0)
+	{
+		return -1;
+	}
+	if (static_cast<size_t>(ret) < _payload.size())
+	{
+		payload_erase(ret);
+		Logger(LOG_FILE, error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
+		return 0;
+	}
+	else
+	{
+		_payload.clear();
+		_ready_to_send = false;
+		return 1;
+	}
+	// std::cerr << "Resp content:\n" << std::string(&_payload[0], _payload.size()) << '\n';
+	// return send_output;
+
 }
 
 bool
@@ -110,7 +156,7 @@ Response::set_resp_metadata(void)
 		meta += "\r\n";
 	}
 	meta += "\r\n";
-	_payload.insert(0, meta);
+	_payload.insert(_payload.begin(), meta.c_str(), meta.c_str() + meta.size());
 }
 
 void
@@ -125,6 +171,10 @@ Response::set_status_line(std::string & meta)
 void
 Response::add_default_headers(void)
 {
+	if (_chunked)
+	{
+		_headers.insert(_headers.begin(), header_t("Transfer-Encoding", "chunked"));
+	}
 	_headers.insert(_headers.begin(), header_t("Server", "robin hoodie"));
 	_headers.insert(_headers.begin(), header_t("Date", ""));
 	set_date(_headers.begin()->second);
@@ -156,6 +206,8 @@ Response::reset(void)
 	_ready_to_send = false;
 	_complete = false;
 	_path_is_dir = false;
+	_need_cgi = false;
+	_chunked = false;
 	if (_handler_fd > 0)
 	{
 		InitiationDispatcher::get_instance().remove_handle(_handler_fd);
@@ -179,7 +231,8 @@ Response::get_handler_fd(void) const
 void
 Response::payload_erase(size_t len)
 {
-	_payload.erase(0, len);
+	std::vector<char>::iterator it = _payload.begin();
+	_payload.erase(it, it + len);
 }
 
 const std::string &
@@ -213,6 +266,12 @@ Response::path_is_dir(void)
 	return _path_is_dir;
 }
 
+bool &
+Response::need_cgi(void)
+{
+	return _need_cgi;
+}
+
 void
 Response::http_redirection(StatusCodes::status_index_t code, const std::string & location)
 {
@@ -224,4 +283,51 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	add_header("Location", complete_location);
 	ready_to_send() = true;
 	complete() = true;
+}
+
+const std::string &
+Response::get_ip(void)
+{
+	return _ip;
+}
+
+void
+Response::send_chunks(void)
+{
+	_chunked = true;
+}
+
+void
+Response::add_payload_crlf(void)
+{
+	_payload.push_back('\r');
+	_payload.push_back('\n');
+}
+
+void
+Response::insert_chunk_size(size_t len)
+{
+	if (len == 0)
+	{		
+		_payload.insert(_payload.begin(), '0');
+	}
+	else
+	{
+		size_t size = len;
+		char hex[] = "0123456789ABCDEF";
+		while (size != 0)
+		{
+			_payload.insert(_payload.begin(), hex[(size % 16)]);
+			size /= 16;
+		}
+	}
+	add_payload_crlf();
+}
+
+void
+Response::add_last_chunk(void)
+{
+	_payload.push_back('0');
+	add_payload_crlf();
+	add_payload_crlf();
 }

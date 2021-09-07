@@ -11,6 +11,7 @@ class Request
 {
 	public:
 		typedef std::map<std::string, const ServerConfig &> config_type;
+		typedef std::vector<const std::string>				cookies_t;
 		typedef struct	uri_s
 		{
 			std::string path;
@@ -26,6 +27,7 @@ class Request
 		std::string							_body;
 		const config_type &					_server_configs;
 		RequestConfig *						_config;
+		cookies_t							_cookies;
 
 	public:
 		Request(const config_type & server_configs);
@@ -37,7 +39,7 @@ class Request
 		uri_t &									uri(void);
 		std::map<std::string, std::string> &	headers(void);
 		void									add_char_to_body(char c);
-		const std::string &						get_body(void) const;
+		const std::vector<char> &				get_body(void) const;
 		size_t									bodysize(void) const;
 		bool &									complete();
 		void									reset(void);
@@ -46,6 +48,7 @@ class Request
 		RequestConfig *							config(void) const;
 		// Is called only one time after the headers have been parsed.
 		void									load_request_config(void);
+		const cookies_t &						get_cookies(void) const;
 
 
 	private:
