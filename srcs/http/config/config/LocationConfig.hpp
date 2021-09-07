@@ -38,14 +38,14 @@ class LocationConfig
 					~LocationConfig();
 
 		//Getters
-		std::string							path() const;
-		HTTPMethod							accepted_method() const;
-		std::pair<int, std::string>			redirection() const;
-		std::string							root() const;
-		bool								is_autoindex_on() const;
-		std::string							default_file_dir() const;
-		const std::map<std::string, std::string> & cgi() const;
-		std::string							upload_path() const;
+		const std::string							& path() const;
+		const HTTPMethod							& accepted_method() const;
+		const std::pair<int, std::string>			& redirection() const;
+		const std::string							& root() const;
+		bool										is_autoindex_on() const;
+		const std::string							& default_file_dir() const;
+		const std::map<std::string, std::string> 	& cgi() const;
+		const std::string							& upload_path() const;
 
 		//Setters
 		void	set_path(std::string path);

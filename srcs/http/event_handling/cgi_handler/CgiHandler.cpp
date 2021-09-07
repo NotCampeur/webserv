@@ -187,15 +187,15 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("REMOTE_ADDR", _response.get_ip());
 	_env.add_cgi_env_var("REMOTE_HOST", "NULL"); //Clients are not expected to have a domain name
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	if (_request.config()->cgi().find(_file_ext) != _request.config()->cgi().end())
+	if (_request.get_config()->cgi().find(_file_ext) != _request.get_config()->cgi().end())
 	{
-		_env.add_cgi_env_var("SCRIPT_NAME", _request.config()->cgi()[_file_ext]);
+		_env.add_cgi_env_var("SCRIPT_NAME", _request.get_config()->cgi().find(_file_ext)->second);
 	}
 	else
 	{
 		_env.add_cgi_env_var("SCRIPT_NAME", "NULL");
 	}
-	_env.add_cgi_env_var("SERVER_PORT", _request.config()->port());
+	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
 
@@ -236,7 +236,7 @@ CgiHandler::start_cgi(void)
 		{
 			exit(EXIT_FAILURE);
 		}
-		const std::string cgi_bin = _request.config()->cgi()[_file_ext];
+		const std::string cgi_bin = _request.get_config()->cgi().find(_file_ext)->second;
 		if (cgi_bin.empty() == true)
 		{
 			exit(EXIT_FAILURE);

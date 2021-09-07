@@ -96,23 +96,29 @@ Request::add_header(std::string & field_name, std::string & field_value)
 }
 
 RequestConfig *
-Request::config(void) const
+Request::get_config(void) const
 {
 	return _config;
 }
 
 void
-Request::load_request_config()
+Request::set_config(RequestConfig * config)
 {
-	if (_config == NULL)
-	{
-		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config has been created";
-		_config = new RequestConfig();
-		*_config = server_config();
-	}
-	else
-		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config is already set";
+	_config = config;
 }
+
+// void
+// Request::load_request_config()
+// {
+// 	if (_config == NULL)
+// 	{
+// 		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config has been created";
+// 		_config = new RequestConfig();
+// 		*_config = server_config();
+// 	}
+// 	else
+// 		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config is already set";
+// }
 
 const ServerConfig &
 Request::server_config(void) const

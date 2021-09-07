@@ -10,7 +10,7 @@ _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
 _handler_fd(-1),
-_config(),
+// _config(),
 _req(req),
 _error_manager(*this),
 _path_is_dir(false),
@@ -27,7 +27,7 @@ _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
 _handler_fd(src._handler_fd),
-_config(src._config),
+// _config(src._config),
 _req(src._req),
 _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir),
@@ -59,12 +59,12 @@ Response::operator=(Response const & src)
     return (*this);
 }
 
-Response &
-Response::operator=(const RequestConfig & to_assign)
-{
-	_config = to_assign;
-    return (*this);
-}
+// Response &
+// Response::operator=(const RequestConfig & to_assign)
+// {
+// 	_config = to_assign;
+//     return (*this);
+// }
 
 void
 Response::set_http_code(StatusCodes::status_index_t i)
@@ -250,7 +250,7 @@ Response::set_path(const std::string & path)
 const RequestConfig &
 Response::config(void) const
 {
-	return _config;
+	return *_req.get_config();
 }
 
 void
@@ -278,7 +278,7 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	reset();
 	set_http_code(code);
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + _config.name() + ':' + _config.port() + '/' + location;
+	std::string complete_location = "http://" + config().name() + ':' + config().port() + '/' + location;
 	std::cerr << complete_location << '\n';
 	add_header("Location", complete_location);
 	ready_to_send() = true;

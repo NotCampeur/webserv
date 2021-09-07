@@ -23,10 +23,11 @@ void
 HttpErrorManager::handle(StatusCodes::status_index_t error)
 {
 	_resp.set_http_code(error);
-	const std::string path = _resp.config().error_pages()[StatusCodes::get_code_value(error)];
-	
-	if (path.empty() == false)
+	std::string path;
+	if (_resp.config().error_pages().find(StatusCodes::get_code_value(error)) !=
+		_resp.config().error_pages().end())
 	{
+		path = _resp.config().error_pages().find(StatusCodes::get_code_value(error))->second;
 		std::cerr << "Error page found: " << path << '\n';
 		_resp.set_path(path);
 		_fd = open(_resp.get_path().c_str(), O_RDONLY);

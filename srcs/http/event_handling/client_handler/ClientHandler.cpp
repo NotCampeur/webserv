@@ -113,7 +113,7 @@ ClientHandler::handle_request(void)
 {
 	try {
 		parse_request();
-		_response = *_request.config();
+		// _response = *_request.config();
 		if (_request.complete())
 		{
 			Validator::get_instance().validate_request_inputs(_request, _response);

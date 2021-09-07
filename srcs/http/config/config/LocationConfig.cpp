@@ -32,25 +32,25 @@ LocationConfig::~LocationConfig()
 {}
 
 // Getters
-std::string
+const std::string &
 LocationConfig::path() const
 {
 	return _path;
 }
 
-HTTPMethod
+const HTTPMethod &
 LocationConfig::accepted_method() const
 {
 	return _accepted_method;
 }
 
-std::pair<int, std::string>
+const std::pair<int, std::string> &
 LocationConfig::redirection() const
 {
 	return _redirection;
 }
 
-std::string
+const std::string &
 LocationConfig::root() const
 {
 	return _root;
@@ -62,7 +62,7 @@ LocationConfig::is_autoindex_on() const
 	return _is_autoindex_on;
 }
 
-std::string
+const std::string &
 LocationConfig::default_file_dir() const
 {
 	return _default_file_dir;
@@ -74,7 +74,7 @@ LocationConfig::cgi() const
 	return _cgi;
 }
 
-std::string
+const std::string &
 LocationConfig::upload_path() const
 {
 	return _upload_path;

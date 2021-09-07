@@ -18,8 +18,9 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 {
 	try
 	{
-		load_desired_config(req);
-		set_full_path(req, resp);
+		std::string path = resolve_relative_path(req.uri().path);
+		set_request_config(req, path);
+		set_full_path(req, resp, path);
 		is_method_allowed(req);
 		verify_path(req, resp);
 	}
@@ -29,37 +30,19 @@ Validator::validate_request_inputs(Request & req, Response & resp)
 	}
 }
 
-// void
-// Validator::host_header_ok(Request & req)
-// {
-// 	if (req.headers().find("host") == req.headers().end())
-// 	{
-// 		throw HttpException(StatusCodes::BAD_REQUEST_400);
-// 	}
-// }
-
 void
-Validator::load_desired_config(Request & req)
+Validator::set_request_config(Request & req, std::string & path)
 {
-	const std::vector<LocationConfig *> &	locations = req.config()->locations();
-	for (std::vector<LocationConfig *>::const_iterator it = locations.begin()
-		; it != locations.end()
-		; ++it)
-	{
-		if ((*it)->path() == req.uri().path)
-		{
-			*req.config() = *(*it);
-			Logger(LOG_FILE, basic_type, debug_lvl) << "Location Config loaded";
-			return ;
-		}
-	}
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config loaded";
+	const ServerConfig & serv_conf = req.server_config();
+	const LocationConfig & loc_conf = find_location_config(req, path);
+	req.set_config(new RequestConfig(serv_conf, loc_conf));
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config Set";
 }
 
 void
 Validator::is_method_allowed(Request & req)
 {
-	HTTPMethod method = req.config()->accepted_method();
+	HTTPMethod method = req.get_config()->accepted_method();
 	if (dynamic_cast<GetMethod *>(&req.method()) != NULL)
 		if ((GET & method) != 0)
 			return ;
@@ -75,17 +58,18 @@ Validator::is_method_allowed(Request & req)
 	throw (HttpException(StatusCodes::METHOD_NOT_ALLOWED_405));
 }
 
-// Assumes that "root" from config is terminated with a '/'
 void
-Validator::set_full_path(Request & req, Response & resp)
+Validator::set_full_path(Request & req, Response & resp, std::string & path)
 {
-	std::string path = req.uri().path;
-	path.erase(path.begin()); // remove '/'
-	resolve_relative_path(path);
-	std::string root = req.config()->root();
-	
+	std::string root = req.get_config()->root();
+	if (*path.begin() == '/')
+	{
+		path.erase(path.begin()); // Remove as we don't want it if we're dealing with a relative path
+	}
 	if (root.empty() == false)
 	{
+		if (*(root.end() - 1) != '/')
+			path.insert(path.begin(), '/');
 		path.insert(0, root);
 	}
 	parse_hexa(path);
@@ -117,10 +101,19 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
-	std::cerr << Utils::get_file_ext(resp.get_path()) << '\n';
-	if (req.config()->cgi().find(Utils::get_file_ext(resp.get_path()))
-		!= req.config()->cgi().end())
+	// std::cerr << "CGI EXT:\n";
+	// std::map<std::string, std::string>::iterator it = req.get_config()->cgi().begin();
+	// for (; it != req.get_config()->cgi().end() ; ++it)
+	// {
+	// 	std::cerr << "Address: " << &it->first << " value: " << it->first << '\n';
+	// }
+	// std::cerr << "Req ext: " << Utils::get_file_ext(resp.get_path()) << '\n';
+	// it = req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path()));
+	// std::cerr << "Find: " << &it->first << " : " << it->first << '\n';
+	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
+		req.get_config()->cgi().end())
 	{
+		std::cerr << "Cgi needed\n";
 		resp.need_cgi() = true;
 		return ;
 	}
@@ -198,7 +191,7 @@ Validator::is_file(mode_t mode)
 	return false;
 }
 
-void
+std::string
 Validator::resolve_relative_path(std::string & path)
 {
 	std::string resolved_path;
@@ -233,7 +226,7 @@ Validator::resolve_relative_path(std::string & path)
 			fragment.clear();
 		}
 	}
-	path = resolved_path;
+	return resolved_path;
 }
 
 void
@@ -259,21 +252,19 @@ Validator::remove_last_path_elem(std::string & path)
 	path.clear();
 }
 
-void
-Validator::get_location_config(Request & req, std::string & path)
+const LocationConfig &
+Validator::find_location_config(Request & req, std::string & path)
 {
-	RequestConfig * server_conf = req.config();
-
 	std::string req_path = path;
-	const std::vector<LocationConfig *> & server_routes = server_conf->locations(); //Consider using public typedef inside RouteConfig
+	const std::vector<LocationConfig *> & server_locations = req.server_config().locations();//		server_conf->locations(); //Consider using public typedef inside RouteConfig
 	while (!path.empty())
 	{
-		for (size_t i = 0; i < server_routes.size(); i++)
+		for (size_t i = 0; i < server_locations.size(); i++)
 		{
-			if (server_routes[i]->path() == req_path)
+			if (server_locations[i]->path() == req_path)
 			{
-				*server_conf = *server_routes[i];
-				return ;
+				return *server_locations[i];
+				// *server_conf = *server_routes[i];
 			}
 		}
 		remove_last_path_elem(req_path);

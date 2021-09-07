@@ -25,7 +25,7 @@ class Response
 		bool							_ready_to_send;
 		bool							_complete;
 		int								_handler_fd;
-		RequestConfig					_config;
+		// RequestConfig					_config;
 		const Request &					_req;
 		std::string						_file_path;
 		HttpErrorManager				_error_manager;

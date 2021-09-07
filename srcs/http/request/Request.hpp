@@ -45,14 +45,15 @@ class Request
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
 		// const config_type &						server_configs(void) const;
-		RequestConfig *							config(void) const;
+		RequestConfig *							get_config(void) const;
+		void									set_config(RequestConfig * config);
 		// Is called only one time after the headers have been parsed.
-		void									load_request_config(void);
+		// void									load_request_config(void);
 		const cookies_t &						get_cookies(void) const;
+		const ServerConfig &					server_config(void) const;
 
 
 	private:
-		const ServerConfig &					server_config(void) const;
 		Request(void);
 };
 

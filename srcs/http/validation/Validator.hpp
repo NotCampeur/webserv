@@ -30,17 +30,17 @@ class Validator : public Singleton<Validator>
 		Validator &  operator=(Validator const & src);
 
 		// void	host_header_ok(Request & req);
-		void	load_desired_config(Request & req);
+		void	set_request_config(Request & req, std::string & path);
 		void	is_method_allowed(Request & req);
-		void	set_full_path(Request & req, Response & resp);
+		void	set_full_path(Request & req, Response & resp, std::string & path);
 		void	verify_path(Request & req, Response & resp);
 		bool	is_dir(mode_t mode);
 		bool	is_file(mode_t mode);
 		void	parse_hexa(std::string & path);
-		void	resolve_relative_path(std::string & path);
+		std::string	resolve_relative_path(std::string & path);
 		void	remove_last_path_elem(std::string & path);
 		//Takes the path after relative resolution has been performed, and returns the associated Location config, or NULL if none is found
-		void	get_location_config(Request & req, std::string & path);
+		const LocationConfig & find_location_config(Request & req, std::string & path);
 };
 
 #endif

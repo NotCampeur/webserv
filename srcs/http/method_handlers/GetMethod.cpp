@@ -25,11 +25,11 @@ GetMethod::handle(Request & req, Response & resp)
 			std::string new_path = resp.get_path() + '/';
 			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, new_path));
 		}
-		else if (req.config()->is_autoindex_on() == false)
+		else if (req.get_config()->is_autoindex_on() == false)
 		{
-			if (req.config()->default_file_dir().empty() == false)
+			if (req.get_config()->default_file_dir().empty() == false)
 			{
-				resp.set_path(req.config()->default_file_dir());
+				resp.set_path(req.get_config()->default_file_dir());
 			}
 			else
 			{
