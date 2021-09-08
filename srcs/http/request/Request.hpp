@@ -11,7 +11,7 @@ class Request
 {
 	public:
 		typedef std::map<std::string, const ServerConfig &> config_type;
-		typedef std::vector<const std::string>				cookies_t;
+		typedef std::vector<std::string>				cookies_t;
 		typedef struct	uri_s
 		{
 			std::string path;

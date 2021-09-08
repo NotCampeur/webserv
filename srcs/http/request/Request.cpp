@@ -104,6 +104,8 @@ Request::get_config(void) const
 void
 Request::set_config(RequestConfig * config)
 {
+	if (_config != NULL)
+		delete _config;
 	_config = config;
 }
 
