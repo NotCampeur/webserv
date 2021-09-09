@@ -103,6 +103,7 @@ Response::set_payload(const char *buf, size_t len)
 int
 Response::send_payload(int fd)
 {
+	signal(SIGPIPE, SIG_IGN);
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();

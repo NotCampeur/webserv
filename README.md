@@ -54,6 +54,5 @@ YOLO
 
 
 "
-* When you full reload a big file, the server crash without any errors
 ## :writing_hand: Change log :writing_hand:  
 * JsonParser branch has been merged.
