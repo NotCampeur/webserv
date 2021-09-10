@@ -103,7 +103,7 @@ Response::set_payload(const char *buf, size_t len)
 int
 Response::send_payload(int fd)
 {
-	signal(SIGPIPE, SIG_IGN);
+	// signal(SIGPIPE, SIG_IGN);
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();
@@ -113,7 +113,12 @@ Response::send_payload(int fd)
 	{
 		add_last_chunk();
 	}
-	ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
+	#ifdef MSG_NOSIGNAL
+		ssize_t ret = send(fd, &_payload[0], _payload.size(), MSG_NOSIGNAL);
+	#else
+		signal(SIGPIPE, SIG_IGN);
+		ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
+	#endif
 
 	if (ret < 0)
 	{
