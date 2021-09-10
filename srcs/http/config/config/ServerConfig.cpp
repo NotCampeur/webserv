@@ -1,9 +1,9 @@
 #include "ServerConfig.hpp"
 
 ServerConfig::ServerConfig(void) :
-_name("NAME_NOT_SET"),
-_ip("127.0.0.1"),
-_port("8080"),
+_name("default"),
+_ip(),
+_port(),
 _error_pages(),
 _max_client_body_size(MAX_CLIENT_BODY_SIZE),
 _locations()
