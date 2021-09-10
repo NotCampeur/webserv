@@ -34,9 +34,9 @@ CgiParser::parse(char * buf, size_t len)
 					}
 					break ;
 				}
-				catch(HttpException & e)
+				catch(const HttpException & e)
 				{
-					handle_error(e.get_code_index());
+					throw e;
 				}
 			}
 			case FINAL_NL :
@@ -47,13 +47,13 @@ CgiParser::parse(char * buf, size_t len)
 					std::cerr << "Header name: " << (*it).first << '\t'
 					<< "Header value: " << (*it).second << '\n';
 				}
-				if (!set_resp_params())
-				{
-					return ;
-				}
-				else
-				{
+				try {
+					set_resp_params();
 					_request_state = BODY; //No break here --> we fall directly in case BODY
+				}
+				catch (const HttpException & e)
+				{
+					throw e;
 				}
 			}
 			case BODY :
@@ -89,14 +89,14 @@ CgiParser::reset(void)
 
 // Assumes all header names are lowercase (responsibility of HeaderParser)
 // Returns true if the response has a body, false otherwise
-bool
+void
 CgiParser::set_resp_params(void)
 {
 	if (_headers.find("content-type") == _headers.end())
 	{
-		handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500); // But most likely that's a CGI error..
+		// handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500); // But most likely that's a CGI error..
 		Logger(LOG_FILE, error_type, error_lvl) << "Missing 'content-type' header in cgi response";
-		return false;
+		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
 	else
 	{
@@ -117,8 +117,7 @@ CgiParser::set_resp_params(void)
 		if (status_code != 200)
 		{
 			Logger(LOG_FILE, error_type, error_lvl) << "Cgi status code: " << status;
-			handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
-			return false;
+			throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 		}
 		_resp.set_http_code(StatusCodes::OK_200);
 		_headers.erase("status");
@@ -139,11 +138,4 @@ CgiParser::set_resp_params(void)
 	{
 		_resp.add_header(it->first, it->second);
 	}
-	return true;
-}
-
-void
-CgiParser::handle_error(StatusCodes::status_index_t code)
-{
-	_resp.http_error(code);
 }

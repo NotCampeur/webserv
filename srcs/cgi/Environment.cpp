@@ -1,6 +1,8 @@
 #include "Environment.hpp"
 #include <iostream>
 #include <cstring>
+#include <unistd.h>
+#include <sys/param.h>
 
 Environment::Environment(void) :
 _cgi_env(NULL)
@@ -105,11 +107,29 @@ Environment::set_cgi_env(void)
 	size_t i = 0;
 	if (_program_env)
 	{
-		for (; _program_env[i]; i++)
+		for (; _program_env[i]; ++i)
 		{
-			char *entry = new char [std::strlen(_program_env[i]) + 1];
-			std::strcpy(entry, _program_env[i]);
-			_cgi_env[i] = entry;
+			if (!std::strcmp(_program_env[i], "PWD"))
+			{
+				char buf_cwd[MAXPATHLEN] = {0};
+				char *ret_buf = getcwd(buf_cwd, MAXPATHLEN);
+				if (ret_buf != NULL)
+				{
+					std::string pwd = "PWD";
+					pwd += "=";
+					pwd += ret_buf;
+					char *entry = new char [pwd.size() + 1];
+					std::strcpy(entry,pwd.c_str());
+					_cgi_env[i] = entry;
+				}
+				// In case of getcwd error, the PWD variable is not set
+			}
+			else
+			{
+				char *entry = new char [std::strlen(_program_env[i]) + 1];
+				std::strcpy(entry, _program_env[i]);
+				_cgi_env[i] = entry;
+			}
 		}
 	}
 	for (size_t j = 0; j < _cgi_env_var.size(); j++)

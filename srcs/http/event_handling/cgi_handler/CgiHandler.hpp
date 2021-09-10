@@ -14,15 +14,16 @@ class CgiHandler : public IEventHandler
 		Response &				_response;
 		const std::string		_method;
 		std::string				_file_ext;
-		int						_pipe_one_fd[2];
-		int						_pipe_two_fd[2];
+		int						_server_write_pipe;
+		int						_server_read_pipe;
+		int						_cgi_write_pipe;
+		int						_cgi_read_pipe;
 		int						_event_flag;
 		Environment				_env;
 		int						_pid;
 		ssize_t					_written_size;
 		bool					_cgi_done;
 		CgiParser				_parser;
-
 
 	public:
 
@@ -40,7 +41,7 @@ class CgiHandler : public IEventHandler
 	private:
 		CgiHandler(CgiHandler const & src);
 		void	set_environment(void);
-		void	manage_error(void);
+		void	manage_error(StatusCodes::status_index_t error = StatusCodes::INTERNAL_SERVER_ERROR_500);
 		void	make_complete(void);
 		bool	cgi_process_error(void);
 		bool	open_pipe_two(void);

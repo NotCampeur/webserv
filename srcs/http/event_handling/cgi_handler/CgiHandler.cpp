@@ -13,6 +13,10 @@ _request(req),
 _response(resp),
 _method(method),
 _file_ext(Utils::get_file_ext(resp.get_path())),
+_server_write_pipe(pipe_one[1]),
+_server_read_pipe(0),
+_cgi_write_pipe(0),
+_cgi_read_pipe(pipe_one[0]),
 _event_flag(POLLOUT),
 _pid(0),
 _written_size(0),
@@ -20,10 +24,8 @@ _cgi_done(false),
 _parser(resp)
 {
 	std::cerr << "Pipe one fds: " << pipe_one[0] << " ; " << pipe_one[1] << '\n';
-	_pipe_one_fd[0] = pipe_one[0];
-	_pipe_one_fd[1] = pipe_one[1];
-	_pipe_two_fd[0] = 0;
-	_pipe_two_fd[1] = 0;
+	// _pipe_two_fd[0] = 0;
+	// _pipe_two_fd[1] = 0;
 	set_environment();
 	if (!open_pipe_two())
 	{
@@ -34,10 +36,8 @@ _parser(resp)
 		if (!set_nonblock())
 		{
 			close_pipes();
-			manage_error();
 		}
 	}
-	_response.set_handler_fd(_pipe_one_fd[1]);
 	start_cgi();
 }
 
@@ -77,7 +77,7 @@ CgiHandler::readable(void)
 	char		read_buff[FILE_READ_BUF_SIZE];
 	ssize_t		bytes_read;
 
-	bytes_read = read(_pipe_two_fd[0], read_buff, FILE_READ_BUF_SIZE);
+	bytes_read = read(_server_read_pipe, read_buff, FILE_READ_BUF_SIZE);
 
 	switch (bytes_read)
 	{
@@ -85,19 +85,27 @@ CgiHandler::readable(void)
 		{
 			manage_error();
 			Logger(LOG_FILE, error_type, error_lvl) << "Read: " << std::strerror(errno);
+			break ;
 		}
 		case 0 :
 		{
 			std::cerr << "Cgi Pipe empty - done reading\n";
 			make_complete();
+			break ;
 		}
 		default :
 		{
-			_parser.parse(read_buff, bytes_read);
-			if (bytes_read < FILE_READ_BUF_SIZE)
+			try {
+				_parser.parse(read_buff, bytes_read);
+				if (bytes_read < FILE_READ_BUF_SIZE)
+				{
+					std::cerr << "Read less than Buf_Size\n";
+					// make_complete(); Might need TBU
+				}
+			}
+			catch (const HttpException & e)
 			{
-				std::cerr << "Read less than Buf_Size\n";
-				// make_complete(); Might need TBU
+				manage_error(e.get_code_index());
 			}
 		}
 	}
@@ -115,7 +123,7 @@ CgiHandler::writable(void)
 	if (_method == "POST" && _request.bodysize() > 0)
 	{
 		//Exposed if max pipe capacity is reached
-		ssize_t len = write(_pipe_one_fd[1], &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
+		ssize_t len = write(_server_write_pipe, &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
 			manage_error();
@@ -127,7 +135,7 @@ CgiHandler::writable(void)
 			return ;
 		}
 	}
-	int ret = dup2(_pipe_two_fd[0], _pipe_one_fd[1]); // Replace write fd by read fd so we can keep using this object + closing write fd so that if there's an error in child, main process will get a "read event"
+	int ret = dup2(_server_read_pipe, _response.get_handler_fd()); // Now we want our server to React to ReadEvents to get the CGI output
 	if (ret < 0)
 	{
 		manage_error();
@@ -135,9 +143,9 @@ CgiHandler::writable(void)
 	}
 	else
 	{
-		close(_pipe_two_fd[0]);
-		_pipe_two_fd[0] = _pipe_one_fd[1];
-		_pipe_one_fd[1] = 0;
+		close(_server_read_pipe);
+		_server_read_pipe = _response.get_handler_fd();
+		_server_write_pipe = 0; // The fd was closed by call to dup2()
 		_event_flag = POLLIN;
 	}
 }
@@ -224,18 +232,20 @@ CgiHandler::start_cgi(void)
 	if (_pid == 0)
 	{
 		// std::cerr << "Hello from chile\n";
-		close(_pipe_one_fd[1]);
-		close(_pipe_two_fd[0]);
-		int ret = dup2(_pipe_one_fd[0], STDIN_FILENO);
+		close(_server_write_pipe);
+		close(_server_read_pipe);
+		int ret = dup2(_cgi_read_pipe, STDIN_FILENO);
 		if (ret < 0)
 		{
 			exit(EXIT_FAILURE);
 		}
-		ret = dup2(_pipe_two_fd[1], STDOUT_FILENO);
+		close(_cgi_read_pipe);
+		ret = dup2(_cgi_write_pipe, STDOUT_FILENO);
 		if (ret < 0)
 		{
 			exit(EXIT_FAILURE);
 		}
+		close(_cgi_write_pipe);
 		const std::string cgi_bin = _request.get_config()->cgi().find(_file_ext)->second;
 		if (cgi_bin.empty() == true)
 		{
@@ -248,7 +258,14 @@ CgiHandler::start_cgi(void)
 				const_cast<char *>(_response.get_path().c_str()),
 				NULL
 				};
-			// std::cerr << "Chile about to execve\n";
+			
+			std::string root = _request.get_config()->root();
+			if (int ret = chdir(root.c_str()) < 0)
+			{
+				Logger(LOG_FILE, error_type, error_lvl) << "Chdir: " << std::strerror(errno);
+			}
+
+			std::cerr << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path() << '\n';
 			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
@@ -256,22 +273,20 @@ CgiHandler::start_cgi(void)
 	}
 	else
 	{
-		close(_pipe_one_fd[0]);
-		close(_pipe_two_fd[1]);
-		// if (ret < 0)
-		// {
-		// 	manage_error();
-		// 	Logger(LOG_FILE, error_type, error_lvl) << "Pipe: " << std::strerror(errno);
-		// }
+		close(_cgi_read_pipe);
+		_cgi_read_pipe = 0;
+		close(_cgi_write_pipe);
+		_cgi_write_pipe = 0;
 	}
 }
 
 void
-CgiHandler::manage_error(void)
+CgiHandler::manage_error(StatusCodes::status_index_t error)
 {
+	close_pipes();
 	if (!_response.metadata_sent())
 	{
-		_response.http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
+		_response.http_error(error);
 	}
 	else
 	{
@@ -297,7 +312,7 @@ CgiHandler::cgi_process_error(void)
 			_cgi_done = true;
 			if (WEXITSTATUS(status) != EXIT_SUCCESS)
 			{
-				Logger(LOG_FILE, error_type, error_lvl) << "CGI error - exit status:" << WEXITSTATUS(status);
+				Logger(LOG_FILE, error_type, error_lvl) << "CGI error - exit status: " << WEXITSTATUS(status);
 				manage_error();
 				return true;
 			}
@@ -309,26 +324,29 @@ CgiHandler::cgi_process_error(void)
 bool
 CgiHandler::open_pipe_two(void)
 {
-	int ret = pipe(_pipe_two_fd);
+	int pipe_two[2];
+	int ret = pipe(pipe_two);
 	if (ret < 0)
 	{
 		close_pipes();
 		Logger(LOG_FILE, error_type, error_lvl) << "Pipe: " << std::strerror(errno);
 		return false;
 	}
+	_server_read_pipe = pipe_two[0];
+	_cgi_write_pipe = pipe_two[1];
 	return true;
 }
 
 bool
 CgiHandler::set_nonblock(void)
 {
-	int ret = fcntl(_pipe_one_fd[1], F_SETFL, O_NONBLOCK);
+	int ret = fcntl(_server_write_pipe, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << "Fcntl: " << std::strerror(errno);
 		return false;
 	}
-	ret = fcntl(_pipe_two_fd[0], F_SETFL, O_NONBLOCK);
+	ret = fcntl(_server_read_pipe, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 	{
 		Logger(LOG_FILE, error_type, error_lvl) << "Fcntl: " << std::strerror(errno);
@@ -337,25 +355,28 @@ CgiHandler::set_nonblock(void)
 	return true;
 }
 
-//Not closing pipe[1] as it is the CgiHandler handle, it will be  closed by ClientHandler call to response.reset()
+//Only close an FD if it's value is != from 0 and != from _cgi_fd_handle
 void
 CgiHandler::close_pipes(void)
 {
-	if (_pipe_one_fd[0] != 0)
+	if (_server_read_pipe != 0 && _server_read_pipe != _response.get_handler_fd())
 	{
-		close(_pipe_one_fd[0]);
-		_pipe_one_fd[0] = 0;
+		close(_server_read_pipe);
+		_server_read_pipe = 0;
 	}
-	// if (_pipe_one_fd[1] != 0)
-	// 	close(_pipe_one_fd[1]);
-	if (_pipe_two_fd[0] != 0)
+	if (_server_write_pipe != 0 && _server_write_pipe != _response.get_handler_fd())
 	{
-		close(_pipe_two_fd[0]);
-		_pipe_two_fd[0] = 0;
+		close(_server_write_pipe);
+		_server_write_pipe = 0;
 	}
-	if (_pipe_two_fd[1] != 0)
+	if (_cgi_read_pipe != 0 && _cgi_read_pipe != _response.get_handler_fd())
 	{
-		close(_pipe_two_fd[1]);
-		_pipe_two_fd[1] = 0;
+		close(_cgi_read_pipe);
+		_cgi_read_pipe = 0;
+	}
+	if (_cgi_write_pipe != 0&& _cgi_write_pipe != _response.get_handler_fd())
+	{
+		close(_cgi_write_pipe);
+		_cgi_write_pipe = 0;
 	}
 }
