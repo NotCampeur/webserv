@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/07 05:50:26 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/10 13:55:30 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,8 @@ Config::load_server_max_client_body_size(IJsonValue * server_max_client_body_siz
 	std::string	s_max_client_body_size_value = value->value();
 	size_t			max_client_body_size_value(0);
 	std::istringstream(s_max_client_body_size_value) >> max_client_body_size_value;
+	if (max_client_body_size_value < 0)
+		throw Exception("The max client body size must be a positive value");
 	server.set_max_client_body_size(max_client_body_size_value);
 }
 

@@ -6,6 +6,10 @@ _config()
 {
 	try
 	{
+		if (config->ip().empty() == true)
+			throw Exception("An ip must be given to the server");
+		if (config->port().empty() == true)
+			throw Exception("A port must be given to the server");
 		_config.insert(std::pair<std::string, const ServerConfig &>("default", *config));
 		_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
 		create_socket(com_domain, sock_type);

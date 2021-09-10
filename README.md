@@ -32,10 +32,6 @@ All libraries will be build and the binary will be ready to launch
 *  Parsing of Hexadecimal values in URL -> in validator class
 
 ### :boom: Known bugs.. I mean features :boom:  
-* If the root in the config file is given without ending '/' the server will loop redirections of type 301.
-* Possibly lost on config errors.  
-* When there is a request on / there is a huge loop on demultiplexer folowed by "{ERROR} CGI error - exit status:1".
-* Config can have multiple location referring same path.
 * Segfault when using curl -d -v "param1=value1&param2=value2" -X POST http://10.11.12.9:8080/ 
 * Segfault when using nc to send requests. exemple :
 * " nc 10.11.12.9 8080
@@ -54,5 +50,7 @@ YOLO
 
 
 "
+* When connecting through https the server segfault.  
+* Parse config value int.
 ## :writing_hand: Change log :writing_hand:  
 * JsonParser branch has been merged.
