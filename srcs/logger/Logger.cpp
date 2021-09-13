@@ -5,6 +5,7 @@ std::string				Logger::_path = std::string();
 log_type				Logger::_type = log_type();
 Logger::map_type		Logger::_files = Logger::map_type();
 log_importance_level	Logger::_accepted_importance = log_importance_level(all_lvl);
+sem_t *					Logger::_multi_process_lock = sem_open("webserv_logger_lock", O_CREAT, 777, 0);
 
 
 Logger::Logger(std::string path, log_type type, log_importance_level importance)
@@ -47,16 +48,27 @@ Logger::accept_importance(log_importance_level accepted_importance)
 }
 
 void
+Logger::process_forked(void)
+{
+	sem_post(_multi_process_lock);
+}
+
+
+void
 Logger::quit(void)
 {
-	map_type::iterator it = _files.begin();
-
-	for (; it != _files.end(); it++)
+	if (sem_trywait(_multi_process_lock) == -1)
 	{
-		*it->second << "End of logs" << std::endl;
-		delete it->second;
+		map_type::iterator it = _files.begin();
+
+		for (; it != _files.end(); it++)
+		{
+			*it->second << "End of logs" << std::endl;
+			delete it->second;
+		}
+		_files.clear();
+		sem_close(_multi_process_lock);
 	}
-	_files.clear();
 }
 
 bool

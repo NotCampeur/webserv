@@ -1,11 +1,12 @@
 #include "LocationConfig.hpp"
+#include "Utils.hpp"
 
 // Constructors & destructor
 LocationConfig::LocationConfig()
 : _path()
 , _accepted_method(GET)
 , _redirection()
-, _root()
+, _root(Utils::get_working_path())
 , _is_autoindex_on()
 , _default_file_dir()
 , _cgi()
@@ -16,7 +17,7 @@ LocationConfig::LocationConfig(std::string path)
 : _path(path)
 , _accepted_method(GET)
 , _redirection()
-, _root()
+, _root(Utils::get_working_path())
 , _is_autoindex_on()
 , _default_file_dir()
 , _cgi()

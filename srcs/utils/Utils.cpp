@@ -35,3 +35,10 @@ Utils::get_file_ext(const std::string & filename)
 	}
 	return file_ext;
 }
+
+std::string
+Utils::get_working_path()
+{
+	char temp[FILENAME_MAX];
+	return (getcwd(temp, sizeof(temp)) ? std::string( temp ) : std::string(""));
+}
