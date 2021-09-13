@@ -8,7 +8,7 @@
 # ifdef DEBUG
 #  define DEBUG_STREAM std::cerr
 # endif
-# define LOG_FILE "webserv.log" //"/dev/fd/1" //
+# define LOG_FILE "/dev/fd/1" //"webserv.log" //
 
 # define MAX_URI_SIZE	8000 //Minimum request line size per rfc 7230 is 8000 octets
 # define MAX_HEADER_SIZE 5000 //Arbitraty - should not receive a header bigger than that - would not make sense from what I know

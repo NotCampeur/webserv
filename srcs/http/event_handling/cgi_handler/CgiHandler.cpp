@@ -51,6 +51,7 @@ CgiHandler::~CgiHandler(void)
 		}
 	}
 	close_pipes();
+	make_complete(); //Due to the behavior of read and poll on linux, there is no way to know from a read that the pipe is closed if there is content in the pipe. Therefore, when the poll detects an empty closed pipe, it gives a POLLHUP and from this we know that the response is complete
 }
 
 void 
@@ -100,7 +101,8 @@ CgiHandler::readable(void)
 				if (bytes_read < FILE_READ_BUF_SIZE)
 				{
 					std::cerr << "Read less than Buf_Size\n";
-					// make_complete(); Might need TBU
+					// make_complete();
+					
 				}
 			}
 			catch (const HttpException & e)
