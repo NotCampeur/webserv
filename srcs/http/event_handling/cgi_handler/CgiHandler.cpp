@@ -263,6 +263,7 @@ CgiHandler::start_cgi(void)
 			if (int ret = chdir(root.c_str()) < 0)
 			{
 				Logger(LOG_FILE, error_type, error_lvl) << "Chdir: " << std::strerror(errno);
+				exit(EXIT_FAILURE);
 			}
 
 			std::cerr << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path() << '\n';
