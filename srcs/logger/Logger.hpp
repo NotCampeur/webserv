@@ -2,6 +2,7 @@
 # define WEBSERV_LOGGER_HPP
 
 # include "webserv.hpp"
+# include <semaphore.h>
 
 // This enum store the flags about the type of entry.
 // Some entry like the errors need further specifications.
@@ -50,6 +51,9 @@ class Logger
 		// If you never set it yourself every messages are accepted.
 		static void	accept_importance(log_importance_level accepted_importance);
 
+		// Incremente the _multi_process_lock to ensure a multi_process running.
+		static void	process_forked(void);
+
 		// This function need to be called right before the end of the program.
 		// The ofstream map will be correctly deleted.
 		static void	quit(void);
@@ -71,6 +75,7 @@ class Logger
 		static log_type				_type;
 		static map_type				_files;
 		static log_importance_level	_accepted_importance;
+		static sem_t *				_multi_process_lock;
 		log_importance_level		_importance;
 };
 

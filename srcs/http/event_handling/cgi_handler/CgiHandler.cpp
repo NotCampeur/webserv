@@ -231,6 +231,7 @@ CgiHandler::start_cgi(void)
 	}
 	if (_pid == 0)
 	{
+		Logger::process_forked();
 		// std::cerr << "Hello from chile\n";
 		close(_server_write_pipe);
 		close(_server_read_pipe);

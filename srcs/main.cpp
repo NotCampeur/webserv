@@ -6,7 +6,7 @@
 /*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/13 10:48:07 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/13 15:49:22 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include "SystemException.hpp"
 #include "ServerConfig.hpp"
 #include "Environment.hpp"
-
+#include "pthread.h"
 int
 serv_test(char * config_path)
 {
@@ -58,6 +58,12 @@ serv_test(char * config_path)
 	return EXIT_SUCCESS;
 }
 
+void *funct(void * var)
+{
+	std::cout << "Thread created" << std::endl;
+	return var;
+}
+
 int	main(int ac, char *av[], char *envp[])
 {
 	int	return_status(EXIT_SUCCESS);
@@ -78,6 +84,10 @@ int	main(int ac, char *av[], char *envp[])
 	// char **env = e1.get_cgi_env();
 	// for (size_t i = 0; env[i]; i++)
 	// 	std::cout << env[i] << '\n';
+
+	pthread_t		thread;
+
+	pthread_create(&thread, NULL, &funct, NULL);
 
 	// serv_test(std::atol(av[1]));
 	return_status = serv_test(av[1]);
