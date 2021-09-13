@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-# define UTILS_H
+#ifndef WEBSERV_UTILS_HPP
+# define WEBSERV_UTILS_HPP
 
 #include <string>
 class CgiHandler;
@@ -17,7 +17,7 @@ class Utils
 		Utils &  operator=(Utils const & src);
 
 		static	std::string		get_file_ext(const std::string & filename);
-
+		static	std::string		get_working_path();
 	private:
 
 };

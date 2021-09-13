@@ -36,7 +36,7 @@ CgiParser::parse(char * buf, size_t len)
 				}
 				catch(const HttpException & e)
 				{
-					throw e;
+					throw ;
 				}
 			}
 			case FINAL_NL :
@@ -53,7 +53,7 @@ CgiParser::parse(char * buf, size_t len)
 				}
 				catch (const HttpException & e)
 				{
-					throw e;
+					throw ;
 				}
 			}
 			case BODY :
