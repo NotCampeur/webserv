@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <pthread.h>
 
 CgiHandler::CgiHandler(Request & req, Response & resp, int pipe_one[2], std::string method) :
 _request(req),
@@ -214,6 +215,17 @@ CgiHandler::set_environment(void)
 	}
 }
 
+static void *
+cgi_monitor(void * param)
+{
+	int *	pid = static_cast<int *>(param);
+	int	status;
+	waitpid(*pid, &status, 0);
+	Logger(LOG_FILE, basic_type, debug_lvl) << "CGI ended with : " << status << " status";
+	Logger::process_ended();
+	return NULL;
+}
+
 void
 CgiHandler::start_cgi(void)
 {
@@ -238,18 +250,21 @@ CgiHandler::start_cgi(void)
 		int ret = dup2(_cgi_read_pipe, STDIN_FILENO);
 		if (ret < 0)
 		{
+			Logger::process_ended();
 			exit(EXIT_FAILURE);
 		}
 		close(_cgi_read_pipe);
 		ret = dup2(_cgi_write_pipe, STDOUT_FILENO);
 		if (ret < 0)
 		{
+			Logger::process_ended();
 			exit(EXIT_FAILURE);
 		}
 		close(_cgi_write_pipe);
 		const std::string cgi_bin = _request.get_config()->cgi().find(_file_ext)->second;
 		if (cgi_bin.empty() == true)
 		{
+			Logger::process_ended();
 			exit(EXIT_FAILURE);
 		}
 		else
@@ -264,13 +279,15 @@ CgiHandler::start_cgi(void)
 			if (int ret = chdir(root.c_str()) < 0)
 			{
 				Logger(LOG_FILE, error_type, error_lvl) << "Chdir: " << std::strerror(errno);
+				Logger::process_ended();
 				exit(EXIT_FAILURE);
 			}
 
-			std::cerr << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path() << '\n';
+			Logger(LOG_FILE, basic_type, debug_lvl) << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path();
 			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
+		Logger::process_ended();
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -279,6 +296,8 @@ CgiHandler::start_cgi(void)
 		_cgi_read_pipe = 0;
 		close(_cgi_write_pipe);
 		_cgi_write_pipe = 0;
+		pthread_t	thread;
+		pthread_create(&thread, NULL, &cgi_monitor, static_cast<void *>(&_pid));
 	}
 }
 

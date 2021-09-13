@@ -6,6 +6,7 @@ log_type				Logger::_type = log_type();
 Logger::map_type		Logger::_files = Logger::map_type();
 log_importance_level	Logger::_accepted_importance = log_importance_level(all_lvl);
 sem_t *					Logger::_multi_process_lock = sem_open("webserv_logger_lock", O_CREAT, 777, 0);
+pid_t					Logger::_process_id = getpid();
 
 
 Logger::Logger(std::string path, log_type type, log_importance_level importance)
@@ -36,7 +37,10 @@ Logger::put_timestamp(void)
 	now = time(0);
 	msg = ctime(&now);
 	msg.erase(msg.end() - 1);
-	*_files[_path] << '[' << msg << "] ";
+	msg = '[' + msg + "] ";
+	if (getpid() != _process_id)
+		msg += "{'CGI'} ";
+	*_files[_path] << msg;
 	if (_type == error_type)
 		*_files[_path] << "{ERROR} ";
 }
@@ -53,6 +57,11 @@ Logger::process_forked(void)
 	sem_post(_multi_process_lock);
 }
 
+void
+Logger::process_ended(void)
+{
+	sem_trywait(_multi_process_lock);
+}
 
 void
 Logger::quit(void)
