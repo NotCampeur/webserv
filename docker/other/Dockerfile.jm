@@ -1,11 +1,13 @@
 FROM ubuntu:18.04
 
+#Minimize interactions (assumes default answers)
+ARG DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update
 RUN apr-get upgrade
 RUN apt-get install -y \
 	vim \
 	git \
-	wget \
 	valgrind \
 	clang \
 	make \
@@ -16,6 +18,11 @@ RUN apt-get install -y \
 	php-cgi \
 	php-mysql
 
-ADD	https://wordpress.org/latest.tar.gz /var/www/html/
+RUN apt-get install -y mysql-server-5.7 mysql-client-5.7
 
+WORKDIR /var/www/html/
 
+ADD	https://wordpress.org/latest.tar.gz .
+
+RUN		tar -xf latest.tar.gz && \
+		rm latest.tar.gz
