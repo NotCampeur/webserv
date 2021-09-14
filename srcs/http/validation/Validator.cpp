@@ -58,23 +58,36 @@ Validator::is_method_allowed(Request & req)
 	throw (HttpException(StatusCodes::METHOD_NOT_ALLOWED_405));
 }
 
+//Remplace first path section with "path" variable with "root"
 void
 Validator::set_full_path(Request & req, Response & resp, std::string & path)
 {
 	std::string root = req.get_config()->root();
-	if (*path.begin() == '/')
+	std::string full_path = path;
+
+	if (*full_path.begin() == '/')
 	{
-		path.erase(path.begin()); // Remove as we don't want it if we're dealing with a relative path
+		full_path.erase(full_path.begin());
 	}
-	if (root.empty() == false)
+
+	for (size_t i = 0; i < full_path.size(); ++i)
 	{
-		if (*(root.end() - 1) != '/')
-			path.insert(path.begin(), '/');
-		path.insert(0, root);
+		if (full_path[i] == '/')
+		{
+			full_path.erase(0, i + 1);
+			break ;
+		}
 	}
-	parse_hexa(path);
-	resp.set_path(path);
-	std::cerr << "Final path: " << path << '\n';
+	if (!root.empty() && *(root.end() - 1) != '/')  // First condition should always be true as default root is current workdir
+	{
+		root += '/';
+	}
+
+	full_path.insert(0, root);
+
+	parse_hexa(full_path);
+	resp.set_path(full_path);
+	std::cerr << "Final path: " << full_path << '\n';
 }
 
 void
@@ -150,7 +163,6 @@ Validator::verify_path(Request & req, Response & resp)
 			default :
 			{
 				throw (HttpException(StatusCodes::NOT_FOUND_404));
-				break ;
 			}
 		}
 	}
@@ -263,6 +275,7 @@ Validator::find_location_config(Request & req, std::string & path)
 		{
 			if (server_locations[i]->path() == req_path)
 			{
+				std::cerr << "Location found: " << server_locations[i]->path() << '\n';
 				return *server_locations[i];
 				// *server_conf = *server_routes[i];
 			}

@@ -142,7 +142,9 @@ RequestParser::parse_char(char c)
 					throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 				if (_request.method().has_body())
-					_request_state = BODY;
+				{
+					_request_state = BODY; //Not breaking here, as body_parser needs a first call to set chunked/content-len state
+				}
 				else
 				{
 					_request_state = DONE;

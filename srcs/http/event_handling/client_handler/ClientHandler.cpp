@@ -86,6 +86,7 @@ ClientHandler::writable(void)
 						_event_flag = POLLIN;
 					}
 				}
+				break ;
 			}
 		}
 	}

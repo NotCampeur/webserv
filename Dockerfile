@@ -7,6 +7,9 @@ RUN apt-get install -y vim git wget valgrind clang make nginx dos2unix
 
 RUN apt-get install -y php php-cgi php-mysql
 
+#Python3 used with cgi script
+RUN apt-get install -y python3
+
 RUN apt-get install -y unzip
 RUN cd /root && \
 	wget https://wordpress.org/latest.zip && \
