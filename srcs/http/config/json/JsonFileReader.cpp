@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/07 01:59:22 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/15 20:42:11 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,13 +241,21 @@ JsonFileReader::check_tokens()
 		else if (*it == '"')
 		{
 			check_quotes_token(it, quote_type);
+			if (quote_type == open_type)
+			{
+				it++;
+				while (it != ite && *it != '"')
+					it++;
+				it--;
+			}
 			quote_type = (quote_type == open_type) ? close_type : open_type;
 		}
 		else if (*it == ':' && quote_type == open_type)
 			check_colon_token(it);
 		else if (*it == ',' && quote_type == open_type)
 			check_comma_token(it);
-		it++;
+		if (it != ite)
+			it++;
 	}
 }
 
