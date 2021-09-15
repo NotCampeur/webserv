@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/15 18:38:03 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/15 19:08:05 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,16 @@ Config::load_server_ip(IJsonValue * server_ip, ServerConfig & server)
 	if (value == NULL)
 		throw Exception("Config file error : Server's ip must be a \"string\"");
 	std::string	ip_value = value->value();
+	std::vector<std::string>	ip_value_split = ft_split(ip_value, ".");
+	if (ip_value_split.size() != 4)
+		throw Exception("Config file error : Server's ip must be a valid ip");
+	int	ip_value_int(0);
+	for (int i(0); i < 4; ++i)
+	{
+		std::istringstream(ip_value_split[i]) >> ip_value_int;
+		if (ip_value_int < 0 || ip_value_int > 255)
+			throw Exception("Config file error : Server's ip must be a valid ip");
+	}
 	server.set_ip(ip_value);
 }
 
@@ -101,6 +111,10 @@ Config::load_server_port(IJsonValue * server_port, ServerConfig & server)
 	if (value == NULL)
 		throw Exception("Config file error : Server's port must be a \"string\"");
 	std::string port_value = value->value();
+	int	port_value_int(0);
+	std::istringstream(port_value) >> port_value_int;
+	if (port_value_int < 1024 || port_value_int > 49151)
+		throw Exception("Config file error : Server's port must be a valid port between 1024 and 49151");
 	server.set_port(port_value);
 }
 
@@ -339,40 +353,39 @@ Config::load_server_config(IJsonValue * server_object)
 	for (JsonObject::value_type::const_iterator it(server->value_begin())
 		; it != ite; it++)
 	{
-		switch (get_server_key(it->first))
+		try
 		{
-			case name:
-				load_server_name(it->second, *server_config);
-				break;
-			case ip:
-				load_server_ip(it->second, *server_config);
-				break;
-			case port:
-				load_server_port(it->second, *server_config);
-				break;
-			case error_page_path:
-				load_server_error_page_path(it->second, *server_config);
-				break;
-			case max_client_body_size:
-				load_server_max_client_body_size(it->second, *server_config);
-				break;
-			case location:
-				try
-				{
+			switch (get_server_key(it->first))
+			{
+				case name:
+					load_server_name(it->second, *server_config);
+					break;
+				case ip:
+					load_server_ip(it->second, *server_config);
+					break;
+				case port:
+					load_server_port(it->second, *server_config);
+					break;
+				case error_page_path:
+					load_server_error_page_path(it->second, *server_config);
+					break;
+				case max_client_body_size:
+					load_server_max_client_body_size(it->second, *server_config);
+					break;
+				case location:
 					load_server_location(it->second, *server_config);
 					break;
-				}
-				catch(const std::exception& e)
+				case server_unknown:
 				{
-					delete server_config;
-					throw ;
+					Logger(LOG_FILE, error_type, error_lvl) << "The unknown server's key is : " << it->first;
+					throw Exception("Config file error : Unknown server's key detected");
 				}
-			case server_unknown:
-			{
-				delete server_config;
-				Logger(LOG_FILE, error_type, error_lvl) << "The unknown server's key is : " << it->first;
-				throw Exception("Config file error : Unknown server's key detected");
 			}
+		}
+		catch(const std::exception& e)
+		{
+			delete server_config;
+			throw ;
 		}
 	}
 	return server_config;

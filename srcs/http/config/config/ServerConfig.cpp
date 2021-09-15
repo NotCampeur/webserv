@@ -121,7 +121,13 @@ ServerConfig::locations(void) const
 void
 ServerConfig::add_location(LocationConfig * location)
 {
-	_locations.push_back(location);
+	if (location->path().empty())
+	{
+		delete location;
+		throw Exception("Config file error : Location must have a path");
+	}
+	else
+		_locations.push_back(location);
 }
 
 const std::string *
