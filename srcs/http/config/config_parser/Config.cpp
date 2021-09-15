@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/10 13:55:30 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/15 13:58:58 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,8 +260,10 @@ Config::load_location_auto_index(IJsonValue * location_auto_index, LocationConfi
 		throw Exception("Config file error : Location's auto_index must be a \"string\"");
 	if (auto_index->value() == "true")
 		location.set_autoindex(true);
-	else
+	else if (auto_index->value() == "false")
 		location.set_autoindex(false);
+	else
+		throw Exception("Config file error : Location's auto_index must be \"true\" or \"false\"");
 }
 
 void

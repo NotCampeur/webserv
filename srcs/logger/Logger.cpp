@@ -1,11 +1,21 @@
 #include "Logger.hpp"
 
+static sem_t *
+load_semaphore(void)
+{
+	sem_t *	result;
+
+	result = sem_open("webserv_logger_lock", O_CREAT, 777, 0);
+	sem_unlink("webserv_logger_lock");
+	return result;
+}
+
 //Static initialisation.
 std::string				Logger::_path = std::string();
 log_type				Logger::_type = log_type();
 Logger::map_type		Logger::_files = Logger::map_type();
 log_importance_level	Logger::_accepted_importance = log_importance_level(all_lvl);
-sem_t *					Logger::_multi_process_lock = sem_open("webserv_logger_lock", O_CREAT, 777, 0);
+sem_t *					Logger::_multi_process_lock = load_semaphore();
 pid_t					Logger::_process_id = getpid();
 
 
