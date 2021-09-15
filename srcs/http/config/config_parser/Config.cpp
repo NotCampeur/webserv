@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/15 13:58:58 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/15 16:26:28 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,36 +162,43 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 		LocationConfig	* location_config = new LocationConfig();
 		while (location_it != location_ite)
 		{
-			switch (get_location_key(location_it->first))
+			try
 			{
-				case location_path:
-					load_location_path(location_it->second, *location_config);
-					break;
-				case location_method:
-					load_location_method(location_it->second, *location_config);
-					break;
-				case location_redirection:
-					load_location_redirection(location_it->second, *location_config);
-					break;
-				case location_root:
-					load_location_root(location_it->second, *location_config);
-					break;
-				case location_auto_index:
-					load_location_auto_index(location_it->second, *location_config);
-					break;
-				case location_default_file_dir:
-					load_location_default_file_dir(location_it->second, *location_config);
-					break;
-				case location_cgi:
-					load_location_cgi(location_it->second, *location_config);
-					break;
-				case location_upload_path:
-					load_location_upload_path(location_it->second, *location_config);
-					break;
-				case location_unknown:
-					delete location_config;
-					Logger(LOG_FILE, error_type, error_lvl) << "The unknown location's key is : " << location_it->first;
-					throw Exception("Config file error : Unknown location's key detected");
+				switch (get_location_key(location_it->first))
+				{
+					case location_path:
+						load_location_path(location_it->second, *location_config);
+						break;
+					case location_method:
+						load_location_method(location_it->second, *location_config);
+						break;
+					case location_redirection:
+						load_location_redirection(location_it->second, *location_config);
+						break;
+					case location_root:
+						load_location_root(location_it->second, *location_config);
+						break;
+					case location_auto_index:
+						load_location_auto_index(location_it->second, *location_config);
+						break;
+					case location_default_file_dir:
+						load_location_default_file_dir(location_it->second, *location_config);
+						break;
+					case location_cgi:
+						load_location_cgi(location_it->second, *location_config);
+						break;
+					case location_upload_path:
+						load_location_upload_path(location_it->second, *location_config);
+						break;
+					case location_unknown:
+						Logger(LOG_FILE, error_type, error_lvl) << "The unknown location's key is : " << location_it->first;
+						throw Exception("Config file error : Unknown location's key detected");
+				}
+			}
+			catch(const std::exception& e)
+			{
+				delete location_config;
+				throw ;
 			}
 			location_it++;
 		}

@@ -52,6 +52,7 @@ YOLO
 "
 * When connecting through https the server segfault.  
 * Parse config value int.
-* Need to parse the accepted method config with a split.
+* Need to parse the accepted method config with a split.  
+* bug in the tokenizer ==="path": "[/ressources/",=== is not valid but should be.  
 ## :writing_hand: Change log :writing_hand:  
 * JsonParser branch has been merged.
