@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putstr_fp.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 14:58:50 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/15 17:44:41 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	file_create(const char *path)
 	int	fd;
 
 	fd = -1;
-	if (ft_is_valid_file_path(path) == b_false)
+	if (ft_is_valid_file_path(path) == false)
 		fd = open(path, O_WRONLY | O_APPEND | O_CREAT, 00700);
 	return (fd);
 }

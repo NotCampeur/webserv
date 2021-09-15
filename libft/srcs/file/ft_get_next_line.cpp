@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_get_next_line.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 10:59:27 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/15 17:44:41 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	remove_line(char **storage)
 static int	read_until_nl_or_eof(char **storage, char *buffer,
 									int *read_return, int fd)
 {
-	while (ft_is_charset_in_str(*storage, "\n") == b_false
+	while (ft_is_charset_in_str(*storage, "\n") == false
 		&& *read_return != IS_END_OF_FILE)
 	{
 		*read_return = read(fd, buffer, BUFFER_SIZE);

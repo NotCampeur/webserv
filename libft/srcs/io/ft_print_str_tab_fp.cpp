@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_print_str_tab_fp.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/08 14:49:30 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/15 17:44:56 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ void		ft_print_str_tab(const char *path,
 	fd = -1;
 	if (path == NULL || mode == NULL)
 		return ;
-	if (ft_strcmp(mode, "OVERWRITE") == b_true)
+	if (ft_strcmp(mode, "OVERWRITE") == true)
 		fd = file_overwrite(path);
-	else if (ft_strcmp(mode, "APPEND") == b_true)
+	else if (ft_strcmp(mode, "APPEND") == true)
 		fd = file_append(path);
-	else if (ft_strcmp(mode, "CREATE") == b_true)
+	else if (ft_strcmp(mode, "CREATE") == true)
 		fd = file_create(path);
 	else
 		return ;

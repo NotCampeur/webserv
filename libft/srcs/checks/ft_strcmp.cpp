@@ -3,27 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strcmp.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/04 14:55:32 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/26 14:31:21 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/15 17:44:56 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.hpp"
 
-t_bool	ft_strcmp(const char *src, const char *target)
+bool	ft_strcmp(const char *src, const char *target)
 {
 	size_t	index;
 
 	index = 0;
 	if (src == NULL || target == NULL)
-		return (b_false);
+		return (false);
 	while (src[index] != '\0' || target[index] != '\0')
 	{
 		if (src[index] != target[index])
-			return (b_false);
+			return (false);
 		index++;
 	}
-	return (b_true);
+	return (true);
 }

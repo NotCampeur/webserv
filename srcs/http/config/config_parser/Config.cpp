@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/15 16:26:28 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/15 18:18:05 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,17 +220,30 @@ void
 Config::load_location_method(IJsonValue * location_method, LocationConfig & location)
 {
 	JsonString	* method = dynamic_cast<JsonString *>(location_method);
-	HTTPMethod	accepted_method(NOTHING);
 	if (method == NULL)
 		throw Exception("Config file error : Location's accepted_method must be a \"string, string\"");
-	if (method->value().find("GET") != std::string::npos)
-		accepted_method = GET;
-	if (method->value().find("POST") != std::string::npos)
-		accepted_method = static_cast<HTTPMethod>(accepted_method | POST);
-	if (method->value().find("DELETE") != std::string::npos)
-		accepted_method = static_cast<HTTPMethod>(accepted_method | DELETE);
-	if (method->value().find("ALL") != std::string::npos)
-		accepted_method = ALL;
+		
+	HTTPMethod	accepted_method(NOTHING);
+
+	if (method->value() == std::string("NOTHING"))
+		return location.set_accepted_method(NOTHING);
+	else if (method->value() == std::string("ALL"))
+		return location.set_accepted_method(ALL);
+	std::vector<std::string>	accepted_method_list(ft_split(ft_rm_charset(method->value(), " "), ","));
+	std::vector<std::string>::const_iterator it(accepted_method_list.begin());
+	std::vector<std::string>::const_iterator ite(accepted_method_list.end());
+	while (it != ite)
+	{
+		if (*it == std::string("GET") && ((accepted_method & GET) == 0))
+			accepted_method = static_cast<HTTPMethod>(accepted_method | GET);
+		else if (*it == std::string("POST") && ((accepted_method & POST) == 0))
+			accepted_method = static_cast<HTTPMethod>(accepted_method | POST);
+		else if (*it == std::string("DELETE") && ((accepted_method & DELETE) == 0))
+			accepted_method = static_cast<HTTPMethod>(accepted_method | DELETE);
+		else
+			throw Exception("Config file error : \nLocation's accepted_method must be a \"string, string\" and only accept : \nGET POST DELETE NOTHING and ALL as a value\n(note that you can't write the same method two times and ALL and NOTHING must be the only keyword)");
+		it++;
+	}
 	location.set_accepted_method(accepted_method);
 }
 

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/10 10:57:07 by ncoudsi           #+#    #+#             */
-/*   Updated: 2021/05/26 14:31:20 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/15 18:06:07 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.hpp"
+#include "libft_string.hpp"
+#include "libft_array.hpp"
+#include <iostream>
 
 /*
 **	Counting how many words we have after splitting the initial string.
@@ -115,5 +117,22 @@ char			**ft_split(const char *src, const char sep)
 	fill_tab(result, src, sep, tab_size);
 	if (result == NULL)
 		return (NULL);
+	return (result);
+}
+
+std::vector<std::string>
+ft_split(const std::string &src, const std::string &sep)
+{
+	std::vector<std::string> result;
+	size_t pos(src.find(sep));
+	size_t begin(0);
+	
+	while (pos != std::string::npos)
+	{
+		result.push_back(src.substr(begin, pos - begin));
+		begin = pos + sep.size();
+		pos = src.find(sep, begin);
+	}
+	result.push_back(src.substr(begin));
 	return (result);
 }
