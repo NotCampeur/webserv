@@ -51,5 +51,6 @@ YOLO
 
 "
 * When connecting through https the server segfault.  
+* When a wrong path is given to the CGI and we cut off the server there are leaks.  
 ## :writing_hand: Change log :writing_hand:  
 * JsonParser branch has been merged.
