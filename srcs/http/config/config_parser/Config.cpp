@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/15 18:18:05 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/15 18:38:03 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,6 +260,8 @@ Config::load_location_redirection(IJsonValue * location_redirection, LocationCon
 		throw Exception("Config file error : redirection's path must be a \"string\"");
 	int			redirection_code(0);
 	std::istringstream(redirection->value_begin()->first) >> redirection_code;
+	if (redirection_code < 300 || redirection_code > 310 || redirection_code == 309)
+		throw Exception("Config file error : redirection's code must be a number between 300 and 310 except 309");
 	location.set_redirection(redirection_code, redirection_path->value());
 }
 
