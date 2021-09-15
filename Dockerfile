@@ -11,9 +11,18 @@ RUN apt-get install -y php php-cgi php-mysql
 RUN apt-get install -y python3
 
 RUN apt-get install -y unzip
-RUN cd /root && \
-	wget https://wordpress.org/latest.zip && \
+
+WORKDIR /root
+
+RUN	wget https://wordpress.org/latest.zip && \
 	unzip latest.zip
+
+WORKDIR /root/wordpress
+
+RUN mv wp-config-sample.php wp-config.php && \
+	sed -i "s/database_name_here/wordpress/" wp-config.php && \
+	sed -i "s/username_here/root/" wp-config.php && \
+	sed -i "s/password_here/password/" wp-config.php
 
 RUN apt-get install -y mysql-server-5.7 mysql-client-5.7
 RUN service mysql start; \

@@ -214,6 +214,8 @@ CgiHandler::set_environment(void)
 	{
 		_env.add_http_env_var("COOKIE", cookies[i]);
 	}
+	// PHP CGI specific
+	_env.add_cgi_env_var("REDIRECT_STATUS", "1");
 }
 
 void

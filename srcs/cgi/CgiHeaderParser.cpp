@@ -50,7 +50,7 @@ CgiHeaderParser::parse_char(char c)
 		{
 			if (std::iscntrl(c))
 			{
-				Logger(LOG_FILE, error_type, error_lvl) << "Cgi header parsing: control character found in cgi header field name \"" << _field_name << "\"";
+				Logger(LOG_FILE, error_type, error_lvl) << "Cgi header parsing: control character found in cgi header field name with value: " << int(c) << '\n';
 				throw HttpException(StatusCodes::BAD_REQUEST_400);
 			}
 			else if(c == ':')

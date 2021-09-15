@@ -10,10 +10,7 @@ CgiParser::~CgiParser(void) {}
 
 void
 CgiParser::parse(char * buf, size_t len)
-{	
-	// write(2, "Cgi read buf content:\n", 22);
-	// write(2, buf, len);
-	// write(2, "\n", 1);
+{
 	for (size_t i = 0; i < len; i++)
 	{
 		char c = buf[i];

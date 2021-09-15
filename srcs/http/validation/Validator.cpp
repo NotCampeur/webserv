@@ -282,5 +282,23 @@ Validator::find_location_config(Request & req, std::string & path)
 		}
 		remove_last_path_elem(req_path);
 	}
+	if (path.size() > 1 && path[path.size() - 1] == '/') //If path is just one '/', no need to try to match it as an empty string
+	{
+		req_path = path;
+		req_path.erase(--req_path.end());
+		while (!path.empty())
+		{
+			for (size_t i = 0; i < server_locations.size(); i++)
+			{
+				if (server_locations[i]->path() == req_path)
+				{
+					std::cerr << "Location found: " << server_locations[i]->path() << '\n';
+					return *server_locations[i];
+					// *server_conf = *server_routes[i];
+				}
+			}
+			remove_last_path_elem(req_path);
+		}
+	}
 	throw HttpException(StatusCodes::NOT_FOUND_404);
 }
