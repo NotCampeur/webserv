@@ -126,8 +126,15 @@ ServerConfig::add_location(LocationConfig * location)
 		delete location;
 		throw Exception("Config file error : Location must have a path");
 	}
-	else
-		_locations.push_back(location);
+	for (size_t i(0); i < _locations.size(); ++i)
+	{
+		if (_locations[i]->path() == location->path())
+		{
+			delete location;
+			throw Exception("Config file error : Multiple location for the same path");
+		}
+	}
+	_locations.push_back(location);
 }
 
 const std::string *
