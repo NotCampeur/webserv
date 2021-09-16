@@ -76,7 +76,7 @@ class Response
 		void	add_default_headers(void);
 		void	set_date(std::string & date);
 		void	set_resp_metadata(void);
-		void	set_status_line(std::string & meta);
+		std::string	get_status_line(void);
 		void	add_payload_crlf(void);
 		void	insert_chunk_size(size_t len);
 		void	add_last_chunk(void);

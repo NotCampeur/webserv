@@ -161,6 +161,7 @@ InitiationDispatcher::add_cgi_handle(Request & req, Response & resp, int open_pi
 void
 InitiationDispatcher::remove_handle(int fd)
 {
+	Logger(LOG_FILE, basic_type, debug_lvl) << "Call to remove FD: " << fd;
 	_event_handler_table->remove(fd);
 	Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << fd << " removed";
 }

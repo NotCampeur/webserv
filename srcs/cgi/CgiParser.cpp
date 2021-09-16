@@ -14,49 +14,55 @@ CgiParser::parse(char * buf, size_t len)
 	for (size_t i = 0; i < len; i++)
 	{
 		char c = buf[i];
-
 		switch (_request_state)
 		{
 			case HEADERS :
 			{
+				if (c == '\r')
+					break ; //According to CGI doc, new line (NL) should only be \n (no \r), but apparently some CGI's use \r\n as NL
 				if (c == '\n' && _header_parser.get_header_name().empty()) // There are no more headers, move to Final NL
 				{
-					_request_state = FINAL_NL;
-					break ;
-				}
-				try {
-					if (_header_parser.parse_char(c))
+					std::cerr << "\n### PARSED CGI REQUEST HEADERS###\n";
+					for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
 					{
-						add_header();
+						std::cerr << "Header name: " << (*it).first << '\t'
+						<< "Header value: " << (*it).second << '\n';
 					}
-					break ;
+					try {
+						if (set_resp_params())
+						{
+							_request_state = BODY; //No break here --> we fall directly in case BODY
+							break ;
+						}
+						else
+						{
+							_resp.ready_to_send();
+							_resp.complete();
+						}
+					}
+					catch (const HttpException & e)
+					{
+						throw e;
+					}
 				}
-				catch(const HttpException & e)
+				else
 				{
-					throw e;
-				}
-			}
-			case FINAL_NL :
-			{
-				std::cerr << "\n### PARSED CGI REQUEST HEADERS###\n";
-				for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
-				{
-					std::cerr << "Header name: " << (*it).first << '\t'
-					<< "Header value: " << (*it).second << '\n';
-				}
-				try {
-					set_resp_params();
-					_request_state = BODY; //No break here --> we fall directly in case BODY
-				}
-				catch (const HttpException & e)
-				{
-					throw e;
+					try {
+						if (_header_parser.parse_char(c))
+						{
+							add_header();
+						}
+						break ;
+					}
+					catch(const HttpException & e)
+					{
+						throw e;
+					}
 				}
 			}
 			case BODY :
 			{
 				_resp.set_payload(&buf[i], len - i);
-				// std::cerr << "Payload set with:\n" << std::string(&buf[i], len - i) << '\n';
 				_resp.ready_to_send() = true;
 				return ;
 			}
@@ -86,7 +92,7 @@ CgiParser::reset(void)
 
 // Assumes all header names are lowercase (responsibility of HeaderParser)
 // Returns true if the response has a body, false otherwise
-void
+bool
 CgiParser::set_resp_params(void)
 {
 	if (_headers.find("content-type") == _headers.end())
@@ -113,6 +119,7 @@ CgiParser::set_resp_params(void)
 		
 		if (status_code != 200)
 		{
+			// TBU for proper handling of redirections
 			Logger(LOG_FILE, error_type, error_lvl) << "Cgi status code: " << status;
 			throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 		}
@@ -135,4 +142,5 @@ CgiParser::set_resp_params(void)
 	{
 		_resp.add_header(it->first, it->second);
 	}
+	return true;
 }

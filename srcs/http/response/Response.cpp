@@ -10,7 +10,6 @@ _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
 _handler_fd(-1),
-// _config(),
 _req(req),
 _error_manager(*this),
 _path_is_dir(false),
@@ -27,7 +26,6 @@ _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
 _handler_fd(src._handler_fd),
-// _config(src._config),
 _req(src._req),
 _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir),
@@ -99,11 +97,11 @@ Response::set_payload(const char *buf, size_t len)
 		_payload.insert(_payload.begin(), buf, buf + len);
 	}
 }
+
 // Return -1 if an error occured, 0 if some data was sent but tje entire payload content, 1 if the entire payload was sent successfully
 int
 Response::send_payload(int fd)
 {
-	// signal(SIGPIPE, SIG_IGN);
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();
@@ -113,32 +111,34 @@ Response::send_payload(int fd)
 	{
 		add_last_chunk();
 	}
+	if (_payload.size() != 0)
+	{
 	#ifdef MSG_NOSIGNAL
 		ssize_t ret = send(fd, &_payload[0], _payload.size(), MSG_NOSIGNAL);
 	#else
 		signal(SIGPIPE, SIG_IGN);
 		ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
+		signal(SIGPIPE, SIG_DFL);
 	#endif
-
-	if (ret < 0)
-	{
-		return -1;
+		if (ret < 0)
+		{
+			return -1;
+		}
+		if (static_cast<size_t>(ret) < _payload.size())
+		{
+			Logger(LOG_FILE, error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
+			payload_erase(ret);
+			return 0;
+		}
+		else
+		{
+			_payload.clear();
+			_ready_to_send = false;
+			return 1;
+		}
 	}
-	if (static_cast<size_t>(ret) < _payload.size())
-	{
-		Logger(LOG_FILE, error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
-		payload_erase(ret);
-		return 0;
-	}
-	else
-	{
-		_payload.clear();
-		_ready_to_send = false;
-		return 1;
-	}
-	// std::cerr << "Resp content:\n" << std::string(&_payload[0], _payload.size()) << '\n';
-	// return send_output;
-
+	Logger(LOG_FILE, error_type, error_lvl) << "Send(): Nothing to send, payload is empty";
+	return 1;
 }
 
 bool
@@ -150,10 +150,9 @@ Response::metadata_sent(void) const
 void
 Response::set_resp_metadata(void)
 {
-	std::string meta;
-	set_status_line(meta);
+	std::string meta = get_status_line();
 	add_default_headers();
-	
+
 	for (size_t i = 0; i < _headers.size(); i++)
 	{
 		meta += _headers[i].first;
@@ -165,13 +164,15 @@ Response::set_resp_metadata(void)
 	_payload.insert(_payload.begin(), meta.c_str(), meta.c_str() + meta.size());
 }
 
-void
-Response::set_status_line(std::string & meta)
+std::string
+Response::get_status_line(void)
 {
+	std::string meta;
 	meta += _version;
 	meta += ' ';
 	meta += StatusCodes::get_code_msg_from_index(_code);
 	meta += "\r\n";
+	return meta;
 }
 
 void
@@ -314,7 +315,7 @@ void
 Response::insert_chunk_size(size_t len)
 {
 	if (len == 0)
-	{		
+	{
 		_payload.insert(_payload.begin(), '0');
 	}
 	else

@@ -14,7 +14,6 @@ class CgiParser {
 
 		enum request_parsing_state {
 			HEADERS,
-			FINAL_NL,
 			BODY,
 			DONE
 		};
@@ -39,7 +38,8 @@ class CgiParser {
 		void    reset(void);
 		void	parse_char(char c);
 		void	add_header(void);
-		void	set_resp_params(void);
+		// Return true if a body is expected
+		bool	set_resp_params(void);
 };
 
 #endif

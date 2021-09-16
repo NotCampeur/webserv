@@ -269,10 +269,12 @@ Validator::find_location_config(Request & req, std::string & path)
 {
 	std::string req_path = path;
 	const std::vector<LocationConfig *> & server_locations = req.server_config().locations();//		server_conf->locations(); //Consider using public typedef inside RouteConfig
-	while (!path.empty())
+	while (!req_path.empty())
 	{
 		for (size_t i = 0; i < server_locations.size(); i++)
 		{
+			if (req_path == "/")
+				break ; //Need to go through second search 
 			if (server_locations[i]->path() == req_path)
 			{
 				std::cerr << "Location found: " << server_locations[i]->path() << '\n';
@@ -282,19 +284,22 @@ Validator::find_location_config(Request & req, std::string & path)
 		}
 		remove_last_path_elem(req_path);
 	}
-	if (path.size() > 1 && path[path.size() - 1] == '/') //If path is just one '/', no need to try to match it as an empty string
+	if (path.size() > 1 && path[path.size() - 1] != '/') //If path is just one '/', no need to try to match it as an empty string
 	{
 		req_path = path;
-		req_path.erase(--req_path.end());
-		while (!path.empty())
+		req_path += '/';
+		while (!req_path.empty())
 		{
 			for (size_t i = 0; i < server_locations.size(); i++)
 			{
 				if (server_locations[i]->path() == req_path)
 				{
+					if (req_path != "/")
+					{
+						throw HttpException(StatusCodes::MOVED_PERMANENTLY_301, req_path);
+					}
 					std::cerr << "Location found: " << server_locations[i]->path() << '\n';
 					return *server_locations[i];
-					// *server_conf = *server_routes[i];
 				}
 			}
 			remove_last_path_elem(req_path);
