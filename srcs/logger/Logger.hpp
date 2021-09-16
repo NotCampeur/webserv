@@ -17,6 +17,7 @@ typedef enum log_type
 // This enum store the flags about the importance restriction,
 typedef enum log_importance_level
 {
+	none_lvl = 0x000,
 	error_lvl = 0x001,
 	major_lvl = 0x002,
 	minor_lvl = 0x004,
