@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+         #
+#    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/09/07 05:57:03 by ldutriez         ###   ########.fr        #
+#    Updated: 2021/09/16 23:38:27 by notcampeur       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ LIB = ft
 
 SRC	=	main.cpp \
 		Logger.cpp \
+		Arguments.cpp \
 		\
 		sigint_handler.cpp \
 		InitiationDispatcher.cpp Demultiplexer.cpp HandlerTable.cpp \

@@ -55,7 +55,7 @@ ClientHandler::readable(void)
 			_timer.reset();
 		}
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
+	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte read): " << read_buff;
 }
 
 void
@@ -122,7 +122,7 @@ ClientHandler::handle_request(void)
 	}
 	catch (HttpException & e)
 	{
-		Logger(LOG_FILE, basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_code_msg_from_index(e.get_code_index());
+		Logger(Arguments::get_instance().log_file(), basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_code_msg_from_index(e.get_code_index());
 		
 		if (StatusCodes::get_code_value(e.get_code_index()) >= 400)
 		{
@@ -136,7 +136,7 @@ ClientHandler::handle_request(void)
 	}
 	catch (SystemException & e)
 	{
-		Logger(LOG_FILE, error_type, error_lvl) << e.what() << " : " << _client.getip();
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what() << " : " << _client.getip();
 		handle_http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
 }

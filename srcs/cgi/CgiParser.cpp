@@ -65,7 +65,7 @@ CgiParser::parse(char * buf, size_t len)
 			}
 			default :
 			{
-				Logger(LOG_FILE, error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
+				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
 				return ;
 			}
 		}
@@ -95,7 +95,7 @@ CgiParser::set_resp_params(void)
 	if (_headers.find("content-type") == _headers.end())
 	{
 		// handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500); // But most likely that's a CGI error..
-		Logger(LOG_FILE, error_type, error_lvl) << "Missing 'content-type' header in cgi response";
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Missing 'content-type' header in cgi response";
 		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
 	else
@@ -116,7 +116,7 @@ CgiParser::set_resp_params(void)
 		
 		if (status_code != 200)
 		{
-			Logger(LOG_FILE, error_type, error_lvl) << "Cgi status code: " << status;
+			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Cgi status code: " << status;
 			throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 		}
 		_resp.set_http_code(StatusCodes::OK_200);

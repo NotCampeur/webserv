@@ -39,7 +39,7 @@ InitiationDispatcher::handle_events(void)
 		}
 		catch (const SystemException & e)
 		{
-			Logger(LOG_FILE, error_type, error_lvl) << e.what();
+			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
 			if (errno != EAGAIN)
 				break;
 			else
@@ -49,7 +49,7 @@ InitiationDispatcher::handle_events(void)
 		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 		for (;it != ite; it++)
 		{
-			Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
+			Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
 			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
 			{					
 				continue;
@@ -57,17 +57,17 @@ InitiationDispatcher::handle_events(void)
 			try {
 				if (POLLIN == (POLLIN & it->revents))	// Important to check POLLIN before POLLHUP: in case of the CGI, POLLHUP happens when cgi process is terminated, but there might still be content to read in the pipe.
 				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
+					Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
 					_event_handler_table->get(it->fd)->readable();
 				}
 				else if (((POLLHUP | POLLERR) & it->revents) > 0)
 				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "Client socket disconnected";
+					Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Client socket disconnected";
 					remove_handle(it->fd);
 				}
 				else if (POLLOUT == (POLLOUT & it->revents))
 				{
-					Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
+					Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 					_event_handler_table->get(it->fd)->writable();
 					// it->events = POLLIN;
 				}
@@ -75,7 +75,7 @@ InitiationDispatcher::handle_events(void)
 				{
 					if (_event_handler_table->get(it->fd)->is_timeout())	//Only client handlers can timeout for now
 					{
-						Logger(LOG_FILE, basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
+						Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
 						remove_handle(it->fd);
 					}
 				}
@@ -83,30 +83,30 @@ InitiationDispatcher::handle_events(void)
 			catch (const ClientException & e)
 			{
 				remove_handle(e.getfd());
-				Logger(LOG_FILE, basic_type, error_lvl) << e.what() << ' ' << it->fd;
+				Logger(Arguments::get_instance().log_file(), basic_type, error_lvl) << e.what() << ' ' << it->fd;
 			}
 			catch (const ClientSystemException & e)
 			{
 				remove_handle(e.getfd());
-				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what() << ' ' << it->fd;
 			}
 			catch (const ServerSystemException & e)
 			{
-				Logger(LOG_FILE, error_type, error_lvl) << e.what() << ' ' << it->fd;
+				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what() << ' ' << it->fd;
 				return ;
 			}
 			catch (const Exception & e)
 			{
-				Logger(LOG_FILE, basic_type, debug_lvl) << e.what() << ' ' << it->fd;
+				Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << e.what() << ' ' << it->fd;
 			}
 			catch (const SystemException & e)
 			{
 				remove_handle(it->fd);
-				Logger(LOG_FILE, error_type, error_lvl) << e.what();
+				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
 			}
 		}
 	}
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Leaving main loop handle_events";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Leaving main loop handle_events";
 }
 
 void
@@ -162,5 +162,5 @@ void
 InitiationDispatcher::remove_handle(int fd)
 {
 	_event_handler_table->remove(fd);
-	Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << fd << " removed";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "FD " << fd << " removed";
 }

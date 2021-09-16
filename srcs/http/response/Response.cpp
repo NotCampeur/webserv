@@ -127,7 +127,7 @@ Response::send_payload(int fd)
 	if (static_cast<size_t>(ret) < _payload.size())
 	{
 		payload_erase(ret);
-		Logger(LOG_FILE, error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
 		return 0;
 	}
 	else

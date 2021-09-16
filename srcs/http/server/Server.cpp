@@ -63,7 +63,7 @@ Server::create_socket(int domain, int type, int protocol)
 	{
 		throw SystemException("Unable to create server socket");
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
+	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "The server socket's fd is " << _sockfd;
 }
 
 void
@@ -74,7 +74,7 @@ Server::make_nonblocking()
 	{
 		throw SystemException("Cannot set nonblocking flag on server socket");
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
+	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "fcntl call to set nonblocking flag returned " << ret;
 }
 
 
@@ -87,7 +87,7 @@ Server::set_sock_opt()
 	{
 		throw SystemException("Unable to set socket option");
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
+	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "SO_REUSEADDR flag set on socket";
 }
 
 void
@@ -109,7 +109,7 @@ Server::name_serv_socket()
 	{
 		throw SystemException("Unable to name the server socket");
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
+	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "Server socket " << _sockfd << " is bind";
 }
 
 void
@@ -122,7 +122,7 @@ Server::set_listener()
 	{
 		throw SystemException("Unable to set socket as listener");
 	}
-	Logger(LOG_FILE, basic_type, minor_lvl) << "The server socket is listening on " << getport();
+	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "The server socket is listening on " << getport();
 }
 
 int

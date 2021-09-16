@@ -41,7 +41,7 @@ class Logger
 	public:
 		typedef std::map<std::string, std::ofstream *>	map_type;
 
-		Logger(std::string path = LOG_FILE, log_type type = basic_type, log_importance_level importance = major_lvl);
+		Logger(std::string path = Arguments::get_instance().log_file(), log_type type = basic_type, log_importance_level importance = major_lvl);
 		~Logger();
 
 		// This function will set the accepted level.

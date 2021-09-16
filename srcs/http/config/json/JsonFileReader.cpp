@@ -6,22 +6,20 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/15 20:42:11 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/16 22:57:52 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "JsonFileReader.hpp"
+#include "Arguments.hpp"
 
-JsonFileReader::JsonFileReader(char * path)
+JsonFileReader::JsonFileReader(const std::string & path)
 : _file_data()
 {
-	if (path != NULL)
-		get_data(path);
-	else
-		get_data("ressources/config/webserv.conf");
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Raw data read from " << path << " :\n" << _file_data;
+	get_data(path.c_str());
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Raw data read from " << path << " :\n" << _file_data;
 	raw_parsing();
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Primary parsing is done.";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Primary parsing is done.";
 }
 
 JsonFileReader::~JsonFileReader()
@@ -47,7 +45,7 @@ JsonFileReader::get_string_value(std::string::iterator & pos, std::pair<std::str
 	size_t	end = _file_data.find('"', start + 1);
 	
 	data.second = new JsonString(data.first ,_file_data.substr(start + 1, end - 1 - start));
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Key \"" << data.first << "\" Value -> " << _file_data.substr(start + 1, end - 1 - start);
 	pos = _file_data.begin() + end;
 	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
 	try	{
@@ -71,7 +69,7 @@ JsonFileReader::get_array_value(std::pair<std::string, IJsonValue *> &data,
 {
 	data.first = current_value.top()->key();
 	data.second = current_value.top();
-	Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " array end";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << data.first << " array end";
 	current_value.pop();
 	JsonObject	*obj = dynamic_cast<JsonObject *>(current_value.top());
 	try	{
@@ -96,7 +94,7 @@ JsonFileReader::get_object_value(std::string::iterator & pos, std::string::itera
 {
 	data.first = current_value.top()->key();
 	data.second = current_value.top();
-	Logger(LOG_FILE, basic_type, debug_lvl) << data.first << " object end";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << data.first << " object end";
 	if (current_value.size() == 1)
 	{
 		if (end - pos > 1)
@@ -135,7 +133,7 @@ JsonFileReader::json_file_reader_exit(const std::string & error_msg
 		current_value.pop();
 		delete value;
 	}
-	Logger(LOG_FILE, error_type, error_lvl) << "Config file is not well formatted : " << error_msg;
+	Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Config file is not well formatted : " << error_msg;
 	Logger::quit();
 	exit(EXIT_FAILURE);
 }
@@ -214,11 +212,11 @@ void
 JsonFileReader::raw_parsing()
 {
 	remove_whitespaces();
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Data without white spaces :\n" << _file_data;
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Data without white spaces :\n" << _file_data;
 	check_scopes();
-	Logger(LOG_FILE, basic_type, debug_lvl) << "scopes are well closed";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "scopes are well closed";
 	check_tokens();
-	Logger(LOG_FILE, basic_type, debug_lvl) << "File is correctly formatted";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "File is correctly formatted";
 }
 
 void
@@ -350,14 +348,14 @@ JsonFileReader::check_number_of_scopes()
 	close_s = std::count(tmp_data.begin(), tmp_data.end(), '}');
 	if (open_s != close_s)
 	{
-		Logger(LOG_FILE, error_type, error_lvl) << "opened \'{\' : " << open_s << " closed \'}\' : " << close_s;
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "opened \'{\' : " << open_s << " closed \'}\' : " << close_s;
 		throw Exception("Missing curly bracket in the config");
 	}
 	open_s = std::count(tmp_data.begin(), tmp_data.end(), '[');
 	close_s = std::count(tmp_data.begin(), tmp_data.end(), ']');
 	if (open_s != close_s)
 	{
-		Logger(LOG_FILE, error_type, error_lvl) << "opened \'[\' : " << open_s << " closed \']\' : " << close_s;
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "opened \'[\' : " << open_s << " closed \']\' : " << close_s;
 		throw Exception("Missing bracket in the config");
 	}
 }

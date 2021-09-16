@@ -68,7 +68,7 @@ class JsonFileReader
 									, std::stack<IJsonValue *> & current_value);
 	public:
 		//	Load a file given by the path to create a JsonFileReader which get the raw data.
-		JsonFileReader(char * path);
+		JsonFileReader(const std::string & path);
 		~JsonFileReader();
 
 		//	Return the json file formated into a JsonObject.

@@ -28,7 +28,7 @@ ReadHandler::readable(void)
 
 	if (len < 0)
 	{
-		Logger(LOG_FILE, error_type, error_lvl) << "Unable to read from file: " << _response.get_path() << " : " << strerror(errno);
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Unable to read from file: " << _response.get_path() << " : " << strerror(errno);
 		manage_error();
 	}
 	else if (len == 0 )
@@ -37,7 +37,7 @@ ReadHandler::readable(void)
 			response_complete();
 		else
 		{
-			Logger(LOG_FILE, error_type, error_lvl) << "Read of size 0 from file: " << _response.get_path();
+			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Read of size 0 from file: " << _response.get_path();
 			manage_error();
 		}
 	}

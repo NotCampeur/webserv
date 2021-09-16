@@ -14,7 +14,7 @@ load_semaphore(void)
 std::string				Logger::_path = std::string();
 log_type				Logger::_type = log_type();
 Logger::map_type		Logger::_files = Logger::map_type();
-log_importance_level	Logger::_accepted_importance = log_importance_level(all_lvl);
+log_importance_level	Logger::_accepted_importance = log_importance_level(error_lvl | major_lvl);
 sem_t *					Logger::_multi_process_lock = load_semaphore();
 pid_t					Logger::_process_id = getpid();
 

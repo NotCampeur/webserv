@@ -35,7 +35,7 @@ void
 HandlerTable::add(int fd, IEventHandler & event_handler)
 {
 	_handler_table->insert(std::pair<int, IEventHandler *>(fd, &event_handler));
-	Logger(LOG_FILE, basic_type, debug_lvl) << "fd: " << fd << " has been added to the handler table";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "fd: " << fd << " has been added to the handler table";
 }
 
 void
@@ -44,7 +44,7 @@ HandlerTable::remove(int fd)
 	if (_handler_table->find(fd) != _handler_table->end())
 		delete _handler_table->find(fd)->second;
 	_handler_table->erase(fd);
-	Logger(LOG_FILE, basic_type, debug_lvl) << "fd: " << fd << " has been removed from the handler table";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "fd: " << fd << " has been removed from the handler table";
 }
 
 IEventHandler *

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webclient.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:32:47 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/24 13:53:43 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/16 23:11:07 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 # include <vector>
 # include <map>
 
-# define LOG_FILE "webclient.log"
+# define CLIENT_LOG_FILE "webclient.log"
 # define PORT 8080
 # include "Logger.hpp"
 

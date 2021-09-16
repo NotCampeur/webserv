@@ -114,12 +114,12 @@ Request::set_config(RequestConfig * config)
 // {
 // 	if (_config == NULL)
 // 	{
-// 		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config has been created";
+// 		Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Request config has been created";
 // 		_config = new RequestConfig();
 // 		*_config = server_config();
 // 	}
 // 	else
-// 		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config is already set";
+// 		Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Request config is already set";
 // }
 
 const ServerConfig &
@@ -133,7 +133,7 @@ Request::server_config(void) const
 	}
 	else
 	{
-		Logger(LOG_FILE, error_type, error_lvl) << "Host header file not found in Request::get_server_config()";
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Host header file not found in Request::get_server_config()";
 		host = "default";
 	}
 	if (_server_configs.find(host) != _server_configs.end())

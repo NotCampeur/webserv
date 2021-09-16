@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/08 21:01:56 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/07/13 18:01:35 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/16 22:49:08 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 JsonArray::JsonArray(std::string key)
 : _key(key), _value()
 {
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Begin of " << _key << " array";
+	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Begin of " << _key << " array";
 }
 
 JsonArray::JsonArray(const JsonArray & to_copy)

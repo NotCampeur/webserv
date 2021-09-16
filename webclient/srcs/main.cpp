@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:33:01 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/06/24 14:52:50 by ldutriez         ###   ########.fr       */
+/*   Updated: 2021/09/16 22:49:08 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int main(int ac, char *av[])
 	}
 	catch(const std::exception& e)
 	{
-		Logger(LOG_FILE, error_type, error_lvl) << e.what();
+		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
 	}
 	Logger::quit();
 	return 0;
