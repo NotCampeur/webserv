@@ -285,7 +285,12 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	reset();
 	set_http_code(code);
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + config().name() + ':' + config().port() + '/' + location;
+	std::string complete_location = "http://" + config().ip() + ':' + config().port(); //Update "ip" with "name", but need proper DNS setup
+	if (!location.empty() && location[0] != '/')
+	{
+		complete_location += '/';
+	}
+	complete_location += location;
 	std::cerr << complete_location << '\n';
 	add_header("Location", complete_location);
 	ready_to_send() = true;

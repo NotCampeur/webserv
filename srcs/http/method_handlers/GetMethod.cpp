@@ -22,8 +22,9 @@ GetMethod::handle(Request & req, Response & resp)
 	{
 		if (!resp.get_path().empty() && (resp.get_path()[resp.get_path().size() - 1]) != '/')
 		{
-			std::string new_path = resp.get_path() + '/';
-			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, new_path));
+			std::string redir_path(req.uri().path);
+			redir_path += '/';
+			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, redir_path));
 		}
 		else if (req.get_config()->is_autoindex_on() == false)
 		{

@@ -114,3 +114,17 @@ StatusCodes::get_code_value(status_index_t index)
 	};
 	return values[index];
 }
+
+StatusCodes::status_index_t
+StatusCodes::get_code_index_from_value(int val)
+{
+	for (int i = 0; i <= HTTP_VERSION_NOT_SUPPORTE_505; ++i)
+	{
+		if (get_code_value(static_cast<StatusCodes::status_index_t>(i)) == val)
+		{
+			return (static_cast<StatusCodes::status_index_t>(i));
+		}
+	}
+	Logger(LOG_FILE, error_type, error_lvl) << "Unexpected value passed to function get_code_index_from_value(): value is not an http code: " << val << " : function returned default OK_200 value";
+	return OK_200;
+}

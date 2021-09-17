@@ -73,7 +73,8 @@ Validator::set_full_path(Request & req, Response & resp, std::string & path)
 	std::string full_path = path;
 
 	full_path.erase(0, req.get_config()->location_path().size());
-	if (!root.empty() && *(root.end() - 1) != '/')  // First condition should always be true as default root is current workdir
+	if (!root.empty() && *(root.end() - 1) != '/'
+	&& !full_path.empty() && *full_path.begin() != '/')  // First condition should always be true as default root is current workdir
 	{
 		root += '/';
 	}
@@ -108,15 +109,14 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
-	// std::cerr << "CGI EXT:\n";
-	// std::map<std::string, std::string>::iterator it = req.get_config()->cgi().begin();
-	// for (; it != req.get_config()->cgi().end() ; ++it)
-	// {
-	// 	std::cerr << "Address: " << &it->first << " value: " << it->first << '\n';
-	// }
-	// std::cerr << "Req ext: " << Utils::get_file_ext(resp.get_path()) << '\n';
-	// it = req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path()));
-	// std::cerr << "Find: " << &it->first << " : " << it->first << '\n';
+
+	std::cerr << "REDIR defalt value: " << req.get_config()->redirection().first << '\n';
+
+	if (req.get_config()->redirection().first != 0)
+	{
+		throw HttpException(StatusCodes::get_code_index_from_value(req.get_config()->redirection().first), req.get_config()->redirection().second);
+	}
+
 	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
 		req.get_config()->cgi().end())
 	{
@@ -290,9 +290,11 @@ Validator::find_location_config(Request & req, std::string & path)
 /*
 	REDIRECTIONS HANDLING:
 
-	- Directory redirections (when missing trailing '/'
-	- Config redirections: when the config provides a redirection
-	- Cgi redirections: 
-
+	1 - Directory redirections (when missing trailing '/'
+		Need something clean, somthing that could be set or unset.. actually not, just redir to uri() + '/'
+	2 - Config redirections: when the config provides a redirection
+		Can only be done after LocationConfig is set, but should be done before checking if file exists
+	3 - Cgi redirections: 
+		Handle like 200: set status code and headers (use CGI output headers): how do I know if there's a body??? Cgi could return redir with body --> check status code, not all redir include body
 
 */
