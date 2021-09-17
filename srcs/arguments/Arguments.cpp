@@ -21,13 +21,14 @@ Arguments::~Arguments(void)
 void
 Arguments::print_help(void) const
 {
-	std::cout << "Usage: webserv [config_path] [--log_file=path] [--log_importance=importance] [--help]" << std::endl
-	<< std::endl << "config_path is the path to the configuration file." << std::endl
+	std::cout << "Usage: webserv [config_path] [--log_file=path] [--log_importance=importance] [--help]" << std::endl << std::endl
+	<< "	Webserv is a program that allow you to run a web server using the protocol HTTP/1.1" << std::endl << std::endl
+	<< "config_path is the path to the configuration file." << std::endl
 	<< "log_file is the path where the log will be written, the file will be created if not exist." << std::endl
 	<< "log_importance is the importance accepted for the log entry, it can be one of the following:" << std::endl
-	<< "  debug, minor, major, error" << std::endl
+	<< "  debug, minor, major, error, all (all can only be writen alone)" << std::endl
 	<< "note that you can combine importance level by doing this :" << std::endl
-	<< "  --log_importance=major|minor|error" << std::endl
+	<< "  --log_importance=major,minor,error" << std::endl
 	<< "By doing this, only the entry flagged as minor, major or error level will be print." << std::endl
 	<< "help will print this help message." << std::endl << std::endl
 	<< "The default value for theses optional params are :" << std::endl
@@ -74,7 +75,7 @@ Arguments::set_log_importance(const std::string importance_level)
 	}
 	_is_log_importance_set = true;
 
-	std::vector<std::string>	importance(ft_split(importance_level.substr(17), "|"));
+	std::vector<std::string>	importance(ft_split(importance_level.substr(17), ","));
 	log_importance_level		accepted_importance(none_lvl);
 
 	if (importance.size() == 1 && importance[0] == "all")
@@ -181,8 +182,15 @@ Arguments::apply(int argc, char* argv[])
 				return false;
 		}
 		else if (tmp.compare("--help") == 0)
+		{
 			if (set_help() == false)
 				return false;
+		}
+		else
+		{
+			std::cerr << "Error: Unknown argument: " << tmp << std::endl;
+			return false;
+		}
 	}
 	if (_is_help_set == true)
 		print_help();
