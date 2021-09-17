@@ -20,7 +20,7 @@ GetMethod::handle(Request & req, Response & resp)
 	}
 	if (resp.path_is_dir())
 	{
-		if (!resp.get_path().empty() && (resp.get_path()[resp.get_path().size() - 1]) != '/')
+		if (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1]) != '/')
 		{
 			std::string redir_path(req.uri().path);
 			redir_path += '/';
