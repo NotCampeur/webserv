@@ -24,8 +24,6 @@ _cgi_done(false),
 _parser(resp)
 {
 	std::cerr << "Pipe one fds: " << pipe_one[0] << " ; " << pipe_one[1] << '\n';
-	// _pipe_two_fd[0] = 0;
-	// _pipe_two_fd[1] = 0;
 	set_environment();
 	if (!open_pipe_two())
 	{

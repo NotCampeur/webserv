@@ -34,9 +34,16 @@ void
 Validator::set_request_config(Request & req, std::string & path)
 {
 	const ServerConfig & serv_conf = req.server_config();
-	const LocationConfig & loc_conf = find_location_config(req, path);
-	req.set_config(new RequestConfig(serv_conf, loc_conf));
-	Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config Set";
+	try {
+		const LocationConfig & loc_conf = find_location_config(req, path);
+		req.set_config(new RequestConfig(serv_conf, loc_conf));
+		Logger(LOG_FILE, basic_type, debug_lvl) << "Server Config Set";
+	}
+	catch (const HttpException & e)
+	{
+		req.set_config(new RequestConfig(serv_conf, *req.server_config().locations()[0])); // Setting the first location block, but actually it won't matter which Location Block is set as there'll only be a lookup on error_pages
+		throw (e);
+	}
 }
 
 void
@@ -65,24 +72,11 @@ Validator::set_full_path(Request & req, Response & resp, std::string & path)
 	std::string root = req.get_config()->root();
 	std::string full_path = path;
 
-	if (*full_path.begin() == '/')
-	{
-		full_path.erase(full_path.begin());
-	}
-
-	for (size_t i = 0; i < full_path.size(); ++i)
-	{
-		if (full_path[i] == '/')
-		{
-			full_path.erase(0, i + 1);
-			break ;
-		}
-	}
+	full_path.erase(0, req.get_config()->location_path().size());
 	if (!root.empty() && *(root.end() - 1) != '/')  // First condition should always be true as default root is current workdir
 	{
 		root += '/';
 	}
-
 	full_path.insert(0, root);
 
 	parse_hexa(full_path);
@@ -273,37 +267,32 @@ Validator::find_location_config(Request & req, std::string & path)
 	{
 		for (size_t i = 0; i < server_locations.size(); i++)
 		{
-			if (req_path == "/")
-				break ; //Need to go through second search 
 			if (server_locations[i]->path() == req_path)
 			{
 				std::cerr << "Location found: " << server_locations[i]->path() << '\n';
 				return *server_locations[i];
-				// *server_conf = *server_routes[i];
+			}
+			else if (req_path[req_path.size() - 1] != '/') //Handling of client path missing trailing '/'
+			{
+				if (server_locations[i]->path() == (req_path + '/'))
+				{
+					std::cerr << "Location found: " << server_locations[i]->path() << '\n';
+					return *server_locations[i];
+					// throw HttpException(StatusCodes::MOVED_PERMANENTLY_301, server_locations[i]->path());
+				}
 			}
 		}
 		remove_last_path_elem(req_path);
 	}
-	if (path.size() > 1 && path[path.size() - 1] != '/') //If path is just one '/', no need to try to match it as an empty string
-	{
-		req_path = path;
-		req_path += '/';
-		while (!req_path.empty())
-		{
-			for (size_t i = 0; i < server_locations.size(); i++)
-			{
-				if (server_locations[i]->path() == req_path)
-				{
-					if (req_path != "/")
-					{
-						throw HttpException(StatusCodes::MOVED_PERMANENTLY_301, req_path);
-					}
-					std::cerr << "Location found: " << server_locations[i]->path() << '\n';
-					return *server_locations[i];
-				}
-			}
-			remove_last_path_elem(req_path);
-		}
-	}
 	throw HttpException(StatusCodes::NOT_FOUND_404);
 }
+
+/*
+	REDIRECTIONS HANDLING:
+
+	- Directory redirections (when missing trailing '/'
+	- Config redirections: when the config provides a redirection
+	- Cgi redirections: 
+
+
+*/

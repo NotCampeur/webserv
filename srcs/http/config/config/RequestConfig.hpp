@@ -35,6 +35,7 @@ class RequestConfig
 		const std::string							&_default_file_dir;
 		const std::map<std::string, std::string>	&_cgi;
 		const std::string							&_upload_path;
+		const std::string							&_path;
 
 	public:
 		RequestConfig(const ServerConfig & serv_conf, const LocationConfig & loc_conf);
@@ -54,6 +55,7 @@ class RequestConfig
 		const std::string							& default_file_dir(void) const;
 		const std::map<std::string, std::string>	& cgi(void) const;
 		const std::string							& upload_path(void) const;
+		const std::string							& location_path(void) const;
 
 		//Operators
 		// RequestConfig	&operator=(const LocationConfig & to_assign);
