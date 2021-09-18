@@ -10,7 +10,12 @@ _config()
 			throw Exception("An ip must be given to the server");
 		if (config->port().empty() == true)
 			throw Exception("A port must be given to the server");
-		_config.insert(std::pair<std::string, const ServerConfig &>("default", *config));
+		
+		// TBU -> need all server configs
+		ServerConfig * default_config = new ServerConfig(*config);
+		std::string tmp("default");
+		default_config->set_name(tmp);
+		_config.insert(std::pair<std::string, const ServerConfig &>("default", *default_config));
 		_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
 		create_socket(com_domain, sock_type);
 		make_nonblocking();
@@ -31,7 +36,7 @@ _config()
 Server::~Server(void)
 {
 	close(_sockfd);
-	_config.erase(_config.find("default"));
+	// _config.erase(_config.find("default"));
 	Server::config_type::iterator	it = _config.begin();
 	for (; it != _config.end(); it++)
 	{

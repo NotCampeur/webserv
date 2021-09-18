@@ -4,7 +4,7 @@
 #include "Request.hpp"
 // #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-Response::Response(const Request & req) :
+Response::Response(const Request & req, const std::string & server_ip) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
@@ -14,7 +14,8 @@ _req(req),
 _error_manager(*this),
 _path_is_dir(false),
 _need_cgi(false),
-_chunked(false)
+_chunked(false),
+_server_ip(server_ip)
 {}
 
 Response::Response(Response const & src) :
@@ -30,7 +31,8 @@ _req(src._req),
 _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir),
 _need_cgi(src._need_cgi),
-_chunked(src._chunked)
+_chunked(src._chunked),
+_server_ip(src._server_ip)
 {}
 
 Response::~Response(void)
@@ -285,14 +287,25 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	reset();
 	set_http_code(code);
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + config().ip() + ':' + config().port(); //Update "ip" with "name", but need proper DNS setup
+	std::string redir_location = "http://";
+	if (_req.get_config()->name() == "default")
+	{
+		redir_location += _server_ip;
+	}
+	else
+	{
+		redir_location += _req.get_config()->name();
+	}
+	redir_location += ':';
+	redir_location += config().port(); //Update "ip" with "name", but need proper DNS setup
+	
 	if (!location.empty() && location[0] != '/')
 	{
-		complete_location += '/';
+		redir_location += '/';
 	}
-	complete_location += location;
-	std::cerr << complete_location << '\n';
-	add_header("Location", complete_location);
+	redir_location += location;
+	std::cerr << "Redir location: " << redir_location << '\n';
+	add_header("Location", redir_location);
 	ready_to_send() = true;
 	complete() = true;
 }

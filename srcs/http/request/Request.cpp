@@ -1,10 +1,11 @@
 #include "Request.hpp"
 
 Request::Request(const config_type & server_configs)
-: _complete(false)
-, _method(NULL)
-, _server_configs(server_configs)
-, _config(NULL)
+: _complete(false),
+_method(NULL),
+_server_configs(server_configs),
+_server_config_cache(NULL),
+_config(NULL)
 {}
 
 Request::Request(Request const & src)
@@ -83,6 +84,7 @@ Request::reset(void)
 	_uri.fragment.clear();
 	_headers.clear();
 	_body.clear();
+	_server_config_cache = NULL;
 }
 
 void
@@ -125,6 +127,9 @@ Request::set_config(RequestConfig * config)
 const ServerConfig &
 Request::server_config(void) const
 {
+	if (_server_config_cache != NULL)
+		return *_server_config_cache;
+
 	std::string host;
 
 	if (_headers.find("host") != _headers.end())	// Defensive: there should always be a host
@@ -137,9 +142,16 @@ Request::server_config(void) const
 		host = "default";
 	}
 	if (_server_configs.find(host) != _server_configs.end())
+	{
+		_server_config_cache = const_cast<ServerConfig *>(&_server_configs.find(host)->second);
 		return _server_configs.find(host)->second;
+	}
 	else
-		return _server_configs.find("default")->second; 
+	{
+		std::cerr << "DEFAULT CONFIG SET: NAME: " << _server_configs.find("default")->second.name() << '\n';
+		_server_config_cache = const_cast<ServerConfig *>(&_server_configs.find("default")->second);
+		return _server_configs.find("default")->second;
+	}
 }
 
 const Request::cookies_t &

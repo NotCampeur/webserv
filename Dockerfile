@@ -24,8 +24,16 @@ RUN mv wp-config-sample.php wp-config.php && \
 	sed -i "s/username_here/root/" wp-config.php && \
 	sed -i "s/password_here/password/" wp-config.php
 
+WORKDIR /
+
 RUN apt-get install -y mysql-server-5.7 mysql-client-5.7
-RUN service mysql start; \
+
+RUN sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+
+RUN mkdir /var/run/mysqld
+
+RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld && \
+	service mysql start; \
 	mysql -u root -e "CREATE DATABASE wordpress;"; \
 	mysql -u root -e "UPDATE mysql.user SET plugin='mysql_native_password';"; \
 	mysql -u root -e "UPDATE mysql.user SET host = '%' WHERE USER = 'root';"; \

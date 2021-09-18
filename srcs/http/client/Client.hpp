@@ -12,16 +12,17 @@ class Client
         const int				_sockfd;
         const struct sockaddr *	_address;
 		const std::string		_ip;
+		const std::string		_server_ip;
 		const config_type &		_server_config;
 
     public:
-        Client(int sockfd, struct sockaddr *address, const config_type & config);
+        Client(int sockfd, struct sockaddr *address, const std::string & server_ip, const config_type & config);
         ~Client(void);
-
 
         int     					getsockfd(void) const;
 		const std::string & 		getip(void) const;
 		const config_type &	get_server_config(void) const;
+		const std::string &	get_server_ip(void) const;
 
     private:
         Client(void);

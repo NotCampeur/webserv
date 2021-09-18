@@ -32,11 +32,11 @@ class Response
 		bool							_path_is_dir;
 		bool							_need_cgi;
 		bool							_chunked;
-		// get_config_t					_get_config;
+		const std::string				_server_ip;						
 
 	public:
     	// Response(const ServerConfig & (Request::*get_config)(void));
-		Response(const Request & req);
+		Response(const Request & req, const std::string & server_ip);
 		// Response(const config_type & config);
 		// Response(void);
     	Response(Response const & src);

@@ -26,6 +26,7 @@ class Request
 		std::map<std::string, std::string>	_headers;
 		std::vector<char>					_body;
 		const config_type &					_server_configs;
+		mutable ServerConfig *				_server_config_cache;
 		RequestConfig *						_config;
 		cookies_t							_cookies;
 

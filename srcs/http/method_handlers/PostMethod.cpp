@@ -20,6 +20,27 @@ PostMethod::handle(Request & req, Response & resp)
 	{
 		throw (HttpException(StatusCodes::FORBIDDEN_403));
 	}
+
+	if (!req.get_config()->upload_path().empty())
+	{
+		std::string upload_path = req.get_config()->upload_path();
+		if (*upload_path.rbegin() != '/')
+		{
+			upload_path += '/';
+		}
+
+		for (size_t i = resp.get_path().size(); i > 0; --i)
+		{
+			if (resp.get_path()[i - 1] == '/' || i == 1)
+			{
+				upload_path += resp.get_path().substr(i);
+				break ;
+			}
+		}
+		std::cerr << "UPLOAD Path: " << upload_path << '\n';
+		resp.set_path(upload_path);
+	}
+
 	resp.set_http_code(StatusCodes::CREATED_201);
 	
 	// set_content_location_header(resp);
