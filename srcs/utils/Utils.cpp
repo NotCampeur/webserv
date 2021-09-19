@@ -35,3 +35,19 @@ Utils::get_file_ext(const std::string & filename)
 	}
 	return file_ext;
 }
+
+std::string
+Utils::get_filename_from_path(const std::string & path)
+{
+	if (path.empty())
+		return std::string();
+
+	for (size_t i = path.size(); i > 0; --i)
+	{
+		if (path[i - 1] == '/' || i == 1)
+		{
+			return path.substr(i);
+		}
+	}
+	return path;
+}

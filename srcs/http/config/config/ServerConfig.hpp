@@ -40,7 +40,7 @@ class ServerConfig
 		const std::string & port(void) const;
 		void				set_port(std::string & port);
 
-		const std::map<int, std::string> &	error_page_path(void) const;
+		const std::map<int, std::string> &	get_all_error_pages(void) const;
 		const std::string *					error_page_path(int error) const;
 		void								add_error_page_path(int error, std::string & path);
 

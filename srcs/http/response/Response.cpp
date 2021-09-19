@@ -256,17 +256,17 @@ Response::set_path(const std::string & path)
 	_file_path = path;
 }
 
-const RequestConfig &
-Response::config(void) const
-{
-	return *_req.get_config();
-}
+// const RequestConfig &
+// Response::config(void) const
+// {
+// 	return *_req.get_config();
+// }
 
 void
 Response::http_error(StatusCodes::status_index_t error)
 {
 	reset();
-	_error_manager.handle(error);
+	_error_manager.handle(error, _req.server_config().error_page_path(error));
 }
 
 bool &
@@ -286,19 +286,20 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 {
 	reset();
 	set_http_code(code);
+
 	add_header("Content-Length", "0");
 	std::string redir_location = "http://";
-	if (_req.get_config()->name() == "default")
+	if (_req.server_config().name() == "default")
 	{
-		redir_location += _server_ip;
+		redir_location += _server_ip; //Need the actual IP of the server (when Config IP is set to 0.0.0.0, the actual server IP is something else)
 	}
 	else
 	{
-		redir_location += _req.get_config()->name();
+		redir_location += _req.server_config().name();
 	}
 	redir_location += ':';
-	redir_location += config().port(); //Update "ip" with "name", but need proper DNS setup
-	
+	redir_location += _req.server_config().port(); //Update "ip" with "name", but need proper DNS setup
+
 	if (!location.empty() && location[0] != '/')
 	{
 		redir_location += '/';

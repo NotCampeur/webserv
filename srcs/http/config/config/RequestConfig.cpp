@@ -16,7 +16,7 @@ RequestConfig::RequestConfig(const ServerConfig & serv_conf, const LocationConfi
 	_name(serv_conf.name()),
 	_ip(serv_conf.ip()),
 	_port(serv_conf.port()),
-	_error_pages(serv_conf.error_page_path()),
+	_error_pages(serv_conf.get_all_error_pages()),
 	_max_client_body_size(serv_conf.max_client_body_size()),
 
 	_accepted_method(loc_conf.accepted_method()),
