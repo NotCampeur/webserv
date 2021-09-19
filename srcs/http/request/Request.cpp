@@ -1,4 +1,5 @@
 #include "Request.hpp"
+#include "StatusCodes.hpp"
 
 Request::Request(const config_type & server_configs)
 : _complete(false),
@@ -111,19 +112,6 @@ Request::set_config(RequestConfig * config)
 	_config = config;
 }
 
-// void
-// Request::load_request_config()
-// {
-// 	if (_config == NULL)
-// 	{
-// 		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config has been created";
-// 		_config = new RequestConfig();
-// 		*_config = server_config();
-// 	}
-// 	else
-// 		Logger(LOG_FILE, basic_type, debug_lvl) << "Request config is already set";
-// }
-
 const ServerConfig &
 Request::server_config(void) const
 {
@@ -158,4 +146,18 @@ const Request::cookies_t &
 Request::get_cookies(void) const
 {
 	return _cookies;
+}
+
+//Useful to avoid setting server config cache variable when in need of error page before parsing of host header
+const std::string *
+Request::get_error_page(StatusCodes::status_index_t error) const
+{
+	if (_server_config_cache == NULL)
+	{
+		return _server_configs.find("default")->second.error_page_path(StatusCodes::get_code_value(error));
+	}
+	else
+	{
+		return _server_config_cache->error_page_path(StatusCodes::get_code_value(error));
+	}
 }

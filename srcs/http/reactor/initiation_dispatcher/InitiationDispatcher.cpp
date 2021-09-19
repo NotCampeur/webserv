@@ -49,7 +49,8 @@ InitiationDispatcher::handle_events(void)
 		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 		for (;it != ite; it++)
 		{
-			Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
+			if (it->revents != 0)
+				Logger(LOG_FILE, basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
 			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
 			{					
 				continue;

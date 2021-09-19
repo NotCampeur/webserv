@@ -1,5 +1,6 @@
 #include "CgiParser.hpp"
 #include "HttpException.hpp"
+#include "Utils.hpp"
 
 CgiParser::CgiParser(Response & resp) :
 _resp(resp),
@@ -115,32 +116,54 @@ CgiParser::set_resp_params(void)
 	else
 	{
 		std::string status = _headers.find("status")->second;
+		_headers.erase("status");
 		long int status_code = std::strtol(status.c_str(), NULL, 10);
-		
+		Logger(LOG_FILE, error_type, error_lvl) << "Cgi status code: " << status;
 		if (status_code != 200)
 		{
-			// TBU for proper handling of redirections
-			Logger(LOG_FILE, error_type, error_lvl) << "Cgi status code: " << status;
+			if (Utils::is_redirect(status_code))
+			{
+				handle_cgi_redirect(status_code);
+				return true;
+			}
 			throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 		}
 		_resp.set_http_code(StatusCodes::OK_200);
-		_headers.erase("status");
 	}
 
-	if (_headers.find("content-length") != _headers.end())
-	{
-		_resp.add_header("Content-Length", _headers.find("content-length")->second);
-		_headers.erase("content-length");	
-	}
-	else
+	if (_headers.find("content-length") == _headers.end())
 	{
 		_resp.send_chunks();
 	}
+	add_all_cgi_headers();
+	return true;
+}
 
-	//Add protocol specific headers that might have been returned by the cgi
+void
+CgiParser::handle_cgi_redirect(long int code)
+{
+	if (_headers.find("location") != _headers.end())
+	{
+		_resp.set_http_code(StatusCodes::get_code_index_from_value(code));
+		std::string location = _headers.find("location")->second;
+		if (location.find("http://") != std::string::npos)
+		{
+			location.erase(0, 7);
+			_headers.find("location")->second = location;
+		}
+		add_all_cgi_headers();
+	}
+	else
+	{
+		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
+	}
+}
+
+void
+CgiParser::add_all_cgi_headers(void)
+{
 	for (str_map::iterator it = _headers.begin(); it != _headers.end(); it++)
 	{
 		_resp.add_header(it->first, it->second);
 	}
-	return true;
 }

@@ -51,3 +51,11 @@ Utils::get_filename_from_path(const std::string & path)
 	}
 	return path;
 }
+
+bool
+Utils::is_redirect(int code)
+{
+	if (code >= 300 && code <= 307 && code != 304)
+		return true;
+	return false;
+}

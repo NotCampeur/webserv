@@ -17,7 +17,6 @@ class Response
 
 	private:
 		std::vector<char>				_payload;
-		const std::string				_ip;
 		const std::string				_version;
 		StatusCodes::status_index_t 	_code;
 		std::vector<header_t>			_headers;	//Using a vector to order headers properly (e.g. good practice to send date first)
@@ -32,18 +31,19 @@ class Response
 		bool							_path_is_dir;
 		bool							_need_cgi;
 		bool							_chunked;
-		const std::string				_server_ip;						
+		const std::string				_server_ip;
+		const std::string				_client_ip;				
 
 	public:
     	// Response(const ServerConfig & (Request::*get_config)(void));
-		Response(const Request & req, const std::string & server_ip);
+		Response(const Request & req, const std::string & server_ip, const std::string & client_ip);
 		// Response(const config_type & config);
 		// Response(void);
     	Response(Response const & src);
     	~Response(void);
 
 		Response &  operator=(Response const & src);
-		Response &  operator=(const RequestConfig & to_assign);
+		// Response &  operator=(const RequestConfig & to_assign);
 
 		const std::string &		get_ip(void);
 		bool &					complete(void);
@@ -71,7 +71,9 @@ class Response
 		void					http_error(StatusCodes::status_index_t error);
 		void					http_redirection(StatusCodes::status_index_t code, const std::string & location);
 		void					send_chunks(void);
-		
+		const std::string &		get_server_ip(void) const;
+		const std::string &		get_client_ip(void) const;
+
 	private:
 		void	add_default_headers(void);
 		void	set_date(std::string & date);

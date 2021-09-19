@@ -52,7 +52,7 @@ class Request
 		// void									load_request_config(void);
 		const cookies_t &						get_cookies(void) const;
 		const ServerConfig &					server_config(void) const;
-
+		const std::string *						get_error_page(StatusCodes::status_index_t error) const;
 
 	private:
 		Request(void);

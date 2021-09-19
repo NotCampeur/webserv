@@ -188,21 +188,24 @@ CgiHandler::set_environment(void)
 			}
 		}
 	}
+	
 	_env.add_cgi_env_var("GATEWAY_INTERFACE", "CGI/1.1");
-	_env.add_cgi_env_var("PATH_INFO", _response.get_path()); // /!\ NEEDS TO BE THE FULL PATH!!
+	_env.add_cgi_env_var("PATH_INFO", _response.get_path());
+	_env.add_cgi_env_var("PATH_INFO", _request.get_config()->location_path());
+
 	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path()); // /!\ This is most likely wrong, but at this point, I am not sure what this variable is about
 	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
-	_env.add_cgi_env_var("REMOTE_ADDR", _response.get_ip());
-	_env.add_cgi_env_var("REMOTE_HOST", "NULL"); //Clients are not expected to have a domain name
+	_env.add_cgi_env_var("REMOTE_ADDR",_response.get_client_ip());
+	_env.add_cgi_env_var("REMOTE_HOST", ""); //Clients are not expected to have a domain name
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	if (_request.get_config()->cgi().find(_file_ext) != _request.get_config()->cgi().end())
-	{
-		_env.add_cgi_env_var("SCRIPT_NAME", _request.get_config()->cgi().find(_file_ext)->second);
-	}
-	else
-	{
-		_env.add_cgi_env_var("SCRIPT_NAME", "NULL");
-	}
+	// if (_request.get_config()->cgi().find(_file_ext) != _request.get_config()->cgi().end())
+	// {
+	// 	_env.add_cgi_env_var("SCRIPT_NAME", _request.get_config()->cgi().find(_file_ext)->second);
+	// }
+	// else
+	// {
+		_env.add_cgi_env_var("SCRIPT_NAME", "");
+	// }
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");

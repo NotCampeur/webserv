@@ -109,9 +109,6 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
-
-	std::cerr << "REDIR defalt value: " << req.get_config()->redirection().first << '\n';
-
 	if (req.get_config()->redirection().first != 0)
 	{
 		throw HttpException(StatusCodes::get_code_index_from_value(req.get_config()->redirection().first), req.get_config()->redirection().second);

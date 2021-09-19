@@ -4,7 +4,7 @@
 #include "Request.hpp"
 // #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-Response::Response(const Request & req, const std::string & server_ip) :
+Response::Response(const Request & req, const std::string & server_ip, const std::string & client_ip) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
@@ -15,12 +15,12 @@ _error_manager(*this),
 _path_is_dir(false),
 _need_cgi(false),
 _chunked(false),
-_server_ip(server_ip)
+_server_ip(server_ip),
+_client_ip(client_ip)
 {}
 
 Response::Response(Response const & src) :
 _payload(src._payload),
-_ip(src._ip),
 _version(src._version),
 _headers(src._headers),
 _metadata_sent(src._metadata_sent),
@@ -32,7 +32,8 @@ _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir),
 _need_cgi(src._need_cgi),
 _chunked(src._chunked),
-_server_ip(src._server_ip)
+_server_ip(src._server_ip),
+_client_ip(src._client_ip)
 {}
 
 Response::~Response(void)
@@ -44,25 +45,18 @@ Response::~Response(void)
 	}
 }
 
-Response &
-Response::operator=(Response const & src)
-{
-	_payload = src._payload;
-	_headers = src._headers;
-	_metadata_sent = src._metadata_sent;
-	_ready_to_send = src._ready_to_send;
-	_complete = src._complete;
-	_handler_fd = src._handler_fd;
-	_path_is_dir = src._path_is_dir;
-	_need_cgi = src._need_cgi;
-	_chunked = src._chunked;
-    return (*this);
-}
-
 // Response &
-// Response::operator=(const RequestConfig & to_assign)
+// Response::operator=(Response const & src)
 // {
-// 	_config = to_assign;
+// 	_payload = src._payload;
+// 	_headers = src._headers;
+// 	_metadata_sent = src._metadata_sent;
+// 	_ready_to_send = src._ready_to_send;
+// 	_complete = src._complete;
+// 	_handler_fd = src._handler_fd;
+// 	_path_is_dir = src._path_is_dir;
+// 	_need_cgi = src._need_cgi;
+// 	_chunked = src._chunked;
 //     return (*this);
 // }
 
@@ -266,7 +260,7 @@ void
 Response::http_error(StatusCodes::status_index_t error)
 {
 	reset();
-	_error_manager.handle(error, _req.server_config().error_page_path(error));
+	_error_manager.handle(error, _req.get_error_page(error));
 }
 
 bool &
@@ -288,17 +282,18 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	set_http_code(code);
 
 	add_header("Content-Length", "0");
-	std::string redir_location = "http://";
-	if (_req.server_config().name() == "default")
-	{
-		redir_location += _server_ip; //Need the actual IP of the server (when Config IP is set to 0.0.0.0, the actual server IP is something else)
-	}
-	else
-	{
-		redir_location += _req.server_config().name();
-	}
-	redir_location += ':';
-	redir_location += _req.server_config().port(); //Update "ip" with "name", but need proper DNS setup
+	std::string redir_location;
+	// redir_location += "http://";
+	// if (_req.server_config().name() == "default")
+	// {
+	// 	redir_location += _server_ip; //Need the actual IP of the server (when Config IP is set to 0.0.0.0, the actual server IP is something else)
+	// }
+	// else
+	// {
+	// 	redir_location += _req.server_config().name();
+	// }
+	// redir_location += ':';
+	// redir_location += _req.server_config().port(); //Update "ip" with "name", but need proper DNS setup
 
 	if (!location.empty() && location[0] != '/')
 	{
@@ -309,12 +304,6 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	add_header("Location", redir_location);
 	ready_to_send() = true;
 	complete() = true;
-}
-
-const std::string &
-Response::get_ip(void)
-{
-	return _ip;
 }
 
 void
@@ -356,4 +345,16 @@ Response::add_last_chunk(void)
 	_payload.push_back('0');
 	add_payload_crlf();
 	add_payload_crlf();
+}
+
+const std::string &
+Response::get_server_ip(void) const
+{
+	return _server_ip;
+}
+
+const std::string &
+Response::get_client_ip(void) const
+{
+	return _client_ip;
 }
