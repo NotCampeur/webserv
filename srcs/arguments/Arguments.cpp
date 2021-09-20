@@ -6,6 +6,8 @@
 #include "libft_string.hpp"
 #include "Logger.hpp"
 #include "webserv_param.hpp"
+#include "Exception.hpp"
+#include <sys/stat.h>
 
 Arguments::Arguments(void)
 : Singleton()
@@ -26,8 +28,8 @@ Arguments::print_help(void) const
 	<< "        using the protocol HTTP/1.1\n\n"
 	<< "config_path is the path to the configuration file.\n\n"
 	<< "Options:\n"
-	<< "    --log_file=FILE\n"
-	<< "                path where the log will be written\n"
+	<< "    --log_file=FILE.log\n"
+	<< "                file where the log will be written\n"
 	<< "                    the file will be created if not exist.\n\n"
 	<< "    --log_importance=FLAGS\n"
 	<< "                Importance accepted for the log entry\n"
@@ -42,7 +44,7 @@ Arguments::print_help(void) const
 	<< "    The default value for theses optional params are :\n"
 	<< "                config_path = ./ressources/config/webserv.conf\n"
 	<< "                log_file = ./webserv.log\n"
-	<< "                log_importance = error | major\n\n"
+	<< "                log_importance = error or major\n\n"
 	<< "    The webserv will try to load the configuration file from the path given in the command line.\n"
 	<< "    If the file is not found, it will throw an error.\n"
 	<< "    If you don't know where to start check the default configuration file" << std::endl;
@@ -52,9 +54,21 @@ Arguments::print_help(void) const
 bool
 Arguments::set_config_path(const std::string& config_path)
 {
+	struct stat		sb;
+
 	if (_config_path.empty() == false)
 	{
 		std::cerr << "Error: Multiple configuration files" << std::endl;
+		return false;
+	}
+	if (config_path.find(".conf\0") != config_path.size() - 5)
+	{
+		std::cerr << "Error: Config file must be a .conf file" << std::endl;
+		return false;
+	}
+	if (stat(config_path.c_str(), &sb) != 0 || S_ISREG(sb.st_mode) == false)
+	{
+		std::cerr << "Error: Config File must be an existing file" << std::endl;
 		return false;
 	}
 	_config_path = config_path;
@@ -64,12 +78,24 @@ Arguments::set_config_path(const std::string& config_path)
 bool
 Arguments::set_log_file(const std::string& log_file)
 {
+	struct stat		sb;
+	
 	if (_log_file.empty() == false)
 	{
 		std::cerr << "Error: Multiple log files" << std::endl;
 		return false;
 	}
 	_log_file = log_file.substr(11);
+	if (_log_file.find(".log\0") != _log_file.size() - 4)
+	{
+		std::cerr << "Error: Log file must be a .log file" << std::endl;
+		return false;
+	}
+	if (stat(_log_file.c_str(), &sb) == 0 && S_ISREG(sb.st_mode) == false)
+	{
+		std::cerr << "Error: Log file is not a regular one" << std::endl;
+		return false;
+	}
 	return true;
 }
 

@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   JsonFileReader.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
+/*   By: ldutriez <ldutriez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/16 22:57:52 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/20 15:12:54 by ldutriez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "JsonFileReader.hpp"
 #include "Arguments.hpp"
+#include <sys/stat.h>
 
 JsonFileReader::JsonFileReader(const std::string & path)
 : _file_data()
@@ -193,13 +194,7 @@ JsonFileReader::get_data(const char *path)
 	std::ifstream	file;
 	std::string		tmp;
 
-	tmp = path;
-	if (tmp.find(".conf\0") != tmp.size() - 5)
-		throw Exception("Config file must be a .conf file");
-	tmp.clear();
 	file.open(path);
-	if (file.is_open() == false)
-		throw SystemException("Can't open the config file");
 	while (std::getline(file, tmp))
 	{
 		_file_data += tmp;
