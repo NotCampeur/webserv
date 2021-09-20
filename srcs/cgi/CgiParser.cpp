@@ -145,12 +145,12 @@ CgiParser::handle_cgi_redirect(long int code)
 	if (_headers.find("location") != _headers.end())
 	{
 		_resp.set_http_code(StatusCodes::get_code_index_from_value(code));
-		std::string location = _headers.find("location")->second;
-		if (location.find("http://") != std::string::npos)
-		{
-			location.erase(0, 7);
-			_headers.find("location")->second = location;
-		}
+		// std::string location = _headers.find("location")->second;
+		// if (location.find("http://") != std::string::npos)
+		// {
+		// 	location.erase(0, 7);
+		// 	_headers.find("location")->second = location;
+		// }
 		add_all_cgi_headers();
 	}
 	else

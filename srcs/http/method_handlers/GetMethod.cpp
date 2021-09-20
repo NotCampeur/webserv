@@ -13,11 +13,6 @@ GetMethod::~GetMethod(void) {}
 void
 GetMethod::handle(Request & req, Response & resp)
 {
-	if (resp.need_cgi())
-	{
-		add_cgi_handle(req, resp);
-		return ;
-	}
 	if (resp.path_is_dir())
 	{
 		if (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1]) != '/')
@@ -42,6 +37,11 @@ GetMethod::handle(Request & req, Response & resp)
 			handle_autoindex(resp);
 			return ;
 		}
+	}
+	else if (resp.need_cgi())
+	{
+		add_cgi_handle(req, resp);
+		return ;
 	}
 
 	resp.set_http_code(StatusCodes::OK_200);

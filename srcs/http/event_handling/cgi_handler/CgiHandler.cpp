@@ -190,10 +190,10 @@ CgiHandler::set_environment(void)
 	}
 	
 	_env.add_cgi_env_var("GATEWAY_INTERFACE", "CGI/1.1");
-	_env.add_cgi_env_var("PATH_INFO", _response.get_path());
-	_env.add_cgi_env_var("PATH_INFO", _request.get_config()->location_path());
-
-	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path()); // /!\ This is most likely wrong, but at this point, I am not sure what this variable is about
+	// _env.add_cgi_env_var("PATH_INFO", _response.get_path());
+	// _env.add_cgi_env_var("PATH_INFO", _request.get_config()->location_path());
+	_env.add_cgi_env_var("PATH_INFO", _request.uri().path);
+	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path());
 	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
 	_env.add_cgi_env_var("REMOTE_ADDR",_response.get_client_ip());
 	_env.add_cgi_env_var("REMOTE_HOST", ""); //Clients are not expected to have a domain name
@@ -204,8 +204,10 @@ CgiHandler::set_environment(void)
 	// }
 	// else
 	// {
-		_env.add_cgi_env_var("SCRIPT_NAME", "");
+		// _env.add_cgi_env_var("SCRIPT_NAME", "");
+		_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
 	// }
+	_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
@@ -215,6 +217,12 @@ CgiHandler::set_environment(void)
 	{
 		_env.add_http_env_var("COOKIE", cookies[i]);
 	}
+	CgiParser::str_map::iterator it = _request.headers().begin();
+	for (; it != _request.headers().end(); ++it)
+	{
+		_env.add_http_env_var(it->first, it->second);
+	}
+
 	// PHP CGI specific
 	_env.add_cgi_env_var("REDIRECT_STATUS", "1");
 }

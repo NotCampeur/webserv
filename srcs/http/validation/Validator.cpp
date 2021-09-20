@@ -114,14 +114,6 @@ Validator::verify_path(Request & req, Response & resp)
 		throw HttpException(StatusCodes::get_code_index_from_value(req.get_config()->redirection().first), req.get_config()->redirection().second);
 	}
 
-	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
-		req.get_config()->cgi().end())
-	{
-		std::cerr << "Cgi needed\n";
-		resp.need_cgi() = true;
-		return ;
-	}
-
 	struct stat buf; 
 	int ret = stat(resp.get_path().c_str(), &buf);
 
@@ -161,7 +153,13 @@ Validator::verify_path(Request & req, Response & resp)
 	{ // Structure to be improved during further development
 		if (is_dir(buf.st_mode))
 		{
-			resp.path_is_dir() = true;
+			if (!req.get_config()->default_file_dir().empty())
+			{
+				std::cerr << "Path set tp default file dir\n";
+				resp.set_path(req.get_config()->default_file_dir());
+			}
+			else
+				resp.path_is_dir() = true;
 		}
 		else if (!is_file(buf.st_mode))
 		{
@@ -171,6 +169,14 @@ Validator::verify_path(Request & req, Response & resp)
 		{
 			resp.path_is_dir() = false;
 		}
+	}
+
+	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
+		req.get_config()->cgi().end())
+	{
+		std::cerr << "Cgi needed\n";
+		resp.need_cgi() = true;
+		return ;
 	}
 }
 
