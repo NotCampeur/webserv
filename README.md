@@ -29,23 +29,10 @@ All libraries will be build and the binary will be ready to launch
 ## [The Norm](.readme/norm.md)  
 
 ### :zzz: TODO :zzz:
-*  Parsing of Hexadecimal values in URL -> in validator class
+Do default_file_dir and directory redir in validator </br>
 
 ### :boom: Known bugs.. I mean features :boom:  
-* Segfault when using curl -d -v "param1=value1&param2=value2" -X POST http://10.11.12.9:8080/ 
-* Segfault when using nc to send requests. exemple :
-* " nc 10.11.12.9 8080
-
-
-
-
-
-
-
-
-
-
-
+* WP installation sending "invalid username"
 YOLO
 
 
