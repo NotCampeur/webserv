@@ -21,23 +21,31 @@ Arguments::~Arguments(void)
 void
 Arguments::print_help(void) const
 {
-	std::cout << "Usage: webserv [config_path] [--log_file=path] [--log_importance=importance] [--help]" << std::endl << std::endl
-	<< "	Webserv is a program that allow you to run a web server using the protocol HTTP/1.1" << std::endl << std::endl
-	<< "config_path is the path to the configuration file." << std::endl
-	<< "log_file is the path where the log will be written, the file will be created if not exist." << std::endl
-	<< "log_importance is the importance accepted for the log entry, it can be one of the following:" << std::endl
-	<< "  debug, minor, major, error, all (all can only be writen alone)" << std::endl
-	<< "note that you can combine importance level by doing this :" << std::endl
-	<< "  --log_importance=major,minor,error" << std::endl
-	<< "By doing this, only the entry flagged as minor, major or error level will be print." << std::endl
-	<< "help will print this help message." << std::endl << std::endl
-	<< "The default value for theses optional params are :" << std::endl
-	<< "  config_path = ./ressources/config/webserv.conf" << std::endl
-	<< "  log_file = ./webserv.log" << std::endl
-	<< "  log_importance = error | major" << std::endl << std::endl
-	<< "The webserv will try to load the configuration file from the path given in the command line." << std::endl
-	<< "If the file is not found, it will throw an error." << std::endl
-	<< "If you don't know where to start there is a commented default configuration file : ./ressources/config/webserv.conf" << std::endl;
+	std::cout << "Usage: webserv [config_path] [options]\n\n"
+	<< "    Webserv is a program that allow you to run a web server\n"
+	<< "        using the protocol HTTP/1.1\n\n"
+	<< "config_path is the path to the configuration file.\n\n"
+	<< "Options:\n"
+	<< "    --log_file=FILE\n"
+	<< "                path where the log will be written\n"
+	<< "                    the file will be created if not exist.\n\n"
+	<< "    --log_importance=FLAGS\n"
+	<< "                Importance accepted for the log entry\n"
+	<< "                it can be one of the following:\n"
+	<< "                    debug, minor, major, error, all (all can only be writen alone)\n"
+	<< "                note that you can combine importance level by doing this :\n"
+	<< "                    --log_importance=major,minor,error\n"
+	<< "                On the above exemple, only the :\n"
+	<< "                    minor, major or error entries will be print.\n\n"
+	<< "    --help      print this help message.\n\n"
+	<< "Good to know:\n"
+	<< "    The default value for theses optional params are :\n"
+	<< "                config_path = ./ressources/config/webserv.conf\n"
+	<< "                log_file = ./webserv.log\n"
+	<< "                log_importance = error | major\n\n"
+	<< "    The webserv will try to load the configuration file from the path given in the command line.\n"
+	<< "    If the file is not found, it will throw an error.\n"
+	<< "    If you don't know where to start check the default configuration file" << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
