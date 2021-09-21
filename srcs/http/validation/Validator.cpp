@@ -73,8 +73,10 @@ Validator::set_full_path(Request & req, Response & resp, std::string & path)
 	std::string full_path = path;
 
 	full_path.erase(0, req.get_config()->location_path().size());
-	if (!root.empty() && *(root.end() - 1) != '/'
-	&& !full_path.empty() && *full_path.begin() != '/')  // First condition should always be true as default root is current workdir
+
+	bool root_missing_end_slash = (!root.empty() && *(root.end() - 1) != '/' && root != "/");
+	bool path_missing_begin_slash = (!full_path.empty() && *full_path.begin() != '/');
+	if (root_missing_end_slash && path_missing_begin_slash)
 	{
 		root += '/';
 	}
@@ -153,7 +155,14 @@ Validator::verify_path(Request & req, Response & resp)
 	{ // Structure to be improved during further development
 		if (is_dir(buf.st_mode))
 		{
-			if (!req.get_config()->default_file_dir().empty())
+			bool missing_trailing_bkslash = (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1] != '/') && (req.uri().path != "/"));
+			if (missing_trailing_bkslash)
+			{
+				std::string redir_path(req.uri().path);
+				redir_path += '/';
+				throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, redir_path));
+			}
+			else if (!req.get_config()->default_file_dir().empty())
 			{
 				std::cerr << "Path set tp default file dir\n";
 				resp.set_path(req.get_config()->default_file_dir());
@@ -165,18 +174,12 @@ Validator::verify_path(Request & req, Response & resp)
 		{
 			throw (HttpException(StatusCodes::NOT_FOUND_404));
 		}
-		else
-		{
-			resp.path_is_dir() = false;
-		}
 	}
-
-	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
-		req.get_config()->cgi().end())
+	bool cgi_needed = (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) != req.get_config()->cgi().end());
+	if (cgi_needed)
 	{
 		std::cerr << "Cgi needed\n";
 		resp.need_cgi() = true;
-		return ;
 	}
 }
 
