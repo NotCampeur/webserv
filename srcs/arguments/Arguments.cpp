@@ -55,6 +55,7 @@ bool
 Arguments::set_config_path(const std::string& config_path)
 {
 	struct stat		sb;
+	std::ifstream	file;
 
 	if (_config_path.empty() == false)
 	{
@@ -71,6 +72,13 @@ Arguments::set_config_path(const std::string& config_path)
 		std::cerr << "Error: Config File must be an existing file" << std::endl;
 		return false;
 	}
+	file.open(config_path.c_str(), std::ios::in);
+	if (file.fail() == true)
+	{
+		std::cerr << "Error: Unable to read from the config file" << std::endl;
+		return false;
+	}
+	file.close();
 	_config_path = config_path;
 	return true;
 }
@@ -79,6 +87,7 @@ bool
 Arguments::set_log_file(const std::string& log_file)
 {
 	struct stat		sb;
+	std::ofstream	file;
 	
 	if (_log_file.empty() == false)
 	{
@@ -96,6 +105,13 @@ Arguments::set_log_file(const std::string& log_file)
 		std::cerr << "Error: Log file is not a regular one" << std::endl;
 		return false;
 	}
+	file.open(_log_file.c_str(), std::ios::out | std::ios::app);
+	if (file.is_open() == false)
+	{
+		std::cerr << "Error: Unable to write to the log file" << std::endl;
+		return false;
+	}
+	file.close();
 	return true;
 }
 
