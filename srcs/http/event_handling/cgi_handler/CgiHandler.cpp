@@ -85,7 +85,7 @@ CgiHandler::readable(void)
 		case -1 :
 		{
 			manage_error();
-			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Read: " << std::strerror(errno);
+			Logger(error_type, error_lvl) << "Read: " << std::strerror(errno);
 			break ;
 		}
 		case 0 :
@@ -110,7 +110,7 @@ CgiHandler::readable(void)
 			}
 		}
 	}
-	// Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read);
+	// Logger(basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read);
 }
 
 void
@@ -128,7 +128,7 @@ CgiHandler::writable(void)
 		if (len < 0)
 		{
 			manage_error();
-			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Write: " << std::strerror(errno);
+			Logger(error_type, error_lvl) << "Write: " << std::strerror(errno);
 		}
 		_written_size += len;
 		if (static_cast<size_t>(_written_size) < _request.bodysize())
@@ -140,7 +140,7 @@ CgiHandler::writable(void)
 	if (ret < 0)
 	{
 		manage_error();
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "dup2: " << std::strerror(errno);
+		Logger(error_type, error_lvl) << "dup2: " << std::strerror(errno);
 	}
 	else
 	{
@@ -215,17 +215,6 @@ CgiHandler::set_environment(void)
 	}
 }
 
-static void *
-cgi_monitor(void * param)
-{
-	int *	pid = static_cast<int *>(param);
-	int	status;
-	waitpid(*pid, &status, 0);
-	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "CGI ended with : " << status << " status";
-	Logger::process_ended();
-	return NULL;
-}
-
 void
 CgiHandler::start_cgi(void)
 {
@@ -239,34 +228,24 @@ CgiHandler::start_cgi(void)
 	if (_pid < 0)
 	{
 		manage_error();
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Fork: " << std::strerror(errno);
+		Logger(error_type, error_lvl) << "Fork: " << std::strerror(errno);
 	}
 	if (_pid == 0)
 	{
-		Logger::process_forked();
 		// std::cerr << "Hello from chile\n";
 		close(_server_write_pipe);
 		close(_server_read_pipe);
 		int ret = dup2(_cgi_read_pipe, STDIN_FILENO);
 		if (ret < 0)
-		{
-			Logger::process_ended();
 			exit(EXIT_FAILURE);
-		}
 		close(_cgi_read_pipe);
 		ret = dup2(_cgi_write_pipe, STDOUT_FILENO);
 		if (ret < 0)
-		{
-			Logger::process_ended();
 			exit(EXIT_FAILURE);
-		}
 		close(_cgi_write_pipe);
 		const std::string cgi_bin = _request.get_config()->cgi().find(_file_ext)->second;
 		if (cgi_bin.empty() == true)
-		{
-			Logger::process_ended();
 			exit(EXIT_FAILURE);
-		}
 		else
 		{
 			char * const av[] = {
@@ -278,16 +257,14 @@ CgiHandler::start_cgi(void)
 			std::string root = _request.get_config()->root();
 			if (int ret = chdir(root.c_str()) < 0)
 			{
-				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Chdir: " << std::strerror(errno);
-				Logger::process_ended();
+				Logger(error_type, error_lvl) << "Chdir: " << std::strerror(errno);
 				exit(EXIT_FAILURE);
 			}
 
-			Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path();
+			Logger(basic_type, debug_lvl) << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path();
 			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Execve: " << std::strerror(errno);
-		Logger::process_ended();
+		Logger(error_type, error_lvl) << "Execve: " << std::strerror(errno);
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -296,8 +273,6 @@ CgiHandler::start_cgi(void)
 		_cgi_read_pipe = 0;
 		close(_cgi_write_pipe);
 		_cgi_write_pipe = 0;
-		pthread_t	thread;
-		pthread_create(&thread, NULL, &cgi_monitor, static_cast<void *>(&_pid));
 	}
 }
 
@@ -333,7 +308,7 @@ CgiHandler::cgi_process_error(void)
 			_cgi_done = true;
 			if (WEXITSTATUS(status) != EXIT_SUCCESS)
 			{
-				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "CGI error - exit status: " << WEXITSTATUS(status);
+				Logger(error_type, error_lvl) << "CGI error - exit status: " << WEXITSTATUS(status);
 				manage_error();
 				return true;
 			}
@@ -350,7 +325,7 @@ CgiHandler::open_pipe_two(void)
 	if (ret < 0)
 	{
 		close_pipes();
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Pipe: " << std::strerror(errno);
+		Logger(error_type, error_lvl) << "Pipe: " << std::strerror(errno);
 		return false;
 	}
 	_server_read_pipe = pipe_two[0];
@@ -364,13 +339,13 @@ CgiHandler::set_nonblock(void)
 	int ret = fcntl(_server_write_pipe, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 	{
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Fcntl: " << std::strerror(errno);
+		Logger(error_type, error_lvl) << "Fcntl: " << std::strerror(errno);
 		return false;
 	}
 	ret = fcntl(_server_read_pipe, F_SETFL, O_NONBLOCK);
 	if (ret == -1)
 	{
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Fcntl: " << std::strerror(errno);
+		Logger(error_type, error_lvl) << "Fcntl: " << std::strerror(errno);
 		return false;
 	}
 	return true;

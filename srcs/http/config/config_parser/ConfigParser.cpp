@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:49:26 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/16 22:49:08 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/21 10:07:31 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ ConfigParser::load(void)
 		_raw_data += tmp;
 	}
 	file.close();
-	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Config file has been loaded up : \n" << _raw_data;
+	Logger(basic_type, debug_lvl) << "Config file has been loaded up : \n" << _raw_data;
 }
 
 Config &

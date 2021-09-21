@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:28:54 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/16 23:35:48 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/21 10:07:31 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,20 @@ serv_test(void)
 			}
 			catch(const std::exception& e)
 			{
-				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
+				Logger(error_type, error_lvl) << e.what();
 				return EXIT_FAILURE;
 			}
 			idis.handle_events();
 		}
 		catch (const std::exception& e)
 		{
-			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
+			Logger(error_type, error_lvl) << e.what();
 			return EXIT_FAILURE;
 		}
 	}
 	catch (const std::exception& e)
 	{
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
+		Logger(error_type, error_lvl) << e.what();
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
@@ -68,8 +68,8 @@ int	main(int ac, char *av[], char *envp[])
 		std::cerr << "Type \"webserv --help\" to know the basic usage" << std::endl;
 		return EXIT_FAILURE;
 	}
-	Logger(Arguments::get_instance().log_file(), basic_type, all_lvl) << "================[Webserv is starting]================";
-	Logger(Arguments::get_instance().log_file(), basic_type, all_lvl) << "Process ID of the server : " << getpid();
+	Logger(basic_type, all_lvl) << "================[Webserv is starting]================";
+	Logger(basic_type, all_lvl) << "Process ID of the server : " << getpid();
 	Environment::set_program_env(envp);
 	// Environment::print_env();
 

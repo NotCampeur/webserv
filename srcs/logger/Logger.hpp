@@ -42,9 +42,7 @@ log_importance_level operator^(const log_importance_level & value_a,
 class Logger
 {
 	public:
-		typedef std::map<std::string, std::ofstream *>	map_type;
-
-		Logger(std::string path = Arguments::get_instance().log_file(), log_type type = basic_type, log_importance_level importance = major_lvl);
+		Logger(log_type type = basic_type, log_importance_level importance = major_lvl);
 		~Logger();
 
 		// This function will set the accepted level.
@@ -53,11 +51,10 @@ class Logger
 		// If you never set it yourself every messages are accepted.
 		static void	accept_importance(log_importance_level accepted_importance);
 
-		// Increment the _multi_process_lock to ajust the number of running process.
-		static void	process_forked(void);
-
-		// Decrement the _multi_process_lock to ajust the number of running process.
-		static void	process_ended(void);
+		// This function will open the log file.
+		// If the file is already opened nothing will happen.
+		// If the file is not already opened it will be created.
+		static void	open_log_file(std::string path); 
 
 		// This function need to be called right before the end of the program.
 		// The ofstream map will be correctly deleted.
@@ -76,12 +73,11 @@ class Logger
 	private:
 		void	put_timestamp(void);
 
-		static std::string			_path;
-		static log_type				_type;
-		static map_type				_files;
+		static std::ofstream		_file;
 		static log_importance_level	_accepted_importance;
 		static sem_t *				_multi_process_lock;
 		static pid_t				_process_id;
+		log_type					_type;
 		log_importance_level		_importance;
 };
 

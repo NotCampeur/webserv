@@ -248,5 +248,6 @@ Arguments::apply(int argc, char* argv[])
 		_config_path = "ressources/config/webserv.conf";
 	if (_log_file.empty() == true)
 		_log_file = DEFAULT_LOG_FILE;
+	Logger::open_log_file(_log_file);
 	return true;
 }

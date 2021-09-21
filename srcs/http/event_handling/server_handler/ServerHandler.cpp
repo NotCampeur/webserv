@@ -38,14 +38,14 @@ ServerHandler::readable(void)
 		{
 			if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
 			{
-				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Unable to set nonblocking flag on client fd: " << inet_ntoa((reinterpret_cast<sockaddr_in *>(address))->sin_addr);
+				Logger(error_type, error_lvl) << "Unable to set nonblocking flag on client fd: " << inet_ntoa((reinterpret_cast<sockaddr_in *>(address))->sin_addr);
 				delete address;
 				close(fd);
 			}
 			else
 			{
 				Client * client = new Client(fd, address, _server.get_server_config());
-				Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "A new connection has been accepted on fd : " << fd << " for client " << client->getip();
+				Logger(basic_type, minor_lvl) << "A new connection has been accepted on fd : " << fd << " for client " << client->getip();
 				InitiationDispatcher::get_instance().add_client_handle(*client);
 			}
 		}
@@ -54,7 +54,7 @@ ServerHandler::readable(void)
 			delete address;
 			if (errno != EWOULDBLOCK)
 				throw ServerSystemException("Accept error", _server.getip(), _server.getport());
-			Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
+			Logger(basic_type, debug_lvl) << "Accept backlog of " << _server.getsockfd() << " is empty";
 			break ;
 		}
 	}

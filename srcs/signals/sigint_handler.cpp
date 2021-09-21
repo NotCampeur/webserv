@@ -8,5 +8,5 @@ sigint_handler(int sig_val)
 {
     (void) sig_val;
     g_run_status = false;
-	Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Sigint signal received";
+	Logger(error_type, error_lvl) << "Sigint signal received";
 }

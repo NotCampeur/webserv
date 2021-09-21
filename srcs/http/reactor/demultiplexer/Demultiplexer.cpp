@@ -35,12 +35,12 @@ Demultiplexer::activate()
 	}
 	else if (result == 0)
 	{
-		Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "Poll timeout";
+		Logger(basic_type, minor_lvl) << "Poll timeout";
 		return result;
 	}
 	std::ostringstream	nb;
 	nb << result;
-	Logger(Arguments::get_instance().log_file(), basic_type, major_lvl) << nb.str() + " fd ready";
+	Logger(basic_type, major_lvl) << nb.str() + " fd ready";
 	return result;
 }
 
@@ -53,7 +53,7 @@ Demultiplexer::addfd(int fd, int flag)
 	fd_data.events = flag;
 	fd_data.revents = 0;
 	_pollfds.push_back(fd_data);
-	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "fd: " << fd << " has been added to demultiplexer";
+	Logger(basic_type, minor_lvl) << "fd: " << fd << " has been added to demultiplexer";
 }
 
 void
@@ -68,7 +68,7 @@ Demultiplexer::removefd(int fd)
 			if (it->fd == fd)
 			{
 				_pollfds.erase(it);
-				Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "fd: " << fd << " removed from pollfd array";
+				Logger(basic_type, minor_lvl) << "fd: " << fd << " removed from pollfd array";
 				return ;
 			}
 		}

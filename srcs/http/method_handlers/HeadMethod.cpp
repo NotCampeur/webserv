@@ -177,7 +177,7 @@ HeadMethod::add_cgi_handle(Request & req, Response & resp)
 	int ret = pipe(pipe_fd);
 	if (ret < 0)
 	{
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Pipe: " << std::strerror(errno);
+		Logger(error_type, error_lvl) << "Pipe: " << std::strerror(errno);
 		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
 	resp.set_handler_fd(pipe_fd[1]); // Setting handler to write end of the pipe, as CGI handler will first need to write to the pipe

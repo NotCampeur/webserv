@@ -164,7 +164,7 @@ RequestParser::parse_char(char c)
 			break ;
 		default :
 		{
-			Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
+			Logger(error_type, error_lvl) << "Request parser - unusual event (400 sent to client)";
 			throw HttpException(StatusCodes::BAD_REQUEST_400); // Defensive: in case something odd happens, send a bad request
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:51:17 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/09/16 22:49:08 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/21 10:07:31 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ UserAgent::create_socket(int domain, int type, int protocol)
 	result = setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(int));
 	if (result == -1 || _sockfd == -1)
 		throw UnableToCreateClientSocket();
-	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "The Client socket's fd is " << _sockfd;
+	Logger(basic_type, minor_lvl) << "The Client socket's fd is " << _sockfd;
 }
 
 void
@@ -66,7 +66,7 @@ UserAgent::init_addr_inputs(int domain, int port)
 	_address.sin_family = domain;
 	_address.sin_port = htons(port);
 	if(inet_pton(AF_INET, "127.0.0.1", &_address.sin_addr) <= 0)
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Invalid address/ Address not supported";
+		Logger(error_type, error_lvl) << "Invalid address/ Address not supported";
 }
 
 void
@@ -74,10 +74,10 @@ UserAgent::connect_to_serv()
 {
 	if (connect(_sockfd, (struct sockaddr *)&_address, sizeof(_address)) < 0)
 	{
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "Connection Failed";
+		Logger(error_type, error_lvl) << "Connection Failed";
 		throw UnableToConnect();
 	}
-	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "The Client is connected to " << _target_port;
+	Logger(basic_type, minor_lvl) << "The Client is connected to " << _target_port;
 }
 
 void
@@ -98,7 +98,7 @@ UserAgent::send_request(std::string file_path)
 	
 	send(_sockfd , to_send.c_str() , to_send.size() , 0);
 
-	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "The Client sent :\n" << to_send;
+	Logger(basic_type, minor_lvl) << "The Client sent :\n" << to_send;
 }
 
 void
@@ -107,7 +107,7 @@ UserAgent::receive_response()
 	char buffer[1024] = {0};
 	
 	read(_sockfd , buffer, 1024);
-	Logger(Arguments::get_instance().log_file(), basic_type, minor_lvl) << "The Client received :\n" << buffer;
+	Logger(basic_type, minor_lvl) << "The Client received :\n" << buffer;
 }
 
 // EXCEPTIONS

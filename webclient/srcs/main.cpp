@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 11:33:01 by ldutriez_ho       #+#    #+#             */
-/*   Updated: 2021/09/16 22:49:08 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/21 10:07:31 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int main(int ac, char *av[])
 	}
 	catch(const std::exception& e)
 	{
-		Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
+		Logger(error_type, error_lvl) << e.what();
 	}
 	Logger::quit();
 	return 0;

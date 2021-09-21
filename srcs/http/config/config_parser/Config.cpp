@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/16 22:49:08 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/21 10:07:31 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,7 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 						load_location_upload_path(location_it->second, *location_config);
 						break;
 					case location_unknown:
-						Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "The unknown location's key is : " << location_it->first;
+						Logger(error_type, error_lvl) << "The unknown location's key is : " << location_it->first;
 						throw Exception("Config file error : Unknown location's key detected");
 				}
 			}
@@ -377,7 +377,7 @@ Config::load_server_config(IJsonValue * server_object)
 					break;
 				case server_unknown:
 				{
-					Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << "The unknown server's key is : " << it->first;
+					Logger(error_type, error_lvl) << "The unknown server's key is : " << it->first;
 					throw Exception("Config file error : Unknown server's key detected");
 				}
 			}
@@ -425,7 +425,7 @@ Config::load_servers_config(IJsonValue * server_array)
 			&& servers_config_list[i]->port() == it->second.port())
 			{
 				server_list[j]->add_server_config(*servers_config_list[i]);
-				Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.ip();
+				Logger(basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.ip();
 				is_same_server = true;
 				break;
 			}
@@ -503,7 +503,7 @@ Config::print_to_log(void) const
 	std::string buffer("Config content :\n");
 
 	_global_scope.print_to_buffer(1, buffer);
-	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << buffer;
+	Logger(basic_type, debug_lvl) << buffer;
 }
 
 Config & Config::operator=(const Config & to_assign)

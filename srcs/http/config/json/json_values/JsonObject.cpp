@@ -16,7 +16,7 @@
 JsonObject::JsonObject(std::string key)
 : _key(key), _value()
 {
-	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Begin of " << _key << " object";
+	Logger(basic_type, debug_lvl) << "Begin of " << _key << " object";
 }
 
 JsonObject::JsonObject(const JsonObject & to_copy)

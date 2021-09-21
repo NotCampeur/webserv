@@ -45,7 +45,7 @@ HttpErrorManager::handle(StatusCodes::status_index_t error)
 			}
 			catch (SystemException & e)
 			{
-				Logger(Arguments::get_instance().log_file(), error_type, error_lvl) << e.what();
+				Logger(error_type, error_lvl) << e.what();
 			}
 		}
 	}

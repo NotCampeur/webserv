@@ -36,7 +36,7 @@ Validator::set_request_config(Request & req, std::string & path)
 	const ServerConfig & serv_conf = req.server_config();
 	const LocationConfig & loc_conf = find_location_config(req, path);
 	req.set_config(new RequestConfig(serv_conf, loc_conf));
-	Logger(Arguments::get_instance().log_file(), basic_type, debug_lvl) << "Server Config Set, location found : " << loc_conf.path();
+	Logger(basic_type, debug_lvl) << "Server Config Set, location found : " << loc_conf.path();
 }
 
 void
