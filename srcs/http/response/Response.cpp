@@ -4,35 +4,36 @@
 #include "Request.hpp"
 // #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-Response::Response(const Request & req) :
+Response::Response(const Request & req, const std::string & server_ip, const std::string & client_ip) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
 _handler_fd(-1),
-// _config(),
 _req(req),
 _error_manager(*this),
 _path_is_dir(false),
 _need_cgi(false),
-_chunked(false)
+_chunked(false),
+_server_ip(server_ip),
+_client_ip(client_ip)
 {}
 
 Response::Response(Response const & src) :
 _payload(src._payload),
-_ip(src._ip),
 _version(src._version),
 _headers(src._headers),
 _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
 _handler_fd(src._handler_fd),
-// _config(src._config),
 _req(src._req),
 _error_manager(src._error_manager),
 _path_is_dir(src._path_is_dir),
 _need_cgi(src._need_cgi),
-_chunked(src._chunked)
+_chunked(src._chunked),
+_server_ip(src._server_ip),
+_client_ip(src._client_ip)
 {}
 
 Response::~Response(void)
@@ -44,25 +45,18 @@ Response::~Response(void)
 	}
 }
 
-Response &
-Response::operator=(Response const & src)
-{
-	_payload = src._payload;
-	_headers = src._headers;
-	_metadata_sent = src._metadata_sent;
-	_ready_to_send = src._ready_to_send;
-	_complete = src._complete;
-	_handler_fd = src._handler_fd;
-	_path_is_dir = src._path_is_dir;
-	_need_cgi = src._need_cgi;
-	_chunked = src._chunked;
-    return (*this);
-}
-
 // Response &
-// Response::operator=(const RequestConfig & to_assign)
+// Response::operator=(Response const & src)
 // {
-// 	_config = to_assign;
+// 	_payload = src._payload;
+// 	_headers = src._headers;
+// 	_metadata_sent = src._metadata_sent;
+// 	_ready_to_send = src._ready_to_send;
+// 	_complete = src._complete;
+// 	_handler_fd = src._handler_fd;
+// 	_path_is_dir = src._path_is_dir;
+// 	_need_cgi = src._need_cgi;
+// 	_chunked = src._chunked;
 //     return (*this);
 // }
 
@@ -99,11 +93,11 @@ Response::set_payload(const char *buf, size_t len)
 		_payload.insert(_payload.begin(), buf, buf + len);
 	}
 }
+
 // Return -1 if an error occured, 0 if some data was sent but tje entire payload content, 1 if the entire payload was sent successfully
 int
 Response::send_payload(int fd)
 {
-	// signal(SIGPIPE, SIG_IGN);
 	if (!_metadata_sent)
 	{
 		set_resp_metadata();
@@ -113,32 +107,34 @@ Response::send_payload(int fd)
 	{
 		add_last_chunk();
 	}
+	if (_payload.size() != 0)
+	{
 	#ifdef MSG_NOSIGNAL
 		ssize_t ret = send(fd, &_payload[0], _payload.size(), MSG_NOSIGNAL);
 	#else
 		signal(SIGPIPE, SIG_IGN);
 		ssize_t ret = send(fd, &_payload[0], _payload.size(), 0);
+		signal(SIGPIPE, SIG_DFL);
 	#endif
-
-	if (ret < 0)
-	{
-		return -1;
+		if (ret < 0)
+		{
+			return -1;
+		}
+		if (static_cast<size_t>(ret) < _payload.size())
+		{
+			Logger(error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
+			payload_erase(ret);
+			return 0;
+		}
+		else
+		{
+			_payload.clear();
+			_ready_to_send = false;
+			return 1;
+		}
 	}
-	if (static_cast<size_t>(ret) < _payload.size())
-	{
-		payload_erase(ret);
-		Logger(error_type, error_lvl) << "Send() failed to send full buffer content: " <<  ret << " byte(s) sent instead of " << _payload.size();
-		return 0;
-	}
-	else
-	{
-		_payload.clear();
-		_ready_to_send = false;
-		return 1;
-	}
-	// std::cerr << "Resp content:\n" << std::string(&_payload[0], _payload.size()) << '\n';
-	// return send_output;
-
+	Logger(error_type, error_lvl) << "Send(): Nothing to send, payload is empty";
+	return 1;
 }
 
 bool
@@ -150,10 +146,9 @@ Response::metadata_sent(void) const
 void
 Response::set_resp_metadata(void)
 {
-	std::string meta;
-	set_status_line(meta);
+	std::string meta = get_status_line();
 	add_default_headers();
-	
+
 	for (size_t i = 0; i < _headers.size(); i++)
 	{
 		meta += _headers[i].first;
@@ -165,13 +160,15 @@ Response::set_resp_metadata(void)
 	_payload.insert(_payload.begin(), meta.c_str(), meta.c_str() + meta.size());
 }
 
-void
-Response::set_status_line(std::string & meta)
+std::string
+Response::get_status_line(void)
 {
+	std::string meta;
 	meta += _version;
 	meta += ' ';
 	meta += StatusCodes::get_code_msg_from_index(_code);
 	meta += "\r\n";
+	return meta;
 }
 
 void
@@ -253,17 +250,17 @@ Response::set_path(const std::string & path)
 	_file_path = path;
 }
 
-const RequestConfig &
-Response::config(void) const
-{
-	return *_req.get_config();
-}
+// const RequestConfig &
+// Response::config(void) const
+// {
+// 	return *_req.get_config();
+// }
 
 void
 Response::http_error(StatusCodes::status_index_t error)
 {
 	reset();
-	_error_manager.handle(error);
+	_error_manager.handle(error, _req.get_error_page(error));
 }
 
 bool &
@@ -283,18 +280,30 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 {
 	reset();
 	set_http_code(code);
+
 	add_header("Content-Length", "0");
-	std::string complete_location = "http://" + config().name() + ':' + config().port() + '/' + location;
-	std::cerr << complete_location << '\n';
-	add_header("Location", complete_location);
+	std::string redir_location;
+	// redir_location += "http://";
+	// if (_req.server_config().name() == "default")
+	// {
+	// 	redir_location += _server_ip; //Need the actual IP of the server (when Config IP is set to 0.0.0.0, the actual server IP is something else)
+	// }
+	// else
+	// {
+	// 	redir_location += _req.server_config().name();
+	// }
+	// redir_location += ':';
+	// redir_location += _req.server_config().port(); //Update "ip" with "name", but need proper DNS setup
+
+	if (!location.empty() && location[0] != '/')
+	{
+		redir_location += '/';
+	}
+	redir_location += location;
+	std::cerr << "Redir location: " << redir_location << '\n';
+	add_header("Location", redir_location);
 	ready_to_send() = true;
 	complete() = true;
-}
-
-const std::string &
-Response::get_ip(void)
-{
-	return _ip;
 }
 
 void
@@ -314,7 +323,7 @@ void
 Response::insert_chunk_size(size_t len)
 {
 	if (len == 0)
-	{		
+	{
 		_payload.insert(_payload.begin(), '0');
 	}
 	else
@@ -336,4 +345,16 @@ Response::add_last_chunk(void)
 	_payload.push_back('0');
 	add_payload_crlf();
 	add_payload_crlf();
+}
+
+const std::string &
+Response::get_server_ip(void) const
+{
+	return _server_ip;
+}
+
+const std::string &
+Response::get_client_ip(void) const
+{
+	return _client_ip;
 }

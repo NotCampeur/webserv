@@ -26,6 +26,7 @@ class Request
 		std::map<std::string, std::string>	_headers;
 		std::vector<char>					_body;
 		const config_type &					_server_configs;
+		mutable ServerConfig *				_server_config_cache;
 		RequestConfig *						_config;
 		cookies_t							_cookies;
 
@@ -51,7 +52,7 @@ class Request
 		// void									load_request_config(void);
 		const cookies_t &						get_cookies(void) const;
 		const ServerConfig &					server_config(void) const;
-
+		const std::string *						get_error_page(StatusCodes::status_index_t error) const;
 
 	private:
 		Request(void);

@@ -18,6 +18,9 @@ class Utils
 
 		static	std::string		get_file_ext(const std::string & filename);
 		static	std::string		get_working_path();
+		static	std::string		get_filename_from_path(const std::string & path);
+		static	bool			is_redirect(int code);
+
 	private:
 
 };

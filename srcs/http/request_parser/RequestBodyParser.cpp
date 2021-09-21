@@ -25,7 +25,7 @@ RequestBodyParser::parse_char(char c)
 		{
 			if (_request.headers().find("transfer-encoding") != _request.headers().end())
 			{
-				if (_request.headers().find("transfer-encoding")->second == std::string("chunked"))
+				if (_request.headers().find("transfer-encoding")->second.find("chunked") != std::string::npos)
 					_state = CHUNK_SIZE;
 				else
 					throw HttpException(StatusCodes::NOT_ACCEPTABLE_406);

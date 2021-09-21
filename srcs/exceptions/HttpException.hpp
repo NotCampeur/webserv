@@ -12,7 +12,7 @@ class HttpException
 
 	public:
     	HttpException(StatusCodes::status_index_t error) throw();
-		HttpException(StatusCodes::status_index_t redir_code, std::string & location) throw();
+		HttpException(StatusCodes::status_index_t redir_code, const std::string & location) throw();
 	    HttpException(HttpException const & src) throw();    	
 		~HttpException(void) throw();
 

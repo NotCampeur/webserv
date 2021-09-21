@@ -42,3 +42,27 @@ Utils::get_working_path()
 	char temp[FILENAME_MAX];
 	return (getcwd(temp, sizeof(temp)) ? std::string( temp ) : std::string(""));
 }
+
+std::string
+Utils::get_filename_from_path(const std::string & path)
+{
+	if (path.empty())
+		return std::string();
+
+	for (size_t i = path.size(); i > 0; --i)
+	{
+		if (path[i - 1] == '/' || i == 1)
+		{
+			return path.substr(i);
+		}
+	}
+	return path;
+}
+
+bool
+Utils::is_redirect(int code)
+{
+	if (code >= 300 && code <= 307 && code != 304)
+		return true;
+	return false;
+}

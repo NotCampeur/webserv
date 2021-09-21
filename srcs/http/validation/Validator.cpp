@@ -34,9 +34,16 @@ void
 Validator::set_request_config(Request & req, std::string & path)
 {
 	const ServerConfig & serv_conf = req.server_config();
-	const LocationConfig & loc_conf = find_location_config(req, path);
-	req.set_config(new RequestConfig(serv_conf, loc_conf));
-	Logger(basic_type, debug_lvl) << "Server Config Set, location found : " << loc_conf.path();
+	try {
+		const LocationConfig & loc_conf = find_location_config(req, path);
+		req.set_config(new RequestConfig(serv_conf, loc_conf));
+		Logger(basic_type, debug_lvl) << "Server Config Set";
+	}
+	catch (const HttpException & e)
+	{
+		req.set_config(new RequestConfig(serv_conf, *req.server_config().locations()[0])); // Setting the first location block, but actually it won't matter which Location Block is set as there'll only be a lookup on error_pages
+		throw (e);
+	}
 }
 
 void
@@ -58,23 +65,24 @@ Validator::is_method_allowed(Request & req)
 	throw (HttpException(StatusCodes::METHOD_NOT_ALLOWED_405));
 }
 
+//Remplace first path section with "path" variable with "root"
 void
 Validator::set_full_path(Request & req, Response & resp, std::string & path)
 {
 	std::string root = req.get_config()->root();
-	if (*path.begin() == '/')
+	std::string full_path = path;
+
+	full_path.erase(0, req.get_config()->location_path().size());
+	if (!root.empty() && *(root.end() - 1) != '/'
+	&& !full_path.empty() && *full_path.begin() != '/')  // First condition should always be true as default root is current workdir
 	{
-		path.erase(path.begin()); // Remove as we don't want it if we're dealing with a relative path
+		root += '/';
 	}
-	if (root.empty() == false)
-	{
-		if (*(root.end() - 1) != '/')
-			path.insert(path.begin(), '/');
-		path.insert(0, root);
-	}
-	parse_hexa(path);
-	resp.set_path(path);
-	std::cerr << "Final path: " << path << '\n';
+	full_path.insert(0, root);
+
+	parse_hexa(full_path);
+	resp.set_path(full_path);
+	std::cerr << "Final path: " << full_path << '\n';
 }
 
 void
@@ -101,21 +109,9 @@ Validator::parse_hexa(std::string & path)
 void
 Validator::verify_path(Request & req, Response & resp)
 {
-	// std::cerr << "CGI EXT:\n";
-	// std::map<std::string, std::string>::iterator it = req.get_config()->cgi().begin();
-	// for (; it != req.get_config()->cgi().end() ; ++it)
-	// {
-	// 	std::cerr << "Address: " << &it->first << " value: " << it->first << '\n';
-	// }
-	// std::cerr << "Req ext: " << Utils::get_file_ext(resp.get_path()) << '\n';
-	// it = req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path()));
-	// std::cerr << "Find: " << &it->first << " : " << it->first << '\n';
-	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
-		req.get_config()->cgi().end())
+	if (req.get_config()->redirection().first != 0)
 	{
-		std::cerr << "Cgi needed\n";
-		resp.need_cgi() = true;
-		return ;
+		throw HttpException(StatusCodes::get_code_index_from_value(req.get_config()->redirection().first), req.get_config()->redirection().second);
 	}
 
 	struct stat buf; 
@@ -150,7 +146,6 @@ Validator::verify_path(Request & req, Response & resp)
 			default :
 			{
 				throw (HttpException(StatusCodes::NOT_FOUND_404));
-				break ;
 			}
 		}
 	}
@@ -158,7 +153,13 @@ Validator::verify_path(Request & req, Response & resp)
 	{ // Structure to be improved during further development
 		if (is_dir(buf.st_mode))
 		{
-			resp.path_is_dir() = true;
+			if (!req.get_config()->default_file_dir().empty())
+			{
+				std::cerr << "Path set tp default file dir\n";
+				resp.set_path(req.get_config()->default_file_dir());
+			}
+			else
+				resp.path_is_dir() = true;
 		}
 		else if (!is_file(buf.st_mode))
 		{
@@ -168,6 +169,14 @@ Validator::verify_path(Request & req, Response & resp)
 		{
 			resp.path_is_dir() = false;
 		}
+	}
+
+	if (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) !=
+		req.get_config()->cgi().end())
+	{
+		std::cerr << "Cgi needed\n";
+		resp.need_cgi() = true;
+		return ;
 	}
 }
 
@@ -257,17 +266,38 @@ Validator::find_location_config(Request & req, std::string & path)
 {
 	std::string req_path = path;
 	const std::vector<LocationConfig *> & server_locations = req.server_config().locations();//		server_conf->locations(); //Consider using public typedef inside RouteConfig
-	while (!path.empty())
+	while (!req_path.empty())
 	{
 		for (size_t i = 0; i < server_locations.size(); i++)
 		{
 			if (server_locations[i]->path() == req_path)
 			{
+				Logger(basic_type, minor_lvl) << "Location found: " << server_locations[i]->path() << '\n';
 				return *server_locations[i];
-				// *server_conf = *server_routes[i];
+			}
+			else if (req_path[req_path.size() - 1] != '/') //Handling of client path missing trailing '/'
+			{
+				if (server_locations[i]->path() == (req_path + '/'))
+				{
+					Logger(basic_type, minor_lvl) << "Location found: " << server_locations[i]->path() << '\n';
+					return *server_locations[i];
+					// throw HttpException(StatusCodes::MOVED_PERMANENTLY_301, server_locations[i]->path());
+				}
 			}
 		}
 		remove_last_path_elem(req_path);
 	}
 	throw HttpException(StatusCodes::NOT_FOUND_404);
 }
+
+/*
+	REDIRECTIONS HANDLING:
+
+	1 - Directory redirections (when missing trailing '/'
+		Need something clean, somthing that could be set or unset.. actually not, just redir to uri() + '/'
+	2 - Config redirections: when the config provides a redirection
+		Can only be done after LocationConfig is set, but should be done before checking if file exists
+	3 - Cgi redirections: 
+		Handle like 200: set status code and headers (use CGI output headers): how do I know if there's a body??? Cgi could return redir with body --> check status code, not all redir include body
+
+*/

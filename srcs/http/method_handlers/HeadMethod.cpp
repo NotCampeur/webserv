@@ -33,16 +33,17 @@ HeadMethod::handle(Request & req, Response & resp)
 
 	if (resp.path_is_dir())
 	{
-		if (!resp.get_path().empty() && (resp.get_path()[resp.get_path().size() - 1]) != '/')
+		if (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1]) != '/')
 		{
-			std::string new_path = resp.get_path() + '/';
-			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, new_path));
+			std::string redir_path(req.uri().path);
+			redir_path += '/';
+			throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, redir_path));
 		}
-		else if (resp.config().is_autoindex_on() == false)
+		else if (req.get_config()->is_autoindex_on() == false)
 		{
-			if (resp.config().default_file_dir().empty() == false)
+			if (req.get_config()->default_file_dir().empty() == false)
 			{
-				resp.set_path(resp.config().default_file_dir());
+				resp.set_path(req.get_config()->default_file_dir());
 			}
 			else
 			{

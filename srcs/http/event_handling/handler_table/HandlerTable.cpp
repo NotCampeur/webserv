@@ -42,9 +42,13 @@ void
 HandlerTable::remove(int fd)
 {
 	if (_handler_table->find(fd) != _handler_table->end())
+	{
 		delete _handler_table->find(fd)->second;
-	_handler_table->erase(fd);
-	Logger(basic_type, debug_lvl) << "fd: " << fd << " has been removed from the handler table";
+		_handler_table->erase(fd);
+		Logger(basic_type, debug_lvl) << "fd: " << fd << " has been removed from the handler table";
+	}
+	else
+		Logger(error_type, error_lvl) << "fd: " << fd << " could not be removed from the handler table: fd not found";
 }
 
 IEventHandler *

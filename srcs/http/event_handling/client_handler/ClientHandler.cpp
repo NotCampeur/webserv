@@ -2,12 +2,12 @@
 #include "Validator.hpp"
 
 ClientHandler::ClientHandler(const Client & client)
-: _client(client)
-, _request(client.get_server_config())
-, _response(_request)
-, _req_parser(_request)
-, _timer(CLIENT_TIMEOUT)
-, _event_flag(POLLIN)
+: _client(client),
+_request(client.get_server_config()),
+_response(_request, client.get_server_ip(), client.getip()),
+_req_parser(_request),
+_timer(CLIENT_TIMEOUT),
+_event_flag(POLLIN)
 {}
 
 ClientHandler::ClientHandler(ClientHandler const & src)
@@ -72,6 +72,7 @@ ClientHandler::writable(void)
 			case 0 :
 			{
 				_timer.reset();
+				break ;
 			}
 			case 1 :
 			{
@@ -85,6 +86,7 @@ ClientHandler::writable(void)
 						_event_flag = POLLIN;
 					}
 				}
+				break ;
 			}
 		}
 	}
@@ -113,7 +115,6 @@ ClientHandler::handle_request(void)
 {
 	try {
 		parse_request();
-		// _response = *_request.config();
 		if (_request.complete())
 		{
 			Validator::get_instance().validate_request_inputs(_request, _response);

@@ -20,21 +20,19 @@ HttpErrorManager::~HttpErrorManager(void)
 {}
 
 void
-HttpErrorManager::handle(StatusCodes::status_index_t error)
+HttpErrorManager::handle(StatusCodes::status_index_t error, const std::string * error_page)
 {
 	_resp.set_http_code(error);
-	std::string path;
-	if (_resp.config().error_pages().find(StatusCodes::get_code_value(error)) !=
-		_resp.config().error_pages().end())
+
+	if (error_page != NULL)
 	{
-		path = _resp.config().error_pages().find(StatusCodes::get_code_value(error))->second;
-		std::cerr << "Error page found: " << path << '\n';
-		_resp.set_path(path);
+		std::cerr << "Error page found: " << *error_page << '\n';
+		_resp.set_path(*error_page);
 		_fd = open(_resp.get_path().c_str(), O_RDONLY);
 		if (_fd >= 0)
 		{
 			try {
-					off_t file_size = get_file_size(path);
+					off_t file_size = get_file_size(*error_page);
 					set_content_length_header(file_size);
 					set_content_type_header();
 					_resp.ready_to_send() = false;

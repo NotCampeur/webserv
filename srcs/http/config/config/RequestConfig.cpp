@@ -16,7 +16,7 @@ RequestConfig::RequestConfig(const ServerConfig & serv_conf, const LocationConfi
 	_name(serv_conf.name()),
 	_ip(serv_conf.ip()),
 	_port(serv_conf.port()),
-	_error_pages(serv_conf.error_page_path()),
+	_error_pages(serv_conf.get_all_error_pages()),
 	_max_client_body_size(serv_conf.max_client_body_size()),
 
 	_accepted_method(loc_conf.accepted_method()),
@@ -25,7 +25,8 @@ RequestConfig::RequestConfig(const ServerConfig & serv_conf, const LocationConfi
 	_is_autoindex_on(loc_conf.is_autoindex_on()),
 	_default_file_dir(loc_conf.default_file_dir()),
 	_cgi(loc_conf.cgi()),
-	_upload_path(loc_conf.upload_path())
+	_upload_path(loc_conf.upload_path()),
+	_path(loc_conf.path())
 	{};
 
 
@@ -123,6 +124,12 @@ const std::string &
 RequestConfig::upload_path(void) const
 {
 	return _upload_path;
+}
+
+const std::string &
+RequestConfig::location_path(void) const
+{
+	return _path;
 }
 
 //Operators

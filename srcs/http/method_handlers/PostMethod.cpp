@@ -1,7 +1,12 @@
 #include "PostMethod.hpp"
-# include "Request.hpp"
-# include "Response.hpp"
-# include "InitiationDispatcher.hpp"
+#include "Request.hpp"
+#include "Response.hpp"
+#include "InitiationDispatcher.hpp"
+#include "Utils.hpp"
+
+#ifndef NAME_MAX
+# define NAME_MAX 255 //usual C limit for filename
+#endif
 
 PostMethod::PostMethod(void) {}
 
@@ -20,6 +25,24 @@ PostMethod::handle(Request & req, Response & resp)
 	{
 		throw (HttpException(StatusCodes::FORBIDDEN_403));
 	}
+
+	std::string filename = Utils::get_filename_from_path(resp.get_path());
+	if (filename.size() > NAME_MAX)
+	{
+		throw HttpException(StatusCodes::REQUEST_URI_TOO_LONG_414);
+	}
+	else if (!req.get_config()->upload_path().empty())
+	{
+		std::string upload_path = req.get_config()->upload_path();
+		if (*upload_path.rbegin() != '/')
+		{
+			upload_path += '/';
+		}
+		upload_path += filename;
+		std::cerr << "UPLOAD Path: " << upload_path << '\n';
+		resp.set_path(upload_path);
+	}
+
 	resp.set_http_code(StatusCodes::CREATED_201);
 	
 	// set_content_location_header(resp);
@@ -53,9 +76,3 @@ PostMethod::add_cgi_handle(Request & req, Response & resp)
 	resp.set_handler_fd(pipe_fd[1]); // Setting handler to write end of the pipe, as CGI handler will first need to write to the pipe
 	InitiationDispatcher::get_instance().add_cgi_handle(req, resp, pipe_fd, "POST");
 }
-
-// void
-// PostMethod::set_content_location_header(const std::string & path, Response & resp)
-// {
-// 	resp.add_header("Location", path);
-// }

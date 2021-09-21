@@ -56,6 +56,7 @@ class StatusCodes
 		StatusCodes &  operator=(StatusCodes const & src);
 
 		static int				get_code_value(status_index_t index);
+		static status_index_t	get_code_index_from_value(int val);
 		static std::string &	get_code_msg_from_index(status_index_t index);
 		// Consider removing if not used
 		static std::string &	get_code_msg_from_value(int value);

@@ -49,7 +49,8 @@ InitiationDispatcher::handle_events(void)
 		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
 		for (;it != ite; it++)
 		{
-			Logger(basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
+			if (it->revents != 0)
+				Logger(basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
 			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
 			{					
 				continue;
@@ -161,6 +162,7 @@ InitiationDispatcher::add_cgi_handle(Request & req, Response & resp, int open_pi
 void
 InitiationDispatcher::remove_handle(int fd)
 {
+	Logger(basic_type, debug_lvl) << "Call to remove FD: " << fd;
 	_event_handler_table->remove(fd);
 	Logger(basic_type, debug_lvl) << "FD " << fd << " removed";
 }

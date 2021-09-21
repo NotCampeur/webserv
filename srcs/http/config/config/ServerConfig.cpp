@@ -14,9 +14,13 @@ _name(src._name),
 _ip(src._ip),
 _port(src._port),
 _error_pages(src._error_pages),
-_max_client_body_size(src._max_client_body_size),
-_locations(src._locations)
-{}
+_max_client_body_size(src._max_client_body_size)
+{
+	for (size_t i(0); i < src._locations.size(); i++)
+		_locations.push_back(new LocationConfig(*src._locations[i]));
+
+	std::cerr << "Server Config Tests:\n" << _error_pages.size() << " vs " << src._error_pages.size() << '\n';
+}
 
 ServerConfig::~ServerConfig(void)
 {
@@ -80,7 +84,7 @@ ServerConfig::set_port(std::string & port)
 }
 
 const std::map<int, std::string> &
-ServerConfig::error_page_path(void) const
+ServerConfig::get_all_error_pages(void) const
 {
 	return _error_pages;
 }

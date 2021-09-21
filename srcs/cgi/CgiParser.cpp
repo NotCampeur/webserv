@@ -1,5 +1,6 @@
 #include "CgiParser.hpp"
 #include "HttpException.hpp"
+#include "Utils.hpp"
 
 CgiParser::CgiParser(Response & resp) :
 _resp(resp),
@@ -10,56 +11,59 @@ CgiParser::~CgiParser(void) {}
 
 void
 CgiParser::parse(char * buf, size_t len)
-{	
-	// write(2, "Cgi read buf content:\n", 22);
-	// write(2, buf, len);
-	// write(2, "\n", 1);
+{
 	for (size_t i = 0; i < len; i++)
 	{
 		char c = buf[i];
-
 		switch (_request_state)
 		{
 			case HEADERS :
 			{
+				if (c == '\r')
+					break ; //According to CGI doc, new line (NL) should only be \n (no \r), but apparently some CGI's use \r\n as NL
 				if (c == '\n' && _header_parser.get_header_name().empty()) // There are no more headers, move to Final NL
 				{
-					_request_state = FINAL_NL;
-					break ;
-				}
-				try {
-					if (_header_parser.parse_char(c))
+					std::cerr << "\n### PARSED CGI REQUEST HEADERS###\n";
+					for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
 					{
-						add_header();
+						std::cerr << "Header name: " << (*it).first << '\t'
+						<< "Header value: " << (*it).second << '\n';
 					}
-					break ;
+					try {
+						if (set_resp_params())
+						{
+							_request_state = BODY; //No break here --> we fall directly in case BODY
+							break ;
+						}
+						else
+						{
+							_resp.ready_to_send();
+							_resp.complete();
+						}
+					}
+					catch (const HttpException & e)
+					{
+						throw e;
+					}
 				}
-				catch(const HttpException & e)
+				else
 				{
-					throw ;
-				}
-			}
-			case FINAL_NL :
-			{
-				std::cerr << "\n### PARSED CGI REQUEST HEADERS###\n";
-				for (std::map<std::string, std::string>::iterator it = _headers.begin(); it != _headers.end(); it++)
-				{
-					std::cerr << "Header name: " << (*it).first << '\t'
-					<< "Header value: " << (*it).second << '\n';
-				}
-				try {
-					set_resp_params();
-					_request_state = BODY; //No break here --> we fall directly in case BODY
-				}
-				catch (const HttpException & e)
-				{
-					throw ;
+					try {
+						if (_header_parser.parse_char(c))
+						{
+							add_header();
+						}
+						break ;
+					}
+					catch(const HttpException & e)
+					{
+						throw e;
+					}
 				}
 			}
 			case BODY :
 			{
 				_resp.set_payload(&buf[i], len - i);
-				// std::cerr << "Payload set with:\n" << std::string(&buf[i], len - i) << '\n';
 				_resp.ready_to_send() = true;
 				return ;
 			}
@@ -89,7 +93,7 @@ CgiParser::reset(void)
 
 // Assumes all header names are lowercase (responsibility of HeaderParser)
 // Returns true if the response has a body, false otherwise
-void
+bool
 CgiParser::set_resp_params(void)
 {
 	if (_headers.find("content-type") == _headers.end())
@@ -112,28 +116,53 @@ CgiParser::set_resp_params(void)
 	else
 	{
 		std::string status = _headers.find("status")->second;
+		_headers.erase("status");
 		long int status_code = std::strtol(status.c_str(), NULL, 10);
-		
+		Logger(error_type, error_lvl) << "Cgi status code: " << status;
 		if (status_code != 200)
 		{
 			Logger(error_type, error_lvl) << "Cgi status code: " << status;
+			if (Utils::is_redirect(status_code))
+			{
+				handle_cgi_redirect(status_code);
+				return true;
+			}
 			throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 		}
 		_resp.set_http_code(StatusCodes::OK_200);
-		_headers.erase("status");
 	}
 
-	if (_headers.find("content-length") != _headers.end())
-	{
-		_resp.add_header("Content-Length", _headers.find("content-length")->second);
-		_headers.erase("content-length");	
-	}
-	else
+	if (_headers.find("content-length") == _headers.end())
 	{
 		_resp.send_chunks();
 	}
+	add_all_cgi_headers();
+	return true;
+}
 
-	//Add protocol specific headers that might have been returned by the cgi
+void
+CgiParser::handle_cgi_redirect(long int code)
+{
+	if (_headers.find("location") != _headers.end())
+	{
+		_resp.set_http_code(StatusCodes::get_code_index_from_value(code));
+		// std::string location = _headers.find("location")->second;
+		// if (location.find("http://") != std::string::npos)
+		// {
+		// 	location.erase(0, 7);
+		// 	_headers.find("location")->second = location;
+		// }
+		add_all_cgi_headers();
+	}
+	else
+	{
+		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
+	}
+}
+
+void
+CgiParser::add_all_cgi_headers(void)
+{
 	for (str_map::iterator it = _headers.begin(); it != _headers.end(); it++)
 	{
 		_resp.add_header(it->first, it->second);

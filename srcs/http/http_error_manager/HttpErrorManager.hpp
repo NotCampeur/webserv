@@ -20,7 +20,7 @@ class HttpErrorManager
 		HttpErrorManager(HttpErrorManager const & src);
     	~HttpErrorManager(void);
 
-		void	handle(StatusCodes::status_index_t error);
+		void	handle(StatusCodes::status_index_t error, const std::string * error_page);
 		void	reset(void);
 
 	private:
