@@ -10,15 +10,19 @@
         <h2>Résultat</h2>
 <?php
 // on vérifie que la variable existe et que c'est bien un nombre
-if (isset($_POST["Nombre"]) && is_numeric($_POST["Nombre"]))
+if (isset($_POST["Nombre"]))
 {
-    $nombre = $_POST["Nombre"];
-    $resultat = $nombre*$nombre;
-    print "<p>Le carré de <strong>$nombre</strong> est <strong>$resultat</strong></p>";
-}
-else
-{
-    print "<p>Valeur invalide !</p>";
+    print "<p>$_POST is set !</p>";
+     if (is_numeric($_POST["Nombre"]))
+    {
+        $nombre = $_POST["Nombre"];
+        $resultat = $nombre*$nombre;
+        print "<p>Le carré de <strong>$nombre</strong> est <strong>$resultat</strong></p>";
+    }
+    else
+    {
+        print "<p>Valeur invalide !</p>";
+    }
 }
 ?>
     </body>
