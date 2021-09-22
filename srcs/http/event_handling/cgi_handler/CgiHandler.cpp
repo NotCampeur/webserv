@@ -136,6 +136,8 @@ CgiHandler::writable(void)
 			return ;
 		}
 	}
+	close(_server_write_pipe);
+	_server_write_pipe = 0;
 	int ret = dup2(_server_read_pipe, _response.get_handler_fd()); // Now we want our server to React to ReadEvents to get the CGI output
 	if (ret < 0)
 	{
@@ -146,7 +148,7 @@ CgiHandler::writable(void)
 	{
 		close(_server_read_pipe);
 		_server_read_pipe = _response.get_handler_fd();
-		_server_write_pipe = 0; // The fd was closed by call to dup2()
+		// _server_write_pipe = 0; // The fd was closed by call to dup2()
 		_event_flag = POLLIN;
 	}
 }
@@ -207,6 +209,7 @@ CgiHandler::set_environment(void)
 	// {
 		// _env.add_cgi_env_var("SCRIPT_NAME", "");
 		_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
+		_env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
 	// }
 	_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
@@ -245,7 +248,6 @@ CgiHandler::start_cgi(void)
 	}
 	if (_pid == 0)
 	{
-		// std::cerr << "Hello from chile\n";
 		close(_server_write_pipe);
 		close(_server_read_pipe);
 		int ret = dup2(_cgi_read_pipe, STDIN_FILENO);
@@ -272,6 +274,12 @@ CgiHandler::start_cgi(void)
 			{
 				Logger(error_type, error_lvl) << "Chdir: " << std::strerror(errno);
 				exit(EXIT_FAILURE);
+			}
+			//DEBUG
+			char **prog_env = _env.get_cgi_env();
+			for (int i = 0; prog_env[i] != NULL; ++i)
+			{
+				std::cerr << prog_env[i] << '\n';
 			}
 
 			Logger(basic_type, debug_lvl) << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path();
