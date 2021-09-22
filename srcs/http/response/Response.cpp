@@ -295,10 +295,10 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 	// redir_location += ':';
 	// redir_location += _req.server_config().port(); //Update "ip" with "name", but need proper DNS setup
 
-	if (!location.empty() && location[0] != '/')
-	{
-		redir_location += '/';
-	}
+	// if (!location.empty() && location[0] != '/')
+	// {
+	// 	redir_location += '/';
+	// }
 	redir_location += location;
 	std::cerr << "Redir location: " << redir_location << '\n';
 	add_header("Location", redir_location);
