@@ -21,7 +21,7 @@ GetMethod::handle(Request & req, Response & resp)
 		// 	redir_path += '/';
 		// 	throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, redir_path));
 		// }
-		// else 
+		// else
 		if (req.get_config()->is_autoindex_on() == false)
 		{
 			// if (req.get_config()->default_file_dir().empty() == false)

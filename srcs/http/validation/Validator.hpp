@@ -41,6 +41,7 @@ class Validator : public Singleton<Validator>
 		void	remove_last_path_elem(std::string & path);
 		//Takes the path after relative resolution has been performed, and returns the associated Location config, or NULL if none is found
 		const LocationConfig & find_location_config(Request & req, std::string & path);
+		bool	file_accessible(const std::string & path);
 };
 
 #endif

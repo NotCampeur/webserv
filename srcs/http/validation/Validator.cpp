@@ -164,8 +164,16 @@ Validator::verify_path(Request & req, Response & resp)
 			}
 			else if (!req.get_config()->default_file_dir().empty())
 			{
-				std::cerr << "Path set tp default file dir\n";
-				resp.set_path(req.get_config()->default_file_dir());
+				std::string file_path = resp.get_path() + req.get_config()->default_file_dir();
+				if (file_accessible(file_path))
+				{
+					std::cerr << "Path set to default file dir: " << file_path << '\n';
+					resp.set_path(file_path);
+				}
+				else
+				{
+					resp.path_is_dir() = true;
+				}
 			}
 			else
 				resp.path_is_dir() = true;
@@ -291,6 +299,23 @@ Validator::find_location_config(Request & req, std::string & path)
 		remove_last_path_elem(req_path);
 	}
 	throw HttpException(StatusCodes::NOT_FOUND_404);
+}
+
+bool
+Validator::file_accessible(const std::string & path)
+{
+	struct stat buf; 
+	int ret = stat(path.c_str(), &buf);
+
+	if (ret < 0)
+	{
+		return false;
+	}
+	if (is_file(buf.st_mode))
+	{
+		return true;
+	}
+	return false;
 }
 
 /*
