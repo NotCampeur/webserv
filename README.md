@@ -33,11 +33,5 @@ Do default_file_dir and directory redir in validator </br>
 
 ### :boom: Known bugs.. I mean features :boom:  
 * WP installation sending "invalid username"  
-* Issue with the default_file_dir wich don't check the auto_index.  
-* I don't know if we want this to work:  
-	"redirection":
-	{
-		"301": "http://webserv:8080/webclient/"
-	}
 ## :writing_hand: Change log :writing_hand:  
 The Logger have been reworked.
