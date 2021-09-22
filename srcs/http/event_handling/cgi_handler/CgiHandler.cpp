@@ -122,13 +122,13 @@ CgiHandler::writable(void)
 
 	if (_method == "POST" && _request.bodysize() > 0)
 	{
-		//Exposed if max pipe capacity is reached
 		ssize_t len = write(_server_write_pipe, &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
 			manage_error();
 			Logger(LOG_FILE, error_type, error_lvl) << "Write: " << std::strerror(errno);
 		}
+		std::cerr << "CGI: written to pipe: " << std::string(&(_request.get_body()[_written_size]), len) << '\n';
 		_written_size += len;
 		if (static_cast<size_t>(_written_size) < _request.bodysize())
 		{
@@ -183,33 +183,22 @@ CgiHandler::set_environment(void)
 		}
 	// Content Type
 		{
-			const std::string *mime_ext = Mime::get_content_type(_file_ext);
-			if (mime_ext != NULL)
+			if (_request.headers().find("content-type") != _request.headers().end())
 			{
-				_env.add_cgi_env_var("CONTENT_TYPE", *mime_ext);
+				_env.add_cgi_env_var("CONTENT_TYPE", _request.headers().find("content-type")->second);
 			}
 		}
 	}
-	
 	_env.add_cgi_env_var("GATEWAY_INTERFACE", "CGI/1.1");
-	// _env.add_cgi_env_var("PATH_INFO", _response.get_path());
-	// _env.add_cgi_env_var("PATH_INFO", _request.get_config()->location_path());
 	_env.add_cgi_env_var("PATH_INFO", _request.uri().path);
 	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path());
 	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
 	_env.add_cgi_env_var("REMOTE_ADDR",_response.get_client_ip());
 	_env.add_cgi_env_var("REMOTE_HOST", ""); //Clients are not expected to have a domain name
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	// if (_request.get_config()->cgi().find(_file_ext) != _request.get_config()->cgi().end())
-	// {
-	// 	_env.add_cgi_env_var("SCRIPT_NAME", _request.get_config()->cgi().find(_file_ext)->second);
-	// }
-	// else
-	// {
-		// _env.add_cgi_env_var("SCRIPT_NAME", "");
-		_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
-		_env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
-	// }
+	_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
+		// If issues with php-cgi, try uncommenting the below
+		// _env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
 	_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
