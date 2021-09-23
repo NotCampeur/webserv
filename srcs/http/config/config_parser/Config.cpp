@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/23 14:48:12 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/23 20:52:48 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ Config::load_server_name(IJsonValue * server_name, ServerConfig & server)
 	if (value == NULL)
 		throw Exception("Config file error : Server's name must be a \"string\"");
 	std::string	name_value = value->value();
+	if (name_value == "default")
+		throw Exception("Config file error : Server's name can't be \"default\", it is a reserved keyword");
 	server.set_name(name_value);
 }
 
