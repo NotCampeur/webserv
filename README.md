@@ -33,4 +33,3 @@ Remove the libft from the project.
 ### :boom: Known bugs.. I mean features :boom:  
 * WP installation sending "invalid username"  
 ## :writing_hand: Change log :writing_hand:  
-The auto_index on / default_file_dir error on config file has been removed.
