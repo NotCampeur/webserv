@@ -1,9 +1,7 @@
 #ifndef WEBSERV_LOGGER_HPP
 # define WEBSERV_LOGGER_HPP
 
-# include "webserv.hpp"
-# include <semaphore.h>
-# include <Arguments.hpp>
+# include "webclient.hpp"
 
 // This enum store the flags about the type of entry.
 // Some entry like the errors need further specifications.
@@ -75,7 +73,6 @@ class Logger
 
 		static std::ofstream		_file;
 		static log_importance_level	_accepted_importance;
-		static sem_t *				_multi_process_lock;
 		static pid_t				_process_id;
 		log_type					_type;
 		log_importance_level		_importance;

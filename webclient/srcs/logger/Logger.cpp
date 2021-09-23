@@ -1,27 +1,13 @@
 #include "Logger.hpp"
 
-static sem_t *
-load_semaphore(void)
-{
-	sem_t *	result;
-
-	result = sem_open("webserv_logger_lock", O_CREAT, 777, 1);
-	sem_unlink("webserv_logger_lock");
-	return result;
-}
-
 //Static initialisation.
 std::ofstream			Logger::_file;
 log_importance_level	Logger::_accepted_importance = log_importance_level(error_lvl | major_lvl);
-sem_t *					Logger::_multi_process_lock = load_semaphore();
 pid_t					Logger::_process_id = getpid();
 
 
 Logger::Logger(log_type type, log_importance_level importance)
 {
-	sem_wait(_multi_process_lock); // I don't know if this is the behaviour we want.
-									// Because it will make the server block in very rare cases.
-									// After all we have done to make it non-blocking.
 	_type = type;
 	_importance = importance;
 	if (is_important_enough())
@@ -32,7 +18,6 @@ Logger::~Logger()
 {
 	if (is_important_enough())
 		_file << std::endl;
-	sem_post(_multi_process_lock);
 }
 
 void
@@ -69,7 +54,6 @@ void
 Logger::quit(void)
 {
 	_file << "End of logs" << std::endl;
-	sem_close(_multi_process_lock);
 }
 
 bool
