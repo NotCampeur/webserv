@@ -32,5 +32,14 @@ All libraries will be build and the binary will be ready to launch
 Remove the libft from the project.  
 ### :boom: Known bugs.. I mean features :boom:  
 * WP installation sending "invalid username"  
+* Check the bug_report_1 files, if the redirection start with a '/' it works.  
+* When you redirect whitout beginning '/' he try to redirect to the current location:
+					"path": "/srcs/",
+					"redirection":
+					{
+						"301": "Makefile"
+					}
+	Will redirect to /srcs/Makefile, so he will loop until the client stop with the message "Too many redirection."
+* When the socket content is bigger than 1024, the server will crash.
 ## :writing_hand: Change log :writing_hand:  
 The auto_index on / default_file_dir error on config file has been removed.
