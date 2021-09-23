@@ -33,7 +33,7 @@ ClientHandler::get_clientfd(void) const
 void 
 ClientHandler::readable(void)
 {
-	char		read_buff[RECV_BUF_SIZE] = {0};
+	char		read_buff[RECV_BUF_SIZE + 1] = {0};
 	ssize_t		bytes_read;
 
 	bytes_read = recv(_client.getsockfd(), read_buff, RECV_BUF_SIZE, 0);
