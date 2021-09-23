@@ -29,9 +29,8 @@ All libraries will be build and the binary will be ready to launch
 ## [The Norm](.readme/norm.md)  
 
 ### :zzz: TODO :zzz:
-Do default_file_dir and directory redir in validator </br>
-
+Remove the libft from the project.  
 ### :boom: Known bugs.. I mean features :boom:  
 * WP installation sending "invalid username"  
 ## :writing_hand: Change log :writing_hand:  
-The Logger have been reworked.
+The auto_index on / default_file_dir error on config file has been removed.

@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/22 18:04:27 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/23 10:43:20 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,12 +215,6 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 				throw ;
 			}
 			location_it++;
-		}
-		if (location_config->is_autoindex_on() == true
-			&& location_config->default_file_dir().empty() == false)
-		{
-			delete location_config;
-			throw Exception("Config file error : Auto_index is on but default_file_dir is set");
 		}
 		server.add_location(location_config);
 		locations_it++;
