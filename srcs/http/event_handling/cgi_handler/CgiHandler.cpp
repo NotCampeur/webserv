@@ -96,6 +96,7 @@ CgiHandler::readable(void)
 		}
 		default :
 		{
+			std::cerr << "Socket content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read) << '\n';
 			try {
 				_parser.parse(read_buff, bytes_read);
 				if (bytes_read < FILE_READ_BUF_SIZE)
@@ -206,11 +207,11 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
 
-	Request::cookies_t cookies = _request.get_cookies();
-	for (size_t i = 0; i < cookies.size(); i++)
-	{
-		_env.add_http_env_var("COOKIE", cookies[i]);
-	}
+	// Request::cookies_t cookies = _request.get_cookies();
+	// for (size_t i = 0; i < cookies.size(); i++)
+	// {
+	// 	_env.add_http_env_var("COOKIE", cookies[i]);
+	// }
 	CgiParser::str_map::iterator it = _request.headers().begin();
 	for (; it != _request.headers().end(); ++it)
 	{

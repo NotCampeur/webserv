@@ -25,7 +25,7 @@ RequestBodyParser::parse_char(char c)
 		{
 			if (_request.headers().find("transfer-encoding") != _request.headers().end())
 			{
-				if (_request.headers().find("transfer-encoding")->second.find("chunked") != std::string::npos)
+				if (_request.headers().find("transfer-encoding")->second.find("chunked") != std::string::npos) // TBU -> need to make case-insensitive check
 					_state = CHUNK_SIZE;
 				else
 					throw HttpException(StatusCodes::NOT_ACCEPTABLE_406);
@@ -40,7 +40,8 @@ RequestBodyParser::parse_char(char c)
 				}
 				else if (_size == 0)
 				{
-					throw HttpException(StatusCodes::BAD_REQUEST_400);
+					return true;
+					// throw HttpException(StatusCodes::BAD_REQUEST_400);
 				}
 			}
 			else

@@ -81,6 +81,9 @@ Response::complete(void)
 void
 Response::set_payload(const char *buf, size_t len)
 {
+	if (len == 0)
+		return ;
+
 	_payload.clear();
 	if (_chunked)
 	{
