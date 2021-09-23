@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <pthread.h>
 
 CgiHandler::CgiHandler(Request & req, Response & resp, int pipe_one[2], std::string method) :

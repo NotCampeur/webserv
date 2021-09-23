@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+#include <fcntl.h>
 
 static sem_t *
 load_semaphore(void)

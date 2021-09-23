@@ -6,12 +6,16 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/23 10:43:20 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/23 14:48:12 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 #include "LocationConfig.hpp"
+#include "Utils.hpp"
+#include "JsonArray.hpp"
+#include "JsonString.hpp"
+#include "InitiationDispatcher.hpp"
 
 Config::Config(JsonObject & config_object)
 : _global_scope(config_object)
@@ -91,7 +95,7 @@ Config::load_server_ip(IJsonValue * server_ip, ServerConfig & server)
 	if (value == NULL)
 		throw Exception("Config file error : Server's ip must be a \"string\"");
 	std::string	ip_value = value->value();
-	std::vector<std::string>	ip_value_split = ft_split(ip_value, ".");
+	std::vector<std::string>	ip_value_split = Utils::split(ip_value, ".");
 	if (ip_value_split.size() != 4)
 		throw Exception("Config file error : Server's ip must be a valid ip");
 	int	ip_value_int(0);
@@ -243,7 +247,7 @@ Config::load_location_method(IJsonValue * location_method, LocationConfig & loca
 		return location.set_accepted_method(NOTHING);
 	else if (method->value() == std::string("ALL"))
 		return location.set_accepted_method(ALL);
-	std::vector<std::string>	accepted_method_list(ft_split(ft_rm_charset(method->value(), " "), ","));
+	std::vector<std::string>	accepted_method_list(Utils::split(Utils::rm_charset(method->value(), " "), ","));
 	std::vector<std::string>::const_iterator it(accepted_method_list.begin());
 	std::vector<std::string>::const_iterator ite(accepted_method_list.end());
 	while (it != ite)

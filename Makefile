@@ -6,7 +6,7 @@
 #    By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/09 11:13:40 by ldutriez          #+#    #+#              #
-#    Updated: 2021/09/16 23:38:27 by notcampeur       ###   ########.fr        #
+#    Updated: 2021/09/23 14:52:47 by notcampeur       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,17 +18,12 @@ CXX =		clang++
 SRC_DIR =	$(shell find srcs -type d)
 
 INC_DIR =	$(shell find includes -type d) \
-			$(shell find srcs -type d) \
-			$(shell find libft/includes -type d)
-
-LIB_DIR =	libft
+			$(shell find srcs -type d)
 
 OBJ_DIR =	objs
 OBJ_DIR_DEV =	dev_objs
 
 vpath %.cpp $(foreach dir, $(SRC_DIR), $(dir):)
-
-LIB = ft
 
 SRC	=	main.cpp \
 		Logger.cpp \
@@ -67,9 +62,6 @@ endif
 
 IFLAGS =	$(foreach dir, $(INC_DIR), -I$(dir))
 
-LDFLAGS =	$(foreach dir, $(LIB_DIR), -L $(dir)) \
-			$(foreach lib, $(LIB), -l$(lib))
-
 # Colors
 
 _GREY=	$'\033[30m
@@ -94,11 +86,6 @@ show:
 				@echo "$(_BLUE)LIB_DIR:\n$(_YELLOW)$(LIB_DIR)$(_WHITE)"
 				@echo "$(_BLUE)INC_DIR :\n$(_YELLOW)$(INC_DIR)$(_WHITE)"
 
-libft/libft.a:
-				@echo "$(_PURPLE)"
-				@$(foreach dir, $(LIB_DIR), make --no-print-directory DEBUG=$(DEBUG) -C $(dir) ; )
-				@echo "$(_WHITE)"		
-
 re-install:
 				@echo "$(_PURPLE)"
 				@$(foreach dir, $(LIB_DIR), make --no-print-directory DEBUG=$(DEBUG) -C $(dir) re ; )
@@ -110,9 +97,9 @@ $(OBJ_DIR)/%.o : %.cpp
 				@$(CXX) $(CPPFLAGS) $(IFLAGS) -o $@ -c $<
 				@echo "$(_GREEN)DONE$(_WHITE)"
 
-$(NAME): 		libft/libft.a $(INC_DIR) $(OBJ) Makefile
+$(NAME): 		$(INC_DIR) $(OBJ) Makefile
 				@echo "-----\nCreating Executable $(_YELLOW)$@$(_WHITE) ... \c"
-				@$(CXX) $(CPPFLAGS) $(OBJ) $(LDFLAGS) -o $(NAME)
+				@$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"
 
 exec:			$(NAME)
@@ -126,7 +113,7 @@ $(OBJ_DIR_DEV)/%.o : %.cpp
 				@$(CXX) $(CPPFLAGS) $(IFLAGS) -D DEBUG=true -o $@ -c $<
 				@echo "$(_GREEN)DONE$(_WHITE)"
 				
-$(NAME_DEV):	libft/libft.a $(INC_DIR) $(OBJ_DEV) Makefile
+$(NAME_DEV):	$(INC_DIR) $(OBJ_DEV) Makefile
 				@echo "-----\nCreating Dev Executable $(_YELLOW)$@$(_WHITE) ... \c"
 				@$(CXX) $(CPPFLAGS) $(OBJ_DEV) $(LDFLAGS) -o $(NAME_DEV)
 				@echo "$(_GREEN)DONE$(_WHITE)\n-----"

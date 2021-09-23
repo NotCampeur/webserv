@@ -5,6 +5,7 @@
 #include "Mime.hpp"
 #include <dirent.h>
 #include <sstream>
+#include <fcntl.h>
 
 GetMethod::GetMethod(void) {}
 

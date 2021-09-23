@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 13:29:35 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/08/02 18:58:55 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/23 14:49:42 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@
 # include <poll.h>
 # include <signal.h>
 
-# include "libft.hpp"
 # include "webserv_param.hpp"
 # include "Logger.hpp"
 # include "webserv_sig_handler.hpp"

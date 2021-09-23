@@ -3,11 +3,11 @@
 #include <string>
 #include <algorithm>
 #include <vector>
-#include "libft_string.hpp"
 #include "Logger.hpp"
 #include "webserv_param.hpp"
 #include "Exception.hpp"
 #include <sys/stat.h>
+#include <Utils.hpp>
 
 Arguments::Arguments(void)
 : Singleton()
@@ -125,7 +125,7 @@ Arguments::set_log_importance(const std::string importance_level)
 	}
 	_is_log_importance_set = true;
 
-	std::vector<std::string>	importance(ft_split(importance_level.substr(17), ","));
+	std::vector<std::string>	importance(Utils::split(importance_level.substr(17), ","));
 	log_importance_level		accepted_importance(none_lvl);
 
 	if (importance.size() == 1 && importance[0] == "all")

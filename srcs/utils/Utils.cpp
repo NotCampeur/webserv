@@ -50,3 +50,35 @@ Utils::is_redirect(int code)
 		return true;
 	return false;
 }
+
+std::vector<std::string>
+Utils::split(const std::string &src, const std::string &sep)
+{
+	std::vector<std::string> result;
+	size_t pos(src.find(sep));
+	size_t begin(0);
+	
+	while (pos != std::string::npos)
+	{
+		result.push_back(src.substr(begin, pos - begin));
+		begin = pos + sep.size();
+		pos = src.find(sep, begin);
+	}
+	result.push_back(src.substr(begin));
+	return (result);
+}
+
+std::string
+Utils::rm_charset(std::string str, std::string charset)
+{
+	size_t	charset_len(0);
+
+	if (str.empty() || charset.empty())
+		return str;
+	charset_len = charset.size();
+	for (unsigned int i = 0; i < charset_len; ++i)
+	{
+		str.erase(remove(str.begin(), str.end(), charset[i]), str.end());
+	}
+	return str;
+}

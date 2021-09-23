@@ -3,6 +3,7 @@
 #include "Response.hpp"
 #include "InitiationDispatcher.hpp"
 #include "Utils.hpp"
+#include <fcntl.h>
 
 #ifndef NAME_MAX
 # define NAME_MAX 255 //usual C limit for filename

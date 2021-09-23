@@ -1,4 +1,5 @@
 #include "ServerHandler.hpp"
+#include <fcntl.h>
 
 ServerHandler::ServerHandler(const Server * server) :
 _server(*server),

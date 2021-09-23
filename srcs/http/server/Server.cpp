@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "Exception.hpp"
+#include <fcntl.h>
 
 Server::Server(ServerConfig *config, int com_domain, int sock_type) :
 _config()

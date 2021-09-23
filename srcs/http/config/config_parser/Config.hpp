@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 16:35:39 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/06 18:46:19 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/23 14:48:36 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 # define WEBSERV_CONFIG_HPP
 
 # include "webserv.hpp"
-# include "InitiationDispatcher.hpp"
 # include "Server.hpp"
 # include "JsonObject.hpp"
-# include "JsonArray.hpp"
-# include "JsonString.hpp"
+
 class RouteConfig;
 
 class Config

@@ -5,6 +5,7 @@
 #include "Mime.hpp"
 #include "HttpException.hpp"
 #include "Utils.hpp"
+#include <fcntl.h>
 
 HttpErrorManager::HttpErrorManager(Response & resp) :
 _fd(-1),
