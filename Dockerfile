@@ -43,6 +43,8 @@ RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld && \
 	
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.2/cgi/php.ini
 
+# RUN	apt-get update && apt-get install -y nginx php-fpm php-json php-mbstring php-mysqli php-phar curl
+
 RUN mkdir /app
 
 WORKDIR /app
