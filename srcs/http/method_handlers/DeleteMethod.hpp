@@ -22,3 +22,11 @@ class DeleteMethod : public IHttpMethod, public Singleton<DeleteMethod>
 };
 
 #endif
+
+/* Mysql:
+use wordpress;
+show tables;
+show fields from wp_users;
+describe wp_users ID;
+describe wp_users user_login;
+*/
