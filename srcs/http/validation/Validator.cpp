@@ -169,6 +169,7 @@ Validator::verify_path(Request & req, Response & resp)
 				{
 					std::cerr << "Path set to default file dir: " << file_path << '\n';
 					resp.set_path(file_path);
+					req.uri().path += req.get_config()->default_file_dir(); // TRYING SOMETHING (DELETE IF NOT WORKING)
 				}
 				else
 				{

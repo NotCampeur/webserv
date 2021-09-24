@@ -199,8 +199,9 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
 	_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
 		// If issues with php-cgi, try uncommenting the below
-		// _env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
-	_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
+	_env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
+	// _env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
+	_env.add_cgi_env_var("SERVER_NAME", _request.headers().find("host")->second); //Tryout
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
 	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
