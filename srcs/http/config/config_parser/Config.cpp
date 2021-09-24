@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/23 20:52:48 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/24 14:30:00 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,7 @@ Config::load_server_location(IJsonValue * server_location, ServerConfig & server
 						break;
 					case location_unknown:
 						Logger(error_type, error_lvl) << "The unknown location's key is : " << location_it->first;
+						Logger(error_type,error_lvl) << "Available keys are : path, method, redirection, root, auto_index, default_file_dir, cgi, upload_path";
 						throw Exception("Config file error : Unknown location's key detected");
 				}
 			}
@@ -384,6 +385,7 @@ Config::load_server_config(IJsonValue * server_object)
 				case server_unknown:
 				{
 					Logger(error_type, error_lvl) << "The unknown server's key is : " << it->first;
+					Logger(error_type, error_lvl) << "Available keys are : name, ip, port, error_page_path, max_client_body_size, location";
 					throw Exception("Config file error : Unknown server's key detected");
 				}
 			}
@@ -393,6 +395,11 @@ Config::load_server_config(IJsonValue * server_object)
 			delete server_config;
 			throw ;
 		}
+	}
+	if (server_config->locations().empty() == true)
+	{
+		delete server_config;
+		throw Exception("Config file error : Server must have at least one location");
 	}
 	return server_config;
 }
@@ -409,6 +416,8 @@ Config::load_servers_config(IJsonValue * server_array)
 	std::vector<Server *>		server_list;
 	bool						is_same_server(false);
 	
+	if (ait == aite)
+		throw Exception("Config file error : There is no server");
 	while (ait != aite)
 	{
 		try

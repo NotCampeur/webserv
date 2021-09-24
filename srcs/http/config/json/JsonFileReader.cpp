@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/02 16:29:40 by notcampeur        #+#    #+#             */
-/*   Updated: 2021/09/21 10:07:31 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/24 18:00:38 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,33 +219,32 @@ JsonFileReader::check_tokens()
 {
 	std::string::iterator	it(_file_data.begin());
 	std::string::iterator	ite(_file_data.end());
-	token_type				quote_type(open_type);
+	token_purpose			quote_purpose(key_type);
 
 	while (it != ite)
 	{
 		if (*it == '{')
-			check_curly_bracket_token(it, open_type);
+		{
+			check_curly_bracket_token(it, open_type, quote_purpose);
+			quote_purpose = key_type;
+		}
 		else if (*it == '}')
-			check_curly_bracket_token(it, close_type);
+			check_curly_bracket_token(it, close_type, quote_purpose);
 		else if (*it == '[')
 			check_bracket_token(it, open_type);
 		else if (*it == ']')
 			check_bracket_token(it, close_type);
 		else if (*it == '"')
 		{
-			check_quotes_token(it, quote_type);
-			if (quote_type == open_type)
-			{
+			check_quotes_token(it, quote_purpose);
+			it++;
+			while (it != ite && *it != '"')
 				it++;
-				while (it != ite && *it != '"')
-					it++;
-				it--;
-			}
-			quote_type = (quote_type == open_type) ? close_type : open_type;
+			quote_purpose = (quote_purpose == key_type) ? value_type : key_type;
 		}
-		else if (*it == ':' && quote_type == open_type)
+		else if (*it == ':')
 			check_colon_token(it);
-		else if (*it == ',' && quote_type == open_type)
+		else if (*it == ',')
 			check_comma_token(it);
 		if (it != ite)
 			it++;
@@ -253,7 +252,7 @@ JsonFileReader::check_tokens()
 }
 
 void
-JsonFileReader::check_curly_bracket_token(std::string::iterator pos, token_type type)
+JsonFileReader::check_curly_bracket_token(std::string::iterator pos, token_type type, token_purpose purpose)
 {
 	if (type == open_type)
 	{
@@ -262,6 +261,8 @@ JsonFileReader::check_curly_bracket_token(std::string::iterator pos, token_type 
 			throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
 	}
 	else if (pos + 1 != _file_data.end() && *(pos + 1) != '}' && *(pos + 1) != ',' && *(pos + 1) != ']' && *(pos + 1) != ':')
+		throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
+	if (purpose == value_type && type == close_type)
 		throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
 }
 
@@ -279,17 +280,22 @@ JsonFileReader::check_bracket_token(std::string::iterator pos, token_type type)
 }
 
 void
-JsonFileReader::check_quotes_token(std::string::iterator pos, token_type type)
+JsonFileReader::check_quotes_token(std::string::iterator pos, token_purpose purpose)
 {
-	if (type == open_type)
+	if (purpose == key_type)
 	{
 		if (pos + 1 == _file_data.end() || pos == _file_data.begin())
 			throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
-		if (*(pos - 1) != '{' && *(pos - 1) != ',' && *(pos - 1) != '[' && *(pos - 1) != ':')
+		if (*(pos - 1) != '{' && *(pos - 1) != ',' && *(pos - 1) != '[')
 			throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
 	}
-	else if (*(pos + 1) != '}' && *(pos + 1) != ',' && *(pos + 1) != ']' && *(pos + 1) != ':')
-		throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
+	else if (purpose == value_type)
+	{
+		if (pos + 1 == _file_data.end() || pos == _file_data.begin())
+			throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
+		if (*(pos - 1) != ':')
+			throw MissingToken(_file_data.substr(std::distance(_file_data.begin(), pos - 1), 10));
+	}
 }
 
 void

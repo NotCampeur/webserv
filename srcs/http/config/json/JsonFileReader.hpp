@@ -28,7 +28,11 @@ class JsonFileReader
 			open_type,
 			close_type
 		};
-
+		enum token_purpose
+		{
+			key_type,
+			value_type
+		};
 		std::string	_file_data;
 
 		//	A JsonFileReader is not instantiable without a path.
@@ -39,9 +43,9 @@ class JsonFileReader
 		void	raw_parsing();
 		//	Make sure that the tokens are correct.
 		void	check_tokens();
-		void	check_curly_bracket_token(std::string::iterator pos, token_type type);
+		void	check_curly_bracket_token(std::string::iterator pos, token_type type, token_purpose purpose);
 		void	check_bracket_token(std::string::iterator pos, token_type type);
-		void	check_quotes_token(std::string::iterator pos, token_type type);
+		void	check_quotes_token(std::string::iterator pos, token_purpose purpose);
 		void	check_colon_token(std::string::iterator pos);
 		void	check_comma_token(std::string::iterator pos);
 		//	Check if the scopes are well formated / closed.
