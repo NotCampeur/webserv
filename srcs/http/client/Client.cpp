@@ -6,7 +6,11 @@ _address(address),
 _ip(inet_ntoa((reinterpret_cast<sockaddr_in *>(address))->sin_addr)),
 _server_ip(server_ip),
 _server_config(config)
-{}
+{
+	std::stringstream ss;
+	ss << (reinterpret_cast<sockaddr_in *>(address))->sin_port;
+	_port = ss.str();
+}
 
 
 Client::~Client(void)
@@ -25,6 +29,12 @@ const std::string &
 Client::getip(void) const
 {
 	return _ip;
+}
+
+const std::string &
+Client::getport(void) const
+{
+	return _port;
 }
 
 const Client::config_type &

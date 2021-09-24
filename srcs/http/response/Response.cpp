@@ -4,7 +4,7 @@
 #include "Request.hpp"
 // #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-Response::Response(const Request & req, const std::string & server_ip, const std::string & client_ip) :
+Response::Response(const Request & req, const std::string & server_ip, const std::string & client_ip, const std::string & client_port) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
@@ -16,7 +16,8 @@ _path_is_dir(false),
 _need_cgi(false),
 _chunked(false),
 _server_ip(server_ip),
-_client_ip(client_ip)
+_client_ip(client_ip),
+_client_port(client_port)
 {}
 
 Response::Response(Response const & src) :
@@ -33,7 +34,8 @@ _path_is_dir(src._path_is_dir),
 _need_cgi(src._need_cgi),
 _chunked(src._chunked),
 _server_ip(src._server_ip),
-_client_ip(src._client_ip)
+_client_ip(src._client_ip),
+_client_port(src._client_port)
 {}
 
 Response::~Response(void)
@@ -181,7 +183,7 @@ Response::add_default_headers(void)
 	{
 		_headers.insert(_headers.begin(), header_t("Transfer-Encoding", "chunked"));
 	}
-	_headers.insert(_headers.begin(), header_t("Server", "robin hoodie"));
+	_headers.insert(_headers.begin(), header_t("Server", "Webserv/1.0"));
 	_headers.insert(_headers.begin(), header_t("Date", ""));
 	set_date(_headers.begin()->second);
 }
@@ -360,4 +362,10 @@ const std::string &
 Response::get_client_ip(void) const
 {
 	return _client_ip;
+}
+
+const std::string &
+Response::get_client_port(void) const
+{
+	return _client_port;
 }

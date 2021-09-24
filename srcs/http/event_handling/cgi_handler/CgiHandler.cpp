@@ -195,16 +195,51 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path());
 	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
 	_env.add_cgi_env_var("REMOTE_ADDR",_response.get_client_ip());
-	_env.add_cgi_env_var("REMOTE_HOST", ""); //Clients are not expected to have a domain name
+	_env.add_cgi_env_var("REMOTE_PORT", _response.get_client_port());
+	// _env.add_cgi_env_var("REMOTE_PORT", _response.get.get)
+	// _env.add_cgi_env_var("REMOTE_HOST", ""); //Clients are not expected to have a domain name - Commented for testing
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
+	_env.add_cgi_env_var("REQUEST_URI", _request.uri().path); // TEST -> for php only
+	
+	
+	std::string script_name = _request.uri().path;
+	// if (script_name != "/" && script_name[0] != '/')
+	// 		script_name.insert(script_name.begin(), '/'); // Per rfc 3875, must start with "/"
+
+	// std::string index_file = _request.get_config()->default_file_dir();
+	// if (!index_file.empty())
+	// {
+	// 	size_t pos = _response.get_path().find(index_file);
+	// 	bool path_ends_with_index = (pos != std::string::npos && pos == _response.get_path().size() - index_file.size());
+	// 	if (path_ends_with_index)
+	// 	{
+	// 		_env.add_cgi_env_var("SCRIPT_NAME", script_name + index_file);
+	// 	}
+	// 	else
+	// 		_env.add_cgi_env_var("SCRIPT_NAME", script_name);
+	// }
+	// else
+		_env.add_cgi_env_var("SCRIPT_NAME", script_name);
+
+
 		// If issues with php-cgi, try uncommenting the below
 	_env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
-	// _env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
-	_env.add_cgi_env_var("SERVER_NAME", _request.headers().find("host")->second); //Tryout
+	
+	// _env.add_cgi_env_var("SERVER_ADDR", "127.0.0.1"); //PHP-CGI specific, hardcoded for testing only
+	if (_request.get_config()->name() == "default")
+		_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->ip());
+	else
+		_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
+	// _env.add_cgi_env_var("SERVER_NAME", _request.headers().find("host")->second); //Tryout
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
-	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
+	_env.add_cgi_env_var("SERVER_SOFTWARE", "Webserv/1.0");
+
+	// EMPTY values -> for testing
+	// _env.add_cgi_env_var("AUTH_TYPE", "");
+	// _env.add_cgi_env_var("REMOTE_PORT", "");
+	// _env.add_cgi_env_var("REMOTE_INDENT", "");
+	// _env.add_cgi_env_var("REMOTE_USER", "");
 
 	// Request::cookies_t cookies = _request.get_cookies();
 	// for (size_t i = 0; i < cookies.size(); i++)
@@ -259,9 +294,10 @@ CgiHandler::start_cgi(void)
 		}
 		else
 		{
+
 			char * const av[] = {
 				const_cast<char *>(cgi_bin.c_str()),
-				const_cast<char *>(_response.get_path().c_str()),
+				const_cast<char *>(_response.get_path().c_str()) + _request.get_config()->root().size(),
 				NULL
 				};
 			
@@ -278,8 +314,8 @@ CgiHandler::start_cgi(void)
 				std::cerr << prog_env[i] << '\n';
 			}
 
-			std::cerr << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path() << '\n';
-			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
+			std::cerr << "Cgi params: bin: " << cgi_bin.c_str() << " : Arguments: 1:" << av[0]  << " 2: " << av[1] << '\n';
+			execve(cgi_bin.c_str(), av, prog_env); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(LOG_FILE, error_type, error_lvl) << "Execve: " << std::strerror(errno);
 		exit(EXIT_FAILURE);

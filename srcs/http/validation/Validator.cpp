@@ -155,6 +155,7 @@ Validator::verify_path(Request & req, Response & resp)
 	{ // Structure to be improved during further development
 		if (is_dir(buf.st_mode))
 		{
+			// bool missing_trailing_bkslash = resp.get_path()[resp.get_path().size() - 1] != '/';
 			bool missing_trailing_bkslash = (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1] != '/') && (req.uri().path != "/"));
 			if (missing_trailing_bkslash)
 			{
@@ -164,12 +165,18 @@ Validator::verify_path(Request & req, Response & resp)
 			}
 			else if (!req.get_config()->default_file_dir().empty())
 			{
-				std::string file_path = resp.get_path() + req.get_config()->default_file_dir();
+				
+				std::string file_path = resp.get_path();
+				// if (missing_trailing_bkslash)
+				// 	file_path += '/';
+				
+				file_path += req.get_config()->default_file_dir();
+				
 				if (file_accessible(file_path))
 				{
 					std::cerr << "Path set to default file dir: " << file_path << '\n';
 					resp.set_path(file_path);
-					req.uri().path += req.get_config()->default_file_dir(); // TRYING SOMETHING (DELETE IF NOT WORKING)
+					// req.uri().path += req.get_config()->default_file_dir(); // TRYING SOMETHING (DELETE IF NOT WORKING)
 				}
 				else
 				{
