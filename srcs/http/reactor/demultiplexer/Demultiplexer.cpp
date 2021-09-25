@@ -38,9 +38,9 @@ Demultiplexer::activate()
 		Logger(LOG_FILE, basic_type, minor_lvl) << "Poll timeout";
 		return result;
 	}
-	std::ostringstream	nb;
-	nb << result;
-	Logger(LOG_FILE, basic_type, major_lvl) << nb.str() + " fd ready";
+	// std::ostringstream	nb;
+	// nb << result;
+	// Logger(LOG_FILE, basic_type, major_lvl) << nb.str() + " fd ready";
 	return result;
 }
 

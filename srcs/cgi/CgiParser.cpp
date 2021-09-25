@@ -77,16 +77,16 @@ CgiParser::add_header(void)
 		// {
 			// p.first = "Cookie";
 		// }
-		bool duplicate = false;
-		for (size_t i = 0; i < _cookies.size(); ++i)
-		{
-			if (_cookies[i] == p.second)
-			{
-				duplicate = true;
-				break ;
-			}
-		}
-		if (!duplicate)
+		// bool duplicate = false;
+		// for (size_t i = 0; i < _cookies.size(); ++i)
+		// {
+		// 	if (_cookies[i] == p.second)
+		// 	{
+		// 		duplicate = true;
+		// 		break ;
+		// 	}
+		// }
+		// if (!duplicate)
 			_cookies.push_back(p.second);
 	}
 	else
@@ -116,11 +116,11 @@ CgiParser::set_resp_params(void)
 		Logger(LOG_FILE, error_type, error_lvl) << "Missing 'content-type' header in cgi response";
 		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
-	else
-	{
-		_resp.add_header("Content-Type", _headers.find("content-type")->second);
-		_headers.erase("content-type");
-	}
+	// else
+	// {
+	// 	_resp.add_header("Content-Type", _headers.find("content-type")->second);
+	// 	_headers.erase("content-type");
+	// }
 
 	if (_headers.find("status") == _headers.end())
 	{

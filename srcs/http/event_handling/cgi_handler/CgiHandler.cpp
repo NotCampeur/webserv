@@ -94,7 +94,7 @@ CgiHandler::readable(void)
 		}
 		default :
 		{
-			std::cerr << "Socket content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read) << '\n';
+			std::cerr << "Pipe content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read) << '\n';
 			try {
 				_parser.parse(read_buff, bytes_read);
 				if (bytes_read < FILE_READ_BUF_SIZE)

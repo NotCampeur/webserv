@@ -137,5 +137,5 @@ CgiHeaderParser::addto_fieldname(char c)
 void
 CgiHeaderParser::addto_fieldvalue(char c)
 {
-	_field_value += std::tolower(c);
+	_field_value += c;
 }
