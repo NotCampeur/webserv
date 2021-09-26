@@ -131,5 +131,5 @@ RequestHeaderParser::addto_fieldname(char c)
 void
 RequestHeaderParser::addto_fieldvalue(char c)
 {
-	_field_value += std::tolower(c);
+	_field_value += c;
 }

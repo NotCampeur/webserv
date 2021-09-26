@@ -86,15 +86,16 @@ Request::reset(void)
 	_headers.clear();
 	_body.clear();
 	_server_config_cache = NULL;
+	// _cookies.clear();
 }
 
 void
 Request::add_header(std::string & field_name, std::string & field_value)
 {
-	if (field_name == "cookie")
-	{
-		_cookies.push_back(field_value);
-	}
+	// if (field_name == "cookie")
+	// {
+	// 	_cookies.push_back(field_value);
+	// }
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
 
@@ -142,11 +143,11 @@ Request::server_config(void) const
 	}
 }
 
-const Request::cookies_t &
-Request::get_cookies(void) const
-{
-	return _cookies;
-}
+// const Request::cookies_t &
+// Request::get_cookies(void) const
+// {
+// 	return _cookies;
+// }
 
 //Useful to avoid setting server config cache variable when in need of error page before parsing of host header
 const std::string *

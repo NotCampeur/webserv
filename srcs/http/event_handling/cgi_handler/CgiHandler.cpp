@@ -25,7 +25,6 @@ _written_size(0),
 _cgi_done(false),
 _parser(resp)
 {
-	std::cerr << "Pipe one fds: " << pipe_one[0] << " ; " << pipe_one[1] << '\n';
 	set_environment();
 	if (!open_pipe_two())
 	{
@@ -90,7 +89,7 @@ CgiHandler::readable(void)
 		}
 		case 0 :
 		{
-			std::cerr << "Cgi Pipe empty - done reading\n";
+			Logger(basic_type, debug_lvl) << "Cgi Pipe empty - done reading";
 			make_complete();
 			break ;
 		}
@@ -100,9 +99,7 @@ CgiHandler::readable(void)
 				_parser.parse(read_buff, bytes_read);
 				if (bytes_read < FILE_READ_BUF_SIZE)
 				{
-					std::cerr << "Read less than Buf_Size\n";
-					// make_complete();
-					
+					Logger(basic_type, debug_lvl) << "Cgi handler read less than FILE_READ_BUF_SIZE";
 				}
 			}
 			catch (const HttpException & e)
@@ -111,7 +108,6 @@ CgiHandler::readable(void)
 			}
 		}
 	}
-	// Logger(basic_type, minor_lvl) << "Socket content (" << bytes_read << " byte(s) read): " << std::string(read_buff, bytes_read);
 }
 
 void
@@ -130,7 +126,6 @@ CgiHandler::writable(void)
 			manage_error();
 			Logger(error_type, error_lvl) << "Write: " << std::strerror(errno);
 		}
-		std::cerr << "CGI: written to pipe: " << std::string(&(_request.get_body()[_written_size]), len) << '\n';
 		_written_size += len;
 		if (static_cast<size_t>(_written_size) < _request.bodysize())
 		{
@@ -149,7 +144,6 @@ CgiHandler::writable(void)
 	{
 		close(_server_read_pipe);
 		_server_read_pipe = _response.get_handler_fd();
-		// _server_write_pipe = 0; // The fd was closed by call to dup2()
 		_event_flag = POLLIN;
 	}
 }
@@ -196,21 +190,29 @@ CgiHandler::set_environment(void)
 	_env.add_cgi_env_var("PATH_TRANSLATED", _response.get_path());
 	_env.add_cgi_env_var("QUERY_STRING", _request.uri().query);
 	_env.add_cgi_env_var("REMOTE_ADDR",_response.get_client_ip());
-	_env.add_cgi_env_var("REMOTE_HOST", ""); //Clients are not expected to have a domain name
+	_env.add_cgi_env_var("REMOTE_PORT", _response.get_client_port());
 	_env.add_cgi_env_var("REQUEST_METHOD", _method);
-	_env.add_cgi_env_var("SCRIPT_NAME", _request.uri().path);
-		// If issues with php-cgi, try uncommenting the below
-		// _env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
-	_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
+	_env.add_cgi_env_var("REQUEST_URI", _request.uri().path); // TEST -> for php only
+	
+	
+	std::string script_name = _request.uri().path;
+	if (script_name != "/" && script_name[0] != '/')
+	{
+			script_name.insert(script_name.begin(), '/'); // Per rfc 3875, must start with "/"
+	}
+	_env.add_cgi_env_var("SCRIPT_NAME", script_name);
+
+	_env.add_cgi_env_var("SCRIPT_FILENAME", _response.get_path());
+	
+	if (_request.get_config()->name() == "default")
+		_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->ip());
+	else
+		_env.add_cgi_env_var("SERVER_NAME", _request.get_config()->name());
+
 	_env.add_cgi_env_var("SERVER_PORT", _request.get_config()->port());
 	_env.add_cgi_env_var("SERVER_PROTOCOL", "HTTP/1.1");
-	_env.add_cgi_env_var("SERVER_SOFTWARE", "webserv/1.0");
+	_env.add_cgi_env_var("SERVER_SOFTWARE", "Webserv/1.0");
 
-	Request::cookies_t cookies = _request.get_cookies();
-	for (size_t i = 0; i < cookies.size(); i++)
-	{
-		_env.add_http_env_var("COOKIE", cookies[i]);
-	}
 	CgiParser::str_map::iterator it = _request.headers().begin();
 	for (; it != _request.headers().end(); ++it)
 	{
@@ -253,6 +255,7 @@ CgiHandler::start_cgi(void)
 			exit(EXIT_FAILURE);
 		else
 		{
+
 			char * const av[] = {
 				const_cast<char *>(cgi_bin.c_str()),
 				const_cast<char *>(_response.get_path().c_str()),
@@ -265,14 +268,7 @@ CgiHandler::start_cgi(void)
 				Logger(error_type, error_lvl) << "Chdir: " << std::strerror(errno);
 				exit(EXIT_FAILURE);
 			}
-			//DEBUG
-			char **prog_env = _env.get_cgi_env();
-			for (int i = 0; prog_env[i] != NULL; ++i)
-			{
-				std::cerr << prog_env[i] << '\n';
-			}
-
-			Logger(basic_type, debug_lvl) << "Cgi params: bin: " << cgi_bin << " : req file path: " << _response.get_path();
+			
 			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(error_type, error_lvl) << "Execve: " << std::strerror(errno);

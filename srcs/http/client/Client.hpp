@@ -12,6 +12,7 @@ class Client
         const int				_sockfd;
         const struct sockaddr *	_address;
 		const std::string		_ip;
+		std::string				_port;
 		const std::string		_server_ip;
 		const config_type &		_server_config;
 
@@ -21,6 +22,7 @@ class Client
 
         int     					getsockfd(void) const;
 		const std::string & 		getip(void) const;
+		const std::string & 		getport(void) const;
 		const config_type &	get_server_config(void) const;
 		const std::string &	get_server_ip(void) const;
 

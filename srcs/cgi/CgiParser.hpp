@@ -10,7 +10,8 @@ class Response;
 class CgiParser {
 
 	public:
-		typedef std::map<std::string, std::string> str_map;
+		typedef std::map<std::string, std::string> 					str_map;
+		typedef std::vector<std::string>							cookies_t;
 
 		enum request_parsing_state {
 			HEADERS,
@@ -23,6 +24,7 @@ class CgiParser {
 		CgiHeaderParser			_header_parser;
 		request_parsing_state	_request_state;
 		str_map					_headers;
+		cookies_t				_cookies;
 
 	public:
 		CgiParser(Response & resp);
@@ -39,7 +41,7 @@ class CgiParser {
 		void	parse_char(char c);
 		void	add_header(void);
 		// Return true if a body is expected
-		bool	set_resp_params(void);
+		void	set_resp_params(void);
 		void	handle_cgi_redirect(long int error);
 		void	add_all_cgi_headers(void);
 };
