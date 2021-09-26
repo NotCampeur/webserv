@@ -69,24 +69,6 @@ CgiParser::add_header(void)
 	std::pair<std::string, std::string> p(_header_parser.get_header_name(), _header_parser.get_header_value());
 	if (p.first == "set-cookie")
 	{
-		// if (p.first == "set-cookie")
-		// {
-			// p.first = "Set-Cookie"; // Probably won't make a diff, but rfc is not clear on this
-		// }
-		// else
-		// {
-			// p.first = "Cookie";
-		// }
-		// bool duplicate = false;
-		// for (size_t i = 0; i < _cookies.size(); ++i)
-		// {
-		// 	if (_cookies[i] == p.second)
-		// 	{
-		// 		duplicate = true;
-		// 		break ;
-		// 	}
-		// }
-		// if (!duplicate)
 			_cookies.push_back(p.second);
 	}
 	else
@@ -105,22 +87,15 @@ CgiParser::reset(void)
 	_header_parser.reset();
 }
 
-// Assumes all header names are lowercase (responsibility of HeaderParser)
-// Returns true if the response has a body, false otherwise
+// Assume all header names are lowercase (responsibility of HeaderParser)
 void
 CgiParser::set_resp_params(void)
 {
 	if (_headers.find("content-type") == _headers.end())
 	{
-		// handle_error(StatusCodes::INTERNAL_SERVER_ERROR_500); // But most likely that's a CGI error..
 		Logger(LOG_FILE, error_type, error_lvl) << "Missing 'content-type' header in cgi response";
 		throw HttpException(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
-	// else
-	// {
-	// 	_resp.add_header("Content-Type", _headers.find("content-type")->second);
-	// 	_headers.erase("content-type");
-	// }
 
 	if (_headers.find("status") == _headers.end())
 	{
@@ -137,8 +112,8 @@ CgiParser::set_resp_params(void)
 		
 		if (status_code != 200)
 		{
-			std::cerr << "STATUS Code: " << status_code << '\n';
-			if (status_code == 100) //For now, ignoring 100 responses
+			Logger(LOG_FILE, error_type, error_lvl) << "CGI status code: " << status_code;
+			if (status_code == 100) //Ignoring 100 responses
 			{
 				reset();
 				return ;
@@ -172,12 +147,6 @@ CgiParser::handle_cgi_redirect(long int code)
 	if (_headers.find("location") != _headers.end())
 	{
 		_resp.set_http_code(StatusCodes::get_code_index_from_value(code));
-		// std::string location = _headers.find("location")->second;
-		// if (location.find("http://") != std::string::npos)
-		// {
-		// 	location.erase(0, 7);
-		// 	_headers.find("location")->second = location;
-		// }
 		add_all_cgi_headers();
 	}
 	else
@@ -188,18 +157,13 @@ CgiParser::handle_cgi_redirect(long int code)
 
 void
 CgiParser::add_all_cgi_headers(void)
-{
-	std::cerr << "\n### PARSED CGI REQUEST HEADERS###\n";
-	
+{	
 	for (str_map::iterator it = _headers.begin(); it != _headers.end(); ++it)
 	{
 		_resp.add_header(it->first, it->second);
-		std::cerr << "Header name: " << it->first << '\t'
-		<< "Header value: " << it->second << '\n';
 	}
 	for (size_t i = 0; i < _cookies.size(); ++i)
 	{
 		_resp.add_header("Set-Cookie", _cookies[i]);
-		std::cerr << "Cookie name: " << _cookies[i] << '\n';
 	}
 }
