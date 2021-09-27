@@ -79,6 +79,7 @@ ClientHandler::writable(void)
 				_timer.reset();
 				if (_response.complete())
 				{
+					Logger(basic_type, major_lvl) << get_req_line() << " < " << _response.get_status_line();
 					if (_response.close_connection())
 					{
 						throw ClientException("Http error: closing connection", _client.getip(), _client.getsockfd());
@@ -121,6 +122,7 @@ ClientHandler::handle_request(void)
 		parse_request();
 		if (_request.complete())
 		{
+			
 			Validator::get_instance().validate_request_inputs(_request, _response);
 			_request.method().handle(_request, _response);
 		}
@@ -168,4 +170,17 @@ ClientHandler::handle_http_error(StatusCodes::status_index_t error_code)
 {
 	_response.http_error(error_code);
 	_event_flag = POLLOUT;	
+}
+
+std::string
+ClientHandler::get_req_line(void)
+{
+	std::string log = _req_parser.get_method() + ' ' + _request.uri().path;
+	if (!_request.uri().query.empty())
+	{
+		log += '?' + _request.uri().query;
+	}
+	log += ' ' + _req_parser.get_version();
+	
+	return log;
 }

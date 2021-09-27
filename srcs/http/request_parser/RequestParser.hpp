@@ -52,6 +52,9 @@ class RequestParser
 		//Clear content of current request, if there were any buffer leftovers from the previous request, they are set into the main buffer, so a subsequent call to 'parse()' would parse the content
 		void	next_request(void);
 
+		const std::string &	get_method(void) const;
+		const std::string &	get_version(void) const;
+
 	private:
 		RequestParser(void);
 		RequestParser &  operator=(RequestParser const & src);

@@ -28,12 +28,6 @@ RequestParser::setbuffer(char *buf, size_t len)
 	_buffer.insert(_buffer.begin(), buf, buf + len);
 }
 
-// void
-// RequestParser::setbuffer(std::string & str)
-// {
-// 	_buffer = str;
-// }
-
 void
 RequestParser::parse(void)
 {
@@ -48,25 +42,8 @@ RequestParser::parse(void)
 			_request.complete() = true;
 			_buffer_leftovers.clear();
 			_buffer_leftovers.insert(_buffer_leftovers.begin(), &_buffer[i + 1], &_buffer[_buffer.size()]);
+			
 
-			// std::cerr << "\n### PARSED REQUEST ###\n"
-			// << "Method: " << _http_method << '\n'
-			// << "Uri (path): " << _request.uri().path << '\n'
-			// << "Uri (query): " << _request.uri().query << '\n'
-			// << "Uri (fragment): " << _request.uri().fragment << '\n'
-			// << "Http version: " << _http_version << '\n';
-
-			// for (std::map<std::string, std::string>::iterator it = _request.headers().begin(); it != _request.headers().end(); it++)
-			// {
-			// 	std::cerr << "Header name: " << (*it).first << '\t'
-			// 	<< "Header value: " << (*it).second << '\n';
-			// }
-			// _request.load_request_config();
-			// if (_request.method().has_body())
-			// {
-			// 	std::cerr << _request.get_body();
-			// 	std::cerr << "Buf leftovers: " << _buffer_leftovers << '\n';
-			// }
 			break ;
 		}
 	}
@@ -137,6 +114,7 @@ RequestParser::parse_char(char c)
 		{
 			if (c == '\n')
 			{
+
 				if (_request.headers().find("host") == _request.headers().end())
 				{
 					throw HttpException(StatusCodes::BAD_REQUEST_400);
@@ -295,4 +273,17 @@ RequestParser::next_request(void)
 	_buffer.insert(_buffer.begin(), _buffer_leftovers.begin(), _buffer_leftovers.end());
 	_buffer_leftovers.clear();
 	std::cerr << "* Buffer Leftovers: *\n" << std::string(&_buffer_leftovers[0], _buffer_leftovers.size()) << '\n';
+}
+
+
+const std::string &
+RequestParser::get_method(void) const
+{
+	return _http_method;
+}
+
+const std::string &
+RequestParser::get_version(void) const
+{
+	return _http_version;
 }

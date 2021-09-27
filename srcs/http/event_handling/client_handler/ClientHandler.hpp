@@ -33,7 +33,8 @@ class ClientHandler : public IEventHandler
 		virtual bool	is_timeout(void) const;
 		virtual int		get_event_flag(void) const;
 		int				get_clientfd(void) const;
-
+		std::string		get_req_line(void);
+	
 	private:
 		ClientHandler &	operator=(ClientHandler const & src);
 		void			handle_request(void);

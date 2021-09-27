@@ -77,12 +77,12 @@ class Response
 		const std::string &		get_server_ip(void) const;
 		const std::string &		get_client_ip(void) const;
 		const std::string &		get_client_port(void) const;
+		std::string				get_status_line(void);
 
 	private:
 		void	add_default_headers(void);
 		void	set_date(std::string & date);
 		void	set_resp_metadata(void);
-		std::string	get_status_line(void);
 		void	add_payload_crlf(void);
 		void	insert_chunk_size(size_t len);
 		void	add_last_chunk(void);
