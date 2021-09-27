@@ -23,6 +23,7 @@ class Response
 		bool							_metadata_sent;
 		bool							_ready_to_send;
 		bool							_complete;
+		bool							_close_connection;
 		int								_handler_fd;
 		// RequestConfig					_config;
 		const Request &					_req;
@@ -52,6 +53,7 @@ class Response
 		bool &					ready_to_send(void);
 		bool &					path_is_dir(void);
 		bool &					need_cgi(void);
+		bool					close_connection(void) const;
 		void					set_http_code(StatusCodes::status_index_t i);
 		void					set_payload(const char *buf, size_t len);
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
