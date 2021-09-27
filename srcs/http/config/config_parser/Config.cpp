@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/24 14:30:00 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/27 11:21:43 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,7 +292,10 @@ Config::load_location_root(IJsonValue * location_root, LocationConfig & location
 	JsonString	* root = dynamic_cast<JsonString *>(location_root);
 	if (root == NULL)
 		throw Exception("Config file error : Location's root must be a \"string\"");
-	location.set_root(root->value());
+	std::string	root_path(root->value());
+	if (*root_path.rbegin() != '/')
+		root_path += '/';
+	location.set_root(root_path);
 }
 
 void
