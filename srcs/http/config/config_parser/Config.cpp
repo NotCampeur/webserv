@@ -6,7 +6,7 @@
 /*   By: notcampeur <notcampeur@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 16:53:23 by ldutriez          #+#    #+#             */
-/*   Updated: 2021/09/27 11:21:43 by notcampeur       ###   ########.fr       */
+/*   Updated: 2021/09/27 17:04:00 by notcampeur       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -442,10 +442,19 @@ Config::load_servers_config(IJsonValue * server_array)
 			if (servers_config_list[i]->ip() == it->second.ip()
 			&& servers_config_list[i]->port() == it->second.port())
 			{
-				server_list[j]->add_server_config(*servers_config_list[i]);
-				Logger(basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.ip();
-				is_same_server = true;
-				break;
+				try
+				{
+					server_list[j]->add_server_config(*servers_config_list[i]);
+					Logger(basic_type, debug_lvl) << "Multiple server configuration added for the same Host : " << it->second.ip();
+					is_same_server = true;
+					break;
+				}
+				catch(const std::exception& e)
+				{
+					delete servers_config_list[i];
+					remove_items(server_list);
+					throw ;
+				}
 			}
 		}
 		if (is_same_server == false)

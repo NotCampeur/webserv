@@ -13,10 +13,13 @@ _config()
 			throw Exception("A port must be given to the server");
 		
 		// TBU -> need all server configs
-		ServerConfig * default_config = new ServerConfig(*config);
-		std::string tmp("default");
-		default_config->set_name(tmp);
-		_config.insert(std::pair<std::string, const ServerConfig &>("default", *default_config));
+		if (config->name() != "default")
+		{
+			ServerConfig * default_config = new ServerConfig(*config);
+			std::string tmp("default");
+			default_config->set_name(tmp);
+			_config.insert(std::pair<std::string, const ServerConfig &>("default", *default_config));
+		}
 		_config.insert(std::pair<std::string, const ServerConfig &>(config->name(), *config));
 		create_socket(com_domain, sock_type);
 		make_nonblocking();
@@ -152,6 +155,8 @@ Server::get_server_config(void) const
 void
 Server::add_server_config(const ServerConfig &config)
 {
+	if (config.name() == "default")
+		throw Exception("You must explicitely named the non-default server config.");
 	std::pair<Server::config_type::iterator, bool> result;
 	result = _config.insert(std::pair<std::string, const ServerConfig &>(config.name(), config));
 	if (result.second == false)
