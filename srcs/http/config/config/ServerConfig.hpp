@@ -23,13 +23,6 @@ class ServerConfig
 		ServerConfig(void);
     	ServerConfig(ServerConfig const & src);
     	~ServerConfig(void);
-		
-
-	// Error pages path: use map
-	// Max client body size: use size_t ? Default should be 1M
-	// Root directory (default could be workdir/server_content)
-	// Autoindex
-	// Default file if request is a directory
 
 		const std::string & name(void) const;
 		void				set_name(std::string & name);

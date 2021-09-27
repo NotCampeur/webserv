@@ -22,8 +22,6 @@ class ServerHandler : public IEventHandler
 		ServerHandler(ServerHandler const & src);
 		~ServerHandler(void);
 
-		ServerHandler &  operator=(ServerHandler const & src);
-
 		virtual void	readable(void);
 		virtual void	writable(void);
 		virtual	bool	is_timeoutable(void) const;
@@ -33,20 +31,9 @@ class ServerHandler : public IEventHandler
 		int			 	get_serverfd(void) const;
 
 	private:
-		ServerHandler(void);	// Default constructor
+		ServerHandler(void);
 		void	new_client_handler(Client & client);
-
-	// Exceptions
-	public:
-		class UnableToAcceptConnection : public std::exception
-		{
-				std::string	_msg;
-
-			public:
-				UnableToAcceptConnection(int error) throw();
-				~UnableToAcceptConnection() throw();
-				const char *what() const throw();
-		};
+		ServerHandler &  operator=(ServerHandler const & src);
 };
 
 #endif

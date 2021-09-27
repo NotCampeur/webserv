@@ -33,23 +33,9 @@ HeadMethod::handle(Request & req, Response & resp)
 
 	if (resp.path_is_dir())
 	{
-		// if (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1]) != '/')
-		// {
-		// 	std::string redir_path(req.uri().path);
-		// 	redir_path += '/';
-		// 	throw (HttpException(StatusCodes::MOVED_PERMANENTLY_301, redir_path));
-		// }
-		// else 
 		if (req.get_config()->is_autoindex_on() == false)
 		{
-			// if (req.get_config()->default_file_dir().empty() == false)
-			// {
-			// 	resp.set_path(req.get_config()->default_file_dir());
-			// }
-			// else
-			// {
 				throw (HttpException(StatusCodes::NOT_FOUND_404));
-			// }
 		}
 		else
 		{
@@ -60,7 +46,6 @@ HeadMethod::handle(Request & req, Response & resp)
 
 	set_content_length_header(resp);
 	set_content_type_header(resp);
-	// set_content_location_header(resp);
 
 	resp.set_http_code(StatusCodes::OK_200);
 	resp.ready_to_send() = true;
@@ -152,7 +137,6 @@ HeadMethod::handle_autoindex(Response & resp)
 	resp.set_http_code(StatusCodes::OK_200);
 	resp.add_header("Content-Length", ss.str());
 	resp.add_header("Content-Type", "text/html");
-	// resp.set_payload(autoindex_content.c_str(), autoindex_content.size());
 	resp.ready_to_send() = true;
 	resp.complete() = true;
 }

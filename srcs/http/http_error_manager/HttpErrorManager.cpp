@@ -27,7 +27,8 @@ HttpErrorManager::handle(StatusCodes::status_index_t error, const std::string * 
 
 	if (error_page != NULL)
 	{
-		std::cerr << "Error page found: " << *error_page << '\n';
+		Logger(basic_type, debug_lvl) << "Error page found: " << *error_page;
+
 		_resp.set_path(*error_page);
 		_fd = open(_resp.get_path().c_str(), O_RDONLY);
 		if (_fd >= 0)
@@ -48,7 +49,8 @@ HttpErrorManager::handle(StatusCodes::status_index_t error, const std::string * 
 			}
 		}
 	}
-	std::cerr << "Error page not found...\n";
+	Logger(basic_type, debug_lvl) << "Error page not found";
+
 	_resp.ready_to_send() = true;
 	_resp.complete() = true;
 	_resp.set_http_code(error);

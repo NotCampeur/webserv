@@ -54,8 +54,8 @@ CgiHandler::~CgiHandler(void)
 	{
 		_response.set_http_code(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
-	make_complete(); //Due to the behavior of read and poll on linux, there is no way to know from a read that the pipe is closed if there is content in the pipe. Therefore, when the poll detects an empty closed pipe, it gives a POLLHUP and from this we know that the response is complete
-	//Not calling manage_error() on purpose, as it would cause a recursive call of CgiHandler's destructor
+	make_complete();	//Due to the behavior of read and poll on linux, there is no way to know from a read that the pipe is closed if there is content in the pipe. Therefore, when the poll detects an empty closed pipe, it gives a POLLHUP and from this we know that the response is complete
+						//Not calling manage_error() on purpose, as it would cause a recursive call of CgiHandler's destructor
 }
 
 void 
@@ -65,7 +65,6 @@ CgiHandler::readable(void)
 	Check if cgi process is terminated and if any error occured there
 	Read from pipe (READ_BUF_SIZE)
 	Parse buffer using cgi_parser
-	Once parsing is done: Set response params
 	*/
 
 	if (_response.complete() || _response.ready_to_send())
@@ -261,9 +260,18 @@ CgiHandler::start_cgi(void)
 		else
 		{
 
+			off_t offset = 0;
+			bool is_relative_path = (!_response.get_path().empty() && _response.get_path()[0] != '/');
+			if (is_relative_path)
+			{
+				offset = _request.get_config()->root().size();
+				if (_response.get_path().size() > static_cast<size_t>(offset) && _response.get_path()[0] == '/')
+					offset++;
+			}
+
 			char * const av[] = {
 				const_cast<char *>(cgi_bin.c_str()),
-				const_cast<char *>(_response.get_path().c_str()),
+				const_cast<char *>(_response.get_path().c_str()) + offset,
 				NULL
 				};
 			
@@ -273,8 +281,8 @@ CgiHandler::start_cgi(void)
 				Logger(error_type, error_lvl) << "Chdir: " << std::strerror(errno);
 				exit(EXIT_FAILURE);
 			}
-			std::cerr << "Passed to execve: " << cgi_bin << " ; " << _response.get_path() << '\n';
-			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
+			Logger(basic_type, debug_lvl) << "CGI: Passed to execve: " << cgi_bin << " ; " << _response.get_path();
+			execve(cgi_bin.c_str(), av, _env.get_cgi_env());
 		}
 		Logger(error_type, error_lvl) << "Execve: " << std::strerror(errno);
 		exit(EXIT_FAILURE);

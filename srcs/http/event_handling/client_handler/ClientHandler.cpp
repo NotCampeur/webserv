@@ -79,7 +79,7 @@ ClientHandler::writable(void)
 				_timer.reset();
 				if (_response.complete())
 				{
-					Logger(basic_type, major_lvl) << get_req_line() << " < " << _response.get_status_line();
+					Logger(basic_type, major_lvl) << get_req_line() << " < " << _response.get_status_line() << " FROM " << _client.getip();
 					if (_response.close_connection())
 					{
 						throw ClientException("Http error: closing connection", _client.getip(), _client.getsockfd());
@@ -130,20 +130,19 @@ ClientHandler::handle_request(void)
 	catch (HttpException & e)
 	{
 		Logger(basic_type, major_lvl) << "Http Exception: " << StatusCodes::get_code_msg_from_index(e.get_code_index());
-		
+
 		if (StatusCodes::get_code_value(e.get_code_index()) >= 400)
 		{
 			handle_http_error(e.get_code_index());
 		}
 		else if (StatusCodes::get_code_value(e.get_code_index()) >= 300)
 		{
-			std::cerr << "Redir caught\n";
 			_response.http_redirection(e.get_code_index(), e.get_location());
 		}
 	}
 	catch (SystemException & e)
 	{
-		Logger(error_type, error_lvl) << e.what() << " : " << _client.getip();
+		Logger(error_type, minor_lvl) << e.what() << " : " << _client.getip();
 		handle_http_error(StatusCodes::INTERNAL_SERVER_ERROR_500);
 	}
 }
@@ -154,13 +153,6 @@ ClientHandler::parse_request(void)
 	_req_parser.parse();
 	if (_request.complete())
 	{
-		// Request::uri_t		* uri = &_request.uri();
-		// if (uri->path == "/")
-		// {
-		// 	const ServerConfig & server_config = _request.get_server_config().begin()->second;
-		// 	if (server_config.get_index() != "")
-		// 		uri->path = server_config.index();
-		// }
 		_event_flag = POLLOUT;
 	}
 }
@@ -181,6 +173,6 @@ ClientHandler::get_req_line(void)
 		log += '?' + _request.uri().query;
 	}
 	log += ' ' + _req_parser.get_version();
-	
+
 	return log;
 }

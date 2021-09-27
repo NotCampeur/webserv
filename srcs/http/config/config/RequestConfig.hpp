@@ -27,7 +27,6 @@ class RequestConfig
 		const std::string							&_port;
 		const std::map<int, std::string>			&_error_pages;
 		const size_t								_max_client_body_size;
-		// const std::vector<LocationConfig *>			&_locations;
 		const HTTPMethod							&_accepted_method;
 		const std::pair<int, std::string>			&_redirection;
 		const std::string							&_root;
@@ -47,7 +46,6 @@ class RequestConfig
 		const std::string							& port(void) const;
 		const std::map<int, std::string>			& error_pages(void) const;
 		size_t										max_client_body_size(void) const;
-		// const const std::vector<LocationConfig *>	& locations(void) const;
 		const HTTPMethod							& accepted_method(void) const;
 		const std::pair<int, std::string>			& redirection(void) const;
 		const std::string							& root(void) const;
@@ -56,10 +54,6 @@ class RequestConfig
 		const std::map<std::string, std::string>	& cgi(void) const;
 		const std::string							& upload_path(void) const;
 		const std::string							& location_path(void) const;
-
-		//Operators
-		// RequestConfig	&operator=(const LocationConfig & to_assign);
-		// RequestConfig	&operator=(const ServerConfig & to_assign);
 
 		private:
 			RequestConfig();

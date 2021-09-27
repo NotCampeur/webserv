@@ -40,10 +40,7 @@ InitiationDispatcher::handle_events(void)
 		catch (const SystemException & e)
 		{
 			Logger(error_type, error_lvl) << e.what();
-			// if (errno != EAGAIN)
 				break;
-			// else
-				// continue;
 		}
 		Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
 		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
@@ -68,11 +65,10 @@ InitiationDispatcher::handle_events(void)
 					{
 						Logger(basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
 						_event_handler_table->get(it->fd)->writable();
-						// it->events = POLLIN;
 					}
 					else if (_event_handler_table->get(it->fd)->is_timeoutable())
 					{
-						if (_event_handler_table->get(it->fd)->is_timeout())	//Only client handlers can timeout for now
+						if (_event_handler_table->get(it->fd)->is_timeout())
 						{
 							Logger(basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
 							remove_handle(it->fd);
@@ -82,7 +78,7 @@ InitiationDispatcher::handle_events(void)
 				catch (const ClientException & e)
 				{
 					remove_handle(e.getfd());
-					Logger(basic_type, error_lvl) << e.what() << ' ' << it->fd;
+					Logger(basic_type, minor_lvl) << e.what() << ' ' << it->fd;
 				}	
 				catch (const ClientSystemException & e)
 				{

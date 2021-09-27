@@ -8,11 +8,8 @@ class RequestConfig;
 
 class HttpErrorManager
 {
-	// public:
-	// 	typedef std::map<std::string, const ServerConfig &>	config_type;
 	private:
 		int						_fd;
-		// const config_type &		_config;
 		Response &				_resp;
 	
 	public:
@@ -28,6 +25,7 @@ class HttpErrorManager
 		HttpErrorManager &  operator=(HttpErrorManager const & src);
 
 		void	set_default_msg(StatusCodes::status_index_t error);
+
 		// Fill response payload with default error msg and return payload size
 		size_t	set_payload_to_default_msg(StatusCodes::status_index_t error);
 		off_t	get_file_size(const std::string & path);

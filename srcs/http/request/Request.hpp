@@ -11,7 +11,6 @@ class Request
 {
 	public:
 		typedef std::map<std::string, const ServerConfig &> config_type;
-		// typedef std::vector<std::string>				cookies_t;
 		typedef struct	uri_s
 		{
 			std::string path;
@@ -28,7 +27,6 @@ class Request
 		const config_type &					_server_configs;
 		mutable ServerConfig *				_server_config_cache;
 		RequestConfig *						_config;
-		// cookies_t							_cookies;
 
 	public:
 		Request(const config_type & server_configs);
@@ -45,12 +43,8 @@ class Request
 		bool &									complete();
 		void									reset(void);
 		void									add_header(std::string & field_name, std::string & field_value);
-		// const config_type &						server_configs(void) const;
 		RequestConfig *							get_config(void) const;
 		void									set_config(RequestConfig * config);
-		// Is called only one time after the headers have been parsed.
-		// void									load_request_config(void);
-		// const cookies_t &						get_cookies(void) const;
 		const ServerConfig &					server_config(void) const;
 		const std::string *						get_error_page(StatusCodes::status_index_t error) const;
 

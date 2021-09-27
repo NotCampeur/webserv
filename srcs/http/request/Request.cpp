@@ -92,10 +92,6 @@ Request::reset(void)
 void
 Request::add_header(std::string & field_name, std::string & field_value)
 {
-	// if (field_name == "cookie")
-	// {
-	// 	_cookies.push_back(field_value);
-	// }
 	_headers.insert(std::pair<std::string, std::string>(field_name, field_value));
 }
 
@@ -124,6 +120,7 @@ Request::server_config(void) const
 	if (_headers.find("host") != _headers.end())	// Defensive: there should always be a host
 	{
 		host = _headers.find("host")->second;
+		
 		//Remove the port at the end of the host.
 		size_t pos = host.find(":");
 		if (pos != std::string::npos)
@@ -141,17 +138,12 @@ Request::server_config(void) const
 	}
 	else
 	{
-		std::cerr << "DEFAULT CONFIG SET: NAME: " << _server_configs.find("default")->second.name() << '\n';
+		Logger(basic_type, debug_lvl) << "DEFAULT CONFIG SET: NAME: " << _server_configs.find("default")->second.name();
+
 		_server_config_cache = const_cast<ServerConfig *>(&_server_configs.find("default")->second);
 		return _server_configs.find("default")->second;
 	}
 }
-
-// const Request::cookies_t &
-// Request::get_cookies(void) const
-// {
-// 	return _cookies;
-// }
 
 //Useful to avoid setting server config cache variable when in need of error page before parsing of host header
 const std::string *

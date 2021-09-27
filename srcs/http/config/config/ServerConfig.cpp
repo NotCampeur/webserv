@@ -18,8 +18,6 @@ _max_client_body_size(src._max_client_body_size)
 {
 	for (size_t i(0); i < src._locations.size(); i++)
 		_locations.push_back(new LocationConfig(*src._locations[i]));
-
-	std::cerr << "Server Config Tests:\n" << _error_pages.size() << " vs " << src._error_pages.size() << '\n';
 }
 
 ServerConfig::~ServerConfig(void)

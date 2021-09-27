@@ -35,8 +35,6 @@ class Environment
 
 		void	set_cgi_env(void);
 		void	delete_cgi_env(void);
-		// void	copy_program_env(char *env[]);
-		// void	copy_cgi_env_var(char *env[]);
 };
 
 #endif

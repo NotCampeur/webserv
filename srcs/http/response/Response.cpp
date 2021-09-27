@@ -3,6 +3,7 @@
 #include <sys/socket.h>
 #include "Request.hpp"
 #include "Utils.hpp"
+#include "HeadMethod.hpp"
 
 Response::Response(const Request & req, const std::string & server_ip, const std::string & client_ip, const std::string & client_port) :
 _version("HTTP/1.1"),
@@ -73,6 +74,15 @@ Response::close_connection(void) const
 	return _close_connection;
 }
 
+static bool
+is_head(Request & req)
+{
+	HeadMethod *method = dynamic_cast<HeadMethod *>(&(req.method()));
+	if (method == NULL)
+		return false;
+	return true;
+}
+
 void
 Response::set_payload(const char *buf, size_t len)
 {
@@ -80,6 +90,8 @@ Response::set_payload(const char *buf, size_t len)
 		return ;
 
 	_payload.clear();
+	if (is_head(const_cast<Request &>(_req))) // Const_cast safe -> not modifying Request, only accessing method() for dynamic cast test
+		return;
 	if (_chunked)
 	{
 		insert_chunk_size(len);
@@ -131,7 +143,7 @@ Response::send_payload(int fd)
 			return 1;
 		}
 	}
-	Logger(error_type, error_lvl) << "Send(): Nothing to send, payload is empty";
+	Logger(basic_type, debug_lvl) << "Send(): Nothing to send, payload is empty";
 	return 1;
 }
 
@@ -290,24 +302,7 @@ Response::http_redirection(StatusCodes::status_index_t code, const std::string &
 
 	add_header("Content-Length", "0");
 	std::string redir_location;
-	// redir_location += "http://";
-	// if (_req.server_config().name() == "default")
-	// {
-	// 	redir_location += _server_ip; //Need the actual IP of the server (when Config IP is set to 0.0.0.0, the actual server IP is something else)
-	// }
-	// else
-	// {
-	// 	redir_location += _req.server_config().name();
-	// }
-	// redir_location += ':';
-	// redir_location += _req.server_config().port(); //Update "ip" with "name", but need proper DNS setup
-
-	// if (!location.empty() && location[0] != '/')
-	// {
-	// 	redir_location += '/';
-	// }
 	redir_location += location;
-	std::cerr << "Redir location: " << redir_location << '\n';
 	add_header("Location", redir_location);
 	ready_to_send() = true;
 	complete() = true;

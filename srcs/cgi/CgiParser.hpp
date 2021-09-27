@@ -40,6 +40,7 @@ class CgiParser {
 		void    reset(void);
 		void	parse_char(char c);
 		void	add_header(void);
+		
 		// Return true if a body is expected
 		void	set_resp_params(void);
 		void	handle_cgi_redirect(long int error);

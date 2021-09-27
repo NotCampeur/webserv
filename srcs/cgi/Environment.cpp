@@ -8,11 +8,6 @@ Environment::Environment(void) :
 _cgi_env(NULL)
 {}
 
-// Environment::Environment(Environment const & src)
-// {
-//     (void)src;
-// }
-
 Environment::~Environment(void)
 {
 	if (_cgi_env != NULL)
@@ -20,13 +15,6 @@ Environment::~Environment(void)
 		delete_cgi_env();
 	}
 }
-
-// Environment &
-// Environment::operator=(Environment const & src)
-// {
-// 	(void)src;
-//     return (*this);
-// }
 
 char **Environment::_program_env; //Necessary to use static member inside function members
 

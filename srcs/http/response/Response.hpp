@@ -13,8 +13,6 @@ class Response
 	public:
 		typedef std::pair<std::string, std::string>		header_t;
 
-		// typedef const ServerConfig & (Request::*get_config_t)(void);
-
 	private:
 		std::vector<char>				_payload;
 		const std::string				_version;
@@ -25,7 +23,6 @@ class Response
 		bool							_complete;
 		bool							_close_connection;
 		int								_handler_fd;
-		// RequestConfig					_config;
 		const Request &					_req;
 		std::string						_file_path;
 		HttpErrorManager				_error_manager;
@@ -37,10 +34,7 @@ class Response
 		const std::string				_client_port;	
 
 	public:
-    	// Response(const ServerConfig & (Request::*get_config)(void));
 		Response(const Request & req, const std::string & server_ip, const std::string & client_ip, const std::string & _client_port);
-		// Response(const config_type & config);
-		// Response(void);
     	Response(Response const & src);
     	~Response(void);
 
@@ -56,6 +50,7 @@ class Response
 		bool					close_connection(void) const;
 		void					set_http_code(StatusCodes::status_index_t i);
 		void					set_payload(const char *buf, size_t len);
+		
 		//Sends buffer content, first checking if header was sent already, if not, sets it and sends it
 		//Returns a pair with the first argument set to the return value of function send(), and the second set to the initial size of the buffer
 		int						send_payload(int fd);

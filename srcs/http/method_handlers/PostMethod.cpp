@@ -40,14 +40,11 @@ PostMethod::handle(Request & req, Response & resp)
 			upload_path += '/';
 		}
 		upload_path += filename;
-		std::cerr << "UPLOAD Path: " << upload_path << '\n';
 		resp.set_path(upload_path);
 	}
 
 	resp.set_http_code(StatusCodes::CREATED_201);
-	
-	// set_content_location_header(resp);
-	
+		
 	int fd = open(resp.get_path().c_str(), O_WRONLY | O_CREAT | O_APPEND, 0666);
 
 	if (fd < 0)

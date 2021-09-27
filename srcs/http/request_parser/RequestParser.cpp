@@ -31,8 +31,6 @@ RequestParser::setbuffer(char *buf, size_t len)
 void
 RequestParser::parse(void)
 {
-	// std::cerr << "Buffer content: " << _buffer << '\n';
-	
 	size_t i = 0;
 	for (; i < _buffer.size(); i++)
 	{
@@ -175,7 +173,6 @@ RequestParser::parse_method(char c)
         {
             if (available_methods[i] == _http_method)
             {
-				std::cout << "Method: " << i << " created\n";
 				_request.set_method(method[i]);
 				_request_state = URI;
 				return ;
@@ -272,7 +269,6 @@ RequestParser::next_request(void)
 	_request.reset();
 	_buffer.insert(_buffer.begin(), _buffer_leftovers.begin(), _buffer_leftovers.end());
 	_buffer_leftovers.clear();
-	std::cerr << "* Buffer Leftovers: *\n" << std::string(&_buffer_leftovers[0], _buffer_leftovers.size()) << '\n';
 }
 
 

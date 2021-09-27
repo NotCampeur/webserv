@@ -12,7 +12,6 @@ _config()
 		if (config->port().empty() == true)
 			throw Exception("A port must be given to the server");
 		
-		// TBU -> need all server configs
 		if (config->name() != "default")
 		{
 			ServerConfig * default_config = new ServerConfig(*config);
@@ -40,7 +39,6 @@ _config()
 Server::~Server(void)
 {
 	close(_sockfd);
-	// _config.erase(_config.find("default"));
 	Server::config_type::iterator	it = _config.begin();
 	for (; it != _config.end(); it++)
 	{

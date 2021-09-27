@@ -17,14 +17,6 @@ ServerHandler::~ServerHandler(void)
 	delete &_server;
 }
 
-ServerHandler &
-ServerHandler::operator=(ServerHandler const & src)
-{
-	(void)src;
-    // Cannot copy const value, remove operator?
-    return *this;
-}
-
 void
 ServerHandler::readable(void)
 {

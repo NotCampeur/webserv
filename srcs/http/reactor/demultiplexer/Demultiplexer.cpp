@@ -53,7 +53,6 @@ Demultiplexer::addfd(int fd, int flag)
 	fd_data.events = flag;
 	fd_data.revents = 0;
 	_pollfds.push_back(fd_data);
-	// Logger(basic_type, minor_lvl) << "fd: " << fd << " has been added to demultiplexer";
 }
 
 void

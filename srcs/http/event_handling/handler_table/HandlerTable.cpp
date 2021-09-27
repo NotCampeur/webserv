@@ -48,7 +48,7 @@ HandlerTable::remove(int fd)
 		Logger(basic_type, debug_lvl) << "fd: " << fd << " has been removed from the handler table";
 	}
 	else
-		Logger(error_type, error_lvl) << "fd: " << fd << " could not be removed from the handler table: fd not found";
+		Logger(basic_type, debug_lvl) << "fd: " << fd << " could not be removed from the handler table: fd not found";
 }
 
 IEventHandler *

@@ -150,12 +150,10 @@ Validator::verify_path(Request & req, Response & resp)
 			}
 			case EIO :
 			{
-				std::cerr << "Stat error val: " << errno << '\n';
 				throw (SystemException("Error on stat call"));
 			}
 			case EOVERFLOW :
 			{
-				std::cerr << "Stat error val: " << errno << '\n';
 				throw (SystemException("Error on stat call"));
 			}
 			default :
@@ -179,14 +177,12 @@ Validator::verify_path(Request & req, Response & resp)
 			{
 				
 				std::string file_path = resp.get_path();
-				// if (missing_trailing_bkslash)
-				// 	file_path += '/';
 				
 				file_path += req.get_config()->default_file_dir();
 				
 				if (file_accessible(file_path))
 				{
-					std::cerr << "Path set to default file dir: " << file_path << '\n';
+					Logger(basic_type, debug_lvl) << "Path set to default file dir: " << file_path;
 					resp.set_path(file_path);
 				}
 				else
@@ -209,7 +205,6 @@ Validator::verify_path(Request & req, Response & resp)
 			resp.need_cgi() = false;
 		else
 		{
-			std::cerr << "Cgi needed\n";
 			resp.need_cgi() = true;
 		}
 	}
@@ -253,7 +248,6 @@ Validator::resolve_relative_path(std::string & path)
 			}
 			else if ((fragment == "../") || (fragment == ".."))
 			{
-				std::cerr << "Found ..: " << fragment << '\n';
 				if (resolved_path.empty())
 				{
 					throw HttpException(StatusCodes::BAD_REQUEST_400);
@@ -300,7 +294,7 @@ const LocationConfig &
 Validator::find_location_config(Request & req, std::string & path)
 {
 	std::string req_path = path;
-	const std::vector<LocationConfig *> & server_locations = req.server_config().locations();//		server_conf->locations(); //Consider using public typedef inside RouteConfig
+	const std::vector<LocationConfig *> & server_locations = req.server_config().locations();
 	while (!req_path.empty())
 	{
 		for (size_t i = 0; i < server_locations.size(); i++)
@@ -316,7 +310,6 @@ Validator::find_location_config(Request & req, std::string & path)
 				{
 					Logger(basic_type, minor_lvl) << "Location found: " << server_locations[i]->path() << '\n';
 					return *server_locations[i];
-					// throw HttpException(StatusCodes::MOVED_PERMANENTLY_301, server_locations[i]->path());
 				}
 			}
 		}

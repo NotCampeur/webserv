@@ -21,8 +21,6 @@ DeleteMethod::handle(Request & req, Response & resp)
 		throw (HttpException(StatusCodes::FORBIDDEN_403));
 	}
 
-	//To delete everything inside a directory, use nftw()
-
 	int ret = remove(resp.get_path().c_str());
 
 	if (ret != 0)

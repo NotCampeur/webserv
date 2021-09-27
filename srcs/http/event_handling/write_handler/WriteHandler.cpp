@@ -22,14 +22,13 @@ void
 WriteHandler::readable(void)
 {}
 
-// Need to map file type and add header
 void
 WriteHandler::writable(void)
 {
 	ssize_t len;
 	if (!_response.complete()) // Something has already been written to the file, but not the full body content
 	{
-		len = write(_response.get_handler_fd(), &_body[_bytes_written], _body.size() - _bytes_written); //Removed the +1
+		len = write(_response.get_handler_fd(), &_body[_bytes_written], _body.size() - _bytes_written);
 		
 		if (len < 0)
 		{
@@ -38,7 +37,7 @@ WriteHandler::writable(void)
 		else
 		{
 			_bytes_written += static_cast<size_t>(len); // Cast is safe as negative value would have been caught in above if statement
-			std::cerr << "Body size: " << _body.size() << " ; Bytes written: " << _bytes_written << '\n';
+			Logger(basic_type, debug_lvl) << "Body size: " << _body.size() << " ; Bytes written to client socket: " << _bytes_written << '\n';
 			if (_bytes_written == _body.size())
 			{
 				response_complete();

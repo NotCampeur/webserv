@@ -13,16 +13,12 @@ class PostMethod : public IHttpMethod, public Singleton<PostMethod>
 
 		void					handle(Request & req, Response & resp);
 		bool					has_body(void);
-		// static IHttpMethod		*create_s(void);
-		// IHttpMethod				*create_v(void);
 		
 		private:
 			PostMethod(PostMethod const & src);
 			PostMethod &  operator=(PostMethod const & src);
 			
 			void	add_cgi_handle(Request & req, Response & resp);
-
-			// void	set_content_location_header(const std::string & path, Response & resp);
 };
 
 #endif
