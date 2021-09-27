@@ -83,7 +83,7 @@ InitiationDispatcher::handle_events(void)
 				{
 					remove_handle(e.getfd());
 					Logger(basic_type, error_lvl) << e.what() << ' ' << it->fd;
-				}
+				}	
 				catch (const ClientSystemException & e)
 				{
 					remove_handle(e.getfd());

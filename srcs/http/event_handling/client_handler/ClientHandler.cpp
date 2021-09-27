@@ -79,6 +79,10 @@ ClientHandler::writable(void)
 				_timer.reset();
 				if (_response.complete())
 				{
+					if (_response.close_connection())
+					{
+						throw ClientException("Http error: closing connection", _client.getip(), _client.getsockfd());
+					}
 					_response.reset();
 					_req_parser.next_request();
 					if (!_request.complete())

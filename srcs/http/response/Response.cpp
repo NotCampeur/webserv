@@ -2,13 +2,14 @@
 #include "InitiationDispatcher.hpp"
 #include <sys/socket.h>
 #include "Request.hpp"
-// #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+#include "Utils.hpp"
 
 Response::Response(const Request & req, const std::string & server_ip, const std::string & client_ip, const std::string & client_port) :
 _version("HTTP/1.1"),
 _metadata_sent(false),
 _ready_to_send(false),
 _complete(false),
+_close_connection(false),
 _handler_fd(-1),
 _req(req),
 _error_manager(*this),
@@ -27,6 +28,7 @@ _headers(src._headers),
 _metadata_sent(src._metadata_sent),
 _ready_to_send(src._ready_to_send),
 _complete(src._complete),
+_close_connection(src._close_connection),
 _handler_fd(src._handler_fd),
 _req(src._req),
 _error_manager(src._error_manager),
@@ -47,21 +49,6 @@ Response::~Response(void)
 	}
 }
 
-// Response &
-// Response::operator=(Response const & src)
-// {
-// 	_payload = src._payload;
-// 	_headers = src._headers;
-// 	_metadata_sent = src._metadata_sent;
-// 	_ready_to_send = src._ready_to_send;
-// 	_complete = src._complete;
-// 	_handler_fd = src._handler_fd;
-// 	_path_is_dir = src._path_is_dir;
-// 	_need_cgi = src._need_cgi;
-// 	_chunked = src._chunked;
-//     return (*this);
-// }
-
 void
 Response::set_http_code(StatusCodes::status_index_t i)
 {
@@ -78,6 +65,12 @@ bool &
 Response::complete(void)
 {
 	return _complete;
+}
+
+bool
+Response::close_connection(void) const
+{
+	return _close_connection;
 }
 
 void
@@ -183,7 +176,15 @@ Response::add_default_headers(void)
 	{
 		_headers.insert(_headers.begin(), header_t("Transfer-Encoding", "chunked"));
 	}
+	
+	if (Utils::is_4XX(StatusCodes::get_code_value(_code)) || Utils::is_5XX(StatusCodes::get_code_value(_code)))
+	{
+		_close_connection = true;
+		_headers.insert(_headers.begin(), header_t("Connection", "close"));
+	}
+	
 	_headers.insert(_headers.begin(), header_t("Server", "Webserv/1.0"));
+	
 	_headers.insert(_headers.begin(), header_t("Date", ""));
 	set_date(_headers.begin()->second);
 }
@@ -213,6 +214,7 @@ Response::reset(void)
 	_metadata_sent = false;
 	_ready_to_send = false;
 	_complete = false;
+	_close_connection = false;
 	_path_is_dir = false;
 	_need_cgi = false;
 	_chunked = false;

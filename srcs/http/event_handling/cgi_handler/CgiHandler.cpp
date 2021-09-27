@@ -50,7 +50,12 @@ CgiHandler::~CgiHandler(void)
 		}
 	}
 	close_pipes();
+	if (!_response.metadata_sent())
+	{
+		_response.set_http_code(StatusCodes::INTERNAL_SERVER_ERROR_500);
+	}
 	make_complete(); //Due to the behavior of read and poll on linux, there is no way to know from a read that the pipe is closed if there is content in the pipe. Therefore, when the poll detects an empty closed pipe, it gives a POLLHUP and from this we know that the response is complete
+	//Not calling manage_error() on purpose, as it would cause a recursive call of CgiHandler's destructor
 }
 
 void 
@@ -83,8 +88,8 @@ CgiHandler::readable(void)
 	{
 		case -1 :
 		{
-			manage_error();
 			Logger(error_type, error_lvl) << "Read: " << std::strerror(errno);
+			manage_error();
 			break ;
 		}
 		case 0 :
@@ -268,7 +273,7 @@ CgiHandler::start_cgi(void)
 				Logger(error_type, error_lvl) << "Chdir: " << std::strerror(errno);
 				exit(EXIT_FAILURE);
 			}
-			
+			std::cerr << "Passed to execve: " << cgi_bin << " ; " << _response.get_path() << '\n';
 			execve(cgi_bin.c_str(), av, _env.get_cgi_env()); // /!\ For now, won't generate any cmd line arguments, seems like it should work without it
 		}
 		Logger(error_type, error_lvl) << "Execve: " << std::strerror(errno);

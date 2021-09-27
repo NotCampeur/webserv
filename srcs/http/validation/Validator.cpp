@@ -84,7 +84,7 @@ Validator::set_full_path(Request & req, Response & resp, std::string & path)
 
 	parse_hexa(full_path);
 	resp.set_path(full_path);
-	std::cerr << "Final path: " << full_path << '\n';
+	Logger(basic_type, debug_lvl) << "Final path: " << full_path;
 }
 
 void
@@ -108,6 +108,21 @@ Validator::parse_hexa(std::string & path)
 	}
 }
 
+static bool
+cgi_needed(const Request & req, const std::string & path)
+{
+	return (req.get_config()->cgi().find(Utils::get_file_ext(path)) != req.get_config()->cgi().end());
+}
+
+static bool
+is_post(Request & req)
+{
+	PostMethod *method = dynamic_cast<PostMethod *>(&req.method());
+	if (method == NULL)
+		return false;
+	return true;
+}
+
 void
 Validator::verify_path(Request & req, Response & resp)
 {
@@ -118,7 +133,6 @@ Validator::verify_path(Request & req, Response & resp)
 
 	struct stat buf; 
 	int ret = stat(resp.get_path().c_str(), &buf);
-
 	if (ret < 0)
 	{
 		switch (errno)
@@ -130,8 +144,7 @@ Validator::verify_path(Request & req, Response & resp)
 			}
 			case ENOENT :
 			{
-				PostMethod *method = dynamic_cast<PostMethod *>(&req.method());
-				if (method == NULL)
+				if (!is_post(req))
 					throw (HttpException(StatusCodes::NOT_FOUND_404));
 				break ;
 			}
@@ -152,10 +165,9 @@ Validator::verify_path(Request & req, Response & resp)
 		}
 	}
 	else
-	{ // Structure to be improved during further development
+	{
 		if (is_dir(buf.st_mode))
 		{
-			// bool missing_trailing_bkslash = resp.get_path()[resp.get_path().size() - 1] != '/';
 			bool missing_trailing_bkslash = (!req.uri().path.empty() && (req.uri().path[req.uri().path.size() - 1] != '/') && (req.uri().path != "/"));
 			if (missing_trailing_bkslash)
 			{
@@ -176,7 +188,6 @@ Validator::verify_path(Request & req, Response & resp)
 				{
 					std::cerr << "Path set to default file dir: " << file_path << '\n';
 					resp.set_path(file_path);
-					// req.uri().path += req.get_config()->default_file_dir(); // TRYING SOMETHING (DELETE IF NOT WORKING)
 				}
 				else
 				{
@@ -191,11 +202,16 @@ Validator::verify_path(Request & req, Response & resp)
 			throw (HttpException(StatusCodes::NOT_FOUND_404));
 		}
 	}
-	bool cgi_needed = (req.get_config()->cgi().find(Utils::get_file_ext(resp.get_path())) != req.get_config()->cgi().end());
-	if (cgi_needed)
+
+	if (cgi_needed(req, resp.get_path()))
 	{
-		std::cerr << "Cgi needed\n";
-		resp.need_cgi() = true;
+		if (!file_accessible(resp.get_path())) //Only case it would be true is on a POST request
+			resp.need_cgi() = false;
+		else
+		{
+			std::cerr << "Cgi needed\n";
+			resp.need_cgi() = true;
+		}
 	}
 }
 
@@ -319,21 +335,10 @@ Validator::file_accessible(const std::string & path)
 	{
 		return false;
 	}
+
 	if (is_file(buf.st_mode))
 	{
 		return true;
 	}
 	return false;
 }
-
-/*
-	REDIRECTIONS HANDLING:
-
-	1 - Directory redirections (when missing trailing '/'
-		Need something clean, somthing that could be set or unset.. actually not, just redir to uri() + '/'
-	2 - Config redirections: when the config provides a redirection
-		Can only be done after LocationConfig is set, but should be done before checking if file exists
-	3 - Cgi redirections: 
-		Handle like 200: set status code and headers (use CGI output headers): how do I know if there's a body??? Cgi could return redir with body --> check status code, not all redir include body
-
-*/

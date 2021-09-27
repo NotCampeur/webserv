@@ -82,3 +82,33 @@ Utils::rm_charset(std::string str, std::string charset)
 	}
 	return str;
 }
+
+bool
+Utils::is_4XX(int code)
+{
+	if ((code >= 400 && code <= 417) || code == 426)
+	{
+		switch (code)
+		{
+			case 401:
+				return false;
+			case 407:
+				return false;
+			case 412:
+				return false;
+			case 416:
+				return false;
+			default :
+				return true;
+		}
+	}
+	return false;
+}
+
+bool
+Utils::is_5XX(int code)
+{
+	if (code >= 500 && code <= 505)
+		return true;
+	return false;
+}
