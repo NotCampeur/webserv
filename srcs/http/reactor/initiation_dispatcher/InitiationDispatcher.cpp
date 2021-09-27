@@ -40,10 +40,10 @@ InitiationDispatcher::handle_events(void)
 		catch (const SystemException & e)
 		{
 			Logger(error_type, error_lvl) << e.what();
-			if (errno != EAGAIN)
+			// if (errno != EAGAIN)
 				break;
-			else
-				continue;
+			// else
+				// continue;
 		}
 		Demultiplexer::pollfd_arr::iterator	it = _demultiplexer->begin();
 		Demultiplexer::pollfd_arr::iterator	ite = _demultiplexer->end();
@@ -51,59 +51,58 @@ InitiationDispatcher::handle_events(void)
 		{
 			if (it->revents != 0)
 				Logger(basic_type, debug_lvl) << "FD " << it->fd << " revent: " << it->revents;
-			if (_event_handler_table->find(it->fd) == _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
+			if (_event_handler_table->find(it->fd) != _event_handler_table->end()) // If fd has been removed from handler table, it should not be inspected
 			{					
-				continue;
-			}
-			try {
-				if (POLLIN == (POLLIN & it->revents))	// Important to check POLLIN before POLLHUP: in case of the CGI, POLLHUP happens when cgi process is terminated, but there might still be content to read in the pipe.
-				{
-					Logger(basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
-					_event_handler_table->get(it->fd)->readable();
-				}
-				else if (((POLLHUP | POLLERR) & it->revents) > 0)
-				{
-					Logger(basic_type, debug_lvl) << "Client socket disconnected";
-					remove_handle(it->fd);
-				}
-				else if (POLLOUT == (POLLOUT & it->revents))
-				{
-					Logger(basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
-					_event_handler_table->get(it->fd)->writable();
-					// it->events = POLLIN;
-				}
-				else if (_event_handler_table->get(it->fd)->is_timeoutable())
-				{
-					if (_event_handler_table->get(it->fd)->is_timeout())	//Only client handlers can timeout for now
+				try {
+					if (POLLIN == (POLLIN & it->revents))	// Important to check POLLIN before POLLHUP: in case of the CGI, POLLHUP happens when cgi process is terminated, but there might still be content to read in the pipe.
 					{
-						Logger(basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
+						Logger(basic_type, debug_lvl) << "FD " << it->fd << " ready for reading";
+						_event_handler_table->get(it->fd)->readable();
+					}
+					else if (((POLLHUP | POLLERR) & it->revents) > 0)
+					{
+						Logger(basic_type, debug_lvl) << "Client socket disconnected";
 						remove_handle(it->fd);
 					}
+					else if (POLLOUT == (POLLOUT & it->revents))
+					{
+						Logger(basic_type, debug_lvl) << "FD " << it->fd << " ready for writing";
+						_event_handler_table->get(it->fd)->writable();
+						// it->events = POLLIN;
+					}
+					else if (_event_handler_table->get(it->fd)->is_timeoutable())
+					{
+						if (_event_handler_table->get(it->fd)->is_timeout())	//Only client handlers can timeout for now
+						{
+							Logger(basic_type, debug_lvl) << "Fd " << it->fd << " timed out";
+							remove_handle(it->fd);
+						}
+					}
 				}
-			}
-			catch (const ClientException & e)
-			{
-				remove_handle(e.getfd());
-				Logger(basic_type, error_lvl) << e.what() << ' ' << it->fd;
-			}
-			catch (const ClientSystemException & e)
-			{
-				remove_handle(e.getfd());
-				Logger(error_type, error_lvl) << e.what() << ' ' << it->fd;
-			}
-			catch (const ServerSystemException & e)
-			{
-				Logger(error_type, error_lvl) << e.what() << ' ' << it->fd;
-				return ;
-			}
-			catch (const Exception & e)
-			{
-				Logger(basic_type, debug_lvl) << e.what() << ' ' << it->fd;
-			}
-			catch (const SystemException & e)
-			{
-				remove_handle(it->fd);
-				Logger(error_type, error_lvl) << e.what();
+				catch (const ClientException & e)
+				{
+					remove_handle(e.getfd());
+					Logger(basic_type, error_lvl) << e.what() << ' ' << it->fd;
+				}
+				catch (const ClientSystemException & e)
+				{
+					remove_handle(e.getfd());
+					Logger(error_type, error_lvl) << e.what() << ' ' << it->fd;
+				}
+				catch (const ServerSystemException & e)
+				{
+					Logger(error_type, error_lvl) << e.what() << ' ' << it->fd;
+					return ;
+				}
+				catch (const Exception & e)
+				{
+					Logger(basic_type, debug_lvl) << e.what() << ' ' << it->fd;
+				}
+				catch (const SystemException & e)
+				{
+					remove_handle(it->fd);
+					Logger(error_type, error_lvl) << e.what();
+				}
 			}
 		}
 	}

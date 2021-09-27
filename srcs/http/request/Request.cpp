@@ -124,6 +124,10 @@ Request::server_config(void) const
 	if (_headers.find("host") != _headers.end())	// Defensive: there should always be a host
 	{
 		host = _headers.find("host")->second;
+		//Remove the port at the end of the host.
+		size_t pos = host.find(":");
+		if (pos != std::string::npos)
+			host = host.substr(0, pos);
 	}
 	else
 	{

@@ -32,11 +32,12 @@ class Response
 		bool							_need_cgi;
 		bool							_chunked;
 		const std::string				_server_ip;
-		const std::string				_client_ip;				
+		const std::string				_client_ip;			
+		const std::string				_client_port;	
 
 	public:
     	// Response(const ServerConfig & (Request::*get_config)(void));
-		Response(const Request & req, const std::string & server_ip, const std::string & client_ip);
+		Response(const Request & req, const std::string & server_ip, const std::string & client_ip, const std::string & _client_port);
 		// Response(const config_type & config);
 		// Response(void);
     	Response(Response const & src);
@@ -73,6 +74,7 @@ class Response
 		void					send_chunks(void);
 		const std::string &		get_server_ip(void) const;
 		const std::string &		get_client_ip(void) const;
+		const std::string &		get_client_port(void) const;
 
 	private:
 		void	add_default_headers(void);
