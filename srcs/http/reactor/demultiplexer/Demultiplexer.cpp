@@ -40,7 +40,7 @@ Demultiplexer::activate()
 	}
 	std::ostringstream	nb;
 	nb << result;
-	Logger(basic_type, major_lvl) << nb.str() + " fd ready";
+	Logger(basic_type, debug_lvl) << nb.str() + " fd ready";
 	return result;
 }
 
