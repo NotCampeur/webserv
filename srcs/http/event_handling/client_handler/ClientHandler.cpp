@@ -79,7 +79,9 @@ ClientHandler::writable(void)
 				_timer.reset();
 				if (_response.complete())
 				{
-					Logger(basic_type, major_lvl) << get_req_line() << " < " << _response.get_status_line() << " FROM " << _client.getip();
+					std::string status_line = _response.get_status_line();
+					status_line.erase(status_line.size() - 2, 2); // Remove trailing "\r\n"
+					Logger(basic_type, major_lvl) << get_req_line() << " << " << status_line << " (from " << _client.getip() << ')';
 					if (_response.close_connection())
 					{
 						throw ClientException("Http error: closing connection", _client.getip(), _client.getsockfd());

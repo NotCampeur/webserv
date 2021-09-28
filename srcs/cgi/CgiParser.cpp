@@ -107,12 +107,11 @@ CgiParser::set_resp_params(void)
 		std::string status = _headers.find("status")->second;
 		_headers.erase("status");
 		long int status_code = std::strtol(status.c_str(), NULL, 10);
-		Logger(error_type, error_lvl) << "Cgi status code: " << status;
+		Logger(basic_type, debug_lvl) << "Cgi status code: " << status;
 		
 		
 		if (status_code != 200)
 		{
-			Logger(error_type, error_lvl) << "CGI status code: " << status_code;
 			if (status_code == 100) //Ignoring 100 responses
 			{
 				reset();

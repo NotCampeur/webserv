@@ -36,8 +36,8 @@ _parser(resp)
 		{
 			close_pipes();
 		}
+		start_cgi();
 	}
-	start_cgi();
 }
 
 CgiHandler::~CgiHandler(void)
@@ -74,7 +74,7 @@ CgiHandler::readable(void)
 
 	if (cgi_process_error())
 	{
-		close_pipes();
+		manage_error();
 		return ;
 	}
 
@@ -127,8 +127,9 @@ CgiHandler::writable(void)
 		ssize_t len = write(_server_write_pipe, &(_request.get_body()[_written_size]), _request.bodysize() - _written_size);
 		if (len < 0)
 		{
-			manage_error();
 			Logger(error_type, error_lvl) << "Write: " << std::strerror(errno);
+			manage_error();
+			return ;
 		}
 		_written_size += len;
 		if (static_cast<size_t>(_written_size) < _request.bodysize())
@@ -141,8 +142,8 @@ CgiHandler::writable(void)
 	int ret = dup2(_server_read_pipe, _response.get_handler_fd()); // Now we want our server to React to ReadEvents to get the CGI output
 	if (ret < 0)
 	{
-		manage_error();
 		Logger(error_type, error_lvl) << "dup2: " << std::strerror(errno);
+		manage_error();
 	}
 	else
 	{
@@ -239,8 +240,9 @@ CgiHandler::start_cgi(void)
 	_pid = fork();
 	if (_pid < 0)
 	{
-		manage_error();
 		Logger(error_type, error_lvl) << "Fork: " << std::strerror(errno);
+		manage_error();
+		return ;
 	}
 	if (_pid == 0)
 	{
@@ -329,7 +331,6 @@ CgiHandler::cgi_process_error(void)
 			if (WEXITSTATUS(status) != EXIT_SUCCESS)
 			{
 				Logger(error_type, error_lvl) << "CGI error - exit status: " << WEXITSTATUS(status);
-				manage_error();
 				return true;
 			}
 		}
