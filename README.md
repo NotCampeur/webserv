@@ -29,6 +29,5 @@ All libraries will be build and the binary will be ready to launch
 ## [The Norm](.readme/norm.md)  
 
 ### :zzz: TODO :zzz:
-### :boom: Known bugs.. I mean features :boom:  
-* WP installation sending "invalid username"  
+### :boom: Known bugs.. I mean features :boom:   
 ## :writing_hand: Change log :writing_hand:  
