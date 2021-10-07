@@ -6,11 +6,18 @@ A 42 project about HTTP
 > :warning: **Warning**: You can take inspiration from it but don't copy / paste what you don't understand.  
 
 ## Install  
-You only need to run **make**.  
-All libraries will be build and the binary will be ready to launch  
+### Two way to use it :
+* run **make** if you want to launch the server on your computer or if you don't have docker installed.
+* From the root of the software, launch **./starters/build_run.sh**. You will then be in a docker container.  
+  To launch the server inside the container you can do a classic **make**,  
+  or launch **./starters/start_webserv.sh ressources/config/worpress.conf** to run a server where wordpress and mysql is running.
 
 ## Content
 * A simple HTTP server.  
+* There is a '--help' option which will guide you.  
+* There is a default configuration file fully commented **ressources/config/webserv.conf**.  
+* The accepted methods are GET POST HEAD and DELETE.  
+* You will find a Dockerfile and scripts to launch the server inside of a container.  
  
 ## Resources  
 * https://www.ibm.com/docs/en/i/7.2?topic=designs-using-poll-instead-select     <-Different API explanation  
@@ -29,5 +36,6 @@ All libraries will be build and the binary will be ready to launch
 ## [The Norm](.readme/norm.md)  
 
 ### :zzz: TODO :zzz:
-### :boom: Known bugs.. I mean features :boom:   
-## :writing_hand: Change log :writing_hand:  
+* Nothing to be done.
+### :boom: Known bugs.. I mean features :boom: 
+* No bugs has been reported.
